@@ -444,6 +444,15 @@ body, .main-content, .nav-menu, .output, .highlight-block, input, select, textar
         </div>
         <input type="number" id="coaxialManual" value="0">
       </div>
+      <label>Metraje Flap</label>
+      <div class="metraje-input-group">
+        <div class="counter-control">
+          <button data-type="flap" data-action="decrease">-</button>
+          <span data-type="flap">0</span>
+          <button data-type="flap" data-action="increase">+</button>
+        </div>
+        <input type="number" id="flap" value="0">
+      </div>
       <label>Mástil</label>
       <div class="counter-control">
         <button data-type="mastil" data-action="decrease">-</button>
@@ -736,6 +745,7 @@ COUPLE: ${toNA(counterValues.couple)}
 METRAJE UTP: ${toNA(counterValues.utp)}
 METRAJE DROP: ${toNA(counterValues.drop)}
 METRAJE COAXIAL: ${toNA(counterValues.coaxial)}
+METRAJE FLAP: ${toNA(counterValues.flap)}
 MASTIL: ${toNA(counterValues.mastil)}
 TENSORES: ${toNA(counterValues.tensores)}
 PREFORMADOS: ${toNA(counterValues.preformados)}
@@ -779,7 +789,7 @@ document.querySelectorAll('#ficha-instalacion .counter-control button').forEach(
     const span = document.querySelector(`#ficha-instalacion span[data-type="${type}"]`);
     let count = parseInt(span.textContent);
 
-    const isMetraje = ['utp', 'drop', 'coaxial'].includes(type);
+    const isMetraje = ['utp', 'drop', 'coaxial','flap'].includes(type);
     const manualInput = $(`${type}Manual`);
 
     if (isMetraje && manualInput) {
