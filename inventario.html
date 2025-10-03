@@ -7,9 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
-        // **Lógica de Tema Crítica (se ejecuta antes de renderizar)**
-        // Esta parte es clave para evitar el "parpadeo" de un tema incorrecto al cargar.
-        // Revisa si hay un tema guardado en localStorage. Si no, revisa la preferencia del sistema operativo.
+        // Lógica de Tema Crítica (se ejecuta antes de renderizar para evitar parpadeos)
         if (localStorage.getItem('inventoryTheme') === 'dark' || (!('inventoryTheme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
         } else {
@@ -175,7 +173,7 @@
             }
 
             function renderInventory() {
-                let html = inventory.length === 0 
+                inventoryList.innerHTML = inventory.length === 0 
                     ? `<tr><td colspan="4" class="text-center py-4 text-gray-500">No hay items en el inventario.</td></tr>`
                     : [...inventory].sort((a, b) => b.createdAt - a.createdAt).map(item => `
                         <tr>
@@ -186,11 +184,10 @@
                                 <button data-id="${item.id}" class="delete-item-btn text-red-500 hover:text-red-700">Eliminar</button>
                             </td>
                         </tr>`).join('');
-                inventoryList.innerHTML = html;
             }
 
             function renderHistory() {
-                let html = history.length === 0 
+                historyList.innerHTML = history.length === 0 
                     ? `<p class="text-center py-4 text-gray-500">No hay reportes en el historial.</p>`
                     : [...history].sort((a, b) => b.createdAt - a.createdAt).map(report => `
                         <div class="border border-gray-200 dark:border-gray-700 p-4 rounded-lg">
@@ -217,7 +214,6 @@
                                 </tbody>
                             </table>
                         </div>`).join('');
-                historyList.innerHTML = html;
             }
 
             // ===== Lógica de Procesamiento de Reporte =====
@@ -254,24 +250,9 @@
                     const reportId = crypto.randomUUID();
                     const now = Date.now();
                     
-                    history.push({
-                        reportId,
-                        clientName: parsedData.clientName,
-                        entryDate: parsedData.entryDate,
-                        items: parsedData.items,
-                        createdAt: now
-                    });
-                    
+                    history.push({ reportId, clientName: parsedData.clientName, entryDate: parsedData.entryDate, items: parsedData.items, createdAt: now });
                     parsedData.items.forEach(item => {
-                        inventory.push({
-                            id: crypto.randomUUID(),
-                            reportId,
-                            itemName: item.name,
-                            itemValue: item.value,
-                            clientName: parsedData.clientName,
-                            entryDate: parsedData.entryDate,
-                            createdAt: now
-                        });
+                        inventory.push({ id: crypto.randomUUID(), reportId, itemName: item.name, itemValue: item.value, clientName: parsedData.clientName, entryDate: parsedData.entryDate, createdAt: now });
                     });
                     
                     saveData();
@@ -329,32 +310,29 @@
                 }
             });
 
-            // ===== Lógica del Tema (Corregida y Verificada) =====
-            function applyTheme(isDark) {
-                if (isDark) {
-                    document.documentElement.classList.add('dark');
-                    localStorage.setItem('inventoryTheme', 'dark');
-                } else {
-                    document.documentElement.classList.remove('dark');
-                    localStorage.setItem('inventoryTheme', 'light');
-                }
-            }
+            // ===== LÓGICA DEL TEMA (CORREGIDA Y SIMPLIFICADA) =====
+            function setupThemeToggle() {
+                // 1. Sincronizar el estado visual del interruptor con el tema actual
+                themeToggle.checked = document.documentElement.classList.contains('dark');
 
-            function initializeTheme() {
-                const isCurrentlyDark = document.documentElement.classList.contains('dark');
-                themeToggle.checked = isCurrentlyDark;
+                // 2. Escuchar los cambios en el interruptor para aplicar el nuevo tema
                 themeToggle.addEventListener('change', () => {
-                    applyTheme(themeToggle.checked);
+                    if (themeToggle.checked) {
+                        document.documentElement.classList.add('dark');
+                        localStorage.setItem('inventoryTheme', 'dark');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                        localStorage.setItem('inventoryTheme', 'light');
+                    }
                 });
             }
-            
 
             // ===== Inicialización =====
             function init() {
                 loadData();
                 renderAll();
                 setActiveSection('inventario-section');
-                initializeTheme();
+                setupThemeToggle(); // Llamar a la nueva función de tema
             }
 
             init();
