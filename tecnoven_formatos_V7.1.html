@@ -217,6 +217,27 @@
       flex: 1;
       text-align: center;
     }
+
+    /* Estilos para el Modal de Novedades */
+    #updatesBody ul {
+      padding-left: 20px;
+      list-style-position: inside;
+    }
+    #updatesBody li {
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+    #updatesBody .chip { /* Reutilizamos la clase 'chip' para las etiquetas */
+      display: inline-block;
+      margin-right: 8px;
+      padding: 3px 8px;
+      font-size: 12px;
+    }
+    .chip.new { background-color: #1a73e8; } /* Azul para 'Nuevo' */
+    .chip.improved { background-color: #1e8e3e; } /* Verde para 'Mejora' */
+    .chip.fixed { background-color: #d93025; } /* Rojo para 'Corregido' */
+
+    /* Modo oscuro */
     body.dark-mode {
       background: linear-gradient(160deg, #181818, #222 100%);
       color: #eee;
@@ -343,34 +364,49 @@
   
   <div id="messageBox" class="message-box"></div>
 
+  <div class="modal-overlay" id="updatesModal">
+    <div class="modal-content">
+      <h2 id="updatesTitle">🚀 Novedades de la Versión</h2>
+      <div id="updatesBody" style="text-align: left; margin-bottom: 24px;">
+        </div>
+      <button class="btn" id="closeUpdatesModal">Entendido</button>
+    </div>
+  </div>
+
   <footer style="text-align:center; color:white; margin-top:32px; font-size:0.92em; opacity:0.8;">
     Plataforma de Reportes y Formatos<br>
-    Versión V0.7 - Build 2025-08-20 12:00<br>
+    Versión V0.8.0<br>
     © 2025 - Todos los derechos reservados<br>
     Espiral - Leonardo Montiel<br>
   </footer>
 
   <script>
-    // Se espera a que el DOM esté completamente cargado para ejecutar el script
     document.addEventListener('DOMContentLoaded', () => {
     
-        // --- TODO EL CÓDIGO DE LA APLICACIÓN VA AQUÍ DENTRO ---
-
         const $ = id => document.getElementById(id);
+        
+        // =============================================
+        // ===== GESTIÓN DE VERSIÓN Y ACTUALIZACIONES =====
+        // =============================================
+        const APP_VERSION = '0.8.0'; // ¡Importante! Cambia esto con cada actualización.
+
+        const updateFeatures = [
+            `<li><span class="chip new">Nuevo</span>¡Hola! Se ha añadido esta ventana de novedades para informarte de los cambios.</li>`,
+            `<li><span class="chip improved">Mejora</span>El código base ha sido refactorizado para ser más estable y rápido.</li>`,
+            `<li><span class="chip fixed">Corregido</span>Solucionados errores de carga que podían impedir el funcionamiento del script.</li>`
+        ];
+
         const navMenu = document.querySelector('.nav-menu');
         const menuToggle = document.querySelector('.menu-toggle');
         const navLinks = document.querySelectorAll('.nav-link');
         const contentSections = document.querySelectorAll('.content-section');
         const themeBtn = document.getElementById('toggleThemeBtn');
 
-        // Lógica de navegación SPA
         function showSection(targetId) {
             navLinks.forEach(l => l.classList.remove('active'));
             contentSections.forEach(section => section.classList.remove('active'));
-            
             const link = document.querySelector(`.nav-link[data-target="${targetId}"]`);
             if (link) link.classList.add('active');
-            
             const section = $(targetId);
             if (section) section.classList.add('active');
         }
@@ -392,7 +428,6 @@
             });
         }
 
-        // Funciones de utilidad
         function showAlert(message) {
             const box = $("messageBox");
             box.textContent = message;
@@ -403,6 +438,17 @@
         function formatFecha(v){v=toNA(v);if(v==="n/a")return v;v=v.replace(/-/g,"/").replace(/\s+/g,"/");const p=v.split("/");if(p.length===3){return p[0].padStart(2,"0")+"/"+p[1].padStart(2,"0")+"/"+p[2];}return v;}
         function formatHora(v){v=toNA(v);if(v==="n/a")return v;const p=v.split(" ");if(p.length===2){let h=parseInt(p[0]);let m=p[1].padStart(2,"0");let suf=h>=12?"PM":"AM";if(h>12)h-=12;if(h===0)h=12;return `${h}:${m}${suf}`;}return v;}
         function setHoraAhora(id){const d=new Date();$(id).value=`${d.getHours()} ${String(d.getMinutes()).padStart(2,"0")}`;}
+
+        function showUpdatesModal() {
+            $('updatesTitle').innerHTML = `🚀 Novedades v${APP_VERSION}`;
+            $('updatesBody').innerHTML = `<ul>${updateFeatures.join('')}</ul>`;
+            $('updatesModal').style.display = 'flex';
+        }
+
+        function hideUpdatesModal() {
+            $('updatesModal').style.display = 'none';
+            localStorage.setItem('lastVersionSeen', APP_VERSION);
+        }
 
         // --- Lógica para Ficha de Instalación ---
         const metrajeManualFieldsInst = ['utpManual', 'dropManual', 'coaxialManual'];
@@ -527,7 +573,6 @@
             });
         });
 
-        // --- Lógica para Proceso de Activación ---
         $("btnGenerarAct").onclick=()=>{
             const tipoActivacion = $("tipoActivacion").value;
             const cliente = $("clienteAct").value;
@@ -548,7 +593,6 @@
             $("resultadoAct").textContent = "";
         };
 
-        // --- Lógica para Solicitud ---
         $("btnGenerarSol").onclick = () => {
             const servicio = $("servicioSol").value;
             const napRegion = $("napRegionSol").value;
@@ -567,7 +611,6 @@
             $("resultadoSol").textContent = "";
         };
 
-        // --- Lógica del Escáner QR ---
         let html5QrCodeScanner;
         function setupQRScanner(serialInputId) {
             const modal = $("qrModal");
@@ -576,8 +619,7 @@
             
             html5QrCodeScanner = new Html5Qrcode("scanner-container");
             html5QrCodeScanner.start(
-                { facingMode: "environment" }, 
-                config, 
+                { facingMode: "environment" }, config, 
                 (decodedText) => {
                     const match = decodedText.match(/PON SN:(\S+)/);
                     let serialToUse = decodedText;
@@ -611,7 +653,6 @@
         $("btnScanQRAct").onclick = () => setupQRScanner("serialAct");
         $("btnCloseScanner").onclick = closeScanner;
         
-        // --- Modo oscuro/claro ---
         if (themeBtn) {
             themeBtn.onclick = () => {
                 document.body.classList.toggle('dark-mode');
@@ -620,7 +661,16 @@
             };
         }
         
-        // --- Estado Inicial de la Página ---
+        // =============================================
+        // ===== LÓGICA DE INICIO DE LA APLICACIÓN =====
+        // =============================================
+        $('closeUpdatesModal').onclick = hideUpdatesModal;
+
+        const lastVersionSeen = localStorage.getItem('lastVersionSeen');
+        if (lastVersionSeen !== APP_VERSION) {
+            showUpdatesModal();
+        }
+
         if (localStorage.getItem('darkMode') === "1") {
             document.body.classList.add('dark-mode');
             if(themeBtn) themeBtn.textContent = "☀️";
