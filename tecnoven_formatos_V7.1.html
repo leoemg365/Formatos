@@ -874,7 +874,8 @@ function setupQRScanner(serialInputId, formats) {
   const config = {
     fps: 10,
     qrbox: 250,
-    supportedScanTypes: [HtmlQrcodeScanType.SCAN_TYPE_CAMERA], //Asegura que use la camara
+    supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA], //Asegura que use la camara
+    formatsToSupport: formats
   };
   html5QrCodeScanner = new Html5Qrcode("scanner-container");
   html5QrCodeScanner.start({ facingMode: "environment" }, config, (decodedText) => {
@@ -904,10 +905,10 @@ function closeScanner() {
   //asignacion a los botones
 }
 $("btnScanQRInst").onclick = () => setupScanner("serialInst, qrCodeFormat");
-  $ ("btnScanBarcodeInst").onclic () => setupScanner("serialInst, barcodeFormats");
+  $ ("btnScanBarcodeInst").onclick () => setupScanner("serialInst, barcodeFormats");
   
 $("btnScanQRAct").onclick = () => setupScanner("serialAct, qrCodeFormat");
-  $("btnScanBarcodeAct").onclick = () => setupScanner("seruakAct, barcodeFormats");
+  $("btnScanBarcodeAct").onclick = () => setupScanner("serialAct, barcodeFormats");
   
 $("btnCloseScanner").onclick = closeScanner;
 
