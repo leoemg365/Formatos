@@ -266,228 +266,164 @@
     </header>
 
     <div id="ficha-instalacion" class="content-section">
-      <h2>Ficha de Instalación</h2>
-      <div class="highlight-block">
-        <label for="tipoTrabajo">Tipo de trabajo</label>
-        <select id="tipoTrabajo">
-          <option value="instalacion">Instalación</option>
-          <option value="soporte">Soporte</option>
-        </select>
-        <label for="servicio">Servicio</label>
-        <select id="servicio">
-          <option value="Internet">Internet</option>
-          <option value="TV">TV</option>
-          <option value="Ambos">Ambos</option>
-        </select>
-      </div>
-      <label for="fecha">Fecha</label>
-      <div class="row">
-        <input id="fecha" placeholder="03/10/2025">
-        <button type="button" class="btn accent" id="btnFecha">Ahora</button>
-      </div>
-      <label for="cliente">Nombre de cliente</label>
-      <input id="cliente">
-      <label>Hora inicio</label>
-      <div class="row">
-        <input id="horaInicio" placeholder="1:20">
-        <button type="button" class="btn" id="btnAhoraIni">Ahora</button>
-      </div>
-      <label>Hora fin</label>
-      <div class="row">
-        <input id="horaFin" placeholder="12:15">
-        <button type="button" class="btn" id="btnAhoraFin">Ahora</button>
-      </div>
-      <label for="serialInst">Serial</label>
-      <div class="row">
-        <input id="serialInst" placeholder="Ingresa serial o escanea">
-        <button type="button" class="btn" id="btnScanQRInst">QR</button>
-        <button type="button" class="btn accent" id="btnScanBarcodeInst">Barras</button>
-      </div>
-      <label>NAP</label>
-      <div class="row">
-        <select id="napRegionInst"><option value="MCBO">MCBO</option><option value="SFCO">SFCO</option></select>
-        <input id="napNumberInst" placeholder="Número" type="number">
-      </div>
-      <label for="puertoInst">Puerto</label>
-      <select id="puertoInst">
-        <option value="">Selecciona</option>
-        <script>for(let i=1; i<=16; i++) document.write(`<option value="${i}">${i}</option>`);</script>
-      </select>
-      <label>Potencia</label><input id="potencia">
-      <label>Conector APC</label><div class="counter-control"><button data-type="apc" data-action="decrease">-</button><span data-type="apc">0</span><button data-type="apc" data-action="increase">+</button></div>
-      <label>Conector UPC</label><div class="counter-control"><button data-type="upc" data-action="decrease">-</button><span data-type="upc">0</span><button data-type="upc" data-action="increase">+</button></div>
-      <label>Conector RG6</label><div class="counter-control"><button data-type="rg6" data-action="decrease">-</button><span data-type="rg6">0</span><button data-type="rg6" data-action="increase">+</button></div>
-      <label>Conector RJ45</label><div class="counter-control"><button data-type="rj45" data-action="decrease">-</button><span data-type="rj45">0</span><button data-type="rj45" data-action="increase">+</button></div>
-      <label>Splitter TV</label><div class="counter-control"><button data-type="splitter" data-action="decrease">-</button><span data-type="splitter">0</span><button data-type="splitter" data-action="increase">+</button></div>
-      <label>Roseta</label><div class="counter-control"><button data-type="roseta" data-action="decrease">-</button><span data-type="roseta">0</span><button data-type="roseta" data-action="increase">+</button></div>
-      <label>Manguita</label><div class="counter-control"><button data-type="manguita" data-action="decrease">-</button><span data-type="manguita">0</span><button data-type="manguita" data-action="increase">+</button></div>
-      <label>Couple</label><div class="counter-control"><button data-type="couple" data-action="decrease">-</button><span data-type="couple">0</span><button data-type="couple" data-action="increase">+</button></div>
-      <label>Metraje UTP</label><div class="metraje-input-group"><div class="counter-control"><button data-type="utp" data-action="decrease">-</button><span data-type="utp">0</span><button data-type="utp" data-action="increase">+</button></div><input type="number" id="utpManual" value="0"></div>
-      <label>Metraje Drop</label><div class="metraje-input-group"><div class="counter-control"><button data-type="drop" data-action="decrease">-</button><span data-type="drop">0</span><button data-type="drop" data-action="increase">+</button></div><input type="number" id="dropManual" value="0"></div>
-      <label>Metraje Coaxial</label><div class="metraje-input-group"><div class="counter-control"><button data-type="coaxial" data-action="decrease">-</button><span data-type="coaxial">0</span><button data-type="coaxial" data-action="increase">+</button></div><input type="number" id="coaxialManual" value="0"></div>
-      <label>Metraje Flap</label><div class="metraje-input-group"><div class="counter-control"><button data-type="flap" data-action="decrease">-</button><span data-type="flap">0</span><button data-type="flap" data-action="increase">+</button></div><input type="number" id="flapManual" value="0"></div>
-      <label>Mástil</label><div class="counter-control"><button data-type="mastil" data-action="decrease">-</button><span data-type="mastil">0</span><button data-type="mastil" data-action="increase">+</button></div>
-      <label>Tensores</label><div class="counter-control"><button data-type="tensores" data-action="decrease">-</button><span data-type="tensores">0</span><button data-type="tensores" data-action="increase">+</button></div>
-      <label>Preformados</label><div class="counter-control"><button data-type="preformados" data-action="decrease">-</button><span data-type="preformados">0</span><button data-type="preformados" data-action="increase">+</button></div>
-      <label>Grapas y Clavos</label><div class="counter-control"><button data-type="grapas" data-action="decrease">-</button><span data-type="grapas">0</span><button data-type="grapas" data-action="increase">+</button></div>
-      <label>Ramplug y Tornillos</label><div class="counter-control"><button data-type="ramplug" data-action="decrease">-</button><span data-type="ramplug">0</span><button data-type="ramplug" data-action="increase">+</button></div>
-      <label>Técnicos</label><select id="tecnicosSelect"><option value="">-- Selecciona técnico --</option><option value="Alejandro Blanco">Alejandro Blanco</option><option value="Alejandro Soto">Alejandro Soto</option><option value="Danny Perez">Danny Perez</option><option value="Keiver Zambrano">Keiver Zambrano</option><option value="Mayckkol Fuenmayor">Mayckkol Fuenmayor</option><option value="Alfonso Solarte">Alfonso Solarte</option><option value="Anddy Bravo">Anddy Bravo</option><option value="Alexander Zambrano">Alexander Zambrano</option><option value="Josue Utria">Josue Utria</option><option value="Leonardo Montiel">Leonardo Montiel</option><option value="Hebert Vargas">Hebert Vargas</option><option value="Pedro Linares">Pedro Linares</option><option value="Jose Luiz Gonzalez">Jose Luiz Gonzalez</option><option value="Ricardo Valencia">Ricardo Valencia</option><option value="Jonathan Bravo">Jonathan Bravo</option><option value="Otro">Otro</option></select>
-      <div class="chips" id="chipsContainer"></div>
-      <input id="otroNombre" placeholder="Escribe otro nombre">
-      <label for="cobro">Cobrar</label><input id="cobro">
-      <label for="observacion">Observación</label><textarea id="observacion"></textarea>
-      <div class="actions">
-        <button class="btn" id="btnGenerarInst">Generar</button>
-        <button class="btn" id="btnCopiarInst">Copiar</button>
-        <button class="btn alt" id="btnNuevoInst">Nuevo</button>
-      </div>
-      <div class="output" id="resultadoInst"></div>
+        <h2>Ficha de Instalación</h2>
+        <div class="highlight-block">
+            <label for="tipoTrabajo">Tipo de trabajo</label>
+            <select id="tipoTrabajo"><option value="instalacion">Instalación</option><option value="soporte">Soporte</option></select>
+            <label for="servicio">Servicio</label>
+            <select id="servicio"><option value="Internet">Internet</option><option value="TV">TV</option><option value="Ambos">Ambos</option></select>
+        </div>
+        <label for="fecha">Fecha</label>
+        <div class="row"><input id="fecha" placeholder="30 08 2025"><button type="button" class="btn accent" id="btnFecha">Ahora</button></div>
+        <label for="cliente">Nombre de cliente</label><input id="cliente">
+        <label>Hora inicio</label>
+        <div class="row"><input id="horaInicio" placeholder="9 37"><button type="button" class="btn" id="btnAhoraIni">Ahora</button></div>
+        <label>Hora fin</label>
+        <div class="row"><input id="horaFin" placeholder="12 15"><button type="button" class="btn" id="btnAhoraFin">Ahora</button></div>
+        <label for="serialInst">Serial</label>
+        <div class="row"><input id="serialInst" placeholder="Ingresa serial o escanea QR"><button type="button" class="btn" id="btnScanQRInst">Escanear QR</button></div>
+        <label>NAP</label>
+        <div class="row"><select id="napRegionInst"><option value="MCBO">MCBO</option><option value="SFCO">SFCO</option></select><input id="napNumberInst" placeholder="Número" type="number"></div>
+        <label for="puertoInst">Puerto</label>
+        <select id="puertoInst"><option value="">Selecciona un puerto</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option></select>
+        <label>Potencia</label><input id="potencia">
+        <label>Conector APC</label><div class="counter-control"><button data-type="apc" data-action="decrease">-</button><span data-type="apc">0</span><button data-type="apc" data-action="increase">+</button></div>
+        <label>Conector UPC</label><div class="counter-control"><button data-type="upc" data-action="decrease">-</button><span data-type="upc">0</span><button data-type="upc" data-action="increase">+</button></div>
+        <label>Conector RG6</label><div class="counter-control"><button data-type="rg6" data-action="decrease">-</button><span data-type="rg6">0</span><button data-type="rg6" data-action="increase">+</button></div>
+        <label>Conector RJ45</label><div class="counter-control"><button data-type="rj45" data-action="decrease">-</button><span data-type="rj45">0</span><button data-type="rj45" data-action="increase">+</button></div>
+        <label>Splitter TV</label><div class="counter-control"><button data-type="splitter" data-action="decrease">-</button><span data-type="splitter">0</span><button data-type="splitter" data-action="increase">+</button></div>
+        <label>Roseta</label><div class="counter-control"><button data-type="roseta" data-action="decrease">-</button><span data-type="roseta">0</span><button data-type="roseta" data-action="increase">+</button></div>
+        <label>Manguita</label><div class="counter-control"><button data-type="manguita" data-action="decrease">-</button><span data-type="manguita">0</span><button data-type="manguita" data-action="increase">+</button></div>
+        <label>Couple</label><div class="counter-control"><button data-type="couple" data-action="decrease">-</button><span data-type="couple">0</span><button data-type="couple" data-action="increase">+</button></div>
+        <label>Metraje UTP</label><div class="metraje-input-group"><div class="counter-control"><button data-type="utp" data-action="decrease">-</button><span data-type="utp">0</span><button data-type="utp" data-action="increase">+</button></div><input type="number" id="utpManual" value="0"></div>
+        <label>Metraje Drop</label><div class="metraje-input-group"><div class="counter-control"><button data-type="drop" data-action="decrease">-</button><span data-type="drop">0</span><button data-type="drop" data-action="increase">+</button></div><input type="number" id="dropManual" value="0"></div>
+        <label>Metraje Coaxial</label><div class="metraje-input-group"><div class="counter-control"><button data-type="coaxial" data-action="decrease">-</button><span data-type="coaxial">0</span><button data-type="coaxial" data-action="increase">+</button></div><input type="number" id="coaxialManual" value="0"></div>
+        <label>Mástil</label><div class="counter-control"><button data-type="mastil" data-action="decrease">-</button><span data-type="mastil">0</span><button data-type="mastil" data-action="increase">+</button></div>
+        <label>Tensores</label><div class="counter-control"><button data-type="tensores" data-action="decrease">-</button><span data-type="tensores">0</span><button data-type="tensores" data-action="increase">+</button></div>
+        <label>Preformados</label><div class="counter-control"><button data-type="preformados" data-action="decrease">-</button><span data-type="preformados">0</span><button data-type="preformados" data-action="increase">+</button></div>
+        <label>Grapas y Clavos</label><div class="counter-control"><button data-type="grapas" data-action="decrease">-</button><span data-type="grapas">0</span><button data-type="grapas" data-action="increase">+</button></div>
+        <label>Ramplug y Tornillos</label><div class="counter-control"><button data-type="ramplug" data-action="decrease">-</button><span data-type="ramplug">0</span><button data-type="ramplug" data-action="increase">+</button></div>
+        <label>Técnicos</label><select id="tecnicosSelect"><option value="">-- Selecciona técnico --</option><option value="Alejandro Blanco">Alejandro Blanco</option><option value="Alejandro Soto">Alejandro Soto</option><option value="Danny Perez">Danny Perez</option><option value="Keiver Zambrano">Keiver Zambrano</option><option value="Mayckkol Fuenmayor">Mayckkol Fuenmayor</option><option value="Alfonso Solarte">Alfonso Solarte</option><option value="Anddy Bravo">Anddy Bravo</option><option value="Alexander Zambrano">Alexander Zambrano</option><option value="Josue Utria">Josue Utria</option><option value="Leonardo Montiel">Leonardo Montiel</option><option value="Hebert Vargas">Hebert Vargas</option><option value="Pedro Linares">Pedro Linares</option><option value="Jose Luiz Gonzalez">Jose Luiz Gonzalez</option><option value="Ricardo Valencia">Ricardo Valencia</option><option value="Jonathan Bravo">Jonathan Bravo</option><option value="Antonio Roo">Antonio Roo</option><option value="Otro">Otro</option></select>
+        <div class="chips" id="chipsContainer"></div>
+        <input id="otroNombre" placeholder="Escribe otro nombre">
+        <label for="cobro">Cobrar</label><input id="cobro">
+        <label for="observacion">Observación</label><textarea id="observacion"></textarea>
+        <div class="actions"><button class="btn" id="btnGenerarInst">Generar</button><button class="btn" id="btnCopiarInst">Copiar</button><button class="btn alt" id="btnNuevoInst">Nuevo Formato</button></div>
+        <div class="output" id="resultadoInst"></div>
     </div>
 
     <div id="proceso-activacion" class="content-section">
-      <h2>Proceso de Activación</h2>
-      <div class="highlight-block">
-        <label for="tipoActivacion">Tipo de Activación</label>
-        <select id="tipoActivacion"><option value="Internet">Internet</option><option value="TV">TV</option><option value="Ambos">Ambos</option></select>
-      </div>
-      <label for="clienteAct">Nombre de Cliente</label><input id="clienteAct" placeholder="Nombre de Cliente">
-      <label>NAP</label>
-      <div class="row">
-        <select id="napRegionAct"><option value="MCBO">MCBO</option><option value="SFCO">SFCO</option></select>
-        <input id="napNumberAct" placeholder="Número" type="number">
-      </div>
-      <label for="puertoAct">Puerto</label>
-      <select id="puertoAct">
-        <option value="">Selecciona</option>
-        <script>for(let i=1; i<=16; i++) document.write(`<option value="${i}">${i}</option>`);</script>
-      </select>
-      <label for="serialAct">Serial</label>
-      <div class="row">
-        <input id="serialAct" placeholder="Ingresa serial o escanea">
-        <button type="button" class="btn" id="btnScanQRAct">QR</button>
-        <button type="button" class="btn accent" id="btnScanBarcodeAct">Barras</button>
-      </div>
-      <div class="actions">
-        <button class="btn" id="btnGenerarAct">Generar</button><button class="btn" id="btnCopiarAct">Copiar</button><button class="btn alt" id="btnNuevoAct">Nuevo</button>
-      </div>
-      <div class="output" id="resultadoAct"></div>
+        <h2>Proceso de Activación</h2>
+        <div class="highlight-block"><label for="tipoActivacion">Tipo de Activación</label><select id="tipoActivacion"><option value="Internet">Internet</option><option value="TV">TV</option><option value="Ambos">Ambos</option></select></div>
+        <label for="clienteAct">Nombre de Cliente</label><input id="clienteAct" placeholder="Nombre de Cliente">
+        <label>NAP</label><div class="row"><select id="napRegionAct"><option value="MCBO">MCBO</option><option value="SFCO">SFCO</option></select><input id="napNumberAct" placeholder="Número" type="number"></div>
+        <label for="puertoAct">Puerto</label><select id="puertoAct"><option value="">Selecciona un puerto</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option></select>
+        <label for="serialAct">Serial</label><div class="row"><input id="serialAct" placeholder="Ingresa serial o escanea QR"><button type="button" class="btn" id="btnScanQRAct">Escanear QR</button></div>
+        <div class="actions"><button class="btn" id="btnGenerarAct">Generar</button><button class="btn" id="btnCopiarAct">Copiar</button><button class="btn alt" id="btnNuevoAct">Nuevo Formato</button></div>
+        <div class="output" id="resultadoAct"></div>
     </div>
 
     <div id="solicitud" class="content-section">
-      <h2>Solicitud de Trabajo</h2>
-      <div class="highlight-block">
-        <label for="servicioSol">Servicio</label>
-        <select id="servicioSol"><option value="Internet">Internet</option><option value="TV">TV</option><option value="Ambos">Ambos</option></select>
-      </div>
-      <label>NAP</label>
-      <div class="row">
-        <select id="napRegionSol"><option value="MCBO">MCBO</option><option value="SFCO">SFCO</option></select>
-        <input id="napNumberSol" placeholder="Número" type="number">
-      </div>
-      <label for="clienteSol">Nombre de Cliente</label><input id="clienteSol">
-      <div class="actions">
-        <button class="btn" id="btnGenerarSol">Generar</button><button class="btn" id="btnCopiarSol">Copiar</button><button class="btn alt" id="btnNuevoSol">Nuevo</button>
-      </div>
-      <div class="output" id="resultadoSol"></div>
+        <h2>Solicitud de Trabajo</h2>
+        <div class="highlight-block"><label for="servicioSol">Servicio</label><select id="servicioSol"><option value="Internet">Internet</option><option value="TV">TV</option><option value="Ambos">Ambos</option></select></div>
+        <label>NAP</label><div class="row"><select id="napRegionSol"><option value="MCBO">MCBO</option><option value="SFCO">SFCO</option></select><input id="napNumberSol" placeholder="Número" type="number"></div>
+        <label for="clienteSol">Nombre de Cliente</label><input id="clienteSol">
+        <div class="actions"><button class="btn" id="btnGenerarSol">Generar</button><button class="btn" id="btnCopiarSol">Copiar</button><button class="btn alt" id="btnNuevoSol">Nuevo Formato</button></div>
+        <div class="output" id="resultadoSol"></div>
     </div>
   </div>
 
   <div class="modal-overlay" id="qrModal">
     <div class="modal-content">
-      <h3 id="modalTitle">Escanear código</h3>
+      <h3>Escanear código QR</h3>
       <div id="scanner-container"></div>
       <button class="btn" id="btnCloseScanner">Cerrar</button>
     </div>
   </div>
-
+  
   <div id="messageBox" class="message-box"></div>
 
   <footer style="text-align:center; color:white; margin-top:32px; font-size:0.92em; opacity:0.8;">
     Plataforma de Reportes y Formatos<br>
-    Versión V0.8 - Build 2025-10-03 01:20<br>
+    Versión V0.7 - Build 2025-08-20 12:00<br>
     © 2025 - Todos los derechos reservados<br>
     Espiral - Leonardo Montiel<br>
   </footer>
 
   <script>
+    // Se espera a que el DOM esté completamente cargado para ejecutar el script
     document.addEventListener('DOMContentLoaded', () => {
-      
-      const $ = id => document.getElementById(id);
-      
-      const { Html5QrcodeScanType, Html5QrcodeSupportedFormats } = Html5Qrcode;
-      const barcodeFormats = [
-          Html5QrcodeSupportedFormats.CODE_128,
-          Html5QrcodeSupportedFormats.EAN_13,
-          Html5QrcodeSupportedFormats.EAN_8,
-          Html5QrcodeSupportedFormats.UPC_A,
-          Html5QrcodeSupportedFormats.UPC_E,
-      ];
-      const qrCodeFormat = [Html5QrcodeSupportedFormats.QR_CODE];
+    
+        // --- TODO EL CÓDIGO DE LA APLICACIÓN VA AQUÍ DENTRO ---
 
-      const navMenu = document.querySelector('.nav-menu');
-      const menuToggle = document.querySelector('.menu-toggle');
-      const navLinks = document.querySelectorAll('.nav-link');
-      const contentSections = document.querySelectorAll('.content-section');
-      const themeBtn = document.getElementById('toggleThemeBtn');
+        const $ = id => document.getElementById(id);
+        const navMenu = document.querySelector('.nav-menu');
+        const menuToggle = document.querySelector('.menu-toggle');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const contentSections = document.querySelectorAll('.content-section');
+        const themeBtn = document.getElementById('toggleThemeBtn');
 
-      function showSection(targetId) {
-          navLinks.forEach(l => l.classList.remove('active'));
-          contentSections.forEach(section => section.classList.remove('active'));
-          const link = document.querySelector(`.nav-link[data-target="${targetId}"]`);
-          if (link) link.classList.add('active');
-          const section = $(targetId);
-          if (section) section.classList.add('active');
-      }
+        // Lógica de navegación SPA
+        function showSection(targetId) {
+            navLinks.forEach(l => l.classList.remove('active'));
+            contentSections.forEach(section => section.classList.remove('active'));
+            
+            const link = document.querySelector(`.nav-link[data-target="${targetId}"]`);
+            if (link) link.classList.add('active');
+            
+            const section = $(targetId);
+            if (section) section.classList.add('active');
+        }
 
-      navLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
-          e.preventDefault();
-          const targetId = link.dataset.target;
-          showSection(targetId);
-          if (window.innerWidth < 768) {
-            navMenu.classList.remove('active');
-          }
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.dataset.target;
+                showSection(targetId);
+                if (window.innerWidth < 768) {
+                    navMenu.classList.remove('active');
+                }
+            });
         });
-      });
 
-      if (menuToggle) {
-        menuToggle.addEventListener('click', () => {
-          navMenu.classList.toggle('active');
-        });
-      }
+        if (menuToggle) {
+            menuToggle.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
+            });
+        }
 
-      function showAlert(message) {
-          const box = $("messageBox");
-          box.textContent = message;
-          box.classList.add("show");
-          setTimeout(() => box.classList.remove("show"), 3000);
-      }
-      function toNA(v){v=(v||"").trim();return (v===""||v==="0")?"n/a":v;}
-      function formatFecha(v){v=toNA(v);if(v==="n/a")return v;v=v.replace(/-/g,"/").replace(/\s+/g,"/");const p=v.split("/");if(p.length===3){return p[0].padStart(2,"0")+"/"+p[1].padStart(2,"0")+"/"+p[2];}return v;}
-      function formatHora(v){v=toNA(v);if(v==="n/a")return v;const p=v.split(" ");if(p.length===2){let h=parseInt(p[0]);let m=p[1].padStart(2,"0");let suf=h>=12?"PM":"AM";if(h>12)h-=12;if(h===0)h=12;return `${h}:${m}${suf}`;}return v;}
-      function setHoraAhora(id){const d=new Date();$(id).value=`${d.getHours()} ${String(d.getMinutes()).padStart(2,"0")}`;}
+        // Funciones de utilidad
+        function showAlert(message) {
+            const box = $("messageBox");
+            box.textContent = message;
+            box.classList.add("show");
+            setTimeout(() => box.classList.remove("show"), 3000);
+        }
+        function toNA(v){v=(v||"").trim();return (v===""||v==="0")?"n/a":v;}
+        function formatFecha(v){v=toNA(v);if(v==="n/a")return v;v=v.replace(/-/g,"/").replace(/\s+/g,"/");const p=v.split("/");if(p.length===3){return p[0].padStart(2,"0")+"/"+p[1].padStart(2,"0")+"/"+p[2];}return v;}
+        function formatHora(v){v=toNA(v);if(v==="n/a")return v;const p=v.split(" ");if(p.length===2){let h=parseInt(p[0]);let m=p[1].padStart(2,"0");let suf=h>=12?"PM":"AM";if(h>12)h-=12;if(h===0)h=12;return `${h}:${m}${suf}`;}return v;}
+        function setHoraAhora(id){const d=new Date();$(id).value=`${d.getHours()} ${String(d.getMinutes()).padStart(2,"0")}`;}
 
-      const fichaInst = $("ficha-instalacion");
-      if (fichaInst) {
-        const metrajeManualFieldsInst = ['utpManual', 'dropManual', 'coaxialManual', 'flapManual'];
-        const counterFieldsInst = ['apc', 'upc', 'rg6', 'rj45', 'splitter', 'roseta', 'manguita', 'couple', 'utp', 'drop', 'coaxial', 'flap', 'mastil', 'tensores', 'preformados', 'grapas', 'ramplug'];
+        // --- Lógica para Ficha de Instalación ---
+        const metrajeManualFieldsInst = ['utpManual', 'dropManual', 'coaxialManual'];
+        const counterFieldsInst = ['apc', 'upc', 'rg6', 'rj45', 'splitter', 'roseta', 'manguita', 'couple', 'utp', 'drop', 'coaxial', 'mastil', 'tensores', 'preformados', 'grapas', 'ramplug'];
         let tecnicosSeleccionados=[];
 
         function renderChips(){
-          const c=$("chipsContainer");c.innerHTML="";
-          tecnicosSeleccionados.forEach((t,i)=>{
-            const chip=document.createElement("div");
-            chip.className="chip";chip.textContent=t+" ";
-            const btn=document.createElement("button");btn.textContent="❌";
-            btn.onclick=()=>{tecnicosSeleccionados.splice(i,1);renderChips();};
-            chip.appendChild(btn);c.appendChild(chip);
-          });
-          $("otroNombre").style.display=tecnicosSeleccionados.includes("Otro")?"block":"none";
+            const c=$("chipsContainer");c.innerHTML="";
+            tecnicosSeleccionados.forEach((t,i)=>{
+                const chip=document.createElement("div");
+                chip.className="chip";chip.textContent=t+" ";
+                const btn=document.createElement("button");btn.textContent="❌";
+                btn.onclick=()=>{tecnicosSeleccionados.splice(i,1);renderChips();};
+                chip.appendChild(btn);c.appendChild(chip);
+            });
+            $("otroNombre").style.display=tecnicosSeleccionados.includes("Otro")?"block":"none";
         }
-        
+
         $("tecnicosSelect").onchange=()=>{
-          const v=$("tecnicosSelect").value;if(v && !tecnicosSeleccionados.includes(v)){tecnicosSeleccionados.push(v);renderChips();}
-          $("tecnicosSelect").value="";
+            const v=$("tecnicosSelect").value;if(v && !tecnicosSeleccionados.includes(v)){tecnicosSeleccionados.push(v);renderChips();}
+            $("tecnicosSelect").value="";
         };
 
         $("btnFecha").onclick=()=>{const d=new Date();$("fecha").value=`${("0"+d.getDate()).slice(-2)}/${("0"+(d.getMonth()+1)).slice(-2)}/${d.getFullYear()}`};
@@ -495,102 +431,103 @@
         $("btnAhoraFin").onclick=()=>setHoraAhora("horaFin");
         
         $("observacion").addEventListener('input', () => {
-          $("observacion").style.border = "";
-          $("observacion").style.backgroundColor = "";
+            $("observacion").style.border = "";
+            $("observacion").style.backgroundColor = "";
         });
 
         $("btnGenerarInst").onclick=()=>{
-          const tipo=$("tipoTrabajo").value;
-          const observacionInput = $("observacion");
-          const observacionValue = observacionInput.value.trim();
+            const tipo=$("tipoTrabajo").value;
+            const observacionInput = $("observacion");
+            const observacionValue = observacionInput.value.trim();
 
-          if (tipo === "soporte" && !observacionValue) {
-              showAlert("Debes escribir una observación en soporte");
-              observacionInput.focus();
-              observacionInput.style.border = "2px solid red";
-              observacionInput.style.backgroundColor = "#fff0f0";
-              return;
-          }
-
-          const serv = $("servicio").value === "Ambos" ? "Internet + TV" : $("servicio").value;
-          const napRegion = $("napRegionInst").value;
-          const napNumber = $("napNumberInst").value;
-          const napValue = napNumber ? `${napRegion}-${napNumber}` : "";
-
-          const counterValues = {};
-          counterFieldsInst.forEach(type => {
-            const span = fichaInst.querySelector(`span[data-type="${type}"]`);
-            if (metrajeManualFieldsInst.includes(`${type}Manual`)) {
-                const manualInput = $(`${type}Manual`);
-                counterValues[type] = manualInput ? manualInput.value : (span ? span.textContent : '0');
-            } else {
-                counterValues[type] = span ? span.textContent : '0';
+            if (tipo === "soporte" && !observacionValue) {
+                showAlert("Debes escribir una observación en soporte");
+                observacionInput.focus();
+                observacionInput.style.border = "2px solid red";
+                observacionInput.style.backgroundColor = "#fff0f0";
+                return;
             }
-          });
 
-          const tecnicosFinales = [];
-          tecnicosSeleccionados.forEach(t => { if (t !== "Otro") tecnicosFinales.push(t); });
-          const otroNombreInput = $("otroNombre");
-          if (otroNombreInput.style.display === "block" && otroNombreInput.value.trim() !== "") {
-            const nombresExtra = otroNombreInput.value.trim().split(",").map(s => s.trim());
-            tecnicosFinales.push(...nombresExtra);
-          }
-          const tecnicosTexto = tecnicosFinales.filter(Boolean).join(" - ") || "n/a";
+            const serv = $("servicio").value === "Ambos" ? "Internet + TV" : $("servicio").value;
+            const napRegion = $("napRegionInst").value;
+            const napNumber = $("napNumberInst").value;
+            const napValue = napNumber ? `${napRegion}-${napNumber}` : "";
+            
+            const counterValues = {};
+            counterFieldsInst.forEach(type => {
+                const span = document.querySelector(`#ficha-instalacion span[data-type="${type}"]`);
+                if (metrajeManualFieldsInst.includes(`${type}Manual`)) {
+                    const manualInput = $(`${type}Manual`);
+                    counterValues[type] = manualInput ? manualInput.value : (span ? span.textContent : '0');
+                } else {
+                    counterValues[type] = span ? span.textContent : '0';
+                }
+            });
 
-          const observacionFinal = (tipo === "instalacion" && !observacionValue)
-              ? "Se realizó la instalación quedando con servicio operativo."
-              : observacionValue;
+            const tecnicosFinales = [];
+            tecnicosSeleccionados.forEach(t => { if (t !== "Otro") tecnicosFinales.push(t); });
+            const otroNombreInput = $("otroNombre");
+            if (otroNombreInput.style.display === "block" && otroNombreInput.value.trim() !== "") {
+                const nombresExtra = otroNombreInput.value.trim().split(",").map(s => s.trim());
+                tecnicosFinales.push(...nombresExtra);
+            }
+            const tecnicosTexto = tecnicosFinales.filter(Boolean).join(" - ") || "n/a";
 
-          const txt = `TIPO DE TRABAJO: ${tipo === "instalacion" ? "Instalación" : "Soporte"}\nINSTALACIÓN: ${serv}\nFECHA: ${formatFecha($("fecha").value)}\nNOMBRE DE CLIENTE: ${toNA($("cliente").value)}\nHORA INICIO: ${formatHora($("horaInicio").value)}\nHORA FIN: ${formatHora($("horaFin").value)}\nSERIAL: ${toNA($("serialInst").value)}\nNAP: ${toNA(napValue)}\nPUERTO: ${toNA($("puertoInst").value)}\nPOTENCIA: ${toNA($("potencia").value)}\nCONECTOR APC: ${toNA(counterValues.apc)}\nCONECTOR UPC: ${toNA(counterValues.upc)}\nCONECTOR RG6: ${toNA(counterValues.rg6)}\nCONECTOR RJ45: ${toNA(counterValues.rj45)}\nSPLITTER TV: ${toNA(counterValues.splitter)}\nROSETA: ${toNA(counterValues.roseta)}\nMANGUITA: ${toNA(counterValues.manguita)}\nCOUPLE: ${toNA(counterValues.couple)}\nMETRAJE UTP: ${toNA(counterValues.utp)}\nMETRAJE DROP: ${toNA(counterValues.drop)}\nMETRAJE COAXIAL: ${toNA(counterValues.coaxial)}\nMETRAJE FLAP: ${toNA(counterValues.flap)}\nMASTIL: ${toNA(counterValues.mastil)}\nTENSORES: ${toNA(counterValues.tensores)}\nPREFORMADOS: ${toNA(counterValues.preformados)}\nGRAPAS y CLAVOS: ${toNA(counterValues.grapas)}\nRamplug y Tornillos: ${toNA(counterValues.ramplug)}\nTÉCNICOS: ${tecnicosTexto}\nCobrar: ${toNA($("cobro").value)}\nObservación:\n${observacionFinal}`;
-          $("resultadoInst").textContent = txt;
+            const observacionFinal = (tipo === "instalacion" && !observacionValue)
+                ? "Se realizó la instalación quedando con servicio operativo."
+                : observacionValue;
+
+            const txt = `TIPO DE TRABAJO: ${tipo === "instalacion" ? "Instalación" : "Soporte"}\nINSTALACIÓN: ${serv}\nFECHA: ${formatFecha($("fecha").value)}\nNOMBRE DE CLIENTE: ${toNA($("cliente").value)}\nHORA INICIO: ${formatHora($("horaInicio").value)}\nHORA FIN: ${formatHora($("horaFin").value)}\nSERIAL: ${toNA($("serialInst").value)}\nNAP: ${toNA(napValue)}\nPUERTO: ${toNA($("puertoInst").value)}\nPOTENCIA: ${toNA($("potencia").value)}\nCONECTOR APC: ${toNA(counterValues.apc)}\nCONECTOR UPC: ${toNA(counterValues.upc)}\nCONECTOR RG6: ${toNA(counterValues.rg6)}\nCONECTOR RJ45: ${toNA(counterValues.rj45)}\nSPLITTER TV: ${toNA(counterValues.splitter)}\nROSETA: ${toNA(counterValues.roseta)}\nMANGUITA: ${toNA(counterValues.manguita)}\nCOUPLE: ${toNA(counterValues.couple)}\nMETRAJE UTP: ${toNA(counterValues.utp)}\nMETRAJE DROP: ${toNA(counterValues.drop)}\nMETRAJE COAXIAL: ${toNA(counterValues.coaxial)}\nMASTIL: ${toNA(counterValues.mastil)}\nTENSORES: ${toNA(counterValues.tensores)}\nPREFORMADOS: ${toNA(counterValues.preformados)}\nGRAPAS y CLAVOS: ${toNA(counterValues.grapas)}\nRamplug y Tornillos: ${toNA(counterValues.ramplug)}\nTÉCNICOS: ${tecnicosTexto}\nCobrar: ${toNA($("cobro").value)}\nObservación:\n${observacionFinal}`;
+            $("resultadoInst").textContent = txt;
         };
-      
+
         $("btnCopiarInst").onclick=async()=>{
-          const t=$("resultadoInst").textContent;if(!t){showAlert("Genera primero");return;}
-          try{await navigator.clipboard.writeText(t);showAlert("Copiado ✅");}
-          catch{const ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand("copy");document.body.removeChild(ta);showAlert("Copiado ✅");}
+            const t=$("resultadoInst").textContent;if(!t){showAlert("Genera primero");return;}
+            try{await navigator.clipboard.writeText(t);showAlert("Copiado ✅");}
+            catch{const ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand("copy");document.body.removeChild(ta);showAlert("Copiado ✅");}
         };
-      
+
         $("btnNuevoInst").onclick=()=>{
-          fichaInst.querySelectorAll("input, textarea, select").forEach(el=>{if(el.type!=="button")el.value="";});
-          tecnicosSeleccionados=[];renderChips();
-          $("resultadoInst").textContent="";
-          counterFieldsInst.forEach(type => {
-            const span = fichaInst.querySelector(`span[data-type="${type}"]`);
-            if (span) span.textContent = '0';
-          });
-          metrajeManualFieldsInst.forEach(id => { const el = $(id); if (el) el.value = '0'; });
-          const d=new Date();$("fecha").value=`${("0"+d.getDate()).slice(-2)}/${("0"+(d.getMonth()+1)).slice(-2)}/${d.getFullYear()}`;
-          setHoraAhora("horaInicio");
+            document.querySelectorAll("#ficha-instalacion input, #ficha-instalacion textarea, #ficha-instalacion select").forEach(el=>{if(el.type!=="button")el.value="";});
+            tecnicosSeleccionados=[];renderChips();
+            $("resultadoInst").textContent="";
+            counterFieldsInst.forEach(type => {
+                const span = document.querySelector(`#ficha-instalacion span[data-type="${type}"]`);
+                if (span) span.textContent = '0';
+            });
+            metrajeManualFieldsInst.forEach(id => {
+                const el = $(id);
+                if (el) el.value = '0';
+            });
+            const d=new Date();$("fecha").value=`${("0"+d.getDate()).slice(-2)}/${("0"+(d.getMonth()+1)).slice(-2)}/${d.getFullYear()}`;
+            setHoraAhora("horaInicio");
         };
-      
-        fichaInst.querySelectorAll('.counter-control button').forEach(button => {
-          button.addEventListener('click', (e) => {
-            const type = e.target.dataset.type;
-            const action = e.target.dataset.action;
-            const span = e.target.parentElement.querySelector(`span[data-type="${type}"]`);
-            if (!span) return;
-            let count = parseInt(span.textContent);
-            const isMetraje = ['utp', 'drop', 'coaxial','flap'].includes(type);
-            const manualInput = $(`${type}Manual`);
 
-            if (isMetraje && manualInput) {
-                let manualCount = parseInt(manualInput.value || '0');
-                manualCount += (action === 'increase' ? 10 : -10);
-                manualInput.value = Math.max(0, manualCount);
-                span.textContent = manualInput.value;
-            } else {
-                count += (action === 'increase' ? 1 : -1);
-                span.textContent = Math.max(0, count);
-            }
-          });
+        document.querySelectorAll('#ficha-instalacion .counter-control button').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const type = e.target.dataset.type;
+                const action = e.target.dataset.action;
+                const span = e.target.parentElement.querySelector(`span[data-type="${type}"]`);
+                if (!span) return;
+
+                let count = parseInt(span.textContent);
+
+                const isMetraje = ['utp', 'drop', 'coaxial'].includes(type);
+                const manualInput = $(`${type}Manual`);
+
+                if (isMetraje && manualInput) {
+                    let manualCount = parseInt(manualInput.value || '0');
+                    manualCount += (action === 'increase' ? 10 : -10);
+                    manualInput.value = Math.max(0, manualCount);
+                    span.textContent = manualInput.value;
+                } else {
+                    count += (action === 'increase' ? 1 : -1);
+                    span.textContent = Math.max(0, count);
+                }
+            });
         });
-        $("btnScanQRInst").onclick = () => setupScanner("serialInst", qrCodeFormat, "Código QR");
-        $("btnScanBarcodeInst").onclick = () => setupScanner("serialInst", barcodeFormats, "Código de Barras");
-      }
 
-      const procAct = $("proceso-activacion");
-      if (procAct) {
+        // --- Lógica para Proceso de Activación ---
         $("btnGenerarAct").onclick=()=>{
             const tipoActivacion = $("tipoActivacion").value;
             const cliente = $("clienteAct").value;
@@ -602,21 +539,16 @@
             $("resultadoAct").textContent = outputText;
         };
         $("btnCopiarAct").onclick=async()=>{
-            const t=$("resultadoAct").textContent;
-            if(!t){showAlert("Genera el reporte primero.");return;}
+            const t=$("resultadoAct").textContent;if(!t){showAlert("Genera el reporte primero.");return;}
             try{await navigator.clipboard.writeText(t);showAlert("Copiado al portapapeles ✅");} 
             catch(err) { const ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand("copy");document.body.removeChild(ta);showAlert("Copiado al portapapeles ✅");}
         };
         $("btnNuevoAct").onclick = () => {
-            procAct.querySelectorAll("input, select").forEach(el => {if (el.type !== "button") el.value = "";});
+            document.querySelectorAll("#proceso-activacion input, #proceso-activacion select").forEach(el => {if (el.type !== "button") el.value = "";});
             $("resultadoAct").textContent = "";
         };
-        $("btnScanQRAct").onclick = () => setupScanner("serialAct", qrCodeFormat, "Código QR");
-        $("btnScanBarcodeAct").onclick = () => setupScanner("serialAct", barcodeFormats, "Código de Barras");
-      }
-      
-      const solicitud = $("solicitud");
-      if(solicitud) {
+
+        // --- Lógica para Solicitud ---
         $("btnGenerarSol").onclick = () => {
             const servicio = $("servicioSol").value;
             const napRegion = $("napRegionSol").value;
@@ -626,87 +558,78 @@
             $("resultadoSol").textContent = outputText;
         };
         $("btnCopiarSol").onclick = async () => {
-            const t = $("resultadoSol").textContent;
-            if (!t){showAlert("Genera el reporte primero.");return;}
+            const t = $("resultadoSol").textContent;if (!t){showAlert("Genera el reporte primero.");return;}
             try {await navigator.clipboard.writeText(t);showAlert("Copiado al portapapeles ✅");} 
             catch (err) {const ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand("copy");document.body.removeChild(ta);showAlert("Copiado al portapapeles ✅");}
         };
         $("btnNuevoSol").onclick = () => {
-            solicitud.querySelectorAll("input, select").forEach(el => {if (el.type !== "button") el.value = "";});
+            document.querySelectorAll("#solicitud input, #solicitud select").forEach(el => {if (el.type !== "button") el.value = "";});
             $("resultadoSol").textContent = "";
         };
-      }
 
-      let html5QrCodeScanner;
-      function setupScanner(serialInputId, formats, type) {
-        const modal = $("qrModal");
-        $("modalTitle").textContent = `Escanear ${type}`;
-        modal.style.display = "flex";
-        
-        const config = {
-          fps: 10,
-          qrbox: { width: 250, height: 250 },
-          supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA],
-          formatsToSupport: formats 
-        };
-        
-        if (!html5QrCodeScanner) {
-          html5QrCodeScanner = new Html5Qrcode("scanner-container");
+        // --- Lógica del Escáner QR ---
+        let html5QrCodeScanner;
+        function setupQRScanner(serialInputId) {
+            const modal = $("qrModal");
+            modal.style.display = "flex";
+            const config = { fps: 10, qrbox: 250 };
+            
+            html5QrCodeScanner = new Html5Qrcode("scanner-container");
+            html5QrCodeScanner.start(
+                { facingMode: "environment" }, 
+                config, 
+                (decodedText) => {
+                    const match = decodedText.match(/PON SN:(\S+)/);
+                    let serialToUse = decodedText;
+                    if (match && match[1]) {
+                        serialToUse = match[1];
+                        showAlert("PON SN: extraído con éxito.");
+                    } else {
+                        showAlert("Código escaneado. Utilizando el texto completo.");
+                    }
+                    $(serialInputId).value = serialToUse;
+                    closeScanner();
+                }
+            ).catch(err => {
+                console.error("Error al iniciar escáner:", err);
+                showAlert("Error al iniciar escáner. Revisa los permisos de la cámara.");
+            });
         }
-        html5QrCodeScanner.start(
-          { facingMode: "environment" },
-          config,
-          (decodedText) => {
-            const match = decodedText.match(/PON SN:(\S+)/);
-            let serialToUse = decodedText;
-            if (match && match[1]) {
-              serialToUse = match[1];
-              showAlert("PON SN: extraído con éxito.");
+        function closeScanner() {
+            if (html5QrCodeScanner && html5QrCodeScanner.isScanning) {
+                html5QrCodeScanner.stop().then(() => {
+                    $("qrModal").style.display = "none";
+                }).catch(err => {
+                    console.error("Error al detener el escáner:", err);
+                    $("qrModal").style.display = "none";
+                });
             } else {
-              showAlert("Código escaneado.");
+                $("qrModal").style.display = "none";
             }
-            $(serialInputId).value = serialToUse;
-            closeScanner();
-          }
-        ).catch(err => {
-          console.error("Error al iniciar escáner:", err);
-          showAlert("Error al iniciar escáner. Revisa permisos.");
-        });
-      }
-
-      function closeScanner() {
-        if (html5QrCodeScanner && html5QrCodeScanner.isScanning) {
-          html5QrCodeScanner.stop().then(() => {
-            $("qrModal").style.display = "none";
-          }).catch(err => {
-            console.error("Error al detener el escáner:", err);
-            $("qrModal").style.display = "none";
-          });
-        } else {
-          $("qrModal").style.display = "none";
         }
-      }
-
-      $("btnCloseScanner").onclick = closeScanner;
-      
-      if (themeBtn) {
-        themeBtn.onclick = () => {
-          document.body.classList.toggle('dark-mode');
-          themeBtn.textContent = document.body.classList.contains('dark-mode') ? "☀️" : "🌙";
-          localStorage.setItem('darkMode', document.body.classList.contains('dark-mode') ? "1" : "0");
-        };
-      }
-      
-      if (localStorage.getItem('darkMode') === "1") {
-        document.body.classList.add('dark-mode');
-        if (themeBtn) themeBtn.textContent = "☀️";
-      }
-      showSection('ficha-instalacion');
-      const d = new Date();
-      if ($("fecha")) $("fecha").value = `${("0"+d.getDate()).slice(-2)}/${("0"+(d.getMonth()+1)).slice(-2)}/${d.getFullYear()}`;
-      if ($("horaInicio")) setHoraAhora("horaInicio");
-      if ($("chipsContainer")) renderChips();
-
+        $("btnScanQRInst").onclick = () => setupQRScanner("serialInst");
+        $("btnScanQRAct").onclick = () => setupQRScanner("serialAct");
+        $("btnCloseScanner").onclick = closeScanner;
+        
+        // --- Modo oscuro/claro ---
+        if (themeBtn) {
+            themeBtn.onclick = () => {
+                document.body.classList.toggle('dark-mode');
+                themeBtn.textContent = document.body.classList.contains('dark-mode') ? "☀️" : "🌙";
+                localStorage.setItem('darkMode', document.body.classList.contains('dark-mode') ? "1" : "0");
+            };
+        }
+        
+        // --- Estado Inicial de la Página ---
+        if (localStorage.getItem('darkMode') === "1") {
+            document.body.classList.add('dark-mode');
+            if(themeBtn) themeBtn.textContent = "☀️";
+        }
+        showSection('ficha-instalacion');
+        const d=new Date();
+        $("fecha").value=`${("0"+d.getDate()).slice(-2)}/${("0"+(d.getMonth()+1)).slice(-2)}/${d.getFullYear()}`;
+        setHoraAhora("horaInicio");
+        renderChips();
     });
   </script>
 </body>
