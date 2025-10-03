@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor de Inventario Moderno</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        // Aplica el tema guardado (claro/oscuro) al cargar la página para evitar parpadeos
+        if (localStorage.getItem('inventoryTheme') === 'dark' || (!('inventoryTheme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        /* Estilos para el scrollbar */
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+        .dark .custom-scrollbar::-webkit-scrollbar-track { background: #2d3748; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #a0aec0; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #718096; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #718096; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #a0aec0; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200">
+
+    <div id="app" class="container mx-auto p-4 md:p-6 max-w-7xl">
+
+        <!-- ===== Encabezado y Navegación ===== -->
+        <header class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 mb-6">
+            <div class="flex flex-col sm:flex-row justify-between items-center">
+                <h1 class="text-2xl font-bold text-blue-600 dark:text-blue-400">Gestor de Inventario</h1>
+                <nav id="nav-menu" class="flex items-center space-x-2 sm:space-x-4 mt-4 sm:mt-0 bg-gray-100 dark:bg-gray-700 p-2 rounded-lg">
+                    <button data-section="inventario-section" class="nav-btn px-4 py-2 text-sm font-semibold rounded-md transition-colors duration-200">Inventario</button>
+                    <button data-section="historial-section" class="nav-btn px-4 py-2 text-sm font-semibold rounded-md transition-colors duration-200">Historial</button>
+                    <button data-section="config-section" class="nav-btn px-4 py-2 text-sm font-semibold rounded-md transition-colors duration-200">Configuración</button>
+                </nav>
+            </div>
+        </header>
+
+        <main>
+            <!-- ===== Sección de Inventario ===== -->
+            <section id="inventario-section" class="app-section">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
+                        <h2 class="text-xl font-semibold mb-4">Añadir Items desde Reporte</h2>
+                        <textarea id="inventory-input" class="w-full h-48 p-3 border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Pega el reporte de trabajo aquí..."></textarea>
+                        <button id="process-inventory-btn" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-4 rounded-lg transition-colors duration-200">Procesar y Añadir</button>
+                        <p id="process-feedback" class="text-sm mt-2 h-5"></p>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
+                        <h2 class="text-xl font-semibold mb-4">Inventario General</h2>
+                        <div class="overflow-y-auto max-h-[30rem] custom-scrollbar">
+                            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                <thead class="bg-gray-50 dark:bg-gray-700 sticky top-0">
+                                    <tr>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Item</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Cantidad</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Cliente</th>
+                                        <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="inventory-list" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- ===== Sección de Historial ===== -->
+            <section id="historial-section" class="app-section hidden">
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
+                    <h2 class="text-2xl font-bold mb-4">Historial de Reportes</h2>
+                    <div id="history-list" class="space-y-6 max-h-[40rem] overflow-y-auto custom-scrollbar pr-2">
+                        <!-- El historial se renderizará aquí -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== Sección de Configuración ===== -->
+            <section id="config-section" class="app-section hidden">
+                 <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md max-w-md mx-auto">
+                    <h2 class="text-2xl font-bold mb-6">Configuración</h2>
+                    <div class="space-y-6">
+                        <!-- Tema -->
+                        <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                            <span class="font-semibold">Tema de la Aplicación</span>
+                            <div class="flex items-center">
+                                <span class="mr-2 text-sm text-gray-600 dark:text-gray-300">Claro</span>
+                                <label for="theme-toggle" class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="theme-toggle" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                                </label>
+                                <span class="ml-2 text-sm text-gray-600 dark:text-gray-300">Oscuro</span>
+                            </div>
+                        </div>
+                        <!-- Borrar datos -->
+                        <div class="p-4 border border-red-500/50 rounded-lg">
+                             <h3 class="font-semibold text-red-600 dark:text-red-400">Zona de Peligro</h3>
+                             <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">Esta acción es irreversible. Se borrarán todos los items del inventario y todo el historial de reportes de forma permanente.</p>
+                             <button id="delete-all-data-btn" class="mt-4 w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200">
+                                 Eliminar Todos los Datos
+                             </button>
+                        </div>
+                    </div>
+                 </div>
+            </section>
+        </main>
+        
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // ===== Selectores del DOM =====
+            const navMenu = document.getElementById('nav-menu');
+            const sections = document.querySelectorAll('.app-section');
+            const inventoryInput = document.getElementById('inventory-input');
+            const processInventoryBtn = document.getElementById('process-inventory-btn');
+            const processFeedback = document.getElementById('process-feedback');
+            const inventoryList = document.getElementById('inventory-list');
+            const historyList = document.getElementById('history-list');
+            const deleteAllBtn = document.getElementById('delete-all-data-btn');
+            const themeToggle = document.getElementById('theme-toggle');
+
+            // ===== Lógica de Almacenamiento Local =====
+            const INVENTORY_KEY = 'inventoryAppItems_v2';
+            const HISTORY_KEY = 'inventoryAppHistory_v2';
+            let inventory = [];
+            let history = [];
+
+            function loadData() {
+                inventory = JSON.parse(localStorage.getItem(INVENTORY_KEY)) || [];
+                history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+            }
+            function saveData() {
+                localStorage.setItem(INVENTORY_KEY, JSON.stringify(inventory));
+                localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+            }
+            
+            // ===== Lógica de Navegación y Vistas =====
+            function setActiveSection(sectionId) {
+                sections.forEach(section => section.classList.add('hidden'));
+                document.getElementById(sectionId).classList.remove('hidden');
+
+                navMenu.querySelectorAll('.nav-btn').forEach(btn => {
+                    if (btn.dataset.section === sectionId) {
+                        btn.classList.add('bg-blue-600', 'text-white');
+                        btn.classList.remove('text-gray-600', 'dark:text-gray-300', 'hover:bg-gray-200', 'dark:hover:bg-gray-600');
+                    } else {
+                        btn.classList.remove('bg-blue-600', 'text-white');
+                        btn.classList.add('text-gray-600', 'dark:text-gray-300', 'hover:bg-gray-200', 'dark:hover:bg-gray-600');
+                    }
+                });
+            }
+            navMenu.addEventListener('click', (e) => {
+                if (e.target.matches('.nav-btn')) {
+                    setActiveSection(e.target.dataset.section);
+                }
+            });
+
+            // ===== Lógica de Renderizado =====
+            function renderAll() {
+                renderInventory();
+                renderHistory();
+            }
+
+            function renderInventory() {
+                let html = inventory.length === 0 
+                    ? `<tr><td colspan="4" class="text-center py-4 text-gray-500">No hay items en el inventario.</td></tr>`
+                    : [...inventory].sort((a, b) => b.createdAt - a.createdAt).map(item => `
+                        <tr>
+                            <td class="px-4 py-3 whitespace-nowrap text-sm font-medium">${item.itemName}</td>
+                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">${item.itemValue}</td>
+                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">${item.clientName}</td>
+                            <td class="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
+                                <button data-id="${item.id}" class="delete-item-btn text-red-500 hover:text-red-700">Eliminar</button>
+                            </td>
+                        </tr>`).join('');
+                inventoryList.innerHTML = html;
+            }
+
+            function renderHistory() {
+                let html = history.length === 0 
+                    ? `<p class="text-center py-4 text-gray-500">No hay reportes en el historial.</p>`
+                    : [...history].sort((a, b) => b.createdAt - a.createdAt).map(report => `
+                        <div class="border border-gray-200 dark:border-gray-700 p-4 rounded-lg">
+                            <div class="flex justify-between items-center mb-3">
+                                <div>
+                                    <p class="font-bold text-lg">${report.clientName}</p>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">Fecha: ${report.entryDate}</p>
+                                </div>
+                                <button data-report-id="${report.reportId}" class="delete-history-btn p-2 rounded-full hover:bg-red-500/10 text-red-500 transition-colors duration-200">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                </button>
+                            </div>
+                            <table class="min-w-full text-sm">
+                                <thead class="bg-gray-50 dark:bg-gray-700">
+                                    <tr><th class="px-3 py-1 text-left font-medium">Item</th><th class="px-3 py-1 text-left font-medium">Cantidad</th></tr>
+                                </thead>
+                                <tbody>
+                                    ${report.items.map(item => `
+                                        <tr class="border-b border-gray-100 dark:border-gray-700/50">
+                                            <td class="px-3 py-1.5">${item.name}</td>
+                                            <td class="px-3 py-1.5">${item.value}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>`).join('');
+                historyList.innerHTML = html;
+            }
+
+            // ===== Lógica de Procesamiento de Reporte =====
+            function parseReportText(text) {
+                const lines = text.split('\n');
+                const data = { items: [] };
+                const materialFields = ['CONECTOR APC', 'CONECTOR UPC', 'CONECTOR RG6', 'CONECTOR RJ45', 'SPLITTER TV', 'ROSETA', 'MANGUITA', 'COUPLE', 'METRAJE UTP', 'METRAJE DROP', 'METRAJE COAXIAL', 'METRAJE FLAP', 'MASTIL', 'TENSORES', 'PREFORMADOS', 'GRAPAS y CLAVOS', 'Ramplug y Tornillos'];
+                lines.forEach(line => {
+                    const parts = line.split(':');
+                    if (parts.length < 2) return;
+                    const key = parts[0].trim().toUpperCase();
+                    const value = parts.slice(1).join(':').trim();
+                    if (key === 'FECHA') data.entryDate = value;
+                    else if (key === 'NOMBRE DE CLIENTE') data.clientName = value;
+                    else if (materialFields.some(f => f.toUpperCase() === key) && value.toLowerCase() !== 'n/a' && value) {
+                        data.items.push({ name: parts[0].trim(), value });
+                    }
+                });
+                return data;
+            }
+
+            processInventoryBtn.addEventListener('click', () => {
+                const text = inventoryInput.value.trim();
+                if (!text) return;
+                
+                processFeedback.textContent = '';
+                processFeedback.className = 'text-sm mt-2 h-5';
+
+                try {
+                    const parsedData = parseReportText(text);
+                    if (!parsedData.entryDate || !parsedData.clientName) throw new Error("Falta 'FECHA' o 'NOMBRE DE CLIENTE'.");
+                    if (parsedData.items.length === 0) throw new Error("No se encontraron materiales válidos.");
+
+                    const reportId = crypto.randomUUID();
+                    const now = Date.now();
+                    
+                    history.push({
+                        reportId,
+                        clientName: parsedData.clientName,
+                        entryDate: parsedData.entryDate,
+                        items: parsedData.items,
+                        createdAt: now
+                    });
+                    
+                    parsedData.items.forEach(item => {
+                        inventory.push({
+                            id: crypto.randomUUID(),
+                            reportId,
+                            itemName: item.name,
+                            itemValue: item.value,
+                            clientName: parsedData.clientName,
+                            entryDate: parsedData.entryDate,
+                            createdAt: now
+                        });
+                    });
+                    
+                    saveData();
+                    renderAll();
+                    processFeedback.textContent = `¡Reporte con ${parsedData.items.length} item(s) añadido!`;
+                    processFeedback.classList.add('text-green-500');
+                    inventoryInput.value = '';
+
+                } catch (error) {
+                    processFeedback.textContent = 'Error: ' + error.message;
+                    processFeedback.classList.add('text-red-500');
+                }
+            });
+
+            // ===== Lógica de Eliminación =====
+            inventoryList.addEventListener('click', (e) => {
+                if(e.target.matches('.delete-item-btn')) {
+                    const itemId = e.target.dataset.id;
+                    const itemToDelete = inventory.find(item => item.id === itemId);
+                    if (confirm(`¿Eliminar "${itemToDelete.itemName}"? Esta acción no se puede deshacer.`)) {
+                        inventory = inventory.filter(item => item.id !== itemId);
+                        // Opcional: también eliminar del historial si es necesario
+                        const reportInHistory = history.find(h => h.reportId === itemToDelete.reportId);
+                        if(reportInHistory) {
+                            reportInHistory.items = reportInHistory.items.filter(i => i.name !== itemToDelete.itemName);
+                            // Si el reporte queda vacío, lo eliminamos también
+                            if (reportInHistory.items.length === 0) {
+                                history = history.filter(h => h.reportId !== itemToDelete.reportId);
+                            }
+                        }
+                        saveData();
+                        renderAll();
+                    }
+                }
+            });
+            
+            historyList.addEventListener('click', (e) => {
+                const button = e.target.closest('.delete-history-btn');
+                if (button) {
+                    const reportId = button.dataset.reportId;
+                    if (confirm("¿Eliminar este reporte completo del historial y del inventario?")) {
+                        history = history.filter(h => h.reportId !== reportId);
+                        inventory = inventory.filter(i => i.reportId !== reportId);
+                        saveData();
+                        renderAll();
+                    }
+                }
+            });
+            
+            deleteAllBtn.addEventListener('click', () => {
+                if (confirm("¿ESTÁS SEGURO? Se borrará TODO el inventario y TODO el historial de forma permanente.")) {
+                    inventory = [];
+                    history = [];
+                    saveData();
+                    renderAll();
+                }
+            });
+
+            // ===== Lógica del Tema =====
+            function applyTheme(isDark) {
+                themeToggle.checked = isDark;
+                if (isDark) {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('inventoryTheme', 'dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('inventoryTheme', 'light');
+                }
+            }
+            themeToggle.addEventListener('change', () => applyTheme(themeToggle.checked));
+
+            // ===== Inicialización =====
+            function init() {
+                loadData();
+                renderAll();
+                setActiveSection('inventario-section');
+                applyTheme(localStorage.getItem('inventoryTheme') === 'dark');
+            }
+
+            init();
+        });
+    </script>
+</body>
+</html>
+
+
