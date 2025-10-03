@@ -7,7 +7,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
-        // Aplica el tema guardado (claro/oscuro) al cargar la página para evitar parpadeos
+        // **Lógica de Tema Crítica (se ejecuta antes de renderizar)**
+        // Esta parte es clave para evitar el "parpadeo" de un tema incorrecto al cargar.
+        // Revisa si hay un tema guardado en localStorage. Si no, revisa la preferencia del sistema operativo.
         if (localStorage.getItem('inventoryTheme') === 'dark' || (!('inventoryTheme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
         } else {
@@ -286,16 +288,15 @@
 
             // ===== Lógica de Eliminación =====
             inventoryList.addEventListener('click', (e) => {
-                if(e.target.matches('.delete-item-btn')) {
-                    const itemId = e.target.dataset.id;
+                const deleteButton = e.target.closest('.delete-item-btn');
+                if(deleteButton) {
+                    const itemId = deleteButton.dataset.id;
                     const itemToDelete = inventory.find(item => item.id === itemId);
                     if (confirm(`¿Eliminar "${itemToDelete.itemName}"? Esta acción no se puede deshacer.`)) {
                         inventory = inventory.filter(item => item.id !== itemId);
-                        // Opcional: también eliminar del historial si es necesario
                         const reportInHistory = history.find(h => h.reportId === itemToDelete.reportId);
                         if(reportInHistory) {
                             reportInHistory.items = reportInHistory.items.filter(i => i.name !== itemToDelete.itemName);
-                            // Si el reporte queda vacío, lo eliminamos también
                             if (reportInHistory.items.length === 0) {
                                 history = history.filter(h => h.reportId !== itemToDelete.reportId);
                             }
@@ -328,9 +329,8 @@
                 }
             });
 
-            // ===== Lógica del Tema =====
+            // ===== Lógica del Tema (Corregida y Verificada) =====
             function applyTheme(isDark) {
-                themeToggle.checked = isDark;
                 if (isDark) {
                     document.documentElement.classList.add('dark');
                     localStorage.setItem('inventoryTheme', 'dark');
@@ -339,14 +339,22 @@
                     localStorage.setItem('inventoryTheme', 'light');
                 }
             }
-            themeToggle.addEventListener('change', () => applyTheme(themeToggle.checked));
+
+            function initializeTheme() {
+                const isCurrentlyDark = document.documentElement.classList.contains('dark');
+                themeToggle.checked = isCurrentlyDark;
+                themeToggle.addEventListener('change', () => {
+                    applyTheme(themeToggle.checked);
+                });
+            }
+            
 
             // ===== Inicialización =====
             function init() {
                 loadData();
                 renderAll();
                 setActiveSection('inventario-section');
-                applyTheme(localStorage.getItem('inventoryTheme') === 'dark');
+                initializeTheme();
             }
 
             init();
