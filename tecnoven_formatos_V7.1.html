@@ -602,17 +602,20 @@ body, .main-content, .nav-menu, .output, .highlight-block, input, select, textar
   <!-- Contenedor para mensajes de alerta -->
   <div id="messageBox" class="message-box"></div>
 
+// CÓDIGO JAVASCRIPT CORREGIDO
 <script>
 const $ = id => document.getElementById(id);
-const {Html5QrcodeScanType, Html5QrcodeSupportedFormats} = Html5Qrcode; // inicio de lineas qr
-  const barcodeFormats = [
+// --- Constantes para el escáner ---
+const { Html5QrcodeScanType, Html5QrcodeSupportedFormats } = Html5Qrcode;
+const barcodeFormats = [
     Html5QrcodeSupportedFormats.CODE_128,
     Html5QrcodeSupportedFormats.EAN_13,
     Html5QrcodeSupportedFormats.EAN_8,
     Html5QrcodeSupportedFormats.UPC_A,
     Html5QrcodeSupportedFormats.UPC_E,
-  ];
-const qrCodeFormat = [Html5QrcodeSupportedFormats.QR_CODE]; // fin de lineas qr  
+];
+const qrCodeFormat = [Html5QrcodeSupportedFormats.QR_CODE];
+
 const navMenu = document.querySelector('.nav-menu');
 const menuToggle = document.querySelector('.menu-toggle');
 const navLinks = document.querySelectorAll('.nav-link');
@@ -622,9 +625,10 @@ const contentSections = document.querySelectorAll('.content-section');
 function showSection(targetId) {
     navLinks.forEach(l => l.classList.remove('active'));
     contentSections.forEach(section => section.classList.remove('active'));
-    
-    document.querySelector(`.nav-link[data-target="${targetId}"]`).classList.add('active');
-    $(targetId).classList.add('active');
+    const link = document.querySelector(.nav-link[data-target="${targetId}"]);
+    if (link) link.classList.add('active');
+    const section = $(targetId);
+    if (section) section.classList.add('active');
 }
 
 navLinks.forEach(link => {
@@ -680,7 +684,6 @@ $("btnFecha").onclick=()=>{const d=new Date();$("fecha").value=("0"+d.getDate())
 $("btnAhoraIni").onclick=()=>setHoraAhora("horaInicio");
 $("btnAhoraFin").onclick=()=>setHoraAhora("horaFin");
 
-// Limpiar el estilo de error al escribir
 $("observacion").addEventListener('input', () => {
   $("observacion").style.border = "";
   $("observacion").style.backgroundColor = "";
@@ -691,26 +694,24 @@ $("btnGenerarInst").onclick=()=>{
   const observacionInput = $("observacion");
   const observacionValue = observacionInput.value.trim();
 
-  // 1. VALIDACIÓN PRIMERO
   if (tipo === "soporte" && (observacionValue === "" || observacionValue === "0")) {
       showAlert("Debes escribir una observación en soporte");
       observacionInput.focus();
       observacionInput.style.border = "2px solid red";
       observacionInput.style.backgroundColor = "#fff0f0";
-      return; // Detiene la función aquí si hay un error
+      return;
   }
 
-  // 2. Si la validación pasa, recopilar todos los datos
   const serv = $("servicio").value === "Ambos" ? "Internet + TV" : $("servicio").value;
   const napRegion = $("napRegionInst").value;
   const napNumber = $("napNumberInst").value;
-  const napValue = napNumber ? `${napRegion}-${napNumber}` : "";
-  
+  const napValue = napNumber ? ${napRegion}-${napNumber} : "";
+
   const counterValues = {};
   counterFieldsInst.forEach(type => {
-    const span = document.querySelector(`#ficha-instalacion span[data-type="${type}"]`);
-    if (metrajeManualFieldsInst.includes(`${type}Manual`)) {
-        const manualInput = $(`${type}Manual`);
+    const span = document.querySelector(#ficha-instalacion span[data-type="${type}"]);
+    if (metrajeManualFieldsInst.includes(${type}Manual)) {
+        const manualInput = $(${type}Manual);
         counterValues[type] = manualInput ? manualInput.value : (span ? span.textContent : '0');
     } else {
         counterValues[type] = span ? span.textContent : '0';
@@ -718,11 +719,7 @@ $("btnGenerarInst").onclick=()=>{
   });
 
   const tecnicosFinales = [];
-  tecnicosSeleccionados.forEach(t => {
-    if (t !== "Otro") {
-      tecnicosFinales.push(t);
-    }
-  });
+  tecnicosSeleccionados.forEach(t => { if (t !== "Otro") tecnicosFinales.push(t); });
   const otroNombreInput = $("otroNombre");
   if (otroNombreInput.style.display === "block" && otroNombreInput.value.trim() !== "") {
     const nombresExtra = otroNombreInput.value.trim().split(",").map(s => s.trim());
@@ -734,7 +731,6 @@ $("btnGenerarInst").onclick=()=>{
       ? "Se realizó la instalación quedando con servicio operativo."
       : observacionValue;
 
-  // 3. Construir el texto final
   const txt = `TIPO DE TRABAJO: ${tipo === "instalacion" ? "Instalación" : "Soporte"}
 INSTALACIÓN: ${serv}
 FECHA: ${formatFecha($("fecha").value)}
@@ -767,7 +763,6 @@ Cobrar: ${toNA($("cobro").value)}
 Observación:
 ${observacionFinal}`;
 
-  // 4. Mostrar el resultado
   $("resultadoInst").textContent = txt;
 };
 
@@ -782,13 +777,10 @@ $("btnNuevoInst").onclick=()=>{
   tecnicosSeleccionados=[];renderChips();
   $("resultadoInst").textContent="";
   counterFieldsInst.forEach(type => {
-    const span = document.querySelector(`#ficha-instalacion span[data-type="${type}"]`);
+    const span = document.querySelector(#ficha-instalacion span[data-type="${type}"]);
     if (span) span.textContent = '0';
   });
-  metrajeManualFieldsInst.forEach(id => {
-    const el = $(id);
-    if (el) el.value = '0';
-  });
+  metrajeManualFieldsInst.forEach(id => { const el = $(id); if (el) el.value = '0'; });
   const d=new Date();$("fecha").value=("0"+d.getDate()).slice(-2)+"/"+("0"+(d.getMonth()+1)).slice(-2)+"/"+d.getFullYear();
   setHoraAhora("horaInicio");
 };
@@ -797,11 +789,11 @@ document.querySelectorAll('#ficha-instalacion .counter-control button').forEach(
   button.addEventListener('click', (e) => {
     const type = e.target.dataset.type;
     const action = e.target.dataset.action;
-    const span = document.querySelector(`#ficha-instalacion span[data-type="${type}"]`);
+    const span = document.querySelector(#ficha-instalacion span[data-type="${type}"]);
     let count = parseInt(span.textContent);
 
     const isMetraje = ['utp', 'drop', 'coaxial','flap'].includes(type);
-    const manualInput = $(`${type}Manual`);
+    const manualInput = $(${type}Manual);
 
     if (isMetraje && manualInput) {
         let manualCount = parseInt(manualInput.value || '0');
@@ -823,12 +815,7 @@ $("btnGenerarAct").onclick=()=>{
     const napNumber = $("napNumberAct").value;
     const puerto = $("puertoAct").value;
     const serial = $("serialAct").value;
-    const outputText = `ACTIVACIÓN: ${tipoActivacion}
-NOMBRE DE CLIENTE: ${toNA(cliente)}
-NAP: ${toNA(napRegion && napNumber ? napRegion + "-" + napNumber : "")}
-PUERTO: ${toNA(puerto)}
-SERIAL: ${toNA(serial)}
-`;
+    const outputText = ACTIVACIÓN: ${tipoActivacion}\nNOMBRE DE CLIENTE: ${toNA(cliente)}\nNAP: ${toNA(napRegion && napNumber ? napRegion + "-" + napNumber : "")}\nPUERTO: ${toNA(puerto)}\nSERIAL: ${toNA(serial)};
     $("resultadoAct").textContent = outputText;
 };
 $("btnCopiarAct").onclick=async()=>{
@@ -848,11 +835,7 @@ $("btnGenerarSol").onclick = () => {
     const napRegion = $("napRegionSol").value;
     const napNumber = $("napNumberSol").value;
     const cliente = $("clienteSol").value;
-    const outputText = `SOLICITUD DE TRABAJO
-Servicio: ${toNA(servicio)}
-NAP: ${toNA(napRegion && napNumber ? napRegion + "-" + napNumber : "")}
-Nombre: ${toNA(cliente)}
-`;
+    const outputText = SOLICITUD DE TRABAJO\nServicio: ${toNA(servicio)}\nNAP: ${toNA(napRegion && napNumber ? napRegion + "-" + napNumber : "")}\nNombre: ${toNA(cliente)};
     $("resultadoSol").textContent = outputText;
 };
 $("btnCopiarSol").onclick = async () => {
@@ -866,31 +849,39 @@ $("btnNuevoSol").onclick = () => {
     $("resultadoSol").textContent = "";
 };
 
-// --- Lógica del Escáner QR ---
+// --- Lógica del Escáner (CORREGIDA) ---
 let html5QrCodeScanner;
-function setupQRScanner(serialInputId, formats) {
+
+function setupScanner(serialInputId, formats) {
   const modal = $("qrModal");
   modal.style.display = "flex";
+  
   const config = {
     fps: 10,
     qrbox: 250,
-    supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA], //Asegura que use la camara
-    formatsToSupport: formats
+    supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA],
+    formatsToSupport: formats // <-- ESTA LÍNEA ES CLAVE
   };
+  
   html5QrCodeScanner = new Html5Qrcode("scanner-container");
-  html5QrCodeScanner.start({ facingMode: "environment" }, config, (decodedText) => {
-    const match = decodedText.match(/PON SN:(\S+)/);
-    let serialToUse = decodedText;
-    if (match && match[1]) {
-      serialToUse = match[1];
-      showAlert("PON SN: extraído con éxito.");
-    } else {
-      showAlert("Código escaneado. Utilizando el texto completo.");
+  html5QrCodeScanner.start(
+    { facingMode: "environment" },
+    config,
+    (decodedText) => {
+      const match = decodedText.match(/PON SN:(\S+)/);
+      let serialToUse = decodedText;
+      if (match && match[1]) {
+        serialToUse = match[1];
+        showAlert("PON SN: extraído con éxito.");
+      } else {
+        showAlert("Código escaneado. Utilizando el texto completo.");
+      }
+      $(serialInputId).value = serialToUse;
+      closeScanner();
     }
-    $(serialInputId).value = serialToUse;
-    closeScanner();
-  }).catch(err => console.error("Error al iniciar escáner:", err));
+  ).catch(err => console.error("Error al iniciar escáner:", err));
 }
+
 function closeScanner() {
   if (html5QrCodeScanner && html5QrCodeScanner.isScanning) {
     html5QrCodeScanner.stop().then(() => {
@@ -902,14 +893,15 @@ function closeScanner() {
   } else {
     $("qrModal").style.display = "none";
   }
-  //asignacion a los botones
 }
-$("btnScanQRInst").onclick = () => setupScanner("serialInst, qrCodeFormat");
-  $ ("btnScanBarcodeInst").onclick () => setupScanner("serialInst, barcodeFormats");
-  
-$("btnScanQRAct").onclick = () => setupScanner("serialAct, qrCodeFormat");
-  $("btnScanBarcodeAct").onclick = () => setupScanner("serialAct, barcodeFormats");
-  
+
+// --- Asignación a los botones (CORREGIDA) ---
+$("btnScanQRInst").onclick = () => setupScanner("serialInst", qrCodeFormat);
+$("btnScanBarcodeInst").onclick = () => setupScanner("serialInst", barcodeFormats);
+
+$("btnScanQRAct").onclick = () => setupScanner("serialAct", qrCodeFormat);
+$("btnScanBarcodeAct").onclick = () => setupScanner("serialAct", barcodeFormats);
+
 $("btnCloseScanner").onclick = closeScanner;
 
 // --- Estado Inicial de la Página ---
@@ -924,12 +916,9 @@ document.addEventListener('DOMContentLoaded', () => {
 const themeBtn = document.getElementById('toggleThemeBtn');
 themeBtn.onclick = () => {
   document.body.classList.toggle('dark-mode');
-  // Cambia el ícono del botón
   themeBtn.textContent = document.body.classList.contains('dark-mode') ? "☀️" : "🌙";
-  // Guarda preferencia en localStorage
   localStorage.setItem('darkMode', document.body.classList.contains('dark-mode') ? "1" : "0");
 };
-// Al cargar, aplica preferencia guardada
 if (localStorage.getItem('darkMode') === "1") {
   document.body.classList.add('dark-mode');
   themeBtn.textContent = "☀️";
