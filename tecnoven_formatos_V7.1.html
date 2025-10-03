@@ -351,6 +351,7 @@ body, .main-content, .nav-menu, .output, .highlight-block, input, select, textar
       <div class="row">
         <input id="serialInst" placeholder="Ingresa serial o escanea QR">
         <button type="button" class="btn" id="btnScanQRInst">Escanear QR</button>
+        <button type="button" class="btn accent" id="btnScanBarcodeInst">Escanear Barras</button>
       </div>
       <label>NAP</label>
       <div class="row">
@@ -550,6 +551,7 @@ body, .main-content, .nav-menu, .output, .highlight-block, input, select, textar
       <div class="row">
         <input id="serialAct" placeholder="Ingresa serial o escanea QR">
         <button type="button" class="btn" id="btnScanQRAct">Escanear QR</button>
+        <button type="button" class="btn accent" id="btnScanBarcodeAct">Escanear Barras</button>
       </div>
       <div class="actions">
         <button class="btn" id="btnGenerarAct">Generar</button>
@@ -602,6 +604,15 @@ body, .main-content, .nav-menu, .output, .highlight-block, input, select, textar
 
 <script>
 const $ = id => document.getElementById(id);
+const {Html5QrcodeScanType, Html5QrcodeSupportedFormats} = Html5Qrcode; // inicio de lineas qr
+  const barcodeFormats = [
+    Html5QrcodeSupportedFormats.CODE_128,
+    Html5QrcodeSupportedFormats.EAN_13,
+    Html5QrcodeSupportedFormats.EAN_8,
+    Html5QrcodeSupportedFormats.UPC_A,
+    Html5QrcodeSupportedFormats.UPC_E,
+  ];
+const qrCodeFormat = [Html5QrcodeSupportedFormats.QR_CODE]; // fin de lineas qr  
 const navMenu = document.querySelector('.nav-menu');
 const menuToggle = document.querySelector('.menu-toggle');
 const navLinks = document.querySelectorAll('.nav-link');
@@ -857,12 +868,13 @@ $("btnNuevoSol").onclick = () => {
 
 // --- Lógica del Escáner QR ---
 let html5QrCodeScanner;
-function setupQRScanner(serialInputId) {
+function setupQRScanner(serialInputId, formats) {
   const modal = $("qrModal");
   modal.style.display = "flex";
   const config = {
     fps: 10,
     qrbox: 250,
+    supportedScanTypes: [HtmlQrcodeScanType.SCAN_TYPE_CAMERA], //Asegura que use la camara
   };
   html5QrCodeScanner = new Html5Qrcode("scanner-container");
   html5QrCodeScanner.start({ facingMode: "environment" }, config, (decodedText) => {
@@ -889,9 +901,14 @@ function closeScanner() {
   } else {
     $("qrModal").style.display = "none";
   }
+  //asignacion a los botones
 }
-$("btnScanQRInst").onclick = () => setupQRScanner("serialInst");
-$("btnScanQRAct").onclick = () => setupQRScanner("serialAct");
+$("btnScanQRInst").onclick = () => setupScanner("serialInst, qrCodeFormat");
+  $ ("btnScanBarcodeInst").onclic () => setupScanner("serialInst, barcodeFormats");
+  
+$("btnScanQRAct").onclick = () => setupScanner("serialAct, qrCodeFormat");
+  $("btnScanBarcodeAct").onclick = () => setupScanner("seruakAct, barcodeFormats");
+  
 $("btnCloseScanner").onclick = closeScanner;
 
 // --- Estado Inicial de la Página ---
