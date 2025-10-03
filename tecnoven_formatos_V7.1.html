@@ -227,15 +227,15 @@
       margin-bottom: 10px;
       line-height: 1.5;
     }
-    #updatesBody .chip { /* Reutilizamos la clase 'chip' para las etiquetas */
+    #updatesBody .chip {
       display: inline-block;
       margin-right: 8px;
       padding: 3px 8px;
       font-size: 12px;
     }
-    .chip.new { background-color: #1a73e8; } /* Azul para 'Nuevo' */
-    .chip.improved { background-color: #1e8e3e; } /* Verde para 'Mejora' */
-    .chip.fixed { background-color: #d93025; } /* Rojo para 'Corregido' */
+    .chip.new { background-color: #1a73e8; }
+    .chip.improved { background-color: #1e8e3e; }
+    .chip.fixed { background-color: #d93025; }
 
     /* Modo oscuro */
     body.dark-mode {
@@ -319,6 +319,16 @@
         <label>Metraje UTP</label><div class="metraje-input-group"><div class="counter-control"><button data-type="utp" data-action="decrease">-</button><span data-type="utp">0</span><button data-type="utp" data-action="increase">+</button></div><input type="number" id="utpManual" value="0"></div>
         <label>Metraje Drop</label><div class="metraje-input-group"><div class="counter-control"><button data-type="drop" data-action="decrease">-</button><span data-type="drop">0</span><button data-type="drop" data-action="increase">+</button></div><input type="number" id="dropManual" value="0"></div>
         <label>Metraje Coaxial</label><div class="metraje-input-group"><div class="counter-control"><button data-type="coaxial" data-action="decrease">-</button><span data-type="coaxial">0</span><button data-type="coaxial" data-action="increase">+</button></div><input type="number" id="coaxialManual" value="0"></div>
+        
+        <label>Metraje Flap</label>
+        <div class="metraje-input-group">
+            <div class="counter-control">
+                <button data-type="flap" data-action="decrease">-</button>
+                <span data-type="flap">0</span>
+                <button data-type="flap" data-action="increase">+</button>
+            </div>
+            <input type="number" id="flapManual" value="0">
+        </div>
         <label>Mástil</label><div class="counter-control"><button data-type="mastil" data-action="decrease">-</button><span data-type="mastil">0</span><button data-type="mastil" data-action="increase">+</button></div>
         <label>Tensores</label><div class="counter-control"><button data-type="tensores" data-action="decrease">-</button><span data-type="tensores">0</span><button data-type="tensores" data-action="increase">+</button></div>
         <label>Preformados</label><div class="counter-control"><button data-type="preformados" data-action="decrease">-</button><span data-type="preformados">0</span><button data-type="preformados" data-action="increase">+</button></div>
@@ -367,8 +377,7 @@
   <div class="modal-overlay" id="updatesModal">
     <div class="modal-content">
       <h2 id="updatesTitle">🚀 Novedades de la Versión</h2>
-      <div id="updatesBody" style="text-align: left; margin-bottom: 24px;">
-        </div>
+      <div id="updatesBody" style="text-align: left; margin-bottom: 24px;"></div>
       <button class="btn" id="closeUpdatesModal">Entendido</button>
     </div>
   </div>
@@ -385,13 +394,9 @@
     
         const $ = id => document.getElementById(id);
         
-        // =============================================
-        // ===== GESTIÓN DE VERSIÓN Y ACTUALIZACIONES =====
-        // =============================================
-        const APP_VERSION = '0.8.0'; // ¡Importante! Cambia esto con cada actualización.
-
+        const APP_VERSION = '0.8.0'; 
         const updateFeatures = [
-            `<li><span class="chip new">Nuevo</span>¡Hola! Se ha añadido esta ventana de novedades para informarte de los cambios.</li>`,
+            `<li><span class="chip new">Nuevo</span>Se ha añadido la ventana de novedades para informarte de los cambios.</li>`,
             `<li><span class="chip improved">Mejora</span>El código base ha sido refactorizado para ser más estable y rápido.</li>`,
             `<li><span class="chip fixed">Corregido</span>Solucionados errores de carga que podían impedir el funcionamiento del script.</li>`
         ];
@@ -451,8 +456,9 @@
         }
 
         // --- Lógica para Ficha de Instalación ---
-        const metrajeManualFieldsInst = ['utpManual', 'dropManual', 'coaxialManual'];
-        const counterFieldsInst = ['apc', 'upc', 'rg6', 'rj45', 'splitter', 'roseta', 'manguita', 'couple', 'utp', 'drop', 'coaxial', 'mastil', 'tensores', 'preformados', 'grapas', 'ramplug'];
+        // ===== LISTAS ACTUALIZADAS =====
+        const metrajeManualFieldsInst = ['utpManual', 'dropManual', 'coaxialManual', 'flapManual'];
+        const counterFieldsInst = ['apc', 'upc', 'rg6', 'rj45', 'splitter', 'roseta', 'manguita', 'couple', 'utp', 'drop', 'coaxial', 'flap', 'mastil', 'tensores', 'preformados', 'grapas', 'ramplug'];
         let tecnicosSeleccionados=[];
 
         function renderChips(){
@@ -523,7 +529,8 @@
                 ? "Se realizó la instalación quedando con servicio operativo."
                 : observacionValue;
 
-            const txt = `TIPO DE TRABAJO: ${tipo === "instalacion" ? "Instalación" : "Soporte"}\nINSTALACIÓN: ${serv}\nFECHA: ${formatFecha($("fecha").value)}\nNOMBRE DE CLIENTE: ${toNA($("cliente").value)}\nHORA INICIO: ${formatHora($("horaInicio").value)}\nHORA FIN: ${formatHora($("horaFin").value)}\nSERIAL: ${toNA($("serialInst").value)}\nNAP: ${toNA(napValue)}\nPUERTO: ${toNA($("puertoInst").value)}\nPOTENCIA: ${toNA($("potencia").value)}\nCONECTOR APC: ${toNA(counterValues.apc)}\nCONECTOR UPC: ${toNA(counterValues.upc)}\nCONECTOR RG6: ${toNA(counterValues.rg6)}\nCONECTOR RJ45: ${toNA(counterValues.rj45)}\nSPLITTER TV: ${toNA(counterValues.splitter)}\nROSETA: ${toNA(counterValues.roseta)}\nMANGUITA: ${toNA(counterValues.manguita)}\nCOUPLE: ${toNA(counterValues.couple)}\nMETRAJE UTP: ${toNA(counterValues.utp)}\nMETRAJE DROP: ${toNA(counterValues.drop)}\nMETRAJE COAXIAL: ${toNA(counterValues.coaxial)}\nMASTIL: ${toNA(counterValues.mastil)}\nTENSORES: ${toNA(counterValues.tensores)}\nPREFORMADOS: ${toNA(counterValues.preformados)}\nGRAPAS y CLAVOS: ${toNA(counterValues.grapas)}\nRamplug y Tornillos: ${toNA(counterValues.ramplug)}\nTÉCNICOS: ${tecnicosTexto}\nCobrar: ${toNA($("cobro").value)}\nObservación:\n${observacionFinal}`;
+            // ===== PLANTILLA DEL REPORTE ACTUALIZADA =====
+            const txt = `TIPO DE TRABAJO: ${tipo === "instalacion" ? "Instalación" : "Soporte"}\nINSTALACIÓN: ${serv}\nFECHA: ${formatFecha($("fecha").value)}\nNOMBRE DE CLIENTE: ${toNA($("cliente").value)}\nHORA INICIO: ${formatHora($("horaInicio").value)}\nHORA FIN: ${formatHora($("horaFin").value)}\nSERIAL: ${toNA($("serialInst").value)}\nNAP: ${toNA(napValue)}\nPUERTO: ${toNA($("puertoInst").value)}\nPOTENCIA: ${toNA($("potencia").value)}\nCONECTOR APC: ${toNA(counterValues.apc)}\nCONECTOR UPC: ${toNA(counterValues.upc)}\nCONECTOR RG6: ${toNA(counterValues.rg6)}\nCONECTOR RJ45: ${toNA(counterValues.rj45)}\nSPLITTER TV: ${toNA(counterValues.splitter)}\nROSETA: ${toNA(counterValues.roseta)}\nMANGUITA: ${toNA(counterValues.manguita)}\nCOUPLE: ${toNA(counterValues.couple)}\nMETRAJE UTP: ${toNA(counterValues.utp)}\nMETRAJE DROP: ${toNA(counterValues.drop)}\nMETRAJE COAXIAL: ${toNA(counterValues.coaxial)}\nMETRAJE FLAP: ${toNA(counterValues.flap)}\nMASTIL: ${toNA(counterValues.mastil)}\nTENSORES: ${toNA(counterValues.tensores)}\nPREFORMADOS: ${toNA(counterValues.preformados)}\nGRAPAS y CLAVOS: ${toNA(counterValues.grapas)}\nRamplug y Tornillos: ${toNA(counterValues.ramplug)}\nTÉCNICOS: ${tecnicosTexto}\nCobrar: ${toNA($("cobro").value)}\nObservación:\n${observacionFinal}`;
             $("resultadoInst").textContent = txt;
         };
 
@@ -558,7 +565,8 @@
 
                 let count = parseInt(span.textContent);
 
-                const isMetraje = ['utp', 'drop', 'coaxial'].includes(type);
+                // ===== LÓGICA DE BOTONES ACTUALIZADA =====
+                const isMetraje = ['utp', 'drop', 'coaxial', 'flap'].includes(type);
                 const manualInput = $(`${type}Manual`);
 
                 if (isMetraje && manualInput) {
@@ -573,6 +581,7 @@
             });
         });
 
+        // --- Lógica para Proceso de Activación (sin cambios) ---
         $("btnGenerarAct").onclick=()=>{
             const tipoActivacion = $("tipoActivacion").value;
             const cliente = $("clienteAct").value;
@@ -593,6 +602,7 @@
             $("resultadoAct").textContent = "";
         };
 
+        // --- Lógica para Solicitud (sin cambios) ---
         $("btnGenerarSol").onclick = () => {
             const servicio = $("servicioSol").value;
             const napRegion = $("napRegionSol").value;
@@ -611,6 +621,7 @@
             $("resultadoSol").textContent = "";
         };
 
+        // --- Lógica del Escáner QR ---
         let html5QrCodeScanner;
         function setupQRScanner(serialInputId) {
             const modal = $("qrModal");
@@ -661,9 +672,7 @@
             };
         }
         
-        // =============================================
-        // ===== LÓGICA DE INICIO DE LA APLICACIÓN =====
-        // =============================================
+        // --- Lógica de Inicio de la Aplicación ---
         $('closeUpdatesModal').onclick = hideUpdatesModal;
 
         const lastVersionSeen = localStorage.getItem('lastVersionSeen');
