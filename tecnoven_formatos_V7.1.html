@@ -275,20 +275,23 @@
   <nav class="nav-menu">
     <h3>Formatos</h3>
     <ul>
-      <li><a href="#" class="nav-link" data-target="ficha-instalacion">Ficha de Instalación</a></li>
+      <li><a href="#" class="nav-link" data-target="ficha-instalacion">Ficha de Trabajos</a></li>
+      <li><a href="#" class="nav-link" data-target="ficha-inalambrico">Ficha de Inalambrico</a></li>
       <li><a href="#" class="nav-link" data-target="proceso-activacion">Proceso de Activación</a></li>
       <li><a href="#" class="nav-link" data-target="solicitud">Solicitud</a></li>
+      <li><a href="inventario.html" class="_blank">Inventario</a></li>
     </ul>
+    <button class="btn alt" id="toggleThemeBtn" title="Modo claro/oscuro">🌙</button>
   </nav>
 
   <div class="main-content">
     <header class="header">
       <button class="menu-toggle">Menú</button>
-      <button class="btn alt" id="toggleThemeBtn" title="Modo claro/oscuro">🌙</button>
+      
     </header>
 
     <div id="ficha-instalacion" class="content-section">
-        <h2>Ficha de Instalación</h2>
+        <h2>Ficha de Trabajo</h2>
         <div class="highlight-block">
             <label for="tipoTrabajo">Tipo de trabajo</label>
             <select id="tipoTrabajo"><option value="instalacion">Instalación</option><option value="soporte">Soporte</option></select>
@@ -335,7 +338,7 @@
         <label>Preformados</label><div class="counter-control"><button data-type="preformados" data-action="decrease">-</button><span data-type="preformados">0</span><button data-type="preformados" data-action="increase">+</button></div>
         <label>Grapas y Clavos</label><div class="counter-control"><button data-type="grapas" data-action="decrease">-</button><span data-type="grapas">0</span><button data-type="grapas" data-action="increase">+</button></div>
         <label>Ramplug y Tornillos</label><div class="counter-control"><button data-type="ramplug" data-action="decrease">-</button><span data-type="ramplug">0</span><button data-type="ramplug" data-action="increase">+</button></div>
-        <label>Técnicos</label><select id="tecnicosSelect"><option value="">-- Selecciona técnico --</option><option value="Alejandro Blanco">Alejandro Blanco</option><option value="Alejandro Soto">Alejandro Soto</option><option value="Danny Perez">Danny Perez</option><option value="Keiver Zambrano">Keiver Zambrano</option><option value="Mayckkol Fuenmayor">Mayckkol Fuenmayor</option><option value="Alfonso Solarte">Alfonso Solarte</option><option value="Anddy Bravo">Anddy Bravo</option><option value="Alexander Zambrano">Alexander Zambrano</option><option value="Josue Utria">Josue Utria</option><option value="Leonardo Montiel">Leonardo Montiel</option><option value="Hebert Vargas">Hebert Vargas</option><option value="Pedro Linares">Pedro Linares</option><option value="Jose Luiz Gonzalez">Jose Luiz Gonzalez</option><option value="Ricardo Valencia">Ricardo Valencia</option><option value="Jonathan Bravo">Jonathan Bravo</option><option value="Antonio Roo">Antonio Roo</option><option value="Otro">Otro</option></select>
+        <label>Técnicos</label><select id="tecnicosSelect"><option value="">-- Selecciona técnico --</option><option value="Alejandro Blanco">Alejandro Blanco</option><option value="Alejandro Soto">Alejandro Soto</option><option value="Danny Perez">Danny Perez</option><option value="Keiver Zambrano">Keiver Zambrano</option><option value="Mayckkol Fuenmayor">Mayckkol Fuenmayor</option><option value="Alfonso Solarte">Alfonso Solarte</option><option value="Anddy Bravo">Anddy Bravo</option><option value="Alexander Zambrano">Alexander Zambrano</option><option value="Josue Utria">Josue Utria</option><option value="Leonardo Montiel">Leonardo Montiel</option><option value="Hebert Vargas">Hebert Vargas</option><option value="Pedro Linares">Pedro Linares</option><option value="Jose Luis Gonzalez">Jose Luis Gonzalez</option><option value="Ricardo Valencia">Ricardo Valencia</option><option value="Jonathan Bravo">Jonathan Bravo</option><option value="Antonio Roo">Antonio Roo</option><option value="Otro">Otro</option></select>
         <div class="chips" id="chipsContainer"></div>
         <input id="otroNombre" placeholder="Escribe otro nombre">
         <label for="cobro">Cobrar</label><input id="cobro">
@@ -344,6 +347,11 @@
         <div class="output" id="resultadoInst"></div>
     </div>
 
+    <div id="ficha-inalambrico" class="content-section">
+        <h2>En desarrollo...
+        <br>👾
+        </h2>
+    </div>
     <div id="proceso-activacion" class="content-section">
         <h2>Proceso de Activación</h2>
         <div class="highlight-block"><label for="tipoActivacion">Tipo de Activación</label><select id="tipoActivacion"><option value="Internet">Internet</option><option value="TV">TV</option><option value="Ambos">Ambos</option></select></div>
@@ -399,9 +407,9 @@
         const APP_VERSION = '0.7.6'; 
         const updateFeatures = [
             `<li><span class="chip new">Nuevo</span>Se ha añadido la ventana de novedades para informarte de los cambios.</li>`,
-            `<li><span class="chip new">Nuevo</span>Se ha añadido el link de contáctanos para informes de error o sugerencias.</li>`,
-            `<li><span class="chip improved">Mejora</span>Ahora al momento de escanear permite escanear codigo de barras (por el momento solo CATV)</li>`,
-            `<li><span class="chip fixed">Corregido</span>Se agregó el Metraje Flap y se corrigieron margenes</li>`,
+            `<li><span class="chip new">Nuevo</span>Inventario, ahora puedes pegar el texto generado y se guardará relación</li>`,
+            `<li><span class="chip improved">Mejora</span>En desarrollo extracción de seriales ZTE</li>`,
+            `<li><span class="chip fixed">Corregido</span>Nombres</li>`,
             `<li><span class="chip new">Próximamente</span>Sección de Instalación Inalambrica</li>`
         ];
 
