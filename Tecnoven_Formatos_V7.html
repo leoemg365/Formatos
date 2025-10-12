@@ -276,7 +276,7 @@
     <h3>Formatos</h3>
     <ul>
       <li><a href="#" class="nav-link" data-target="ficha-instalacion">Ficha de Trabajos</a></li>
-      <li><a href="#" class="nav-link" data-target="ficha-inalambrico">Ficha de Inalambrico</a></li>
+      <li><a href="seccioninalambrico.html" class="_blank" data-target="ficha-inalambrico">Ficha de Inalambrico</a></li>
       <li><a href="#" class="nav-link" data-target="proceso-activacion">Proceso de Activación</a></li>
       <li><a href="#" class="nav-link" data-target="solicitud">Solicitud</a></li>
       <li><a href="inventario.html" class="_blank">Inventario</a></li>
@@ -286,7 +286,7 @@
 
   <div class="main-content">
     <header class="header">
-      <button class="menu-toggle">Menú</button>
+      <button class="menu-toggle">☰</button>
       
     </header>
 
@@ -348,8 +348,7 @@
     </div>
 
     <div id="ficha-inalambrico" class="content-section">
-        <h2>En desarrollo...
-        <br>👾
+        <h2>Conetido de Inalambrico
         </h2>
     </div>
     <div id="proceso-activacion" class="content-section">
@@ -393,7 +392,7 @@
 
   <footer style="text-align:center; color:white; margin-top:32px; font-size:0.92em; opacity:0.8;">
     Plataforma de Reportes y Formatos<br>
-    Versión V0.7.7 <br>
+    Versión V0.7.8<br>
     Todos los derechos reservados<br>
     © 2025 Espiral - Leonardo Montiel<br>
     <a href="https://wa.me/584121982608">Contáctanos</a>
@@ -404,13 +403,13 @@
     
         const $ = id => document.getElementById(id);
         
-        const APP_VERSION = '0.7.7'; 
+        const APP_VERSION = '0.7.8'; 
         const updateFeatures = [
             `<li><span class="chip new">Nuevo</span>Se ha añadido la ventana de novedades para informarte de los cambios.</li>`,
             `<li><span class="chip new">Nuevo</span>Inventario, ahora puedes pegar el texto generado y se guardará relación</li>`,
+            `<li><span class="chip new">Nuevo</span>Sección de Instalación Inalambrica</li>`,
             `<li><span class="chip improved">Mejora</span>En desarrollo extracción de seriales ZTE</li>`,
             `<li><span class="chip fixed">Corregido</span>Nombres</li>`,
-            `<li><span class="chip new">Próximamente</span>Sección de Instalación Inalambrica</li>`
         ];
 
         const navMenu = document.querySelector('.nav-menu');
