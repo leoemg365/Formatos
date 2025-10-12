@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tecnoven Formatos</title>
+    <link rel="icon" href="https://empresas.blogthinkbig.com/wp-content/uploads/2019/11/Imagen3-245003649.jpg?fit=960%2C720" type="image/png">
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <style>
+        :root{
+            --vino: #4b0e20;
+            --vino-2: #6d1433;
+            --card: #ffffff;
+            --ink: #111;
+            --muted: #f5f5f5;
+            --accent: var(--vino);
+            --danger: #d93025;
+            --success: #1e8e3e;
+        }
+        *{
+            box-sizing: border-box;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+        body{
+            margin: 0;
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+            background: linear-gradient(160deg, var(--vino), #2a0a14 100%);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            padding: 12px;
+            gap: 12px;
+            min-height: 100vh;
+        }
+        .header {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            color: white;
+            z-index: 101;
+        }
+        .menu-toggle,
+        .btn.alt {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            padding: 0;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+        }
+        .menu-toggle {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .menu-toggle:hover {
+            background: var(--vino-2);
+            color: #fff;
+            border-color: var(--vino-2);
+        }
+        .nav-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 250px;
+            background: var(--card);
+            border-right: 1px solid #ddd;
+            padding: 18px;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-in-out;
+            z-index: 100;
+            color: var(--ink);
+            display: flex;
+            flex-direction: column;
+        }
+        .nav-menu.active {
+            transform: translateX(0);
+        }
+        .nav-menu h3 {
+            text-align: center;
+            color: var(--vino);
+            margin-top: 0;
+            padding-top: 90px;
+        }
+        .nav-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+            flex-grow: 1;
+        }
+        .nav-menu ul li a {
+            display: block;
+            padding: 12px;
+            border-radius: 8px;
+            color: var(--ink);
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.2s ease;
+        }
+        .nav-menu ul li a:hover {
+            background: #eee;
+        }
+        .nav-menu ul li a.active {
+            background: var(--vino);
+            color: #fff;
+        }
+        .main-content {
+            flex-grow: 1;
+            background: var(--card);
+            color: var(--ink);
+            border-radius: 16px;
+            box-shadow: 0 8px 28px rgba(0, 217, 255, 0.4);
+            padding: 18px;
+            margin-top: 5px;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+
+        /* Responsive Design */
+        @media (min-width: 768px) {
+            body {
+                flex-direction: row;
+                justify-content: center;
+                align-items: flex-start;
+            }
+            .header {
+                display: none;
+            }
+            .nav-menu {
+                position: relative;
+                transform: translateX(0);
+                width: 250px;
+                flex-shrink: 0;
+                height: auto;
+                border-right: 1px solid #ddd;
+                border-radius: 16px;
+            }
+            .nav-menu h3 {
+                margin-top: 0;
+            }
+            .main-content {
+                max-width: 560px;
+                margin-top: 0;
+            }
+        }
+
+        /* Estilos de Formulario y Botones */
+        h2 {
+            text-align: center;
+            color: var(--vino);
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            font-weight: 700;
+            margin-top: 10px;
+            margin-bottom: 4px;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .input-group input {
+            flex: 1;
+        }
+        .valor-separator {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--ink);
+        }
+        
+        /* Grid para el formulario */
+        .grid-container {
+            display: grid;
+            gap: 16px;
+            grid-template-columns: 1fr;
+        }
+        @media (min-width: 500px) {
+            .grid-container {
+                grid-template-columns: 1fr 1fr;
+            }
+            .md-col-span-2 {
+                grid-column: span 2;
+            }
+        }
+        .campo-fecha > div {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .campo-fecha input {
+            flex: 1;
+        }
+        .campo-fecha button {
+            width: auto;
+            white-space: nowrap;
+        }
+
+        /* Botones generales */
+        .btn {
+            background: var(--vino);
+            color: #fff;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn:hover {
+            background: var(--vino-2);
+        }
+        .btn.alt {
+            background: #fff;
+            color: var(--vino);
+            border: 2px solid var(--vino);
+        }
+        .btn.alt:hover {
+            background: var(--muted);
+        }
+        .btn.accent {
+            background: var(--accent);
+            color: #fff;
+        }
+        .btn.accent:hover {
+            background: var(--vino-2);
+        }
+
+        /* Botones de Reporte y Reinicio */
+        .reporte-area {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        .reporte-botones {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        .reporte-botones button {
+            /* Hacer que el botón de Copiar sea también accent */
+            flex: 1;
+            min-width: 150px;
+        }
+        .btn-reiniciar {
+            background: var(--danger);
+            color: #fff;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: 8px;
+            padding: 10px;
+        }
+        .btn-reiniciar:hover {
+            background: #a80f08;
+        }
+        #reporte-output {
+            font-family: monospace;
+            white-space: pre-wrap;
+            background: var(--muted);
+            color: var(--ink);
+        }
+
+        /* Chips de Técnicos */
+        .chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            min-height: 44px;
+        }
+        .chip {
+            background: var(--vino);
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+        }
+        .chip button {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 0;
+            margin-left: 4px;
+            line-height: 1;
+            width: auto;
+            height: auto;
+        }
+        .tecnicos-control {
+            display: flex;
+            gap: 8px;
+            margin-top: 4px;
+        }
+        .tecnicos-control select {
+            flex: 1;
+        }
+        .tecnicos-control button {
+            width: auto;
+            white-space: nowrap;
+        }
+
+        /* Message Box */
+        .message-box {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--success);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 1001;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            pointer-events: none;
+        }
+        .message-box.show {
+            opacity: 1;
+        }
+
+        /* Modo oscuro */
+        body.dark-mode {
+            background: linear-gradient(160deg, #181818, #222 100%);
+            color: #eee;
+        }
+        body.dark-mode .main-content,
+        body.dark-mode .nav-menu {
+            background: #232323;
+            color: #eee;
+        }
+        body.dark-mode .main-content {
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
+        }
+        body.dark-mode .nav-menu {
+            border-right: 1px solid #333;
+        }
+        body.dark-mode .nav-menu ul li a {
+            color: #eee;
+        }
+        body.dark-mode .nav-menu ul li a:hover {
+             background: #333;
+        }
+        body.dark-mode .nav-menu ul li a.active {
+            background: #4b0e20;
+            color: #fff;
+        }
+        body.dark-mode #reporte-output {
+            background: #181818;
+            color: #eee;
+        }
+        body.dark-mode input,
+        body.dark-mode select,
+        body.dark-mode textarea {
+            background: #181818;
+            color: #eee;
+            border: 1px solid #444;
+        }
+        body.dark-mode .btn.alt {
+            background: #232323;
+            color: #fff;
+            border: 2px solid #fff;
+        }
+        body.dark-mode .btn.alt:hover {
+            background: #333;
+        }
+        body.dark-mode .menu-toggle {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        body.dark-mode .message-box {
+            background: #4b0e20;
+            color: #fff;
+        }
+        body.dark-mode .chip {
+            background: #6d1433;
+        }
+        body.dark-mode .valor-separator {
+            color: #eee;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="message-box" class="message-box"></div> 
+    
+    <nav class="nav-menu" id="navMenu">
+        <h3>Formatos</h3>
+        <ul>
+            <li><a href="tecnoven_formatos_V7.html" class="_blank" data-target="ficha-instalacion">Ficha de Trabajos</a></li>
+            <li><a href="#" class="nav-link active" data-target="ficha-inalambrico">Ficha de Inalámbrico</a></li>
+            <li><a href="inventario.html" target="_blank">Inventario</a></li>
+        </ul>
+        <button class="btn alt" id="toggleThemeBtn" title="Modo claro/oscuro">🌙</button>
+    </nav>
+
+    <div class="main-content">
+        <header class="header">
+            <button class="menu-toggle" id="menuToggleBtn">☰</button>
+        </header>
+
+        <div id="ficha-instalacion" class="content-section">
+            <h2>Ficha de Trabajos (Cableado)</h2>
+            <p>Contenido para la Ficha de Trabajos...</p>
+        </div>
+
+        <div id="ficha-inalambrico" class="content-section active">
+            <form id="inalambrico-form">
+                <h2>Ficha de Instalación Inalámbrica</h2>
+
+                <div class="grid-container">
+
+                    <div class="md-col-span-2">
+                        <label for="fecha">FECHA DE INSTALACIÓN (Obligatorio)</label>
+                        <div class="campo-fecha">
+                            <input type="date" id="fecha" required>
+                            <button type="button" onclick="setFechaActual()" class="btn accent">
+                                Hoy
+                            </button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="cliente">NOMBRE CLIENTE (Obligatorio)</label>
+                        <input type="text" id="cliente" required placeholder="Ej: JUAN PEREZ">
+                    </div>
+
+                    <div>
+                        <label for="nodo">NODO (Obligatorio)</label>
+                        <select id="nodo" required>
+                            <option value="" disabled selected>Selecciona un Nodo</option>
+                            <option value="Matancera">Matancera</option>
+                            <option value="Zafiro">Zafiro</option>
+                            <option value="Chamarreta">Chamarreta</option>
+                            <option value="Palace">Palace</option>
+                            <option value="Casco">Casco</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="sectorial">SECTORIAL (Obligatorio)</label>
+                        <input type="text" id="sectorial" required placeholder="Ej: S5 o C3">
+                    </div>
+
+                    <div>
+                        <label>VALORES (Obligatorio)</label>
+                        <div class="input-group">
+                            <input type="number" id="valor1" required placeholder="-55" min="-100" max="0">
+                            <span class="valor-separator">/</span>
+                            <input type="number" id="valor2" required placeholder="-58" min="-100" max="0">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label>DESCARGA / SUBIDA (Mbps) (Obligatorio)</label>
+                        <div class="input-group descarga-subida">
+                            <input type="number" id="descarga" required placeholder="50" min="0">
+                            <span style="font-size: 1rem; font-weight: 500;">Mbps /</span>
+                            <input type="number" id="subida" required placeholder="10" min="0">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="rj45">CONECTOR RJ45 (Obligatorio)</label>
+                        <input type="number" id="rj45" min="0" required placeholder="4" style="text-align: center;">
+                    </div>
+
+                    <div>
+                        <label for="utp">CABLE UTP (m) (Obligatorio)</label>
+                        <input type="number" id="utp" min="0" required placeholder="25" style="text-align: center;">
+                    </div>
+
+                    <div>
+                        <label for="ramplug">Ramplug y tornillos (Obligatorio)</label>
+                        <input type="number" id="ramplug" min="0" required placeholder="8" style="text-align: center;">
+                    </div>
+
+                    <div>
+                        <label for="grapas">Grapas y clavos (Obligatorio)</label>
+                        <input type="number" id="grapas" min="0" required placeholder="15" style="text-align: center;">
+                    </div>
+
+                    <div class="md-col-span-2">
+                        <label>Técnicos (Obligatorio)</label>
+                        <div class="tecnicos-control">
+                            <select id="tecnico-select" onchange="manejarSeleccionTecnico()">
+                                <option value="" disabled selected>Selecciona un técnico</option>
+                                <option value="Mayckkol">Mayckkol</option>
+                                <option value="Anddy">Anddy</option>
+                                <option value="Leonardo">Leonardo</option>
+                                <option value="Alfonso">Alfonso</option>
+                                <option value="Otro">Otro (Especifique)</option>
+                            </select>
+                        </div>
+                        <input type="text" id="otroNombre" placeholder="Nombre del otro técnico (presiona ENTER para añadir)" style="display: none; margin-top: 8px;">
+                        <div id="tecnicos-container" class="chips">
+                            </div>
+                        <input type="hidden" id="tecnicos-input" required>
+                    </div>
+
+                    <div class="md-col-span-2">
+                        <label for="cobrar">COBRAR (Obligatorio)</label>
+                        <input type="text" id="cobrar" required placeholder="Ej: Cliente canceló $20 de la mensualidad y $21 de cableado.">
+                    </div>
+
+                    <div class="md-col-span-2">
+                        <label for="notas">NOTAS ADICIONALES (Opcional)</label>
+                        <textarea id="notas" rows="4" placeholder="Escribe aquí las notas específicas del servicio, como solicitud de router secundario, problemas resueltos, o el estado final."></textarea>
+                    </div>
+
+                </div>
+
+                <div class="reporte-area">
+                    <h2>Reporte Final para Copiar</h2>
+                    
+                    <textarea id="reporte-output" rows="10" readonly placeholder="El reporte final aparecerá aquí con el formato requerido..."></textarea>
+
+                    <div class="reporte-botones">
+                        <button type="button" onclick="generarReporte()" class="btn accent">
+                            Generar Reporte
+                        </button>
+                        <button type="button" onclick="copiarReporte()" class="btn accent">
+                            Copiar Reporte 📋
+                        </button>
+                        <button type="button" onclick="reiniciarFormulario()" class="btn-reiniciar">
+                            Reiniciar
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+
+        <div id="proceso-activacion" class="content-section">
+            <h2>Proceso de Activación</h2>
+            <p>Contenido de Proceso de Activación...</p>
+        </div>
+        
+        <div id="solicitud" class="content-section">
+            <h2>Solicitud</h2>
+            <p>Contenido de Solicitud...</p>
+        </div>
+
+    </div>
+    
+
+</body>
+<script>
+    // Función de utilidad para simplificar el acceso a elementos
+    const $ = (id) => document.getElementById(id);
+
+    // Array para almacenar los técnicos
+    let tecnicosSeleccionados = [];
+
+    // --- LÓGICA DE FECHA ---
+    function setFechaActual() {
+        const today = new Date();
+        // Formato YYYY-MM-DD requerido por input type="date"
+        const day = String(today.getDate()).padStart(2, '0');
+        const month = String(today.getMonth() + 1).padStart(2, '0'); // Enero es 0!
+        const year = today.getFullYear();
+        $('fecha').value = `${year}-${month}-${day}`;
+        mostrarMensaje('Fecha de instalación actualizada.', 'success');
+    }
+
+    // --- LÓGICA DE SELECCIÓN Y GESTIÓN DE TÉCNICOS ---
+    
+    // Función principal que se llama al cambiar la selección
+    function manejarSeleccionTecnico() {
+        const select = $('tecnico-select');
+        const valorSeleccionado = select.value.trim();
+        const otroNombreInput = $('otroNombre');
+
+        // Resetear la visibilidad de "Otro" y su estado de requerido
+        otroNombreInput.style.display = 'none';
+        otroNombreInput.required = false;
+
+        if (valorSeleccionado === "Otro") {
+            // Si es "Otro", mostramos el campo de texto y lo hacemos requerido
+            otroNombreInput.style.display = 'block';
+            otroNombreInput.required = true;
+        } else if (valorSeleccionado) {
+            // Si es un nombre fijo, lo agregamos inmediatamente
+            agregarTecnico(valorSeleccionado);
+            // Volver a poner el select en la opción por defecto después de agregar
+            select.value = ""; 
+        }
+    }
+    
+    // Función para agregar un técnico a la lista (usada para nombres fijos y "Otro")
+    function agregarTecnico(nombreTecnico) {
+        if (nombreTecnico && !tecnicosSeleccionados.includes(nombreTecnico)) {
+            tecnicosSeleccionados.push(nombreTecnico);
+            renderizarChips();
+            mostrarMensaje(`Técnico ${nombreTecnico} añadido.`, 'success');
+            return true;
+        } else if (nombreTecnico) {
+            mostrarMensaje(`El técnico ${nombreTecnico} ya fue añadido.`, 'danger');
+            return false;
+        }
+        return false;
+    }
+
+    // Evento para capturar cuando el usuario presiona ENTER en el campo "Otro Nombre"
+    $('otroNombre').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault(); // Evita que se envíe el formulario
+            const nombreTecnico = this.value.trim();
+            if (nombreTecnico && agregarTecnico(nombreTecnico)) {
+                // Limpiar y ocultar elementos después de añadir
+                this.value = "";
+                this.style.display = 'none';
+                this.required = false;
+                $('tecnico-select').value = ""; // Reiniciar el selector
+            }
+        }
+    });
+
+    function eliminarTecnico(nombre) {
+        tecnicosSeleccionados = tecnicosSeleccionados.filter(t => t !== nombre);
+        renderizarChips();
+        // Actualizar el campo oculto
+        $('tecnicos-input').value = tecnicosSeleccionados.join(', ');
+        mostrarMensaje(`Técnico ${nombre} eliminado.`, 'info');
+    }
+
+    function renderizarChips() {
+        const container = $('tecnicos-container');
+        container.innerHTML = '';
+        tecnicosSeleccionados.forEach(tecnico => {
+            const chip = document.createElement('div');
+            chip.className = 'chip';
+            chip.innerHTML = `
+                ${tecnico}
+                <button type="button" onclick="eliminarTecnico('${tecnico.replace(/'/g, "\\'")}')">✖</button>
+            `;
+            container.appendChild(chip);
+        });
+
+        // La validación requerida del campo oculto
+        if (tecnicosSeleccionados.length > 0) {
+            $('tecnicos-input').value = tecnicosSeleccionados.join(', ');
+            $('tecnicos-input').removeAttribute('required');
+        } else {
+             // Usamos el required nativo para forzar la validación si no hay técnicos
+             $('tecnicos-input').value = '';
+             $('tecnicos-input').setAttribute('required', 'required');
+        }
+    }
+
+    // --- LÓGICA DE GENERACIÓN DE REPORTE ---
+    function validarCampos() {
+        const form = $('inalambrico-form');
+        
+        // Ejecutar la validación nativa del formulario
+        if (!form.checkValidity()) {
+            // Activa la visualización de errores del navegador
+            form.reportValidity(); 
+            mostrarMensaje('Por favor, complete todos los campos obligatorios para generar el reporte.', 'danger');
+            return false;
+        }
+
+        // Validación específica para técnicos (siempre es obligatoria)
+        if (tecnicosSeleccionados.length === 0) {
+            mostrarMensaje('Debe seleccionar al menos un técnico.', 'danger');
+            return false;
+        }
+
+        return true;
+    }
+
+    function generarReporte() {
+        if (!validarCampos()) {
+            return;
+        }
+
+        const fecha = $('fecha').value;
+        const cliente = $('cliente').value.toUpperCase();
+        const nodo = $('nodo').value;
+        const sectorial = $('sectorial').value.toUpperCase();
+        const valor1 = $('valor1').value;
+        const valor2 = $('valor2').value;
+        const descarga = $('descarga').value;
+        const subida = $('subida').value;
+        const rj45 = $('rj45').value;
+        const utp = $('utp').value;
+        const ramplug = $('ramplug').value;
+        const grapas = $('grapas').value;
+        const cobrar = $('cobrar').value;
+        const notas = $('notas').value.trim();
+        const tecnicos = tecnicosSeleccionados.join(' - ');
+
+        // Formatear la fecha a DD/MM/AAAA para el reporte
+        const [year, month, day] = fecha.split('-');
+        const fechaFormateada = `${day}/${month}/${year}`;
+
+        // Construcción del reporte
+        let reporte = `✅ *FICHA DE INSTALACIÓN INALÁMBRICA*
+
+*FECHA:* ${fechaFormateada}
+*CLIENTE:* ${cliente}
+
+*DATOS TÉCNICOS*
+*NODO/SECTORIAL:* ${nodo} / ${sectorial}
+*VALORES:* ${valor1} / ${valor2}
+*VELOCIDAD:* ${descarga} Mbps / ${subida} Mbps (Descarga / Subida)
+
+*MATERIALES*
+*Conectores RJ45:* ${rj45} Und
+*Cable UTP:* ${utp} Metros
+*Ramplug y tornillos:* ${ramplug} Und
+*Grapas y clavos:* ${grapas} Und
+
+*COBRO*
+${cobrar}
+
+*TÉCNICOS:* ${tecnicos}`;
+
+        if (notas) {
+            reporte += `\n\n*NOTAS ADICIONALES*
+${notas}`;
+        }
+
+        $('reporte-output').value = reporte;
+        mostrarMensaje('Reporte generado exitosamente. ¡Listo para copiar! 👍', 'success');
+    }
+
+    // --- NUEVA LÓGICA DE COPIADO ---
+    function copiarReporte() {
+        const reporteOutput = $('reporte-output');
+        const reporteTexto = reporteOutput.value;
+
+        if (!reporteTexto.trim()) {
+            mostrarMensaje('Primero debe generar el reporte.', 'danger');
+            return;
+        }
+
+        // Seleccionar y copiar
+        navigator.clipboard.writeText(reporteTexto)
+            .then(() => {
+                mostrarMensaje('¡Reporte copiado al portapapeles! 📋', 'success');
+            })
+            .catch(err => {
+                console.error('Error al copiar: ', err);
+                // Solución de fallback para navegadores antiguos/móviles:
+                reporteOutput.select(); 
+                document.execCommand('copy');
+                mostrarMensaje('Reporte copiado (método fallback).', 'info');
+            });
+    }
+
+
+    function reiniciarFormulario() {
+        // Reiniciar los campos del formulario
+        $('inalambrico-form').reset();
+        
+        // Reiniciar los técnicos
+        tecnicosSeleccionados = [];
+        renderizarChips();
+        $('otroNombre').style.display = 'none';
+        $('otroNombre').required = false;
+
+        // Limpiar el reporte
+        $('reporte-output').value = '';
+        
+        mostrarMensaje('Formulario reiniciado, listo para un nuevo reporte. 🔄', 'info');
+    }
+
+    // --- LÓGICA DE MENSAJES DE NOTIFICACIÓN (Toasts) ---
+    function mostrarMensaje(mensaje, tipo = 'info') {
+        const msgBox = $('message-box');
+        msgBox.textContent = mensaje;
+        msgBox.className = `message-box show`; // Reinicia las clases
+        
+        // Configurar el color de fondo basado en el tipo
+        const rootStyles = getComputedStyle(document.documentElement);
+        let bgColor;
+        if (tipo === 'success') {
+            bgColor = rootStyles.getPropertyValue('--success');
+        } else if (tipo === 'danger') {
+            bgColor = rootStyles.getPropertyValue('--danger');
+        } else {
+            bgColor = rootStyles.getPropertyValue('--vino'); // Info por defecto
+        }
+
+        // Aplicar el estilo de fondo
+        msgBox.style.backgroundColor = bgColor;
+
+        // Si está en modo oscuro y no es éxito/peligro, ajustamos el color de info
+        if (document.body.classList.contains('dark-mode') && tipo === 'info') {
+             msgBox.style.backgroundColor = rootStyles.getPropertyValue('--vino-2');
+        }
+
+        setTimeout(() => {
+            msgBox.classList.remove('show');
+        }, 3000);
+    }
+
+    // --- LÓGICA DE NAVEGACIÓN (SPA LIGERO) ---
+    function handleNavigation(e) {
+        e.preventDefault();
+        const targetId = e.target.getAttribute('data-target');
+        if (!targetId) return;
+
+        // Ocultar todas las secciones
+        document.querySelectorAll('.content-section').forEach(section => {
+            section.classList.remove('active');
+        });
+
+        // Desactivar todos los links
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.remove('active');
+        });
+
+        // Mostrar la sección objetivo y activar el link
+        const targetSection = $(targetId);
+        if (targetSection) {
+            targetSection.classList.add('active');
+            e.target.classList.add('active');
+        }
+
+        // Cerrar menú en móvil
+        $('navMenu').classList.remove('active');
+    }
+    
+    // --- LÓGICA DE INICIO DE LA APLICACIÓN (DOMContentLoaded) ---
+    document.addEventListener('DOMContentLoaded', () => {
+        // Referencias a elementos
+        const navMenu = $('navMenu');
+        const menuToggleBtn = $('menuToggleBtn');
+        const themeBtn = $('toggleThemeBtn');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        // 1. Lógica del Tema
+        if (themeBtn) {
+            themeBtn.onclick = () => {
+                document.body.classList.toggle('dark-mode');
+                themeBtn.textContent = document.body.classList.contains('dark-mode') ? "☀️" : "🌙";
+                localStorage.setItem('darkMode', document.body.classList.contains('dark-mode') ? "1" : "0");
+            };
+        }
+        if (localStorage.getItem('darkMode') === "1") {
+            document.body.classList.add('dark-mode');
+            if(themeBtn) themeBtn.textContent = "☀️";
+        }
+        
+        // 2. Lógica del Menú Móvil
+        if (menuToggleBtn && navMenu) {
+            menuToggleBtn.onclick = () => {
+                navMenu.classList.toggle('active');
+            };
+        }
+
+        // 3. Lógica de Navegación
+        navLinks.forEach(link => {
+            // Se asume que los links que apuntan a archivos externos NO tienen la clase 'nav-link' o se manejan de otra forma.
+            // Los links de navegación interna sí usan 'nav-link' y 'data-target'.
+            link.addEventListener('click', handleNavigation);
+        });
+
+        // 4. Establecer la sección activa inicial
+        const initialActiveLink = document.querySelector('.nav-link.active');
+        if (initialActiveLink) {
+            const initialTargetId = initialActiveLink.getAttribute('data-target');
+            const initialTargetSection = $(initialTargetId);
+            if (initialTargetSection) {
+                initialTargetSection.classList.add('active'); 
+            }
+        }
+        
+        // 5. Inicializar el renderizado de chips al cargar
+        renderizarChips(); 
+    });
+</script>
+</html>
