@@ -452,18 +452,18 @@
                         <div class="campo-fecha">
                             <input type="date" id="fecha" required>
                             <button type="button" onclick="setFechaActual()" class="btn accent">
-                                Hoy
+                                Ahora
                             </button>
                         </div>
                     </div>
 
                     <div>
-                        <label for="cliente">NOMBRE CLIENTE (Obligatorio)</label>
+                        <label for="cliente">NOMBRE CLIENTE</label>
                         <input type="text" id="cliente" required placeholder="Ej: JUAN PEREZ">
                     </div>
 
                     <div>
-                        <label for="nodo">NODO (Obligatorio)</label>
+                        <label for="nodo">NODO</label>
                         <select id="nodo" required>
                             <option value="" disabled selected>Selecciona un Nodo</option>
                             <option value="Matancera">Matancera</option>
@@ -475,50 +475,50 @@
                     </div>
 
                     <div>
-                        <label for="sectorial">SECTORIAL (Obligatorio)</label>
-                        <input type="text" id="sectorial" required placeholder="Ej: S5 o C3">
+                        <label for="sectorial">SECTORIAL o AP</label>
+                        <input type="text" id="sectorial" required placeholder="Ej: S5-Zafiro">
                     </div>
 
                     <div>
-                        <label>VALORES (Obligatorio)</label>
+                        <label>VALORES</label>
                         <div class="input-group">
-                            <input type="number" id="valor1" required placeholder="-55" min="-100" max="0">
+                            <input type="number" id="valor1" required placeholder="Ej: -55" min="-100" max="0">
                             <span class="valor-separator">/</span>
-                            <input type="number" id="valor2" required placeholder="-58" min="-100" max="0">
+                            <input type="number" id="valor2" required placeholder="Ej: -58" min="-100" max="0">
                         </div>
                     </div>
 
                     <div>
-                        <label>DESCARGA / SUBIDA (Mbps) (Obligatorio)</label>
+                        <label>DESCARGA / SUBIDA (Mbps)</label>
                         <div class="input-group descarga-subida">
-                            <input type="number" id="descarga" required placeholder="50" min="0">
+                            <input type="number" id="descarga" required placeholder="80" min="0">
                             <span style="font-size: 1rem; font-weight: 500;">Mbps /</span>
-                            <input type="number" id="subida" required placeholder="10" min="0">
+                            <input type="number" id="subida" required placeholder="80" min="0">
                         </div>
                     </div>
                     
                     <div>
-                        <label for="rj45">CONECTOR RJ45 (Obligatorio)</label>
+                        <label for="rj45">CONECTOR RJ45</label>
                         <input type="number" id="rj45" min="0" required placeholder="4" style="text-align: center;">
                     </div>
 
                     <div>
-                        <label for="utp">CABLE UTP (m) (Obligatorio)</label>
+                        <label for="utp">CABLE UTP (m)</label>
                         <input type="number" id="utp" min="0" required placeholder="25" style="text-align: center;">
                     </div>
 
                     <div>
-                        <label for="ramplug">Ramplug y tornillos (Obligatorio)</label>
-                        <input type="number" id="ramplug" min="0" required placeholder="8" style="text-align: center;">
+                        <label for="ramplug">Ramplug y tornillos</label>
+                        <input type="number" id="ramplug" min="0" required placeholder="4" style="text-align: center;">
                     </div>
 
                     <div>
-                        <label for="grapas">Grapas y clavos (Obligatorio)</label>
-                        <input type="number" id="grapas" min="0" required placeholder="15" style="text-align: center;">
+                        <label for="grapas">Grapas y clavos</label>
+                        <input type="number" id="grapas" min="0" required placeholder="5" style="text-align: center;">
                     </div>
 
                     <div class="md-col-span-2">
-                        <label>Técnicos (Obligatorio)</label>
+                        <label>Técnicos</label>
                         <div class="tecnicos-control">
                             <select id="tecnico-select" onchange="manejarSeleccionTecnico()">
                                 <option value="" disabled selected>Selecciona un técnico</option>
@@ -548,28 +548,28 @@
                     </div>
 
                     <div class="md-col-span-2">
-                        <label for="cobrar">COBRAR (Obligatorio)</label>
-                        <input type="text" id="cobrar" required placeholder="Ej: Cliente canceló $20 de la mensualidad y $21 de cableado.">
+                        <label for="cobrar">COBRAR</label>
+                        <input type="text" id="cobrar" required placeholder="Ej: Cliente canceló $20 de la mensualidad y $15 de cableado.">
                     </div>
 
                     <div class="md-col-span-2">
-                        <label for="notas">NOTAS ADICIONALES (Opcional)</label>
-                        <textarea id="notas" rows="4" placeholder="Escribe aquí las notas específicas del servicio, como solicitud de router secundario, problemas resueltos, o el estado final."></textarea>
+                        <label for="notas">NOTAS (Opcional)</label>
+                        <textarea id="notas" rows="4" placeholder="Escribe aquí las notas específicas del servicio"></textarea>
                     </div>
 
                 </div>
 
                 <div class="reporte-area">
-                    <h2>Reporte Final para Copiar</h2>
+                    <h2>Reporte Final:</h2>
                     
-                    <textarea id="reporte-output" rows="10" readonly placeholder="El reporte final aparecerá aquí con el formato requerido..."></textarea>
+                    <textarea id="reporte-output" rows="10" readonly placeholder="El reporte final aparecerá aquí..."></textarea>
 
                     <div class="reporte-botones">
                         <button type="button" onclick="generarReporte()" class="btn accent">
-                            Generar Reporte
+                            Generar
                         </button>
                         <button type="button" onclick="copiarReporte()" class="btn accent">
-                            Copiar Reporte 📋
+                            Copiar
                         </button>
                         <button type="button" onclick="reiniciarFormulario()" class="btn-reiniciar">
                             Reiniciar
@@ -766,7 +766,7 @@ ${cobrar}
 *TÉCNICOS:* ${tecnicos}`;
 
         if (notas) {
-            reporte += `\n\n*NOTAS ADICIONALES*
+            reporte += `\n\n*NOTAS*
 ${notas}`;
         }
 
