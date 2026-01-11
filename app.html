@@ -3,255 +3,362 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sushisimo - Sistema de Comandas</title>
+    <title>Tidy App</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --accent: #ff6b00; --bg-dark: #1a1c22; --bg-card: #252830; }
-        .dark-mode { background-color: var(--bg-dark); color: white; }
-        .light-mode { background-color: #f3f4f6; color: #1a1c22; }
-        .accent-text { color: var(--accent); }
-        .bg-accent { background-color: var(--accent); }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        .mesa-lista { animation: pulse 1.5s infinite; border: 2px solid #10b981; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        :root { --bg-dark: #1e222d; --bg-card: #2d3343; --accent: #ff6b00; --text-gray: #9ca3af; }
+        body { background-color: var(--bg-dark); color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        .tab-btn { color: var(--text-gray); font-weight: 600; font-size: 0.85rem; padding-bottom: 4px; transition: 0.3s; }
+        .tab-btn.active { color: var(--accent); border-bottom: 2px solid var(--accent); }
+        .card-mesa { background-color: #bbf7d0; color: #166534; border-radius: 8px; transition: transform 0.2s; }
+        .card-mesa.ocupada { background-color: var(--bg-card); color: white; border: 1px solid #3f4759; }
+        .card-mesa.listo { background-color: #10b981; color: white; animation: pulse 1.5s infinite; }
+        .card-mesa.limpiar { background-color: #3b82f6; color: white; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
         .no-scrollbar::-webkit-scrollbar { display: none; }
+        input, select { background-color: #1e222d !important; border: 1px solid #3f4759 !important; color: white !important; }
     </style>
 </head>
-<body class="dark-mode transition-colors duration-300 font-sans no-scrollbar">
+<body class="no-scrollbar">
 
-    <header class="p-6 pb-2">
-        <div class="flex justify-between items-center mb-4">
+    <header class="p-5">
+        <div class="flex justify-between items-start mb-6">
             <div>
-                <h1 class="text-3xl font-bold tracking-tight">Sushisimo</h1>
-                <p class="text-gray-400 text-sm">Bienvenido/a, <span class="text-white">Administrador</span></p>
+                <h1 class="text-2xl font-bold tracking-tight">Tidy</h1>
+                <p class="text-gray-400 text-xs mt-1">Bienvenido/a, <span class="font-semibold text-white">Administrador</span></p>
             </div>
-            <button class="bg-red-500/20 text-red-500 px-4 py-1 rounded-lg font-bold text-sm">Salir</button>
-        </div>
-        
-        <div class="flex space-x-6 border-b border-gray-700 pb-2 mb-4 text-sm font-bold">
-            <button onclick="showTab('dashboard')" class="accent-text border-b-2 border-orange-500 pb-2">Dashboard</button>
-            <button onclick="showTab('config')" class="text-gray-500">Gestión de Usuarios</button>
+            <button class="bg-[#ef4444] text-white px-4 py-1.5 rounded-lg text-sm font-bold shadow-lg">Salir</button>
         </div>
 
-        <div class="flex bg-[#252830] rounded-xl p-1 mb-6">
-            <button onclick="showTab('mesas')" class="flex-1 py-2 rounded-lg font-bold text-sm">Mesas</button>
-            <button onclick="showTab('cocina')" class="flex-1 py-2 rounded-lg font-bold text-sm">Cocina</button>
-            <button onclick="showTab('caja')" class="flex-1 py-2 rounded-lg font-bold text-sm">Caja</button>
+        <div class="flex gap-6 mb-4 border-b border-gray-700/50">
+            <button onclick="changeMenu('main')" id="btn-main" class="tab-btn active">Dashboard</button>
+            <button onclick="changeMenu('admin')" id="btn-admin" class="tab-btn">Gestión de Usuarios</button>
+        </div>
+        <div id="sub-nav-admin" class="hidden flex gap-4 mb-6 text-xs font-semibold text-gray-400">
+            <button onclick="showSection('config')" class="hover:text-white">Configuración</button>
+            <button class="hover:text-white">Reportes</button>
+        </div>
+
+        <div class="bg-[#2d3343] p-1 rounded-xl flex gap-1 mb-6">
+            <button onclick="showSection('mesas')" class="sec-btn flex-1 py-2 text-xs font-bold rounded-lg bg-[#3f4759]">Mesas</button>
+            <button onclick="showSection('cocina')" class="sec-btn flex-1 py-2 text-xs font-bold rounded-lg">Cocina</button>
+            <button onclick="showSection('caja')" class="sec-btn flex-1 py-2 text-xs font-bold rounded-lg">Caja</button>
         </div>
     </header>
 
-    <main class="px-6 pb-24">
-        
-        <section id="mesas" class="tab-content active">
-            <h2 class="text-lg font-bold mb-4 italic">Mesas de</h2>
-            <div id="grid-mesas" class="grid grid-cols-2 gap-4">
-                </div>
+    <main class="px-5 pb-24">
+        <section id="sec-mesas" class="app-section">
+            <h3 class="text-sm font-bold mb-4">Mesas</h3>
+            <div id="grid-mesas" class="grid grid-cols-2 gap-3"></div>
         </section>
 
-        <section id="cocina" class="tab-content">
-            <h2 class="text-lg font-bold mb-4">Monitor de Cocina</h2>
-            <div id="lista-cocina" class="space-y-4">
-                </div>
+        <section id="sec-cocina" class="app-section hidden">
+            <h3 class="text-sm font-bold mb-4">Cocina - Órdenes Pendientes</h3>
+            <div id="lista-cocina" class="space-y-3"></div>
         </section>
 
-        <section id="caja" class="tab-content">
-            <h2 class="text-lg font-bold mb-4 text-center">Facturación y POS</h2>
-            <div id="lista-caja" class="space-y-4"></div>
+        <section id="sec-caja" class="app-section hidden">
+            <h3 class="text-sm font-bold mb-4">Caja Registradora</h3>
+            <div id="lista-caja" class="space-y-3"></div>
         </section>
 
-        <section id="config" class="tab-content">
-            <div class="space-y-6">
-                <div class="bg-[#252830] p-4 rounded-2xl">
-                    <h3 class="font-bold mb-3 accent-text text-sm uppercase">Agregar Platillo</h3>
-                    <input type="text" id="new-p-nombre" placeholder="Nombre..." class="w-full bg-[#1a1c22] p-3 rounded-xl mb-2 text-sm">
-                    <input type="number" id="new-p-precio" placeholder="Precio USD" class="w-full bg-[#1a1c22] p-3 rounded-xl mb-4 text-sm">
-                    <button onclick="addPlatillo()" class="w-full bg-green-600 py-3 rounded-xl font-bold">Guardar Producto</button>
-                </div>
-                
-                <div class="bg-[#252830] p-4 rounded-2xl">
-                    <h3 class="font-bold mb-3 accent-text text-sm uppercase">Ajustes Generales</h3>
-                    <div class="flex justify-between items-center mb-4 text-sm">
-                        <span>Tasa del Dólar (Bs)</span>
-                        <input type="number" id="cfg-tasa" value="36.5" class="bg-[#1a1c22] w-20 p-2 rounded text-right">
-                    </div>
-                    <div class="flex justify-between items-center mb-4 text-sm">
-                        <span>Modo Oscuro</span>
-                        <input type="checkbox" checked onchange="toggleTheme()" class="w-10 h-5 accent-orange-500">
-                    </div>
-                </div>
+        <section id="sec-config" class="app-section hidden">
+            <div class="bg-[#2d3343] p-5 rounded-2xl space-y-4">
+                <h4 class="text-orange-500 font-bold text-xs uppercase">Añadir/Editar Platillo</h4>
+                <input type="text" id="crud-nombre" placeholder="Nombre del platillo" class="w-full p-3 rounded-xl outline-none text-sm">
+                <input type="number" id="crud-precio" placeholder="Precio USD" class="w-full p-3 rounded-xl outline-none text-sm">
+                <button onclick="savePlatillo()" class="w-full bg-orange-500 py-3 rounded-xl font-bold text-sm">Guardar en Menú</button>
+                <div id="lista-crud" class="mt-4 space-y-2 border-t border-gray-700 pt-4"></div>
             </div>
-        </section>
+        </header>
+
     </main>
 
-    <div id="modal-pedido" class="fixed inset-0 bg-black/80 hidden z-50 flex items-end">
-        <div class="bg-[#252830] w-full rounded-t-[3rem] p-8 max-h-[85vh] overflow-y-auto">
-            <div class="w-12 h-1 bg-gray-600 mx-auto mb-6 rounded"></div>
-            <h2 id="mesa-titulo" class="text-2xl font-bold mb-2">Mesa </h2>
-            <p id="notif-cocina" class="text-green-400 text-xs font-bold mb-4 hidden italic">¡Esta mesa tiene platos listos!</p>
+    <div id="modal-orden" class="fixed inset-0 bg-black/80 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-[#2d3343] w-full max-w-sm rounded-[2rem] p-6 shadow-2xl">
+            <h2 id="orden-mesa-titulo" class="text-xl font-bold mb-6 text-center">Tomar Orden - Mesa 5</h2>
             
-            <select id="select-platillo" class="w-full bg-[#1a1c22] p-4 rounded-2xl mb-4 border border-gray-700 text-gray-300">
-                <option value="">Seleccione un platillo...</option>
-            </select>
-            
-            <textarea placeholder="Notas (Opcional)" class="w-full bg-[#1a1c22] p-4 rounded-2xl mb-6 h-20 text-sm"></textarea>
-            
-            <div class="flex justify-between items-center mb-8">
-                <span class="text-gray-400">Total en USD:</span>
-                <span class="text-2xl font-black accent-text">$<span id="total-pedido">0.00</span></span>
-            </div>
+            <div class="space-y-5">
+                <div>
+                    <select id="sel-platillo" onchange="updatePriceFromMenu()" class="w-full p-3 rounded-xl text-sm outline-none">
+                        <option value="">Seleccione un platillo...</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="text-[10px] text-gray-400 font-bold ml-1 uppercase">Notas (Opcional)</label>
+                    <input type="text" id="orden-notas" placeholder="Ej: Sin cebolla" class="w-full p-3 rounded-xl text-sm mt-1 outline-none">
+                </div>
 
-            <div class="grid grid-cols-2 gap-4">
-                <button onclick="closeModal()" class="bg-gray-700 py-4 rounded-2xl font-bold uppercase text-xs">Cerrar</button>
-                <button onclick="confirmarPedido()" class="bg-accent py-4 rounded-2xl font-bold uppercase text-xs shadow-lg shadow-orange-500/20">Enviar Comanda</button>
+                <div class="flex gap-4">
+                    <div class="flex-1">
+                        <label class="text-[10px] text-gray-400 font-bold ml-1 uppercase">Precio</label>
+                        <div class="flex items-center bg-[#1e222d] rounded-xl mt-1 border border-[#3f4759]">
+                            <button class="px-3 py-2 text-gray-400" onclick="adjustValue('orden-precio', -1)">-</button>
+                            <input type="number" id="orden-precio" value="0.00" step="0.5" class="w-full text-center bg-transparent border-none p-2 text-sm">
+                            <button class="px-3 py-2 text-gray-400" onclick="adjustValue('orden-precio', 1)">+</button>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <label class="text-[10px] text-gray-400 font-bold ml-1 uppercase">Cantidad</label>
+                        <div class="flex items-center bg-[#1e222d] rounded-xl mt-1 border border-[#3f4759]">
+                            <button class="px-3 py-2 text-gray-400" onclick="adjustValue('orden-cant', -1)">-</button>
+                            <input type="number" id="orden-cant" value="1" class="w-full text-center bg-transparent border-none p-2 text-sm">
+                            <button class="px-3 py-2 text-gray-400" onclick="adjustValue('orden-cant', 1)">+</button>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="agregarAlPedido()" class="w-full bg-[#ff6b00] py-3 rounded-xl font-bold text-sm shadow-lg shadow-orange-500/20 mt-2">Agregar al Pedido</button>
+                
+                <div class="py-4 border-t border-gray-700/50">
+                    <p class="text-[10px] text-gray-400 font-bold uppercase mb-3">Items del Pedido:</p>
+                    <div id="lista-pedido-modal" class="space-y-3 max-h-40 overflow-y-auto no-scrollbar"></div>
+                    <div class="flex justify-end mt-4 text-lg font-black text-white">$<span id="total-modal">0.00</span></div>
+                </div>
+
+                <div class="flex gap-3 pt-2">
+                    <button onclick="closeModalOrden()" class="flex-1 bg-white/10 py-3 rounded-xl font-bold text-sm">Cerrar</button>
+                    <button onclick="emitirComanda()" id="btn-emitir" class="flex-1 bg-[#10b981] py-3 rounded-xl font-bold text-sm">Emitir</button>
+                </div>
             </div>
         </div>
     </div>
 
+    <div id="modal-pago" class="fixed inset-0 bg-black/95 hidden z-50 flex items-center justify-center p-6 text-center">
+        <div class="bg-[#2d3343] w-full max-w-sm rounded-[2.5rem] p-8">
+            <h2 class="text-2xl font-black mb-2">Pago Mesa <span id="pago-id"></span></h2>
+            <p class="text-orange-500 font-bold mb-8">Total: $<span id="pago-usd"></span> / Bs <span id="pago-bs"></span></p>
+            
+            <div class="space-y-4 mb-8 text-left">
+                <div>
+                    <label class="text-[10px] opacity-50 uppercase font-bold">Pago en Dólares ($)</label>
+                    <input type="number" id="pay-usd" oninput="calcMix()" class="w-full p-4 rounded-2xl outline-none text-xl font-bold mt-1">
+                </div>
+                <div class="p-4 bg-white/5 rounded-2xl">
+                    <label class="text-[10px] opacity-50 uppercase font-bold">Resta en Bolívares (Bs)</label>
+                    <div id="pay-bs-res" class="text-2xl font-black text-green-400 mt-1">0.00</div>
+                </div>
+            </div>
+            <button onclick="finalizarCobro()" class="w-full bg-green-500 text-black py-5 rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-green-500/20">Finalizar Pago</button>
+        </div>
+    </div>
+
     <script>
-        // ESTADO INICIAL
         let app = {
-            tasa: 36.5,
-            mesas: Array.from({length: 8}, (_, i) => ({ id: i + 1, status: 'Libre', pedido: [], total: 0, listaParaEntrega: false })),
+            tasa: 37.50,
+            mesas: Array.from({length: 12}, (_, i) => ({ id: i + 1, status: 'libre', items: [], total: 0 })),
             menu: [
-                { nombre: 'California Roll', precio: 12 },
-                { nombre: 'Sashimi Atún', precio: 15 },
-                { nombre: 'Mochi Té Verde', precio: 5 }
+                { id: 1, nombre: 'Pizza', precio: 6.00 },
+                { id: 2, nombre: 'Refresco', precio: 1.50 },
+                { id: 3, nombre: 'Sushi Roll', precio: 12.00 }
             ],
             cocina: [],
-            mesaActiva: null
+            mesaSeleccionada: null
         };
 
-        // NAVEGACIÓN
-        function showTab(id) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
+        // NAVEGACIÓN (Imagen 2)
+        function changeMenu(type) {
+            document.getElementById('btn-main').classList.toggle('active', type === 'main');
+            document.getElementById('btn-admin').classList.toggle('active', type === 'admin');
+            document.getElementById('sub-nav-admin').classList.toggle('hidden', type !== 'admin');
+        }
+
+        function showSection(id) {
+            document.querySelectorAll('.app-section').forEach(s => s.classList.add('hidden'));
+            document.getElementById('sec-' + id).classList.remove('hidden');
+            document.querySelectorAll('.sec-btn').forEach(b => b.classList.remove('bg-[#3f4759]'));
+            event.currentTarget.classList.add('bg-[#3f4759]');
             render();
         }
 
-        // CRUD PLATILLOS
-        function addPlatillo() {
-            const n = document.getElementById('new-p-nombre').value;
-            const p = parseFloat(document.getElementById('new-p-precio').value);
+        // CRUD
+        function savePlatillo() {
+            const n = document.getElementById('crud-nombre').value;
+            const p = parseFloat(document.getElementById('crud-precio').value);
             if(n && p) {
-                app.menu.push({ nombre: n, precio: p });
-                alert("Platillo Agregado");
-                showTab('mesas');
+                app.menu.push({ id: Date.now(), nombre: n, precio: p });
+                render();
             }
         }
 
-        // GESTIÓN DE MESAS
+        // MODAL ORDEN (Lógica funcional de Imagen 1)
+        function openMesa(id) {
+            app.mesaSeleccionada = id;
+            const mesa = app.mesas.find(m => m.id === id);
+            
+            if(mesa.status === 'limpiar') {
+                if(confirm("¿Mesa limpia?")) { mesa.status = 'libre'; mesa.items = []; render(); }
+                return;
+            }
+
+            document.getElementById('orden-mesa-titulo').innerText = `Tomar Orden - Mesa ${id}`;
+            const sel = document.getElementById('sel-platillo');
+            sel.innerHTML = '<option value="">Seleccione un platillo...</option>' + 
+                app.menu.map(p => `<option value="${p.id}">${p.nombre}</option>`).join('');
+            
+            renderModalPedido();
+            document.getElementById('modal-orden').classList.remove('hidden');
+        }
+
+        function updatePriceFromMenu() {
+            const id = document.getElementById('sel-platillo').value;
+            const plato = app.menu.find(p => p.id == id);
+            if(plato) document.getElementById('orden-precio').value = plato.precio.toFixed(2);
+        }
+
+        function adjustValue(id, val) {
+            const el = document.getElementById(id);
+            el.value = (parseFloat(el.value) + val < 0) ? 0 : (parseFloat(el.value) + val);
+        }
+
+        function agregarAlPedido() {
+            const id = document.getElementById('sel-platillo').value;
+            if(!id) return;
+            const plato = app.menu.find(p => p.id == id);
+            const cant = parseInt(document.getElementById('orden-cant').value);
+            const precio = parseFloat(document.getElementById('orden-precio').value);
+            const notas = document.getElementById('orden-notas').value;
+
+            const mesa = app.mesas.find(m => m.id === app.mesaSeleccionada);
+            mesa.items.push({ nombre: plato.nombre, cantidad: cant, precio: precio, notas: notas });
+            mesa.status = 'ocupada';
+            renderModalPedido();
+        }
+
+        function renderModalPedido() {
+            const mesa = app.mesas.find(m => m.id === app.mesaSeleccionada);
+            const list = document.getElementById('lista-pedido-modal');
+            let total = 0;
+            list.innerHTML = mesa.items.map((i, idx) => {
+                total += i.precio * i.cantidad;
+                return `
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-white">${i.cantidad} x ${i.nombre} <small class="text-gray-500">($${i.precio.toFixed(2)} c/u)</small></span>
+                        <div class="flex items-center gap-3">
+                            <span class="font-bold text-white">$${(i.precio * i.cantidad).toFixed(2)}</span>
+                            <button onclick="removerItem(${idx})" class="text-red-500 text-xs">✕</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            document.getElementById('total-modal').innerText = total.toFixed(2);
+            mesa.total = total;
+            document.getElementById('btn-emitir').innerText = mesa.status === 'listo' ? 'Entregar' : 'Emitir';
+        }
+
+        function removerItem(idx) {
+            const mesa = app.mesas.find(m => m.id === app.mesaSeleccionada);
+            mesa.items.splice(idx, 1);
+            if(mesa.items.length === 0) mesa.status = 'libre';
+            renderModalPedido();
+        }
+
+        function emitirComanda() {
+            const mesa = app.mesas.find(m => m.id === app.mesaSeleccionada);
+            if(mesa.status === 'listo') {
+                mesa.status = 'ocupada';
+            } else if(mesa.items.length > 0) {
+                app.cocina.push({ id: Date.now(), mesaId: mesa.id, items: [...mesa.items], inicio: new Date() });
+            }
+            closeModalOrden();
+            render();
+        }
+
+        // CAJA (Pagos Mixtos)
+        function abrirPago(id) {
+            app.mesaSeleccionada = id;
+            const mesa = app.mesas.find(m => m.id === id);
+            document.getElementById('pago-id').innerText = id;
+            document.getElementById('pago-usd').innerText = mesa.total.toFixed(2);
+            document.getElementById('pago-bs').innerText = (mesa.total * app.tasa).toFixed(2);
+            document.getElementById('pay-usd').value = mesa.total;
+            calcMix();
+            document.getElementById('modal-pago').classList.remove('hidden');
+        }
+
+        function calcMix() {
+            const mesa = app.mesas.find(m => m.id === app.mesaSeleccionada);
+            const pagoUsd = parseFloat(document.getElementById('pay-usd').value) || 0;
+            const resta = (mesa.total - pagoUsd) * app.tasa;
+            document.getElementById('pay-bs-res').innerText = (resta > 0 ? resta : 0).toFixed(2);
+        }
+
+        function finalizarCobro() {
+            const mesa = app.mesas.find(m => m.id === app.mesaSeleccionada);
+            mesa.status = 'limpiar';
+            document.getElementById('modal-pago').classList.add('hidden');
+            render();
+        }
+
+        // RENDER GENERAL
         function render() {
-            // Mesas
+            // Mesas (Imagen 2)
             const grid = document.getElementById('grid-mesas');
-            grid.innerHTML = app.mesas.map(m => `
-                <div onclick="openMesa(${m.id})" class="p-6 rounded-2xl flex flex-col items-center justify-center transition-all active:scale-95 ${m.listaParaEntrega ? 'mesa-lista' : (m.status === 'Libre' ? 'bg-[#bbf7d0] text-black' : 'bg-[#252830] text-white border border-gray-700')}">
-                    <span class="text-sm font-bold">Mesa ${m.id}</span>
-                    <span class="text-[10px] opacity-70 mt-1 uppercase">${m.listaParaEntrega ? '¡LISTO!' : m.status}</span>
-                </div>
-            `).join('');
+            grid.innerHTML = app.mesas.map(m => {
+                let statusClass = '';
+                let label = m.status === 'libre' ? 'Libre' : m.status.toUpperCase();
+                if(m.status === 'ocupada') statusClass = 'ocupada';
+                if(m.status === 'listo') statusClass = 'listo';
+                if(m.status === 'limpiar') statusClass = 'limpiar';
+
+                return `
+                    <div onclick="openMesa(${m.id})" class="card-mesa p-5 shadow-lg flex flex-col items-center justify-center ${statusClass}">
+                        <span class="text-xs font-bold">Mesa ${m.id}</span>
+                        <span class="text-[10px] opacity-70 mt-1">${label}</span>
+                    </div>
+                `;
+            }).join('');
 
             // Cocina
-            const listaCocina = document.getElementById('lista-cocina');
-            listaCocina.innerHTML = app.cocina.map((c, i) => `
-                <div class="bg-[#252830] p-5 rounded-2xl border-l-4 ${c.estado === 'En espera' ? 'border-red-500' : 'border-green-500'}">
-                    <div class="flex justify-between items-start mb-2">
-                        <span class="font-bold text-orange-500">Mesa ${c.mesaId}</span>
-                        <span class="text-[10px] bg-black/30 px-2 py-1 rounded italic">${c.tiempo}</span>
+            const kList = document.getElementById('lista-cocina');
+            kList.innerHTML = app.cocina.map(o => {
+                const mins = Math.floor((new Date() - o.inicio) / 60000);
+                return `
+                    <div class="bg-[#2d3343] p-5 rounded-2xl border-l-4 ${mins > 10 ? 'border-red-500' : 'border-green-500'}">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="font-bold text-lg">Mesa ${o.mesaId}</span>
+                            <span class="text-xs text-gray-400 font-bold">${mins}m transcurridos</span>
+                        </div>
+                        <div class="text-sm opacity-80 mb-4">${o.items.map(i => `• ${i.cantidad}x ${i.nombre}`).join('<br>')}</div>
+                        <button onclick="terminarCocina(${o.id})" class="w-full bg-[#10b981] py-3 rounded-xl font-bold text-xs uppercase">Marcar como Listo</button>
                     </div>
-                    <div class="text-sm mb-4">${c.platos.map(p => `• ${p.nombre}`).join('<br>')}</div>
-                    <button onclick="avanzarCocina(${i})" class="w-full py-2 bg-green-600 rounded-xl text-xs font-bold uppercase">${c.estado === 'En espera' ? 'Marcar Preparado' : 'Listo para enviar'}</button>
-                </div>
-            `).join('');
+                `;
+            }).join('');
 
             // Caja
-            const listaCaja = document.getElementById('lista-caja');
-            const ocupadas = app.mesas.filter(m => m.status === 'Ocupada');
-            listaCaja.innerHTML = ocupadas.map(m => `
-                <div class="bg-[#252830] p-5 rounded-3xl flex justify-between items-center border border-gray-800">
+            const cList = document.getElementById('lista-caja');
+            const pends = app.mesas.filter(m => m.status === 'ocupada' || m.status === 'listo');
+            cList.innerHTML = pends.map(m => `
+                <div class="bg-[#2d3343] p-5 rounded-2xl flex justify-between items-center shadow-md">
                     <div>
-                        <div class="text-sm font-bold uppercase tracking-widest text-gray-500">Mesa ${m.id}</div>
-                        <div class="text-xl font-black">$${m.total} <span class="text-xs text-green-500 ml-2">Bs ${(m.total * app.tasa).toFixed(2)}</span></div>
+                        <p class="text-[10px] font-bold text-gray-400 uppercase">Mesa ${m.id}</p>
+                        <p class="text-xl font-black">$${m.total.toFixed(2)}</p>
                     </div>
-                    <button onclick="cobrar(${m.id})" class="bg-green-500 text-black px-4 py-2 rounded-xl font-bold text-xs">Cobrar / POS</button>
+                    <button onclick="abrirPago(${m.id})" class="bg-white text-black px-6 py-2 rounded-xl font-bold text-xs">COBRAR</button>
+                </div>
+            `).join('');
+
+            // CRUD List
+            document.getElementById('lista-crud').innerHTML = app.menu.map(p => `
+                <div class="flex justify-between text-sm bg-black/20 p-3 rounded-xl border border-white/5">
+                    <span>${p.nombre}</span>
+                    <span class="font-bold text-orange-500">$${p.precio.toFixed(2)}</span>
                 </div>
             `).join('');
         }
 
-        function openMesa(id) {
-            app.mesaActiva = id;
-            const mesa = app.mesas.find(m => m.id === id);
-            document.getElementById('mesa-titulo').innerText = `Mesa ${id}`;
-            document.getElementById('total-pedido').innerText = mesa.total.toFixed(2);
-            document.getElementById('notif-cocina').style.display = mesa.listaParaEntrega ? 'block' : 'none';
-            
-            const select = document.getElementById('select-platillo');
-            select.innerHTML = '<option value="">Seleccione un platillo...</option>' + 
-                app.menu.map((p, i) => `<option value="${i}">${p.nombre} - $${p.precio}</option>`).join('');
-            
-            document.getElementById('modal-pedido').classList.remove('hidden');
-        }
-
-        function confirmarPedido() {
-            const sel = document.getElementById('select-platillo').value;
-            const mesa = app.mesas.find(m => m.id === app.mesaActiva);
-            
-            if(sel !== "") {
-                const plato = app.menu[sel];
-                mesa.pedido.push(plato);
-                mesa.total += plato.precio;
-                mesa.status = 'Ocupada';
-                
-                // Enviar a Cocina
-                app.cocina.push({
-                    mesaId: mesa.id,
-                    platos: [plato],
-                    estado: 'En espera',
-                    tiempo: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
-                });
-            }
-            closeModal();
+        function terminarCocina(id) {
+            const orden = app.cocina.find(o => o.id === id);
+            const mesa = app.mesas.find(m => m.id === orden.mesaId);
+            mesa.status = 'listo';
+            app.cocina = app.cocina.filter(o => o.id !== id);
             render();
         }
 
-        function avanzarCocina(i) {
-            const item = app.cocina[i];
-            if(item.estado === 'En espera') {
-                item.estado = 'Listo';
-            } else {
-                // Notificar al mesero
-                const mesa = app.mesas.find(m => m.id === item.mesaId);
-                mesa.listaParaEntrega = true;
-                app.cocina.splice(i, 1);
-            }
-            render();
-        }
-
-        function cobrar(id) {
-            const mesa = app.mesas.find(m => m.id === id);
-            const msg = `Mesa ${id} pagada: $${mesa.total}`;
-            window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
-            mesa.status = 'Libre';
-            mesa.pedido = [];
-            mesa.total = 0;
-            mesa.listaParaEntrega = false;
-            render();
-        }
-
-        function closeModal() {
-            document.getElementById('modal-pedido').classList.add('hidden');
-            const mesa = app.mesas.find(m => m.id === app.mesaActiva);
-            mesa.listaParaEntrega = false; // El mesero "vio" la notificación
-            render();
-        }
-
-        function toggleTheme() {
-            document.body.classList.toggle('dark-mode');
-            document.body.classList.toggle('light-mode');
-        }
-
-        // INICIO
+        function closeModalOrden() { document.getElementById('modal-orden').classList.add('hidden'); }
+        setInterval(render, 30000); // Auto refresh cocina
         render();
     </script>
 </body>
