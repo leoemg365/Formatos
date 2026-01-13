@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NetAdmin v6.5</title>
+    <style>
+        :root {
+            --bg-body: #f0f2f5; --bg-surface: #ffffff; --bg-input: #e4e6eb;
+            --text-main: #1c1e21; --text-sec: #65676b;
+            --primary: #1877f2; --danger: #ff4d4f; --border: #ced0d4;
+            --radius: 12px; --shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        body.dark-mode {
+            --bg-body: #18191a; --bg-surface: #242526; --bg-input: #3a3b3c;
+            --text-main: #e4e6eb; --text-sec: #b0b3b8; --border: #3e4042;
+        }
+        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg-body); color: var(--text-main); margin: 0; padding: 0; transition: 0.3s; height: 100vh; overflow-y: auto; }
+
+        /* Eliminar flechas numéricas */
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
+
+        /* PANTALLAS */
+        .screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-body); z-index: 2000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: 20px; text-align: center;
+        }
+        .hidden { display: none !important; }
+
+        .welcome-box {
+            background: var(--bg-surface); padding: 30px; border-radius: 20px;
+            box-shadow: var(--shadow); max-width: 400px; width: 100%;
+            border: 1px solid var(--border);
+        }
+        .logo { font-size: 3rem; margin-bottom: 10px; }
+        h2 { margin: 10px 0; color: var(--primary); }
+        p { color: var(--text-sec); font-size: 0.95rem; margin-bottom: 20px; }
+
+        .big-input {
+            width: 100%; padding: 15px; border-radius: var(--radius);
+            border: 2px solid var(--border); background: var(--bg-input);
+            font-size: 1.1rem; text-align: center; color: var(--text-main); margin-bottom: 15px;
+        }
+        .big-input:focus { border-color: var(--primary); }
+        .btn-large {
+            width: 100%; padding: 15px; background: var(--primary); color: white;
+            border: none; border-radius: var(--radius); font-size: 1rem; font-weight: bold;
+            cursor: pointer; transition: 0.2s;
+        }
+        
+        /* APP CONTAINER */
+        #app-container { max-width: 800px; margin: 0 auto; padding: 20px; display: none; padding-bottom: 50px; }
+        #app-container.visible { display: block; animation: fadeIn 0.5s; }
+
+        .app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .user-greeting { font-weight: bold; font-size: 1.2rem; }
+        .controls { display: flex; gap: 10px; }
+
+        .tabs { display: flex; background: var(--bg-surface); padding: 5px; border-radius: 15px; margin-bottom: 20px; box-shadow: var(--shadow); }
+        .tab { flex: 1; text-align: center; padding: 12px; border-radius: 10px; cursor: pointer; color: var(--text-sec); font-weight: 600; }
+        .tab.active { background: var(--primary); color: white; }
+
+        .list-box { background: var(--bg-surface); border-radius: var(--radius); padding: 15px; margin-bottom: 15px; border: 1px solid var(--border); }
+        .list-head { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+        
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+        
+        .card { 
+            background: var(--bg-body); border: 1px solid var(--border); border-radius: 8px; padding: 12px;
+            position: relative; cursor: pointer; border-left: 4px solid var(--border); transition: 0.2s;
+        }
+        .card:active { transform: scale(0.98); }
+        .card-label { font-weight: bold; font-size: 0.9rem; margin-bottom: 4px; }
+        .card-val { font-size: 0.8rem; color: var(--text-sec); font-family: monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        
+        .actions { position: absolute; top: 5px; right: 5px; display: none; }
+        .card:hover .actions { display: block; }
+        .mini-btn { font-size: 10px; padding: 2px 5px; background: white; border: 1px solid #ccc; border-radius: 4px; cursor: pointer; }
+        
+        .pass-card { border-left: none; border-top: 4px solid var(--danger); cursor: default; }
+        .cred-row { display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.03); padding: 5px; border-radius: 4px; margin-top: 5px; font-size: 0.85rem; }
+        .blur { filter: blur(4px); cursor: pointer; transition: 0.2s; }
+        .blur:hover { filter: blur(0); }
+
+        /* MODALES */
+        .modal-overlay {
+            position: fixed; top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.6); z-index: 3000;
+            display: none; justify-content: center; align-items: center;
+        }
+        /* Modal Seguridad debe estar ENCIMA de la alarma */
+        #security-modal { z-index: 4000; }
+        
+        .alert-box {
+            background: var(--bg-surface); padding: 25px; border-radius: 20px;
+            text-align: center; max-width: 300px; animation: popUp 0.3s; border: 2px solid var(--primary);
+        }
+        .alert-danger { border-color: var(--danger); }
+        .alert-icon { font-size: 3rem; margin-bottom: 10px; animation: shake 0.5s infinite; }
+
+        .btn-icon { background: none; border: 1px solid var(--border); border-radius: 8px; width: 40px; height: 40px; cursor: pointer; color: var(--text-main); font-size: 1.2rem; }
+        .btn-add { border: 2px dashed var(--border); color: var(--text-sec); font-weight: bold; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 10px 20px; border-radius: 20px; opacity: 0; pointer-events: none; transition: 0.3s; }
+        #toast.show { opacity: 1; transform: translateX(-50%) translateY(-10px); }
+
+        @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+        @keyframes popUp { from{transform:scale(0.8)} to{transform:scale(1)} }
+        @keyframes shake { 0% { transform: rotate(0deg); } 25% { transform: rotate(5deg); } 75% { transform: rotate(-5deg); } 100% { transform: rotate(0deg); } }
+    </style>
+</head>
+<body>
+
+    <input type="file" id="import-file" style="display:none" accept=".json" onchange="importData(this)">
+
+    <div id="setup-screen" class="screen hidden">
+        <div class="welcome-box">
+            <div class="logo">👋</div>
+            <h2>Bienvenido</h2>
+            <p>Configuremos tu acceso seguro.</p>
+            <div id="step-1">
+                <input type="text" id="setup-name" class="big-input" placeholder="Tu Nombre">
+                <button class="btn-large" onclick="nextStep(2)">Continuar</button>
+            </div>
+            <div id="step-2" class="hidden">
+                <p>Crea un PIN (4-12 dígitos)</p>
+                <input type="password" inputmode="numeric" id="setup-pin" class="big-input" placeholder="Ej: 1234" maxlength="12">
+                <button class="btn-large" onclick="finishSetup()">Finalizar Configuración</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="lock-screen" class="screen hidden">
+        <div class="welcome-box">
+            <div class="logo">🔒</div>
+            <h2>Hola, <span id="lock-name">Usuario</span></h2>
+            <div style="background: var(--bg-input); padding: 10px; border-radius: 8px; margin-bottom: 15px; border: 1px solid var(--primary);">
+                <label style="display:block; font-size:0.85rem; color:var(--text-sec); margin-bottom:5px">¿A qué hora sales hoy?</label>
+                <input type="time" id="daily-shift" style="width:100%; padding:8px; border-radius:6px; border:1px solid #ccc; font-size:1.1rem; text-align:center;">
+            </div>
+            <p>Ingresa tu PIN</p>
+            <input type="password" inputmode="numeric" id="login-pin" class="big-input" placeholder="****" maxlength="12">
+            <button class="btn-large" onclick="unlockApp()">Entrar</button>
+            <p style="margin-top:20px; font-size:0.8rem; cursor:pointer; color:var(--text-sec)" onclick="resetApp()">¿Olvidaste tu PIN?</p>
+        </div>
+    </div>
+
+    <div id="app-container">
+        <div class="app-header">
+            <div class="user-greeting">
+                <span id="app-username">Usuario</span>
+                <div style="font-size:0.75rem; color:var(--text-sec); font-weight:normal">Salida hoy: <span id="display-time">--:--</span></div>
+            </div>
+            <div class="controls">
+                <button class="btn-icon" onclick="toggleTheme()" title="Tema">🌓</button>
+                <button class="btn-icon" onclick="startSecurityCheck('save')" title="Guardar Backup">💾</button>
+                <button class="btn-icon" onclick="startSecurityCheck('restore')" title="Restaurar Backup">📂</button>
+                <button class="btn-icon" onclick="lockApp()" title="Bloquear">🔒</button>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('clip')">📋 Portapapeles</div>
+            <div class="tab" onclick="switchTab('pass')">🔐 Contraseñas</div>
+        </div>
+
+        <div id="view-clip"></div>
+        <div id="view-pass" class="hidden"></div>
+
+        <footer style="text-align:center; color:var(--text-sec); margin-top:32px; font-size:0.92em; opacity:0.8; padding-bottom: 20px;">
+            NetAdmin<br>
+            Gestor de Portapapeles<br>
+            Versión Final V6.5 - Build 2026-01-13<br>
+            © 2026 - Todos los derechos reservados<br>
+            Espiral - Leonardo Montiel<br>
+        </footer>
+    </div>
+
+    <div id="backup-modal" class="modal-overlay">
+        <div class="alert-box alert-danger">
+            <div class="alert-icon">⏰</div>
+            <h3 style="color:var(--danger)">¡HORA DEL BACKUP!</h3>
+            <p>Falta 1 hora para tu salida.<br>Guarda tu trabajo ahora.</p>
+            <button class="btn-large" onclick="startSecurityCheck('alarm_save')">💾 DESCARGAR YA</button>
+            <br>
+            <button style="background:none; border:none; color:var(--text-sec); margin-top:15px; cursor:pointer" onclick="stopAlarm()">Ya lo hice</button>
+        </div>
+    </div>
+
+    <div id="security-modal" class="modal-overlay">
+        <div class="alert-box" id="security-box">
+            
+            <div id="sec-step-1">
+                <div style="font-size:2rem; margin-bottom:10px">🛡️</div>
+                <h3>Seguridad</h3>
+                <p>Ingresa tu PIN para continuar.</p>
+                <input type="password" inputmode="numeric" id="security-pin" class="big-input" placeholder="****" maxlength="12">
+                <div style="display:flex; gap:10px">
+                    <button class="btn-large" style="background:#ccc; color:#333" onclick="closeSecModal()">Cancelar</button>
+                    <button class="btn-large" onclick="verifyPin()">Verificar</button>
+                </div>
+            </div>
+
+            <div id="sec-step-2" class="hidden">
+                <div style="font-size:2rem; margin-bottom:10px">✅</div>
+                <h3 id="conf-title">Confirmar</h3>
+                <p id="conf-desc">Acción autorizada.</p>
+                <div style="display:flex; gap:10px">
+                    <button class="btn-large" style="background:#ccc; color:#333" onclick="closeSecModal()">Cancelar</button>
+                    <button class="btn-large" id="conf-btn" onclick="executeAction()">Confirmar</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="toast">Copiado</div>
+
+    <audio id="alarm-sound" loop>
+        <source src="data:audio/mp3;base64,//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq" type="audio/mpeg">
+    </audio>
+
+    <script>
+        let db = { config: { name: "", pin: "", theme: "light" }, clipboard: [], passwords: [] };
+        let dailyExitTime = null;
+        let alarmTriggered = false;
+        
+        let pendingAction = null; 
+        let pendingPayload = null; 
+        const alarmAudio = document.getElementById('alarm-sound');
+
+        window.onload = function() {
+            const saved = localStorage.getItem('netAdminDB_v6');
+            if (saved) {
+                db = JSON.parse(saved);
+                if(db.config.theme === 'dark') document.body.classList.add('dark-mode');
+                showLockScreen();
+            } else {
+                document.getElementById('setup-screen').classList.remove('hidden');
+            }
+            setInterval(checkTime, 30000);
+        };
+
+        // SETUP
+        function nextStep(s) {
+            if(s===2 && !document.getElementById('setup-name').value) return alert("Pon tu nombre");
+            document.getElementById('step-1').classList.add('hidden');
+            document.getElementById('step-2').classList.remove('hidden');
+        }
+
+        function finishSetup() {
+            const pin = document.getElementById('setup-pin').value;
+            if(pin.length < 4) return alert("Mínimo 4 dígitos");
+            
+            db.config.name = document.getElementById('setup-name').value;
+            db.config.pin = pin;
+            db.clipboard.push({id:1, title:"OLTs", cards:[{id:101, label:"OLT Maracaibo", content:"10.10.20.2"}]});
+            db.clipboard.push({id:2, title:"IPs Routers", cards:[{id:102, label:"Router Mercusys", content:"192.168.1.1"}]});
+            db.passwords.push({id:3, title:"Credenciales", cards:[{id:201, label:"ONU ZTE", user:"admin", pass:"gpon"}]});
+
+            saveDB();
+            location.reload();
+        }
+
+        // LOGIN
+        function showLockScreen() {
+            document.getElementById('lock-name').innerText = db.config.name;
+            document.getElementById('lock-screen').classList.remove('hidden');
+            document.getElementById('app-container').classList.remove('visible');
+            const now = new Date(); now.setHours(now.getHours() + 8);
+            const hh = String(now.getHours()).padStart(2, '0');
+            const mm = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('daily-shift').value = `${hh}:${mm}`;
+        }
+
+        function unlockApp() {
+            const pin = document.getElementById('login-pin').value;
+            const time = document.getElementById('daily-shift').value;
+            
+            if(pin !== db.config.pin) return alert("PIN Incorrecto");
+            if(!time) return alert("Indica tu hora de salida");
+            
+            if ("Notification" in window) Notification.requestPermission();
+            
+            dailyExitTime = time;
+            document.getElementById('app-username').innerText = db.config.name;
+            document.getElementById('display-time').innerText = time;
+            
+            document.getElementById('lock-screen').classList.add('hidden');
+            document.getElementById('app-container').classList.add('visible');
+            document.getElementById('login-pin').value = '';
+            
+            renderAll();
+        }
+
+        // --- SISTEMA DE SEGURIDAD (2 PASOS) ---
+        function startSecurityCheck(actionType, payload = null) {
+            pendingAction = actionType;
+            pendingPayload = payload;
+            
+            document.getElementById('security-pin').value = '';
+            document.getElementById('sec-step-1').classList.remove('hidden');
+            document.getElementById('sec-step-2').classList.add('hidden');
+            document.getElementById('security-modal').style.display = 'flex';
+            document.getElementById('security-pin').focus();
+        }
+
+        function verifyPin() {
+            const pin = document.getElementById('security-pin').value;
+            if(pin === db.config.pin) {
+                document.getElementById('sec-step-1').classList.add('hidden');
+                document.getElementById('sec-step-2').classList.remove('hidden');
+                
+                const title = document.getElementById('conf-title');
+                const desc = document.getElementById('conf-desc');
+                const btn = document.getElementById('conf-btn');
+                
+                if(pendingAction === 'save') {
+                    title.innerText = "Guardar Backup";
+                    desc.innerText = "Se descargará un archivo .json";
+                    btn.innerText = "Descargar";
+                    btn.onclick = executeSave; 
+                } else if(pendingAction === 'restore') {
+                    title.innerText = "Restaurar Backup";
+                    desc.innerText = "Selecciona el archivo para importar.";
+                    btn.innerText = "Seleccionar Archivo";
+                    btn.onclick = executeRestore;
+                } else if(pendingAction === 'delete') {
+                    title.innerText = "Eliminar";
+                    desc.innerText = "¿Estás seguro de borrar este elemento?";
+                    btn.innerText = "Sí, Borrar";
+                    btn.style.backgroundColor = "var(--danger)";
+                    btn.onclick = executeDelete;
+                } else if(pendingAction === 'alarm_save') { // NUEVO CASO ALARMA
+                    title.innerText = "Backup de Emergencia";
+                    desc.innerText = "Autorizar descarga de seguridad.";
+                    btn.innerText = "Autorizar y Descargar";
+                    btn.style.backgroundColor = "var(--danger)";
+                    btn.onclick = executeAlarmSave;
+                }
+            } else {
+                alert("PIN Incorrecto");
+            }
+        }
+
+        // ACCIONES FINALES
+        function executeSave() { exportData(); closeSecModal(); }
+        function executeRestore() { document.getElementById('import-file').click(); closeSecModal(); }
+        
+        function executeAlarmSave() {
+            exportData();
+            stopAlarm(); // Detiene alarma y cierra modal rojo
+            closeSecModal(); // Cierra modal de PIN
+        }
+
+        function executeDelete() {
+            if(pendingPayload.type === 'list') {
+                db[pendingPayload.cat].splice(pendingPayload.idx, 1);
+            } else {
+                db[pendingPayload.cat][pendingPayload.lIdx].cards.splice(pendingPayload.cIdx, 1);
+            }
+            saveDB();
+            renderAll();
+            closeSecModal();
+        }
+
+        function closeSecModal() {
+            document.getElementById('security-modal').style.display = 'none';
+            pendingAction = null; pendingPayload = null;
+        }
+
+        // ALARMA
+        function checkTime() {
+            if(!dailyExitTime || alarmTriggered) return;
+            const now = new Date(); const [h, m] = dailyExitTime.split(':');
+            const exit = new Date(); exit.setHours(h, m, 0);
+            const diff = (exit - now) / 1000 / 60;
+            if(diff <= 60 && diff > 0) triggerAlarm();
+        }
+        function triggerAlarm() {
+            alarmTriggered = true;
+            document.getElementById('backup-modal').style.display = 'flex';
+            try { alarmAudio.play(); } catch(e) {}
+            if ("Notification" in window && Notification.permission === "granted") new Notification("⏰ Alerta Backup", { body: "Falta 1 hora. Guarda." });
+        }
+        function stopAlarm() { document.getElementById('backup-modal').style.display = 'none'; alarmAudio.pause(); alarmAudio.currentTime = 0; }
+
+        // RENDER & CRUD
+        function renderAll() { renderSection('clipboard', 'view-clip'); renderSection('passwords', 'view-pass'); }
+        function renderSection(type, viewId) {
+            const container = document.getElementById(viewId); container.innerHTML = '';
+            db[type].forEach((list, lIdx) => {
+                const listEl = document.createElement('div'); listEl.className = 'list-box';
+                listEl.innerHTML = `<div class="list-head"><span>${list.title}</span> <button class="mini-btn" style="color:red" onclick="startSecurityCheck('delete', {type:'list', cat:'${type}', idx:${lIdx}})">x</button></div><div class="grid"></div>`;
+                const grid = listEl.querySelector('.grid');
+                list.cards.forEach((c, cIdx) => {
+                    const d = document.createElement('div');
+                    const delBtn = `<button class="mini-btn" onclick="startSecurityCheck('delete', {type:'card', cat:'${type}', lIdx:${lIdx}, cIdx:${cIdx}})">🗑️</button>`;
+                    if(type === 'clipboard') {
+                        d.className = 'card'; d.onclick = (e)=>{if(!e.target.closest('button')) copy(c.content)};
+                        d.innerHTML = `<div class="card-label">${c.label}</div><div class="card-val">${c.content}</div><div class="actions">${delBtn}</div>`;
+                    } else {
+                        d.className = 'card pass-card';
+                        d.innerHTML = `<div class="card-label">${c.label}</div><div class="cred-row"><span>👤 ${c.user}</span><button class="mini-btn" onclick="copy('${c.user}')">C</button></div><div class="cred-row"><span class="blur" onclick="copy('${c.pass}')">🔑 ${c.pass}</span><button class="mini-btn" onclick="copy('${c.pass}')">C</button></div><div class="actions">${delBtn}</div>`;
+                    }
+                    grid.appendChild(d);
+                });
+                const add = document.createElement('div'); add.className='card btn-add'; add.innerText='+'; add.onclick = () => addItem(type, lIdx);
+                grid.appendChild(add); container.appendChild(listEl);
+            });
+            const btn = document.createElement('button'); btn.className='btn-large'; btn.style.background='transparent'; btn.style.border='2px dashed #ccc'; btn.style.color='#777'; btn.innerText='+ Nueva Lista'; btn.onclick = () => addList(type);
+            container.appendChild(btn);
+        }
+
+        function addItem(type, idx) {
+            if(type==='clipboard') { const l=prompt("Título:"); const c=prompt("Contenido:"); if(l&&c) { db.clipboard[idx].cards.push({id:Date.now(), label:l, content:c}); saveDB(); renderAll(); }}
+            else { const l=prompt("Equipo:"); const u=prompt("User:"); const p=prompt("Pass:"); if(l&&u&&p) { db.passwords[idx].cards.push({id:Date.now(), label:l, user:u, pass:p}); saveDB(); renderAll(); }}
+        }
+        function addList(t) { const x=prompt("Nombre:"); if(x){ db[t].push({id:Date.now(), title:x, cards:[]}); saveDB(); renderAll(); }}
+
+        async function copy(x) { try { await navigator.clipboard.writeText(x); showToast(); } catch { const t=document.createElement('textarea');t.value=x;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);showToast(); } }
+        function showToast() { const t=document.getElementById('toast'); t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1500); }
+        function saveDB() { localStorage.setItem('netAdminDB_v6', JSON.stringify(db)); }
+        
+        function exportData() {
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob([JSON.stringify(db)],{type:"application/json"}));
+            a.download = `Backup_${db.config.name}_${new Date().toLocaleDateString().replace(/\//g,'-')}.json`;
+            a.click();
+        }
+        function importData(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if(confirm("Esto sobrescribirá tus datos actuales. ¿Continuar?")) {
+                        db = data; saveDB(); location.reload();
+                    }
+                } catch(err) { alert("Error: Archivo inválido"); }
+            };
+            reader.readAsText(file);
+            input.value = '';
+        }
+
+        function toggleTheme() { document.body.classList.toggle('dark-mode'); db.config.theme = document.body.classList.contains('dark-mode')?'dark':'light'; saveDB(); }
+        function switchTab(t) { document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active')); event.target.classList.add('active'); document.getElementById('view-clip').classList.toggle('hidden', t!=='clip'); document.getElementById('view-pass').classList.toggle('hidden', t!=='pass'); }
+        function lockApp() { location.reload(); }
+        function resetApp() { if(confirm("¿Borrar todo?")) { localStorage.removeItem('netAdminDB_v6'); location.reload(); }}
+    </script>
+</body>
+</html>
