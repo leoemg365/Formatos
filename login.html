@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SaaS Login & License Manager</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --danger: #dc2626;
+            --success: #16a34a;
+            --bg: #f3f4f6;
+            --card: #ffffff;
+        }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        
+        .container { background: var(--card); padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); width: 100%; max-width: 500px; }
+        .hidden { display: none !important; }
+        
+        h2 { text-align: center; color: #1f2937; margin-bottom: 1.5rem; }
+        input, button, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 6px; border: 1px solid #d1d5db; box-sizing: border-box; }
+        button { background: var(--primary); color: white; border: none; cursor: pointer; font-weight: bold; }
+        button:hover { opacity: 0.9; }
+        button.logout { background: #4b5563; margin-top: 1rem; }
+        
+        /* Status Badges */
+        .status { padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; }
+        .active { background: #dcfce7; color: var(--success); }
+        .suspended { background: #fee2e2; color: var(--danger); }
+
+        /* Admin Dashboard Styles */
+        .user-card { border: 1px solid #e5e7eb; padding: 10px; margin-bottom: 10px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+        .actions { display: flex; gap: 5px; margin-top: 5px; width: 100%; }
+        .btn-sm { padding: 5px 10px; font-size: 0.8rem; width: auto; }
+        .btn-suspend { background: var(--danger); }
+        .btn-activate { background: var(--success); }
+        .timer-info { font-size: 0.85rem; color: #6b7280; width: 100%; margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+    <div id="loginScreen" class="container">
+        <h2>Acceso SaaS</h2>
+        <form id="loginForm">
+            <input type="text" id="username" placeholder="Usuario" required>
+            <input type="password" id="password" placeholder="Contraseña" required>
+            <button type="submit">Ingresar</button>
+            <p style="text-align: center; font-size: 0.8rem; color: #666;">Solo el Superuser puede crear cuentas.</p>
+        </form>
+    </div>
+
+    <div id="adminScreen" class="container hidden">
+        <h2>Panel Superuser</h2>
+        <div style="background: #eff6ff; padding: 10px; border-radius: 8px; margin-bottom: 20px;">
+            <h3>Crear / Modificar Usuario</h3>
+            <input type="hidden" id="editUserId"> <input type="text" id="newUsername" placeholder="Nombre de usuario">
+            <input type="password" id="newPassword" placeholder="Contraseña">
+            <div style="display: flex; gap: 10px;">
+                <input type="number" id="licDays" placeholder="Días" min="0" value="30">
+                <input type="number" id="licHours" placeholder="Horas" min="0" value="0">
+            </div>
+            <button onclick="saveUser()">Guardar Usuario</button>
+            <button onclick="cancelEdit()" id="cancelEditBtn" class="hidden" style="background: #9ca3af;">Cancelar Edición</button>
+        </div>
+
+        <h3>Usuarios Activos</h3>
+        <div id="userList"></div>
+        <button class="logout" onclick="logout()">Cerrar Sesión</button>
+    </div>
+
+    <div id="clientScreen" class="container hidden">
+        <h2>Bienvenido</h2>
+        <div style="text-align: center;">
+            <h1 id="clientName">Usuario</h1>
+            <div id="clientStatusDisplay" style="margin: 20px 0; padding: 15px; border-radius: 8px;">
+                </div>
+            <p>Tiempo restante de licencia:</p>
+            <h3 id="timeLeft" style="font-family: monospace; font-size: 1.5rem;">00d 00h 00m</h3>
+            
+            <hr>
+            <p style="color: #666; font-style: italic;">Aquí se cargaría la aplicación...</p>
+        </div>
+        <button class="logout" onclick="logout()">Salir</button>
+    </div>
+
+<script>
+    // --- LÓGICA DEL SISTEMA ---
+
+    // 1. Inicialización de Base de Datos Simulada
+    const DB_KEY = 'saas_users_db';
+    
+    function initDB() {
+        const db = localStorage.getItem(DB_KEY);
+        if (!db) {
+            // Creamos el Superuser por defecto si no existe
+            const initialData = [
+                { id: 1, user: 'admin', pass: 'admin123', role: 'admin', active: true, expiresAt: null }
+            ];
+            localStorage.setItem(DB_KEY, JSON.stringify(initialData));
+        }
+    }
+    initDB();
+
+    function getDB() { return JSON.parse(localStorage.getItem(DB_KEY)); }
+    function saveDB(data) { localStorage.setItem(DB_KEY, JSON.stringify(data)); }
+
+    // 2. Funciones de Tiempo y Utilidad
+    function calculateExpiration(days, hours) {
+        const now = new Date();
+        // Sumar días y horas a la fecha actual en milisegundos
+        const addedTime = (days * 24 * 60 * 60 * 1000) + (hours * 60 * 60 * 1000);
+        return now.getTime() + addedTime;
+    }
+
+    function formatTimeLeft(expiryTimestamp) {
+        if (!expiryTimestamp) return "Ilimitado (Admin)";
+        const now = new Date().getTime();
+        const diff = expiryTimestamp - now;
+
+        if (diff <= 0) return "EXPIRADO";
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+        return `${days}d ${hours}h ${minutes}m`;
+    }
+
+    // 3. Autenticación
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const user = document.getElementById('username').value;
+        const pass = document.getElementById('password').value;
+        
+        const users = getDB();
+        const account = users.find(u => u.user === user && u.pass === pass);
+
+        if (!account) {
+            alert('Credenciales incorrectas');
+            return;
+        }
+
+        // Verificación de Licencia (Tiempo)
+        const now = new Date().getTime();
+        if (account.role !== 'admin' && account.expiresAt && now > account.expiresAt) {
+            account.active = false; // Auto suspender si expiró
+            saveDB(users); // Guardar el nuevo estado
+        }
+
+        if (!account.active && account.role !== 'admin') {
+            alert('TU SERVICIO ESTÁ SUSPENDIDO O HA EXPIRADO. Contacta al soporte.');
+            return;
+        }
+
+        // Login Exitoso
+        sessionStorage.setItem('currentUser', JSON.stringify(account));
+        routeUser(account);
+    });
+
+    function routeUser(account) {
+        document.getElementById('loginScreen').classList.add('hidden');
+        
+        if (account.role === 'admin') {
+            document.getElementById('adminScreen').classList.remove('hidden');
+            renderUserList();
+        } else {
+            document.getElementById('clientScreen').classList.remove('hidden');
+            loadClientView(account);
+        }
+    }
+
+    function logout() {
+        sessionStorage.clear();
+        location.reload();
+    }
+
+    // 4. Lógica de Superuser
+    function saveUser() {
+        const id = document.getElementById('editUserId').value;
+        const user = document.getElementById('newUsername').value;
+        const pass = document.getElementById('newPassword').value;
+        const days = parseInt(document.getElementById('licDays').value) || 0;
+        const hours = parseInt(document.getElementById('licHours').value) || 0;
+
+        if (!user || !pass) return alert('Completa los datos');
+
+        const users = getDB();
+        const expiry = calculateExpiration(days, hours);
+
+        if (id) {
+            // Modificar existente
+            const index = users.findIndex(u => u.id == id);
+            if (index !== -1) {
+                users[index].user = user;
+                users[index].pass = pass;
+                // Solo actualizamos fecha si se puso tiempo, si no, mantenemos la anterior o extendemos
+                // Para simplificar esta demo: Reseteamos el contador al guardar
+                users[index].expiresAt = expiry; 
+                users[index].active = true; // Reactivar al editar
+            }
+        } else {
+            // Crear nuevo
+            if(users.find(u => u.user === user)) return alert('El usuario ya existe');
+            const newUser = {
+                id: Date.now(),
+                user: user,
+                pass: pass,
+                role: 'client',
+                active: true,
+                expiresAt: expiry
+            };
+            users.push(newUser);
+        }
+
+        saveDB(users);
+        resetForm();
+        renderUserList();
+        alert('Usuario guardado y licencia iniciada/renovada');
+    }
+
+    function toggleStatus(id) {
+        const users = getDB();
+        const index = users.findIndex(u => u.id == id);
+        users[index].active = !users[index].active;
+        saveDB(users);
+        renderUserList();
+    }
+
+    function editUser(id) {
+        const users = getDB();
+        const u = users.find(u => u.id == id);
+        
+        document.getElementById('editUserId').value = u.id;
+        document.getElementById('newUsername').value = u.user;
+        document.getElementById('newPassword').value = u.pass;
+        document.getElementById('cancelEditBtn').classList.remove('hidden');
+        // Nota: No cargamos los días restantes en los inputs porque esos inputs son para "Agregar tiempo"
+    }
+
+    function resetForm() {
+        document.getElementById('editUserId').value = '';
+        document.getElementById('newUsername').value = '';
+        document.getElementById('newPassword').value = '';
+        document.getElementById('licDays').value = '30';
+        document.getElementById('licHours').value = '0';
+        document.getElementById('cancelEditBtn').classList.add('hidden');
+    }
+
+    function cancelEdit() { resetForm(); }
+
+    function renderUserList() {
+        const users = getDB().filter(u => u.role !== 'admin'); // No mostrar al admin a sí mismo
+        const list = document.getElementById('userList');
+        list.innerHTML = '';
+
+        users.forEach(u => {
+            const timeLeft = formatTimeLeft(u.expiresAt);
+            const statusClass = u.active ? 'active' : 'suspended';
+            const statusText = u.active ? 'ACTIVO' : 'SUSPENDIDO';
+            const btnAction = u.active 
+                ? `<button class="btn-sm btn-suspend" onclick="toggleStatus(${u.id})">Suspender</button>` 
+                : `<button class="btn-sm btn-activate" onclick="toggleStatus(${u.id})">Activar</button>`;
+
+            list.innerHTML += `
+                <div class="user-card">
+                    <div>
+                        <strong>${u.user}</strong> <span class="status ${statusClass}">${statusText}</span>
+                        <div class="timer-info">Vence en: ${timeLeft}</div>
+                    </div>
+                    <div class="actions">
+                        ${btnAction}
+                        <button class="btn-sm" onclick="editUser(${u.id})">Editar/Renovar</button>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    // 5. Vista del Cliente
+    function loadClientView(account) {
+        document.getElementById('clientName').innerText = `Hola, ${account.user}`;
+        const display = document.getElementById('clientStatusDisplay');
+        const timeLeftDisplay = document.getElementById('timeLeft');
+
+        if (account.active) {
+            display.style.background = '#dcfce7';
+            display.style.color = '#166534';
+            display.innerHTML = '<strong>ESTADO: SERVICIO ACTIVO</strong><br>Todos los sistemas operativos.';
+        } else {
+            // Este caso es raro que se vea porque el login lo bloquea, 
+            // pero sirve si se suspende mientras el usuario ya está dentro (requeriría polling).
+            display.style.background = '#fee2e2';
+            display.style.color = '#991b1b';
+            display.innerText = 'ESTADO: SERVICIO SUSPENDIDO';
+        }
+
+        // Cuenta regresiva visual
+        setInterval(() => {
+            timeLeftDisplay.innerText = formatTimeLeft(account.expiresAt);
+        }, 60000); // Actualizar cada minuto
+        timeLeftDisplay.innerText = formatTimeLeft(account.expiresAt);
+    }
+
+</script>
+</body>
+</html>
