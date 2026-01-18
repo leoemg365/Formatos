@@ -3,38 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SaaS Login & License Manager</title>
+    <title>SaaS Manager - Login & Billing</title>
     <style>
         :root {
             --primary: #2563eb;
+            --dark: #1e3a8a;
             --danger: #dc2626;
             --success: #16a34a;
+            --warning: #ca8a04;
             --bg: #f3f4f6;
             --card: #ffffff;
         }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
         
-        .container { background: var(--card); padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); width: 100%; max-width: 500px; }
+        .container { background: var(--card); padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); width: 100%; max-width: 600px; }
         .hidden { display: none !important; }
         
         h2 { text-align: center; color: #1f2937; margin-bottom: 1.5rem; }
-        input, button, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 6px; border: 1px solid #d1d5db; box-sizing: border-box; }
-        button { background: var(--primary); color: white; border: none; cursor: pointer; font-weight: bold; }
-        button:hover { opacity: 0.9; }
-        button.logout { background: #4b5563; margin-top: 1rem; }
+        h3 { margin-top: 0; color: #374151; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px;}
         
-        /* Status Badges */
-        .status { padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; }
+        input, button, select { width: 100%; padding: 12px; margin: 6px 0; border-radius: 6px; border: 1px solid #d1d5db; box-sizing: border-box; }
+        .row { display: flex; gap: 10px; }
+        
+        button { background: var(--primary); color: white; border: none; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        button:hover { opacity: 0.9; }
+        button.secondary { background: #6b7280; }
+        button.logout { background: #1f2937; margin-top: 1rem; }
+        
+        /* Badges */
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; display: inline-block;}
         .active { background: #dcfce7; color: var(--success); }
         .suspended { background: #fee2e2; color: var(--danger); }
+        .paid { background: #d1fae5; color: var(--success); }
+        .pending { background: #fef3c7; color: var(--warning); }
 
-        /* Admin Dashboard Styles */
-        .user-card { border: 1px solid #e5e7eb; padding: 10px; margin-bottom: 10px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
-        .actions { display: flex; gap: 5px; margin-top: 5px; width: 100%; }
-        .btn-sm { padding: 5px 10px; font-size: 0.8rem; width: auto; }
-        .btn-suspend { background: var(--danger); }
-        .btn-activate { background: var(--success); }
-        .timer-info { font-size: 0.85rem; color: #6b7280; width: 100%; margin-top: 5px; }
+        /* Admin List */
+        .user-card { border: 1px solid #e5e7eb; padding: 12px; margin-bottom: 10px; border-radius: 6px; background: #f9fafb; }
+        .user-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .actions { display: flex; gap: 5px; flex-wrap: wrap; }
+        .btn-sm { padding: 6px 12px; font-size: 0.8rem; width: auto; }
+        .btn-bill { background: var(--dark); }
+
+        /* Modal Styles */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 100; }
+        .modal-content { background: white; padding: 20px; border-radius: 10px; width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto; }
+        
+        /* Table Styles */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9rem; }
+        th, td { border: 1px solid #e5e7eb; padding: 8px; text-align: left; }
+        th { background: #f3f4f6; }
     </style>
 </head>
 <body>
@@ -45,56 +62,107 @@
             <input type="text" id="username" placeholder="Usuario" required>
             <input type="password" id="password" placeholder="Contraseña" required>
             <button type="submit">Ingresar</button>
-            <p style="text-align: center; font-size: 0.8rem; color: #666;">Solo el Superuser puede crear cuentas.</p>
+            <p style="text-align: center; font-size: 0.8rem; color: #666;">Admin: admin / admin123</p>
         </form>
     </div>
 
     <div id="adminScreen" class="container hidden">
-        <h2>Panel Superuser</h2>
-        <div style="background: #eff6ff; padding: 10px; border-radius: 8px; margin-bottom: 20px;">
-            <h3>Crear / Modificar Usuario</h3>
-            <input type="hidden" id="editUserId"> <input type="text" id="newUsername" placeholder="Nombre de usuario">
-            <input type="password" id="newPassword" placeholder="Contraseña">
-            <div style="display: flex; gap: 10px;">
-                <input type="number" id="licDays" placeholder="Días" min="0" value="30">
+        <h2>Panel de Control</h2>
+        
+        <div style="background: #eff6ff; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+            <h3>Gestión de Usuarios</h3>
+            <input type="hidden" id="editUserId">
+            <div class="row">
+                <input type="text" id="newUsername" placeholder="Usuario">
+                <input type="password" id="newPassword" placeholder="Contraseña">
+            </div>
+            <div class="row">
+                <input type="number" id="licDays" placeholder="Días Licencia" min="0" value="30">
                 <input type="number" id="licHours" placeholder="Horas" min="0" value="0">
             </div>
-            <button onclick="saveUser()">Guardar Usuario</button>
-            <button onclick="cancelEdit()" id="cancelEditBtn" class="hidden" style="background: #9ca3af;">Cancelar Edición</button>
+            <div class="row">
+                <input type="number" id="planCost" placeholder="Costo del Plan ($)" min="0" value="10">
+            </div>
+            <div class="row">
+                <button onclick="saveUser()">Guardar Usuario</button>
+                <button onclick="cancelEdit()" id="cancelEditBtn" class="secondary hidden">Cancelar</button>
+            </div>
         </div>
 
-        <h3>Usuarios Activos</h3>
+        <h3>Lista de Clientes</h3>
         <div id="userList"></div>
         <button class="logout" onclick="logout()">Cerrar Sesión</button>
     </div>
 
-    <div id="clientScreen" class="container hidden">
-        <h2>Bienvenido</h2>
-        <div style="text-align: center;">
-            <h1 id="clientName">Usuario</h1>
-            <div id="clientStatusDisplay" style="margin: 20px 0; padding: 15px; border-radius: 8px;">
-                </div>
-            <p>Tiempo restante de licencia:</p>
-            <h3 id="timeLeft" style="font-family: monospace; font-size: 1.5rem;">00d 00h 00m</h3>
+    <div id="billingModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3>Facturación: <span id="modalUserTitle"></span></h3>
+            <p>Costo del Plan: <strong id="modalPlanCost">$0.00</strong></p>
             
-            <hr>
-            <p style="color: #666; font-style: italic;">Aquí se cargaría la aplicación...</p>
+            <button onclick="generateInvoice()" style="margin-bottom: 15px;">+ Generar Factura Mensual</button>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Monto</th>
+                        <th>Estado</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody id="invoiceListBody">
+                    </tbody>
+            </table>
+            <button class="secondary" onclick="closeModal()" style="margin-top: 15px;">Cerrar</button>
         </div>
-        <button class="logout" onclick="logout()">Salir</button>
+    </div>
+
+    <div id="clientScreen" class="container hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2>Mi Cuenta</h2>
+            <span id="clientStatusBadge" class="badge"></span>
+        </div>
+        
+        <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+            <p><strong>Usuario:</strong> <span id="clientName"></span></p>
+            <p><strong>Vencimiento:</strong> <span id="clientExpiry"></span></p>
+            <p><strong>Tiempo Restante:</strong> <span id="clientTimer" style="font-family: monospace; font-weight: bold;"></span></p>
+        </div>
+
+        <h3>Historial de Pagos</h3>
+        <p style="font-size: 0.9rem;">Plan contratado: <strong id="clientPlanCost"></strong> / mes</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Fecha Emisión</th>
+                    <th>Monto</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody id="clientInvoiceList">
+                </tbody>
+        </table>
+
+        <button class="logout" onclick="logout()">Cerrar Sesión</button>
     </div>
 
 <script>
-    // --- LÓGICA DEL SISTEMA ---
-
-    // 1. Inicialización de Base de Datos Simulada
-    const DB_KEY = 'saas_users_db';
+    // --- 1. BASE DE DATOS Y UTILIDADES ---
+    const DB_KEY = 'saas_v2_db';
     
     function initDB() {
-        const db = localStorage.getItem(DB_KEY);
-        if (!db) {
-            // Creamos el Superuser por defecto si no existe
+        if (!localStorage.getItem(DB_KEY)) {
             const initialData = [
-                { id: 1, user: 'admin', pass: 'admin123', role: 'admin', active: true, expiresAt: null }
+                { 
+                    id: 1, 
+                    user: 'admin', 
+                    pass: 'admin123', 
+                    role: 'admin', 
+                    active: true, 
+                    expiresAt: null,
+                    planCost: 0,
+                    invoices: [] 
+                }
             ];
             localStorage.setItem(DB_KEY, JSON.stringify(initialData));
         }
@@ -103,63 +171,50 @@
 
     function getDB() { return JSON.parse(localStorage.getItem(DB_KEY)); }
     function saveDB(data) { localStorage.setItem(DB_KEY, JSON.stringify(data)); }
+    
+    // Formatear Fecha
+    function formatDate(dateString) {
+        const d = new Date(dateString);
+        return d.toLocaleDateString('es-ES') + ' ' + d.toLocaleTimeString('es-ES', {hour: '2-digit', minute:'2-digit'});
+    }
 
-    // 2. Funciones de Tiempo y Utilidad
+    // Calcular expiración
     function calculateExpiration(days, hours) {
         const now = new Date();
-        // Sumar días y horas a la fecha actual en milisegundos
-        const addedTime = (days * 24 * 60 * 60 * 1000) + (hours * 60 * 60 * 1000);
-        return now.getTime() + addedTime;
+        return now.getTime() + (days * 86400000) + (hours * 3600000);
     }
 
-    function formatTimeLeft(expiryTimestamp) {
-        if (!expiryTimestamp) return "Ilimitado (Admin)";
-        const now = new Date().getTime();
-        const diff = expiryTimestamp - now;
-
-        if (diff <= 0) return "EXPIRADO";
-
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-
-        return `${days}d ${hours}h ${minutes}m`;
-    }
-
-    // 3. Autenticación
+    // --- 2. AUTENTICACIÓN ---
     document.getElementById('loginForm').addEventListener('submit', function(e) {
         e.preventDefault();
-        const user = document.getElementById('username').value;
-        const pass = document.getElementById('password').value;
+        const uVal = document.getElementById('username').value;
+        const pVal = document.getElementById('password').value;
         
         const users = getDB();
-        const account = users.find(u => u.user === user && u.pass === pass);
+        const account = users.find(u => u.user === uVal && u.pass === pVal);
 
-        if (!account) {
-            alert('Credenciales incorrectas');
-            return;
-        }
+        if (!account) return alert('Datos incorrectos');
 
-        // Verificación de Licencia (Tiempo)
+        // Check Tiempo
         const now = new Date().getTime();
         if (account.role !== 'admin' && account.expiresAt && now > account.expiresAt) {
-            account.active = false; // Auto suspender si expiró
-            saveDB(users); // Guardar el nuevo estado
-        }
-
-        if (!account.active && account.role !== 'admin') {
-            alert('TU SERVICIO ESTÁ SUSPENDIDO O HA EXPIRADO. Contacta al soporte.');
+            account.active = false;
+            saveDB(users);
+            alert('TU LICENCIA HA EXPIRADO. Contacta al administrador.');
             return;
         }
 
-        // Login Exitoso
+        // Check Suspensión Manual
+        if (!account.active && account.role !== 'admin') {
+            return alert('ACCESO DENEGADO: Cuenta suspendida.');
+        }
+
         sessionStorage.setItem('currentUser', JSON.stringify(account));
         routeUser(account);
     });
 
     function routeUser(account) {
         document.getElementById('loginScreen').classList.add('hidden');
-        
         if (account.role === 'admin') {
             document.getElementById('adminScreen').classList.remove('hidden');
             renderUserList();
@@ -174,67 +229,66 @@
         location.reload();
     }
 
-    // 4. Lógica de Superuser
+    // --- 3. LÓGICA ADMIN (CRUD USUARIOS) ---
     function saveUser() {
         const id = document.getElementById('editUserId').value;
         const user = document.getElementById('newUsername').value;
         const pass = document.getElementById('newPassword').value;
         const days = parseInt(document.getElementById('licDays').value) || 0;
         const hours = parseInt(document.getElementById('licHours').value) || 0;
+        const cost = parseFloat(document.getElementById('planCost').value) || 0;
 
-        if (!user || !pass) return alert('Completa los datos');
+        if (!user || !pass) return alert('Faltan datos obligatorios');
 
         const users = getDB();
         const expiry = calculateExpiration(days, hours);
 
         if (id) {
-            // Modificar existente
-            const index = users.findIndex(u => u.id == id);
-            if (index !== -1) {
-                users[index].user = user;
-                users[index].pass = pass;
-                // Solo actualizamos fecha si se puso tiempo, si no, mantenemos la anterior o extendemos
-                // Para simplificar esta demo: Reseteamos el contador al guardar
-                users[index].expiresAt = expiry; 
-                users[index].active = true; // Reactivar al editar
+            // Editar
+            const idx = users.findIndex(u => u.id == id);
+            if (idx !== -1) {
+                users[idx].user = user;
+                users[idx].pass = pass;
+                users[idx].expiresAt = expiry; // Resetea el tiempo al editar
+                users[idx].planCost = cost;
+                users[idx].active = true;
             }
         } else {
-            // Crear nuevo
-            if(users.find(u => u.user === user)) return alert('El usuario ya existe');
-            const newUser = {
+            // Crear
+            if(users.find(u => u.user === user)) return alert('Usuario ya existe');
+            users.push({
                 id: Date.now(),
                 user: user,
                 pass: pass,
                 role: 'client',
                 active: true,
-                expiresAt: expiry
-            };
-            users.push(newUser);
+                expiresAt: expiry,
+                planCost: cost,
+                invoices: []
+            });
         }
-
         saveDB(users);
         resetForm();
         renderUserList();
-        alert('Usuario guardado y licencia iniciada/renovada');
+        alert('Datos guardados correctamente.');
     }
 
     function toggleStatus(id) {
         const users = getDB();
-        const index = users.findIndex(u => u.id == id);
-        users[index].active = !users[index].active;
+        const u = users.find(x => x.id == id);
+        u.active = !u.active;
         saveDB(users);
         renderUserList();
     }
 
     function editUser(id) {
         const users = getDB();
-        const u = users.find(u => u.id == id);
-        
+        const u = users.find(x => x.id == id);
         document.getElementById('editUserId').value = u.id;
         document.getElementById('newUsername').value = u.user;
         document.getElementById('newPassword').value = u.pass;
+        document.getElementById('planCost').value = u.planCost;
         document.getElementById('cancelEditBtn').classList.remove('hidden');
-        // Nota: No cargamos los días restantes en los inputs porque esos inputs son para "Agregar tiempo"
     }
 
     function resetForm() {
@@ -243,62 +297,184 @@
         document.getElementById('newPassword').value = '';
         document.getElementById('licDays').value = '30';
         document.getElementById('licHours').value = '0';
+        document.getElementById('planCost').value = '10';
         document.getElementById('cancelEditBtn').classList.add('hidden');
     }
 
     function cancelEdit() { resetForm(); }
 
     function renderUserList() {
-        const users = getDB().filter(u => u.role !== 'admin'); // No mostrar al admin a sí mismo
+        const users = getDB().filter(u => u.role !== 'admin');
         const list = document.getElementById('userList');
         list.innerHTML = '';
 
         users.forEach(u => {
             const timeLeft = formatTimeLeft(u.expiresAt);
-            const statusClass = u.active ? 'active' : 'suspended';
-            const statusText = u.active ? 'ACTIVO' : 'SUSPENDIDO';
-            const btnAction = u.active 
-                ? `<button class="btn-sm btn-suspend" onclick="toggleStatus(${u.id})">Suspender</button>` 
-                : `<button class="btn-sm btn-activate" onclick="toggleStatus(${u.id})">Activar</button>`;
+            const statusBadge = u.active 
+                ? `<span class="badge active">ACTIVO</span>` 
+                : `<span class="badge suspended">SUSPENDIDO</span>`;
+            
+            const btnToggle = u.active
+                ? `<button class="btn-sm btn-suspend" style="background:var(--danger)" onclick="toggleStatus(${u.id})">Suspender</button>`
+                : `<button class="btn-sm btn-activate" style="background:var(--success)" onclick="toggleStatus(${u.id})">Activar</button>`;
 
             list.innerHTML += `
                 <div class="user-card">
-                    <div>
-                        <strong>${u.user}</strong> <span class="status ${statusClass}">${statusText}</span>
-                        <div class="timer-info">Vence en: ${timeLeft}</div>
+                    <div class="user-header">
+                        <div>
+                            <strong>${u.user}</strong> ${statusBadge}
+                            <div style="font-size:0.8rem; color:#666; margin-top:2px;">Plan: $${u.planCost}/mes</div>
+                        </div>
+                        <div style="text-align:right; font-size:0.8rem;">
+                            ${timeLeft}
+                        </div>
                     </div>
                     <div class="actions">
-                        ${btnAction}
-                        <button class="btn-sm" onclick="editUser(${u.id})">Editar/Renovar</button>
+                        ${btnToggle}
+                        <button class="btn-sm" onclick="editUser(${u.id})">Editar</button>
+                        <button class="btn-sm btn-bill" onclick="openBilling(${u.id})">Facturas (${u.invoices.length})</button>
                     </div>
                 </div>
             `;
         });
     }
 
-    // 5. Vista del Cliente
-    function loadClientView(account) {
-        document.getElementById('clientName').innerText = `Hola, ${account.user}`;
-        const display = document.getElementById('clientStatusDisplay');
-        const timeLeftDisplay = document.getElementById('timeLeft');
+    // --- 4. LÓGICA DE FACTURACIÓN (NUEVO) ---
+    let currentBillingId = null;
 
+    function openBilling(userId) {
+        currentBillingId = userId;
+        const users = getDB();
+        const user = users.find(u => u.id == userId);
+        
+        document.getElementById('modalUserTitle').innerText = user.user;
+        document.getElementById('modalPlanCost').innerText = `$${user.planCost.toFixed(2)}`;
+        document.getElementById('billingModal').classList.remove('hidden');
+        
+        renderInvoiceTable(user);
+    }
+
+    function closeModal() {
+        document.getElementById('billingModal').classList.add('hidden');
+        currentBillingId = null;
+        renderUserList(); // Actualizar contador en la lista
+    }
+
+    function generateInvoice() {
+        if (!currentBillingId) return;
+        
+        const users = getDB();
+        const index = users.findIndex(u => u.id == currentBillingId);
+        const user = users[index];
+
+        // Crear objeto factura
+        const newInv = {
+            id: Date.now(),
+            date: new Date().toISOString(),
+            amount: user.planCost,
+            paid: false
+        };
+
+        user.invoices.push(newInv);
+        saveDB(users);
+        renderInvoiceTable(user);
+    }
+
+    function togglePaid(invId) {
+        const users = getDB();
+        const index = users.findIndex(u => u.id == currentBillingId);
+        const invIndex = users[index].invoices.findIndex(i => i.id == invId);
+        
+        users[index].invoices[invIndex].paid = !users[index].invoices[invIndex].paid;
+        saveDB(users);
+        renderInvoiceTable(users[index]);
+    }
+
+    function renderInvoiceTable(user) {
+        const tbody = document.getElementById('invoiceListBody');
+        tbody.innerHTML = '';
+        
+        // Ordenar: más recientes primero
+        const sortedInvoices = [...user.invoices].sort((a,b) => new Date(b.date) - new Date(a.date));
+
+        sortedInvoices.forEach(inv => {
+            const statusHtml = inv.paid 
+                ? `<span class="badge paid">PAGADO</span>` 
+                : `<span class="badge pending">PENDIENTE</span>`;
+            
+            const btnText = inv.paid ? 'Marcar Pendiente' : 'Marcar Pagado';
+
+            tbody.innerHTML += `
+                <tr>
+                    <td>${formatDate(inv.date)}</td>
+                    <td>$${inv.amount.toFixed(2)}</td>
+                    <td>${statusHtml}</td>
+                    <td>
+                        <button class="btn-sm secondary" onclick="togglePaid(${inv.id})">${btnText}</button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        if (sortedInvoices.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#999;">No hay facturas generadas</td></tr>`;
+        }
+    }
+
+    // --- 5. LÓGICA VISTA CLIENTE ---
+    function loadClientView(account) {
+        document.getElementById('clientName').innerText = account.user;
+        document.getElementById('clientPlanCost').innerText = `$${(account.planCost || 0).toFixed(2)}`;
+        
+        // Timer Logic
+        const updateTimer = () => {
+            document.getElementById('clientTimer').innerText = formatTimeLeft(account.expiresAt);
+        };
+        updateTimer();
+        setInterval(updateTimer, 60000);
+
+        // Status
+        const badge = document.getElementById('clientStatusBadge');
         if (account.active) {
-            display.style.background = '#dcfce7';
-            display.style.color = '#166534';
-            display.innerHTML = '<strong>ESTADO: SERVICIO ACTIVO</strong><br>Todos los sistemas operativos.';
+            badge.className = 'badge active';
+            badge.innerText = 'SERVICIO ACTIVO';
+            document.getElementById('clientExpiry').innerText = formatDate(account.expiresAt);
         } else {
-            // Este caso es raro que se vea porque el login lo bloquea, 
-            // pero sirve si se suspende mientras el usuario ya está dentro (requeriría polling).
-            display.style.background = '#fee2e2';
-            display.style.color = '#991b1b';
-            display.innerText = 'ESTADO: SERVICIO SUSPENDIDO';
+            badge.className = 'badge suspended';
+            badge.innerText = 'SUSPENDIDO';
         }
 
-        // Cuenta regresiva visual
-        setInterval(() => {
-            timeLeftDisplay.innerText = formatTimeLeft(account.expiresAt);
-        }, 60000); // Actualizar cada minuto
-        timeLeftDisplay.innerText = formatTimeLeft(account.expiresAt);
+        // Render Facturas del cliente
+        const tbody = document.getElementById('clientInvoiceList');
+        tbody.innerHTML = '';
+        const sortedInvoices = [...(account.invoices || [])].sort((a,b) => new Date(b.date) - new Date(a.date));
+
+        sortedInvoices.forEach(inv => {
+            const statusHtml = inv.paid 
+                ? `<span class="badge paid">PAGADO</span>` 
+                : `<span class="badge pending">PENDIENTE DE PAGO</span>`;
+                
+            tbody.innerHTML += `
+                <tr>
+                    <td>${formatDate(inv.date)}</td>
+                    <td>$${inv.amount.toFixed(2)}</td>
+                    <td>${statusHtml}</td>
+                </tr>
+            `;
+        });
+        
+        if (sortedInvoices.length === 0) tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;">Sin facturas.</td></tr>`;
+    }
+
+    // Helper Time Formatter
+    function formatTimeLeft(expiry) {
+        if (!expiry) return "--";
+        const diff = expiry - new Date().getTime();
+        if (diff <= 0) return "EXPIRADO";
+        const d = Math.floor(diff / (86400000));
+        const h = Math.floor((diff % 86400000) / 3600000);
+        const m = Math.floor((diff % 3600000) / 60000);
+        return `${d}d ${h}h ${m}m`;
     }
 
 </script>
