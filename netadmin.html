@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NetAdmin v6.5</title>
+    <title>NetAdmin Suite v7.0</title>
     <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/10581/10581089.png" type="image/x-icon">
     <style>
         :root {
             --bg-body: #f0f2f5; --bg-surface: #ffffff; --bg-input: #e4e6eb;
             --text-main: #1c1e21; --text-sec: #65676b;
-            --primary: #1877f2; --danger: #ff4d4f; --border: #ced0d4;
-            --radius: 12px; --shadow: 0 4px 12px rgba(0,0,0,0.1);
+            --primary: #1877f2; --danger: #ff4d4f; --warning: #f7b928; --success: #42b72a;
+            --border: #ced0d4; --radius: 12px; --shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         body.dark-mode {
             --bg-body: #18191a; --bg-surface: #242526; --bg-input: #3a3b3c;
@@ -19,11 +19,11 @@
         * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg-body); color: var(--text-main); margin: 0; padding: 0; transition: 0.3s; height: 100vh; overflow-y: auto; }
 
-        /* Eliminar flechas numéricas */
+        /* No flechas numéricas */
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         input[type=number] { -moz-appearance: textfield; }
 
-        /* PANTALLAS */
+        /* --- PANTALLAS --- */
         .screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg-body); z-index: 2000;
@@ -39,32 +39,51 @@
         }
         .logo { font-size: 3rem; margin-bottom: 10px; }
         h2 { margin: 10px 0; color: var(--primary); }
-        p { color: var(--text-sec); font-size: 0.95rem; margin-bottom: 20px; }
-
+        
+        /* Inputs Grandes */
         .big-input {
             width: 100%; padding: 15px; border-radius: var(--radius);
             border: 2px solid var(--border); background: var(--bg-input);
             font-size: 1.1rem; text-align: center; color: var(--text-main); margin-bottom: 15px;
         }
-        .big-input:focus { border-color: var(--primary); }
         .btn-large {
             width: 100%; padding: 15px; background: var(--primary); color: white;
-            border: none; border-radius: var(--radius); font-size: 1rem; font-weight: bold;
-            cursor: pointer; transition: 0.2s;
+            border: none; border-radius: var(--radius); font-size: 1rem; font-weight: bold; cursor: pointer;
         }
-        
-        /* APP CONTAINER */
-        #app-container { max-width: 800px; margin: 0 auto; padding: 20px; display: none; padding-bottom: 50px; }
+
+        /* --- APP CONTAINER --- */
+        #app-container { max-width: 900px; margin: 0 auto; padding: 20px; display: none; padding-bottom: 60px; }
         #app-container.visible { display: block; animation: fadeIn 0.5s; }
 
-        .app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .user-greeting { font-weight: bold; font-size: 1.2rem; }
-        .controls { display: flex; gap: 10px; }
+        /* HEADER & MOTIVATION */
+        .app-header-grid {
+            display: grid; grid-template-columns: 1fr auto; gap: 15px; margin-bottom: 20px;
+            align-items: center;
+        }
+        .quote-box {
+            background: linear-gradient(135deg, var(--primary), #0056b3);
+            color: white; padding: 15px; border-radius: var(--radius);
+            font-size: 0.9rem; font-style: italic; box-shadow: var(--shadow);
+            position: relative; overflow: hidden;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+        .quote-box::after { content: "❝"; position: absolute; right: 10px; bottom: -10px; font-size: 4rem; opacity: 0.2; }
+        
+        .controls { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+        .btn-icon { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px; width: 40px; height: 40px; cursor: pointer; font-size: 1.2rem; }
 
-        .tabs { display: flex; background: var(--bg-surface); padding: 5px; border-radius: 15px; margin-bottom: 20px; box-shadow: var(--shadow); }
-        .tab { flex: 1; text-align: center; padding: 12px; border-radius: 10px; cursor: pointer; color: var(--text-sec); font-weight: 600; }
+        /* TABS NUEVAS */
+        .tabs-container { overflow-x: auto; padding-bottom: 5px; margin-bottom: 20px; }
+        .tabs { display: flex; background: var(--bg-surface); padding: 5px; border-radius: 15px; box-shadow: var(--shadow); min-width: 350px; }
+        .tab { flex: 1; text-align: center; padding: 12px 5px; border-radius: 10px; cursor: pointer; color: var(--text-sec); font-weight: 600; font-size: 0.9rem; white-space: nowrap; }
         .tab.active { background: var(--primary); color: white; }
 
+        /* SUB-FILTROS NOTAS */
+        .sub-filters { display: flex; gap: 10px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; }
+        .pill { padding: 6px 12px; border-radius: 20px; background: var(--bg-input); cursor: pointer; font-size: 0.85rem; color: var(--text-sec); border: 1px solid transparent; white-space: nowrap; }
+        .pill.active { background: var(--bg-surface); border-color: var(--primary); color: var(--primary); font-weight: bold; }
+
+        /* LISTAS & CARDS */
         .list-box { background: var(--bg-surface); border-radius: var(--radius); padding: 15px; margin-bottom: 15px; border: 1px solid var(--border); }
         .list-head { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
         
@@ -72,44 +91,36 @@
         
         .card { 
             background: var(--bg-body); border: 1px solid var(--border); border-radius: 8px; padding: 12px;
-            position: relative; cursor: pointer; border-left: 4px solid var(--border); transition: 0.2s;
+            position: relative; cursor: pointer; border-left: 4px solid var(--border);
         }
         .card:active { transform: scale(0.98); }
-        .card-label { font-weight: bold; font-size: 0.9rem; margin-bottom: 4px; }
-        .card-val { font-size: 0.8rem; color: var(--text-sec); font-family: monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        
         .actions { position: absolute; top: 5px; right: 5px; display: none; }
         .card:hover .actions { display: block; }
         .mini-btn { font-size: 10px; padding: 2px 5px; background: white; border: 1px solid #ccc; border-radius: 4px; cursor: pointer; }
+
+        /* Estilos Específicos */
+        .pass-card { border-top: 4px solid var(--danger); border-left: 0; }
         
-        .pass-card { border-left: none; border-top: 4px solid var(--danger); cursor: default; }
-        .cred-row { display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.03); padding: 5px; border-radius: 4px; margin-top: 5px; font-size: 0.85rem; }
-        .blur { filter: blur(4px); cursor: pointer; transition: 0.2s; }
-        .blur:hover { filter: blur(0); }
+        .note-card { border-left: 4px solid var(--warning); background: #fffceb; color: #5c4e06; cursor: default; }
+        body.dark-mode .note-card { background: #423805; color: #e6dbb5; }
+        
+        .reminder-card { border-left: 4px solid var(--success); display: flex; justify-content: space-between; align-items: center; cursor: default; }
+        .reminder-time { font-weight: bold; font-size: 1.2rem; color: var(--primary); }
+        .reminder-done { opacity: 0.5; text-decoration: line-through; }
+
+        /* SELECTOR DE HORA RÁPIDO */
+        .time-selector { display: flex; gap: 5px; background: var(--bg-input); padding: 10px; border-radius: 8px; margin-bottom: 15px; border: 1px solid var(--primary); }
+        .ts-select { flex: 1; padding: 10px; border-radius: 6px; border: 1px solid #ccc; font-size: 1rem; text-align: center; background: var(--bg-surface); color: var(--text-main); }
 
         /* MODALES */
-        .modal-overlay {
-            position: fixed; top:0; left:0; width:100%; height:100%;
-            background: rgba(0,0,0,0.6); z-index: 3000;
-            display: none; justify-content: center; align-items: center;
-        }
-        /* Modal Seguridad debe estar ENCIMA de la alarma */
-        #security-modal { z-index: 4000; }
-        
-        .alert-box {
-            background: var(--bg-surface); padding: 25px; border-radius: 20px;
-            text-align: center; max-width: 300px; animation: popUp 0.3s; border: 2px solid var(--primary);
-        }
-        .alert-danger { border-color: var(--danger); }
-        .alert-icon { font-size: 3rem; margin-bottom: 10px; animation: shake 0.5s infinite; }
+        .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6); z-index: 3000; display: none; justify-content: center; align-items: center; }
+        .alert-box { background: var(--bg-surface); padding: 25px; border-radius: 20px; text-align: center; max-width: 300px; border: 2px solid var(--primary); }
+        .alert-danger { border-color: var(--danger); animation: shake 0.5s infinite; }
 
-        .btn-icon { background: none; border: 1px solid var(--border); border-radius: 8px; width: 40px; height: 40px; cursor: pointer; color: var(--text-main); font-size: 1.2rem; }
-        .btn-add { border: 2px dashed var(--border); color: var(--text-sec); font-weight: bold; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-        #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 10px 20px; border-radius: 20px; opacity: 0; pointer-events: none; transition: 0.3s; }
-        #toast.show { opacity: 1; transform: translateX(-50%) translateY(-10px); }
+        #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 10px 20px; border-radius: 20px; opacity: 0; pointer-events: none; transition: 0.3s; z-index: 5000; }
+        #toast.show { opacity: 1; transform: translateY(-10px); }
 
         @keyframes fadeIn { from{opacity:0} to{opacity:1} }
-        @keyframes popUp { from{transform:scale(0.8)} to{transform:scale(1)} }
         @keyframes shake { 0% { transform: rotate(0deg); } 25% { transform: rotate(5deg); } 75% { transform: rotate(-5deg); } 100% { transform: rotate(0deg); } }
     </style>
 </head>
@@ -121,7 +132,7 @@
         <div class="welcome-box">
             <div class="logo">👋</div>
             <h2>Bienvenido</h2>
-            <p>Configuremos tu acceso seguro.</p>
+            <p>Configura tu acceso.</p>
             <div id="step-1">
                 <input type="text" id="setup-name" class="big-input" placeholder="Tu Nombre">
                 <button class="btn-large" onclick="nextStep(2)">Continuar</button>
@@ -129,7 +140,7 @@
             <div id="step-2" class="hidden">
                 <p>Crea un PIN (4-12 dígitos)</p>
                 <input type="password" inputmode="numeric" id="setup-pin" class="big-input" placeholder="Ej: 1234" maxlength="12">
-                <button class="btn-large" onclick="finishSetup()">Finalizar Configuración</button>
+                <button class="btn-large" onclick="finishSetup()">Finalizar</button>
             </div>
         </div>
     </div>
@@ -138,10 +149,21 @@
         <div class="welcome-box">
             <div class="logo">🔒</div>
             <h2>Hola, <span id="lock-name">Usuario</span></h2>
-            <div style="background: var(--bg-input); padding: 10px; border-radius: 8px; margin-bottom: 15px; border: 1px solid var(--primary);">
-                <label style="display:block; font-size:0.85rem; color:var(--text-sec); margin-bottom:5px">¿A qué hora sales hoy?</label>
-                <input type="time" id="daily-shift" style="width:100%; padding:8px; border-radius:6px; border:1px solid #ccc; font-size:1.1rem; text-align:center;">
+            
+            <label style="display:block; font-size:0.85rem; color:var(--text-sec); margin-bottom:5px">¿A qué hora sales hoy?</label>
+            <div class="time-selector">
+                <select id="ts-hour" class="ts-select">
+                    </select>
+                <select id="ts-min" class="ts-select">
+                    <option value="00">00</option>
+                    <option value="30">30</option>
+                </select>
+                <select id="ts-ampm" class="ts-select">
+                    <option value="PM">PM</option>
+                    <option value="AM">AM</option>
+                </select>
             </div>
+
             <p>Ingresa tu PIN</p>
             <input type="password" inputmode="numeric" id="login-pin" class="big-input" placeholder="****" maxlength="12">
             <button class="btn-large" onclick="unlockApp()">Entrar</button>
@@ -150,145 +172,183 @@
     </div>
 
     <div id="app-container">
-        <div class="app-header">
-            <div class="user-greeting">
-                <span id="app-username">Usuario</span>
-                <div style="font-size:0.75rem; color:var(--text-sec); font-weight:normal">Salida hoy: <span id="display-time">--:--</span></div>
+        
+        <div class="app-header-grid">
+            <div class="quote-box" id="daily-quote">
+                "La disciplina es el puente entre metas y logros."
             </div>
-            <div class="controls">
-                <button class="btn-icon" onclick="toggleTheme()" title="Tema">🌓</button>
-                <button class="btn-icon" onclick="startSecurityCheck('save')" title="Guardar Backup">💾</button>
-                <button class="btn-icon" onclick="startSecurityCheck('restore')" title="Restaurar Backup">📂</button>
-                <button class="btn-icon" onclick="lockApp()" title="Bloquear">🔒</button>
+            <div style="text-align: right;">
+                <div style="font-weight:bold" id="app-username">Usuario</div>
+                <div style="font-size:0.8rem; color:var(--text-sec)">Salida: <span id="display-time">--:--</span></div>
             </div>
         </div>
 
-        <div class="tabs">
-            <div class="tab active" onclick="switchTab('clip')">📋 Portapapeles</div>
-            <div class="tab" onclick="switchTab('pass')">🔐 Contraseñas</div>
+        <div class="controls" style="margin-bottom: 15px;">
+            <button class="btn-icon" onclick="toggleTheme()" title="Tema">🌓</button>
+            <button class="btn-icon" onclick="startSecurityCheck('save')" title="Backup">💾</button>
+            <button class="btn-icon" onclick="startSecurityCheck('restore')" title="Restaurar">📂</button>
+            <button class="btn-icon" onclick="lockApp()" title="Bloquear">🔒</button>
+        </div>
+
+        <div class="tabs-container">
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('clip')">📋 Links</div>
+                <div class="tab" onclick="switchTab('pass')">🔐 Pass</div>
+                <div class="tab" onclick="switchTab('notes')">📝 Notas</div>
+                <div class="tab" onclick="switchTab('reminders')">⏰ Alarmas</div>
+            </div>
         </div>
 
         <div id="view-clip"></div>
         <div id="view-pass" class="hidden"></div>
+        
+        <div id="view-notes" class="hidden">
+            <div class="sub-filters">
+                <div class="pill active" onclick="filterNotes('General')">General</div>
+                <div class="pill" onclick="filterNotes('Día')">🌞 Día</div>
+                <div class="pill" onclick="filterNotes('Tarde')">⛅ Tarde</div>
+                <div class="pill" onclick="filterNotes('Noche')">🌙 Noche</div>
+            </div>
+            <div id="notes-grid" class="grid" style="display:flex; flex-direction:column; gap:10px;"></div>
+            <button class="btn-large" style="margin-top:15px; background:transparent; border:2px dashed #ccc; color:#777" onclick="addNote()">+ Nueva Nota</button>
+        </div>
 
-        <footer style="text-align:center; color:var(--text-sec); margin-top:32px; font-size:0.92em; opacity:0.8; padding-bottom: 20px;">
+        <div id="view-reminders" class="hidden">
+            <div id="reminders-list" style="display:flex; flex-direction:column; gap:10px;"></div>
+            <button class="btn-large" style="margin-top:15px; background:transparent; border:2px dashed #ccc; color:#777" onclick="addReminder()">+ Nuevo Recordatorio</button>
+        </div>
+
+        <footer style="text-align:center; color:var(--text-sec); margin-top:32px; font-size:0.92em; opacity:0.8;">
             NetAdmin<br>
-            Gestor de Portapapeles<br>
-            Versión Final V6.5 - Build 2026-01-13<br>
-            © 2026 - Todos los derechos reservados<br>
-            Espiral - Leonardo Montiel<br>
+            Versión V7.0 - Build 2026-01-13<br>
+            © 2026 - Espiral - Leonardo Montiel
         </footer>
     </div>
 
     <div id="backup-modal" class="modal-overlay">
         <div class="alert-box alert-danger">
             <div class="alert-icon">⏰</div>
-            <h3 style="color:var(--danger)">¡HORA DEL BACKUP!</h3>
-            <p>Falta 1 hora para tu salida.<br>Guarda tu trabajo ahora.</p>
-            <button class="btn-large" onclick="startSecurityCheck('alarm_save')">💾 DESCARGAR YA</button>
-            <br>
-            <button style="background:none; border:none; color:var(--text-sec); margin-top:15px; cursor:pointer" onclick="stopAlarm()">Ya lo hice</button>
+            <h3>¡HORA DEL BACKUP!</h3>
+            <p>Falta 1 hora. Guarda ahora.</p>
+            <button class="btn-large" onclick="startSecurityCheck('alarm_save')">💾 DESCARGAR</button>
+            <br><button style="background:none; border:none; margin-top:10px" onclick="stopAlarm()">Ya lo hice</button>
+        </div>
+    </div>
+
+    <div id="nag-modal" class="modal-overlay">
+        <div class="alert-box" style="border-color:var(--warning)">
+            <div class="alert-icon">🔔</div>
+            <h3>RECORDATORIO</h3>
+            <p id="nag-text" style="font-weight:bold; font-size:1.1rem">Texto...</p>
+            <button class="btn-large" onclick="dismissNag()">✅ LISTO</button>
         </div>
     </div>
 
     <div id="security-modal" class="modal-overlay">
         <div class="alert-box" id="security-box">
-            
             <div id="sec-step-1">
-                <div style="font-size:2rem; margin-bottom:10px">🛡️</div>
-                <h3>Seguridad</h3>
-                <p>Ingresa tu PIN para continuar.</p>
+                <h3>🛡️ PIN Requerido</h3>
                 <input type="password" inputmode="numeric" id="security-pin" class="big-input" placeholder="****" maxlength="12">
-                <div style="display:flex; gap:10px">
-                    <button class="btn-large" style="background:#ccc; color:#333" onclick="closeSecModal()">Cancelar</button>
-                    <button class="btn-large" onclick="verifyPin()">Verificar</button>
-                </div>
+                <div style="display:flex; gap:10px"><button class="btn-large" style="background:#ccc" onclick="closeSecModal()">X</button><button class="btn-large" onclick="verifyPin()">OK</button></div>
             </div>
-
             <div id="sec-step-2" class="hidden">
-                <div style="font-size:2rem; margin-bottom:10px">✅</div>
-                <h3 id="conf-title">Confirmar</h3>
-                <p id="conf-desc">Acción autorizada.</p>
-                <div style="display:flex; gap:10px">
-                    <button class="btn-large" style="background:#ccc; color:#333" onclick="closeSecModal()">Cancelar</button>
-                    <button class="btn-large" id="conf-btn" onclick="executeAction()">Confirmar</button>
-                </div>
+                <h3>✅ Confirmar</h3>
+                <p id="conf-desc"></p>
+                <div style="display:flex; gap:10px"><button class="btn-large" style="background:#ccc" onclick="closeSecModal()">X</button><button class="btn-large" id="conf-btn" onclick="executeAction()">OK</button></div>
             </div>
-
         </div>
     </div>
 
     <div id="toast">Copiado</div>
-
-    <audio id="alarm-sound" loop>
-        <source src="data:audio/mp3;base64,//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq" type="audio/mpeg">
-    </audio>
+    <audio id="alarm-sound" loop src="data:audio/mp3;base64,//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq"></audio>
 
     <script>
-        let db = { config: { name: "", pin: "", theme: "light" }, clipboard: [], passwords: [] };
-        let dailyExitTime = null;
-        let alarmTriggered = false;
+        // 4. FRASES MOTIVADORAS (Modificables)
+        const QUOTES = [
+            "La excelencia no es un acto, es un hábito.",
+            "Si puedes soñarlo, puedes hacerlo.",
+            "La tecnología es mejor cuando une a las personas.",
+            "Hazlo con pasión o no lo hagas.",
+            "Un error es una oportunidad para aprender.",
+            "Hoy es un buen día para tener un gran día.",
+            "Cuando te estés exigiendo, recuerda: No soy un Robot."
+        ];    
+
+        // ESTRUCTURA BASE
+        let db = { 
+            config: { name: "", pin: "", theme: "light" }, 
+            clipboard: [], passwords: [], notes: [], reminders: [] 
+        };
         
-        let pendingAction = null; 
-        let pendingPayload = null; 
+        let dailyExitTime = null; // Formato 24h String
+        let currentNoteFilter = 'General';
+        
+        // Variables de Control
+        let alarmTriggered = false;
+        let currentNagId = null;
+        let pendingAction, pendingPayload;
         const alarmAudio = document.getElementById('alarm-sound');
 
         window.onload = function() {
-            const saved = localStorage.getItem('netAdminDB_v6');
+            // Generar opciones de hora 1-12
+            const selHour = document.getElementById('ts-hour');
+            for(let i=1; i<=12; i++) {
+                let opt = document.createElement('option'); opt.value = i; opt.text = i;
+                selHour.appendChild(opt);
+            }
+            // Poner frase aleatoria
+            document.getElementById('daily-quote').innerText = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+
+            const saved = localStorage.getItem('netAdminDB_v7');
             if (saved) {
                 db = JSON.parse(saved);
+                // MIGRACIÓN AUTOMÁTICA DE V6 A V7
+                // Si el backup importado no tiene notas o recordatorios, los crea vacíos para evitar errores
+                if(!db.notes) db.notes = [];
+                if(!db.reminders) db.reminders = [];
+
                 if(db.config.theme === 'dark') document.body.classList.add('dark-mode');
                 showLockScreen();
             } else {
                 document.getElementById('setup-screen').classList.remove('hidden');
             }
-            setInterval(checkTime, 30000);
+            setInterval(checkTime, 30000); // Chequeo Backup
+            setInterval(checkReminders, 20000); // Chequeo Recordatorios (cada 20s para la notificación)
         };
 
-        // SETUP
-        function nextStep(s) {
-            if(s===2 && !document.getElementById('setup-name').value) return alert("Pon tu nombre");
-            document.getElementById('step-1').classList.add('hidden');
-            document.getElementById('step-2').classList.remove('hidden');
-        }
-
+        // --- 1. SETUP & LOGIN CON NUEVO SELECTOR ---
+        function nextStep(s) { if(s===2 && !document.getElementById('setup-name').value) return alert("Nombre?"); document.getElementById('step-1').classList.add('hidden'); document.getElementById('step-2').classList.remove('hidden'); }
         function finishSetup() {
             const pin = document.getElementById('setup-pin').value;
-            if(pin.length < 4) return alert("Mínimo 4 dígitos");
-            
-            db.config.name = document.getElementById('setup-name').value;
-            db.config.pin = pin;
-            db.clipboard.push({id:1, title:"OLTs", cards:[{id:101, label:"OLT Maracaibo", content:"10.10.20.2"}]});
-            db.clipboard.push({id:2, title:"IPs Routers", cards:[{id:102, label:"Router Mercusys", content:"192.168.1.1"}]});
-            db.passwords.push({id:3, title:"Credenciales", cards:[{id:201, label:"ONU ZTE", user:"admin", pass:"gpon"}]});
-
-            saveDB();
-            location.reload();
+            if(pin.length<4) return alert("Min 4 digitos");
+            db.config.name = document.getElementById('setup-name').value; db.config.pin = pin;
+            // Datos demo
+            db.clipboard.push({id:1, title:"OLTs", cards:[{id:101, label:"OLT 1", content:"10.10.10.1"}]});
+            saveDB(); location.reload();
         }
-
-        // LOGIN
         function showLockScreen() {
             document.getElementById('lock-name').innerText = db.config.name;
             document.getElementById('lock-screen').classList.remove('hidden');
             document.getElementById('app-container').classList.remove('visible');
-            const now = new Date(); now.setHours(now.getHours() + 8);
-            const hh = String(now.getHours()).padStart(2, '0');
-            const mm = String(now.getMinutes()).padStart(2, '0');
-            document.getElementById('daily-shift').value = `${hh}:${mm}`;
         }
-
         function unlockApp() {
             const pin = document.getElementById('login-pin').value;
-            const time = document.getElementById('daily-shift').value;
-            
             if(pin !== db.config.pin) return alert("PIN Incorrecto");
-            if(!time) return alert("Indica tu hora de salida");
+            
+            // CONVERTIR 12h a 24h
+            let h = parseInt(document.getElementById('ts-hour').value);
+            const m = document.getElementById('ts-min').value;
+            const ampm = document.getElementById('ts-ampm').value;
+            
+            if(ampm === 'PM' && h !== 12) h += 12;
+            if(ampm === 'AM' && h === 12) h = 0;
+            
+            dailyExitTime = `${String(h).padStart(2,'0')}:${m}`; // Guardar como 24h
             
             if ("Notification" in window) Notification.requestPermission();
             
-            dailyExitTime = time;
             document.getElementById('app-username').innerText = db.config.name;
-            document.getElementById('display-time').innerText = time;
+            document.getElementById('display-time').innerText = `${document.getElementById('ts-hour').value}:${m} ${ampm}`;
             
             document.getElementById('lock-screen').classList.add('hidden');
             document.getElementById('app-container').classList.add('visible');
@@ -297,162 +357,190 @@
             renderAll();
         }
 
-        // --- SISTEMA DE SEGURIDAD (2 PASOS) ---
-        function startSecurityCheck(actionType, payload = null) {
-            pendingAction = actionType;
-            pendingPayload = payload;
+        // --- 2. RENDERIZADO DE VISTAS ---
+        function switchTab(t) {
+            document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active')); event.target.classList.add('active');
+            ['clip','pass','notes','reminders'].forEach(v => document.getElementById(`view-${v}`).classList.add('hidden'));
+            document.getElementById(`view-${t}`).classList.remove('hidden');
+            if(t==='notes') renderNotes();
+            if(t==='reminders') renderReminders();
+        }
+
+        function renderAll() {
+            // Clip & Pass
+            ['clipboard', 'passwords'].forEach(type => {
+                const div = document.getElementById(type==='clipboard'?'view-clip':'view-pass'); div.innerHTML='';
+                db[type].forEach((list, lIdx) => {
+                    const box = document.createElement('div'); box.className='list-box';
+                    box.innerHTML = `<div class="list-head"><span>${list.title}</span><button class="mini-btn" style="color:red" onclick="startSecurityCheck('delete',{type:'list',cat:'${type}',idx:${lIdx}})">x</button></div><div class="grid"></div>`;
+                    const grid = box.querySelector('.grid');
+                    list.cards.forEach((c, cIdx) => {
+                        const d = document.createElement('div');
+                        const delBtn = `<button class="mini-btn" onclick="startSecurityCheck('delete',{type:'card',cat:'${type}',lIdx:${lIdx},cIdx:${cIdx}})">🗑️</button>`;
+                        if(type==='clipboard') {
+                            d.className='card'; d.onclick=(e)=>{if(!e.target.closest('button'))copy(c.content)};
+                            d.innerHTML=`<div class="card-label">${c.label}</div><div class="card-val">${c.content}</div><div class="actions">${delBtn}</div>`;
+                        } else {
+                            d.className='card pass-card';
+                            d.innerHTML=`<div class="card-label">${c.label}</div><div class="cred-row"><span>👤 ${c.user}</span><button class="mini-btn" onclick="copy('${c.user}')">C</button></div><div class="cred-row"><span class="blur" onclick="copy('${c.pass}')">🔑 ${c.pass}</span><button class="mini-btn" onclick="copy('${c.pass}')">C</button></div><div class="actions">${delBtn}</div>`;
+                        }
+                        grid.appendChild(d);
+                    });
+                    const add = document.createElement('div'); add.className='card btn-add'; add.style.border='2px dashed #ccc'; add.style.display='flex'; add.style.justifyContent='center'; add.innerText='+'; add.onclick=()=>addItem(type,lIdx);
+                    grid.appendChild(add); div.appendChild(box);
+                });
+                const btn = document.createElement('button'); btn.className='btn-large'; btn.style.background='transparent'; btn.style.border='2px dashed #ccc'; btn.style.color='#777'; btn.innerText='+ Lista'; btn.onclick=()=>addList(type);
+                div.appendChild(btn);
+            });
+            renderNotes();
+            renderReminders();
+        }
+
+        // --- 3. LOGICA DE NOTAS ---
+        function renderNotes() {
+            const grid = document.getElementById('notes-grid'); grid.innerHTML = '';
+            db.notes.filter(n => n.filter === currentNoteFilter).forEach((n, idx) => {
+                const d = document.createElement('div'); d.className = 'card note-card';
+                d.innerHTML = `<div style="white-space:pre-wrap;">${n.text}</div><div class="actions"><button class="mini-btn" onclick="delNote(${n.id})">🗑️</button></div>`;
+                grid.appendChild(d);
+            });
+            // Update pills
+            document.querySelectorAll('.pill').forEach(p => p.classList.toggle('active', p.innerText.includes(currentNoteFilter)));
+        }
+        function filterNotes(f) { currentNoteFilter = f; renderNotes(); }
+        function addNote() {
+            const t = prompt("Escribe la nota:");
+            if(t) { db.notes.push({id:Date.now(), text:t, filter:currentNoteFilter}); saveDB(); renderNotes(); }
+        }
+        function delNote(id) {
+            if(confirm("Borrar nota?")) { db.notes = db.notes.filter(n => n.id !== id); saveDB(); renderNotes(); }
+        }
+
+        // --- 4. LOGICA DE RECORDATORIOS (INSISTENTES) ---
+        function renderReminders() {
+            const list = document.getElementById('reminders-list'); list.innerHTML = '';
+            db.reminders.forEach((r) => {
+                const d = document.createElement('div'); d.className = 'card reminder-card';
+                if(r.done) d.style.opacity = '0.6';
+                d.innerHTML = `
+                    <div>
+                        <div class="reminder-time">${r.displayTime}</div>
+                        <div class="${r.done?'reminder-done':''}">${r.text}</div>
+                    </div>
+                    <div>
+                        ${!r.done ? `<button class="mini-btn" onclick="completeReminder(${r.id})">✅</button>` : ''}
+                        <button class="mini-btn" style="color:red" onclick="delReminder(${r.id})">🗑️</button>
+                    </div>
+                `;
+                list.appendChild(d);
+            });
+        }
+        function addReminder() {
+            const txt = prompt("Recordar:"); if(!txt) return;
+            // Usar prompts simples para hora (podria mejorarse con UI, pero por espacio usamos prompt)
+            const h = prompt("Hora (0-23):"); const m = prompt("Minutos (0-59):");
+            if(h && m) {
+                const timeStr = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+                db.reminders.push({id:Date.now(), text:txt, time:timeStr, displayTime: `${h}:${m}`, done:false});
+                saveDB(); renderReminders();
+            }
+        }
+        function completeReminder(id) {
+            const r = db.reminders.find(x=>x.id===id); if(r) r.done = true;
+            saveDB(); renderReminders();
+            // Si era el que estaba sonando, parar
+            if(currentNagId === id) dismissNag();
+        }
+        function delReminder(id) {
+            db.reminders = db.reminders.filter(x=>x.id!==id); saveDB(); renderReminders();
+        }
+
+        function checkReminders() {
+            const now = new Date();
+            const nowStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
             
-            document.getElementById('security-pin').value = '';
-            document.getElementById('sec-step-1').classList.remove('hidden');
-            document.getElementById('sec-step-2').classList.add('hidden');
-            document.getElementById('security-modal').style.display = 'flex';
-            document.getElementById('security-pin').focus();
-        }
-
-        function verifyPin() {
-            const pin = document.getElementById('security-pin').value;
-            if(pin === db.config.pin) {
-                document.getElementById('sec-step-1').classList.add('hidden');
-                document.getElementById('sec-step-2').classList.remove('hidden');
-                
-                const title = document.getElementById('conf-title');
-                const desc = document.getElementById('conf-desc');
-                const btn = document.getElementById('conf-btn');
-                
-                if(pendingAction === 'save') {
-                    title.innerText = "Guardar Backup";
-                    desc.innerText = "Se descargará un archivo .json";
-                    btn.innerText = "Descargar";
-                    btn.onclick = executeSave; 
-                } else if(pendingAction === 'restore') {
-                    title.innerText = "Restaurar Backup";
-                    desc.innerText = "Selecciona el archivo para importar.";
-                    btn.innerText = "Seleccionar Archivo";
-                    btn.onclick = executeRestore;
-                } else if(pendingAction === 'delete') {
-                    title.innerText = "Eliminar";
-                    desc.innerText = "¿Estás seguro de borrar este elemento?";
-                    btn.innerText = "Sí, Borrar";
-                    btn.style.backgroundColor = "var(--danger)";
-                    btn.onclick = executeDelete;
-                } else if(pendingAction === 'alarm_save') { // NUEVO CASO ALARMA
-                    title.innerText = "Backup de Emergencia";
-                    desc.innerText = "Autorizar descarga de seguridad.";
-                    btn.innerText = "Autorizar y Descargar";
-                    btn.style.backgroundColor = "var(--danger)";
-                    btn.onclick = executeAlarmSave;
+            db.reminders.forEach(r => {
+                if(!r.done && r.time === nowStr) {
+                    // Trigger NAG
+                    if(currentNagId !== r.id) {
+                        currentNagId = r.id;
+                        document.getElementById('nag-text').innerText = r.text;
+                        document.getElementById('nag-modal').style.display = 'flex';
+                        try { alarmAudio.play(); } catch(e){}
+                        // Notificacion
+                        if ("Notification" in window && Notification.permission === "granted") new Notification("🔔 Recordatorio", { body: r.text });
+                    } else {
+                        // YA ESTA ACTIVO, REPETIR (CADA 20s entra aqui si la hora sigue siendo igual)
+                        try { alarmAudio.play(); } catch(e){}
+                        if ("Notification" in window) new Notification("🔔 ¡ATENCIÓN!", { body: r.text });
+                    }
                 }
-            } else {
-                alert("PIN Incorrecto");
-            }
+            });
+        }
+        function dismissNag() {
+            document.getElementById('nag-modal').style.display = 'none';
+            alarmAudio.pause(); alarmAudio.currentTime = 0;
+            if(currentNagId) completeReminder(currentNagId); // Marcar como listo al cerrar
+            currentNagId = null;
         }
 
-        // ACCIONES FINALES
-        function executeSave() { exportData(); closeSecModal(); }
-        function executeRestore() { document.getElementById('import-file').click(); closeSecModal(); }
-        
-        function executeAlarmSave() {
-            exportData();
-            stopAlarm(); // Detiene alarma y cierra modal rojo
-            closeSecModal(); // Cierra modal de PIN
-        }
-
-        function executeDelete() {
-            if(pendingPayload.type === 'list') {
-                db[pendingPayload.cat].splice(pendingPayload.idx, 1);
-            } else {
-                db[pendingPayload.cat][pendingPayload.lIdx].cards.splice(pendingPayload.cIdx, 1);
-            }
-            saveDB();
-            renderAll();
-            closeSecModal();
-        }
-
-        function closeSecModal() {
-            document.getElementById('security-modal').style.display = 'none';
-            pendingAction = null; pendingPayload = null;
-        }
-
-        // ALARMA
-        function checkTime() {
+        // --- FUNCIONES CORE ---
+        function checkTime() { // Backup Alarm logic
             if(!dailyExitTime || alarmTriggered) return;
             const now = new Date(); const [h, m] = dailyExitTime.split(':');
             const exit = new Date(); exit.setHours(h, m, 0);
             const diff = (exit - now) / 1000 / 60;
-            if(diff <= 60 && diff > 0) triggerAlarm();
+            if(diff <= 60 && diff > 0) {
+                alarmTriggered = true;
+                document.getElementById('backup-modal').style.display = 'flex';
+                try{alarmAudio.play()}catch(e){}
+            }
         }
-        function triggerAlarm() {
-            alarmTriggered = true;
-            document.getElementById('backup-modal').style.display = 'flex';
-            try { alarmAudio.play(); } catch(e) {}
-            if ("Notification" in window && Notification.permission === "granted") new Notification("⏰ Alerta Backup", { body: "Falta 1 hora. Guarda." });
-        }
-        function stopAlarm() { document.getElementById('backup-modal').style.display = 'none'; alarmAudio.pause(); alarmAudio.currentTime = 0; }
+        function stopAlarm() { document.getElementById('backup-modal').style.display='none'; alarmAudio.pause(); }
 
-        // RENDER & CRUD
-        function renderAll() { renderSection('clipboard', 'view-clip'); renderSection('passwords', 'view-pass'); }
-        function renderSection(type, viewId) {
-            const container = document.getElementById(viewId); container.innerHTML = '';
-            db[type].forEach((list, lIdx) => {
-                const listEl = document.createElement('div'); listEl.className = 'list-box';
-                listEl.innerHTML = `<div class="list-head"><span>${list.title}</span> <button class="mini-btn" style="color:red" onclick="startSecurityCheck('delete', {type:'list', cat:'${type}', idx:${lIdx}})">x</button></div><div class="grid"></div>`;
-                const grid = listEl.querySelector('.grid');
-                list.cards.forEach((c, cIdx) => {
-                    const d = document.createElement('div');
-                    const delBtn = `<button class="mini-btn" onclick="startSecurityCheck('delete', {type:'card', cat:'${type}', lIdx:${lIdx}, cIdx:${cIdx}})">🗑️</button>`;
-                    if(type === 'clipboard') {
-                        d.className = 'card'; d.onclick = (e)=>{if(!e.target.closest('button')) copy(c.content)};
-                        d.innerHTML = `<div class="card-label">${c.label}</div><div class="card-val">${c.content}</div><div class="actions">${delBtn}</div>`;
-                    } else {
-                        d.className = 'card pass-card';
-                        d.innerHTML = `<div class="card-label">${c.label}</div><div class="cred-row"><span>👤 ${c.user}</span><button class="mini-btn" onclick="copy('${c.user}')">C</button></div><div class="cred-row"><span class="blur" onclick="copy('${c.pass}')">🔑 ${c.pass}</span><button class="mini-btn" onclick="copy('${c.pass}')">C</button></div><div class="actions">${delBtn}</div>`;
-                    }
-                    grid.appendChild(d);
-                });
-                const add = document.createElement('div'); add.className='card btn-add'; add.innerText='+'; add.onclick = () => addItem(type, lIdx);
-                grid.appendChild(add); container.appendChild(listEl);
-            });
-            const btn = document.createElement('button'); btn.className='btn-large'; btn.style.background='transparent'; btn.style.border='2px dashed #ccc'; btn.style.color='#777'; btn.innerText='+ Nueva Lista'; btn.onclick = () => addList(type);
-            container.appendChild(btn);
+        // Security Wrapper
+        function startSecurityCheck(act, load) { pendingAction=act; pendingPayload=load; document.getElementById('security-pin').value=''; document.getElementById('security-modal').style.display='flex'; }
+        function verifyPin() {
+            if(document.getElementById('security-pin').value === db.config.pin) {
+                document.getElementById('sec-step-1').classList.add('hidden');
+                document.getElementById('sec-step-2').classList.remove('hidden');
+                document.getElementById('conf-desc').innerText = "Acción autorizada.";
+            } else alert("PIN Incorrecto");
         }
-
-        function addItem(type, idx) {
-            if(type==='clipboard') { const l=prompt("Título:"); const c=prompt("Contenido:"); if(l&&c) { db.clipboard[idx].cards.push({id:Date.now(), label:l, content:c}); saveDB(); renderAll(); }}
-            else { const l=prompt("Equipo:"); const u=prompt("User:"); const p=prompt("Pass:"); if(l&&u&&p) { db.passwords[idx].cards.push({id:Date.now(), label:l, user:u, pass:p}); saveDB(); renderAll(); }}
+        function executeAction() {
+            if(pendingAction==='save') exportData();
+            if(pendingAction==='restore') document.getElementById('import-file').click();
+            if(pendingAction==='delete') {
+                if(pendingPayload.type==='list') db[pendingPayload.cat].splice(pendingPayload.idx,1);
+                else db[pendingPayload.cat][pendingPayload.lIdx].cards.splice(pendingPayload.cIdx,1);
+                saveDB(); renderAll();
+            }
+            if(pendingAction==='alarm_save') { exportData(); stopAlarm(); }
+            closeSecModal();
         }
-        function addList(t) { const x=prompt("Nombre:"); if(x){ db[t].push({id:Date.now(), title:x, cards:[]}); saveDB(); renderAll(); }}
+        function closeSecModal() { document.getElementById('security-modal').style.display='none'; document.getElementById('sec-step-1').classList.remove('hidden'); document.getElementById('sec-step-2').classList.add('hidden'); }
 
-        async function copy(x) { try { await navigator.clipboard.writeText(x); showToast(); } catch { const t=document.createElement('textarea');t.value=x;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);showToast(); } }
+        // Utils
+        function addItem(t,i) { 
+            if(t==='clipboard'){const l=prompt("Titulo");const c=prompt("Contenido"); if(l&&c)db.clipboard[i].cards.push({id:Date.now(),label:l,content:c});}
+            else{const l=prompt("Equipo");const u=prompt("User");const p=prompt("Pass"); if(l&&u&&p)db.passwords[i].cards.push({id:Date.now(),label:l,user:u,pass:p});}
+            saveDB(); renderAll();
+        }
+        function addList(t) { const n=prompt("Nombre Lista"); if(n) db[t].push({id:Date.now(), title:n, cards:[]}); saveDB(); renderAll(); }
+        async function copy(x) { try{await navigator.clipboard.writeText(x); showToast();}catch{const t=document.createElement('textarea');t.value=x;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);showToast();} }
         function showToast() { const t=document.getElementById('toast'); t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1500); }
-        function saveDB() { localStorage.setItem('netAdminDB_v6', JSON.stringify(db)); }
-        
-        function exportData() {
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(new Blob([JSON.stringify(db)],{type:"application/json"}));
-            a.download = `Backup_${db.config.name}_${new Date().toLocaleDateString().replace(/\//g,'-')}.json`;
-            a.click();
-        }
-        function importData(input) {
-            const file = input.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    if(confirm("Esto sobrescribirá tus datos actuales. ¿Continuar?")) {
-                        db = data; saveDB(); location.reload();
-                    }
-                } catch(err) { alert("Error: Archivo inválido"); }
-            };
-            reader.readAsText(file);
-            input.value = '';
-        }
-
-        function toggleTheme() { document.body.classList.toggle('dark-mode'); db.config.theme = document.body.classList.contains('dark-mode')?'dark':'light'; saveDB(); }
-        function switchTab(t) { document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active')); event.target.classList.add('active'); document.getElementById('view-clip').classList.toggle('hidden', t!=='clip'); document.getElementById('view-pass').classList.toggle('hidden', t!=='pass'); }
+        function saveDB() { localStorage.setItem('netAdminDB_v7', JSON.stringify(db)); }
+        function exportData() { const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(db)],{type:"json"})); a.download=`Backup_${db.config.name}.json`; a.click(); }
+        function importData(i) { const f=i.files[0]; const r=new FileReader(); r.onload=e=>{
+            // MIGRACION AL IMPORTAR
+            let data = JSON.parse(e.target.result);
+            if(!data.notes) data.notes = [];
+            if(!data.reminders) data.reminders = [];
+            db=data; saveDB(); location.reload();
+        }; if(f)r.readAsText(f); i.value=''; }
+        function toggleTheme() { document.body.classList.toggle('dark-mode'); db.config.theme=document.body.classList.contains('dark-mode')?'dark':'light'; saveDB(); }
         function lockApp() { location.reload(); }
-        function resetApp() { if(confirm("¿Borrar todo?")) { localStorage.removeItem('netAdminDB_v6'); location.reload(); }}
+        function resetApp() { if(confirm("Reset total?")) { localStorage.removeItem('netAdminDB_v7'); location.reload(); }}
     </script>
 </body>
-
 </html>
