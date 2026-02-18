@@ -4,8 +4,21 @@
       "id": 1,
       "title": "OLTs Zulia",
       "cards": [
-        {"id": 101, "label": "OLT Maracaibo", "content": "10.10.20.2"},
-        {"id": 102, "label": "OLT Cabimas", "content": "10.10.30.5"}
+        {
+          "id": 101,
+          "label": "OLT Maracaibo",
+          "content": "10.10.20.2"
+        },
+        {
+          "id": 102,
+          "label": "OLT Cabimas",
+          "content": "10.10.30.5"
+        },
+        {
+          "id": 1771445588134,
+          "label": "OLT Ciudad Ojeda",
+          "content": "10.10.10.10"
+        }
       ]
     }
   ],
@@ -14,8 +27,18 @@
       "id": 2,
       "title": "Accesos Maestros",
       "cards": [
-        {"id": 201, "label": "ZTE Principal", "user": "admin", "pass": "gpon1234"},
-        {"id": 202, "label": "Huawei Borde", "user": "root", "pass": "adminHW"}
+        {
+          "id": 201,
+          "label": "ZTE Principal",
+          "user": "admin",
+          "pass": "gpon1234"
+        },
+        {
+          "id": 202,
+          "label": "Huawei Borde",
+          "user": "root",
+          "pass": "adminHW"
+        }
       ]
     }
   ]
