@@ -1,9 +1,9 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NetAdmin Cloud v8.0</title>
+    <title>NetAdmin v9.0</title>
     <style>
         :root {
             --bg-body: #f0f2f5; --bg-surface: #ffffff; --bg-input: #e4e6eb;
@@ -27,104 +27,109 @@
 
         .welcome-box { background: var(--bg-surface); padding: 30px; border-radius: 20px; box-shadow: var(--shadow); max-width: 400px; width: 100%; border: 1px solid var(--border); }
         .logo { font-size: 3rem; margin-bottom: 10px; }
-        h2 { margin: 10px 0; color: var(--primary); }
         
         .big-input { width: 100%; padding: 15px; border-radius: var(--radius); border: 2px solid var(--border); background: var(--bg-input); font-size: 1.1rem; text-align: center; color: var(--text-main); margin-bottom: 15px; }
         .btn-large { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: var(--radius); font-size: 1rem; font-weight: bold; cursor: pointer; }
-
-        /* APP HEADER & GRID */
+        
+        /* APP */
         #app-container { max-width: 900px; margin: 0 auto; padding: 20px; display: none; padding-bottom: 60px; }
         #app-container.visible { display: block; animation: fadeIn 0.5s; }
 
         .app-header-grid { display: grid; grid-template-columns: 1fr auto; gap: 15px; margin-bottom: 20px; align-items: center; }
-        .quote-box { background: linear-gradient(135deg, var(--primary), #0056b3); color: white; padding: 15px; border-radius: var(--radius); font-size: 0.9rem; font-style: italic; box-shadow: var(--shadow); position: relative; overflow: hidden; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+        .quote-box { background: linear-gradient(135deg, var(--primary), #0056b3); color: white; padding: 15px; border-radius: var(--radius); font-size: 0.9rem; font-style: italic; box-shadow: var(--shadow); position: relative; overflow: hidden; }
+        
         .controls { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
         .btn-icon { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px; width: 40px; height: 40px; cursor: pointer; font-size: 1.2rem; }
 
         /* TABS */
         .tabs-container { overflow-x: auto; padding-bottom: 5px; margin-bottom: 20px; }
-        .tabs { display: flex; background: var(--bg-surface); padding: 5px; border-radius: 15px; box-shadow: var(--shadow); min-width: 350px; }
+        .tabs { display: flex; background: var(--bg-surface); padding: 5px; border-radius: 15px; box-shadow: var(--shadow); min-width: 360px; }
         .tab { flex: 1; text-align: center; padding: 12px 5px; border-radius: 10px; cursor: pointer; color: var(--text-sec); font-weight: 600; font-size: 0.9rem; white-space: nowrap; }
         .tab.active { background: var(--primary); color: white; }
 
-        /* PILLS & LISTS */
+        /* FILTROS RESPUESTAS */
         .sub-filters { display: flex; gap: 10px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; }
         .pill { padding: 6px 12px; border-radius: 20px; background: var(--bg-input); cursor: pointer; font-size: 0.85rem; color: var(--text-sec); border: 1px solid transparent; white-space: nowrap; }
         .pill.active { background: var(--bg-surface); border-color: var(--primary); color: var(--primary); font-weight: bold; }
 
+        /* LISTAS & CARDS */
         .list-box { background: var(--bg-surface); border-radius: var(--radius); padding: 15px; margin-bottom: 15px; border: 1px solid var(--border); }
         .list-head { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
-        
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
         
-        /* CARD STYLES */
         .card { background: var(--bg-body); border: 1px solid var(--border); border-radius: 8px; padding: 12px; position: relative; cursor: pointer; border-left: 4px solid var(--border); overflow: hidden; }
         .card:active { transform: scale(0.98); }
         .card-label { font-weight: bold; font-size: 0.9rem; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        
-        .card-val { 
-            font-size: 0.8rem; color: var(--text-sec); font-family: monospace; 
-            white-space: normal; overflow-wrap: anywhere; word-break: break-all;
-            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.2;
-        }
+        .card-val { font-size: 0.8rem; color: var(--text-sec); font-family: monospace; white-space: normal; overflow-wrap: anywhere; word-break: break-all; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.2; }
 
-        .actions { position: absolute; top: 5px; right: 5px; display: none; background: rgba(255,255,255,0.9); border-radius: 4px; z-index: 10; padding:2px; }
-        .card:hover .actions { display: block; } /* Solo visible si Admin está activo */
-        
-        /* Tipos de Tarjetas */
+        /* Actions */
+        .actions { position: absolute; top: 5px; right: 5px; display: block; background: rgba(255,255,255,0.8); border-radius: 4px; }
+        .mini-btn { font-size: 10px; padding: 2px 5px; background: white; border: 1px solid #ccc; border-radius: 4px; cursor: pointer; }
+
+        /* TIPOS DE CARDS */
         .pass-card { border-top: 4px solid var(--danger); border-left: 0; }
-        .note-card { border-left: 4px solid var(--warning); background: #fffceb; color: #5c4e06; cursor: default; white-space: pre-wrap; }
-        body.dark-mode .note-card { background: #423805; color: #e6dbb5; }
-        .reminder-card { border-left: 4px solid var(--success); display: flex; justify-content: space-between; align-items: center; cursor: default; }
+        .resp-card { border-left: 4px solid var(--warning); background: #fffceb; color: #5c4e06; }
+        body.dark-mode .resp-card { background: #423805; color: #e6dbb5; }
+        
+        .news-card { border-left: 4px solid var(--primary); cursor: default; }
+        .news-date { font-size: 0.75rem; color: var(--text-sec); margin-bottom: 5px; }
+        .news-title { font-weight: bold; font-size: 1rem; margin-bottom: 5px; color: var(--primary); }
+        
         .cred-row { display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.03); padding: 5px; border-radius: 4px; margin-top: 5px; font-size: 0.85rem; }
-        .cred-val-fix { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 80px; }
+        .blur { filter: blur(4px); cursor: pointer; transition: 0.2s; }
+        .blur:hover { filter: blur(0); }
 
         /* CLOCK & MODALS */
         .time-selector { display: flex; gap: 5px; background: var(--bg-input); padding: 10px; border-radius: 8px; margin-bottom: 15px; border: 1px solid var(--primary); }
         .ts-select { flex: 1; padding: 10px; border-radius: 6px; border: 1px solid #ccc; font-size: 1rem; text-align: center; background: var(--bg-surface); color: var(--text-main); }
+        
         .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6); z-index: 3000; display: none; justify-content: center; align-items: center; }
         .alert-box { background: var(--bg-surface); padding: 25px; border-radius: 20px; text-align: center; max-width: 300px; border: 2px solid var(--primary); }
-        .admin-badge { background: var(--danger); color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: bold; margin-left: 5px; display: none; }
+        .alert-danger { border-color: var(--danger); animation: shake 0.5s infinite; }
         
         #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 10px 20px; border-radius: 20px; opacity: 0; pointer-events: none; transition: 0.3s; z-index: 5000; }
         #toast.show { opacity: 1; transform: translateY(-10px); }
 
+        .btn-add { border: 2px dashed #ccc; display: flex; justify-content: center; align-items: center; font-weight: bold; color: #777; min-height: 50px; }
+
         @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+        @keyframes shake { 0% { transform: rotate(0deg); } 25% { transform: rotate(5deg); } 75% { transform: rotate(-5deg); } 100% { transform: rotate(0deg); } }
     </style>
 </head>
 <body>
 
     <div id="login-screen" class="screen">
         <div class="welcome-box">
-            <div class="logo">🏢</div>
-            <h2>Acceso Corporativo</h2>
+            <div class="logo">📡</div>
+            <h2 id="login-title">Acceso Soporte</h2>
             
-            <label style="display:block; font-size:0.85rem; color:var(--text-sec); margin-bottom:5px">Hora de Salida Hoy:</label>
+            <label style="display:block; font-size:0.85rem; color:var(--text-sec); margin-bottom:5px">Hora de Salida:</label>
             <div class="time-selector">
                 <select id="ts-hour" class="ts-select"></select>
                 <select id="ts-min" class="ts-select"><option value="00">00</option><option value="30">30</option></select>
                 <select id="ts-ampm" class="ts-select"><option value="PM">PM</option><option value="AM">AM</option></select>
             </div>
 
-            <input type="text" id="login-user" class="big-input" placeholder="Usuario">
-            <input type="password" id="login-pass" class="big-input" placeholder="Contraseña">
-            
-            <button class="btn-large" onclick="attemptLogin()">Iniciar Sesión</button>
-            
-            <p style="margin-top:20px; font-size:0.8rem; cursor:pointer; color:var(--text-sec)" onclick="toggleAdminPanel()">¿Eres Administrador?</p>
-            <div id="admin-token-area" class="hidden" style="margin-top:10px; border-top:1px solid #ccc; padding-top:10px">
-                <p style="font-size:0.8rem; color:var(--danger)">Ingresa Token de GitHub para Editar:</p>
-                <input type="password" id="admin-token" class="big-input" style="font-size:0.9rem" placeholder="ghp_xxxxxxxxxxxx">
-                <button class="mini-btn" style="width:100%; padding:8px" onclick="saveToken()">Guardar Token</button>
+            <div id="login-mode-support">
+                <input type="password" id="pass-support" class="big-input" placeholder="Contraseña de Soporte">
+                <button class="btn-large" onclick="loginSupport()">Iniciar Turno</button>
+                <p style="margin-top:20px; font-size:0.8rem; cursor:pointer; color:var(--text-sec)" onclick="switchLoginMode('admin')">¿Eres Administrador?</p>
+            </div>
+
+            <div id="login-mode-admin" class="hidden">
+                <input type="password" id="pass-admin" class="big-input" placeholder="Contraseña Admin">
+                <input type="password" id="token-admin" class="big-input" placeholder="Token GitHub (ghp_...)" style="font-size:0.8rem">
+                <button class="btn-large" style="background-color:var(--text-main)" onclick="loginAdmin()">Acceso Total</button>
+                <p style="margin-top:20px; font-size:0.8rem; cursor:pointer; color:var(--text-sec)" onclick="switchLoginMode('support')">Volver a Soporte</p>
             </div>
         </div>
     </div>
 
     <div id="app-container">
         <div class="app-header-grid">
-            <div class="quote-box" id="daily-quote">"La disciplina es el puente entre metas y logros."</div>
+            <div class="quote-box" id="daily-quote">"La calidad de tu trabajo es tu firma."</div>
             <div style="text-align: right;">
-                <div style="font-weight:bold"><span id="username-display">Soporte</span> <span id="admin-badge" class="admin-badge">ADMIN</span></div>
+                <div style="font-weight:bold"><span id="username-display">Soporte</span> <span id="admin-badge" style="display:none; background:red; color:white; font-size:0.7rem; padding:2px 5px; border-radius:4px">ADMIN</span></div>
                 <div style="font-size:0.8rem; color:var(--text-sec)">Salida: <span id="display-time">--:--</span></div>
             </div>
         </div>
@@ -132,389 +137,342 @@
         <div class="controls" style="margin-bottom: 15px;">
             <span id="sync-status" style="margin-right:auto; font-size:0.8rem; display:flex; align-items:center; color:var(--text-sec)">☁️ Conectando...</span>
             <button class="btn-icon" onclick="toggleTheme()" title="Tema">🌓</button>
-            <button class="btn-icon" onclick="logout()" title="Salir">🔒</button>
+            <button class="btn-icon" onclick="location.reload()" title="Salir">🔒</button>
         </div>
 
         <div class="tabs-container">
             <div class="tabs">
                 <div class="tab active" onclick="switchTab('clip')">📋 Links</div>
                 <div class="tab" onclick="switchTab('pass')">🔐 Pass</div>
-                <div class="tab" onclick="switchTab('notes')">📝 Notas</div>
-                <div class="tab" onclick="switchTab('reminders')">⏰ Alarmas</div>
+                <div class="tab" onclick="switchTab('resp')">💬 Respuestas</div>
+                <div class="tab" onclick="switchTab('news')">📢 Comunicados</div>
             </div>
         </div>
 
         <div id="view-clip"></div>
         <div id="view-pass" class="hidden"></div>
         
-        <div id="view-notes" class="hidden">
+        <div id="view-resp" class="hidden">
             <div class="sub-filters">
-                <div class="pill active" onclick="filterNotes('General')">General</div>
-                <div class="pill" onclick="filterNotes('Día')">🌞 Día</div>
-                <div class="pill" onclick="filterNotes('Tarde')">⛅ Tarde</div>
-                <div class="pill" onclick="filterNotes('Noche')">🌙 Noche</div>
+                <div class="pill active" onclick="filterResp('General')">General</div>
+                <div class="pill" onclick="filterResp('Día')">🌞 Día</div>
+                <div class="pill" onclick="filterResp('Tarde')">⛅ Tarde</div>
+                <div class="pill" onclick="filterResp('Noche')">🌙 Noche</div>
             </div>
-            <div id="notes-grid" class="grid" style="display:flex; flex-direction:column; gap:10px;"></div>
-            <button class="btn-large" style="margin-top:15px; background:transparent; border:2px dashed #ccc; color:#777" onclick="addNote()">+ Nueva Nota</button>
+            <div id="resp-grid" class="grid" style="display:flex; flex-direction:column; gap:10px;"></div>
+            <div id="resp-admin-tools"></div>
         </div>
 
-        <div id="view-reminders" class="hidden">
-            <div id="reminders-list" style="display:flex; flex-direction:column; gap:10px;"></div>
-            <button class="btn-large" style="margin-top:15px; background:transparent; border:2px dashed #ccc; color:#777" onclick="addReminder()">+ Nuevo Recordatorio</button>
+        <div id="view-news" class="hidden">
+            <div id="news-grid" style="display:flex; flex-direction:column; gap:15px;"></div>
+            <div id="news-admin-tools" style="margin-top:15px"></div>
         </div>
 
         <footer style="text-align:center; color:var(--text-sec); margin-top:32px; font-size:0.92em; opacity:0.8;">
-            NetAdmin Cloud<br>Versión V8.0 - Build 2026<br>© 2026 - Espiral - Leonardo Montiel
+            Espiral Soporte v9.0<br>© 2026 Leonardo Montiel
         </footer>
     </div>
 
     <div id="backup-modal" class="modal-overlay">
-        <div class="alert-box alert-danger" style="border-color:var(--danger)">
+        <div class="alert-box alert-danger">
             <div style="font-size:3rem">🚨</div>
-            <h3 style="color:var(--danger)">ALERTA DE SALIDA</h3>
-            <p>Falta 1 hora para tu salida.<br>Verifica tus pendientes.</p>
-            <button class="btn-large" onclick="stopAlarm()">ENTENDIDO</button>
+            <h3 style="color:var(--danger)">FIN DE TURNO</h3>
+            <p>Falta 1 hora para tu salida.<br>Verifica pendientes.</p>
+            <button class="btn-large" onclick="document.getElementById('backup-modal').style.display='none'; alarmAudio.pause()">ENTENDIDO</button>
         </div>
     </div>
 
-    <div id="nag-modal" class="modal-overlay">
-        <div class="alert-box" style="border-color:var(--warning)">
-            <div style="font-size:3rem">🔔</div>
-            <h3>RECORDATORIO</h3>
-            <p id="nag-text" style="font-weight:bold; font-size:1.1rem">...</p>
-            <button class="btn-large" onclick="dismissNag()">✅ LISTO</button>
+    <div id="security-modal" class="modal-overlay">
+        <div class="alert-box">
+            <h3>🛡️ Confirmar</h3>
+            <p>Confirma con tu contraseña Admin</p>
+            <input type="password" id="sec-pin" class="big-input">
+            <div style="display:flex; gap:10px; margin-top:10px">
+                <button class="btn-large" style="background:#ccc" onclick="document.getElementById('security-modal').style.display='none'">X</button>
+                <button class="btn-large" onclick="confirmAdminAction()">OK</button>
+            </div>
         </div>
     </div>
 
     <div id="toast">Copiado</div>
-    <audio id="alarm-sound" loop src="data:audio/mp3;base64,//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq"></audio>
+    <audio id="alarm-sound" loop src="data:audio/mp3;base64,//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq" type="audio/mpeg"></audio>
 
     <script>
-        // --- CONFIGURACIÓN DE LA NUBE (EDITA ESTO) ---
-        const GH_CONFIG = {
-            USER: 'leoemg365',  // <--- PON TU USUARIO AQUÍ
-            REPO: 'Formatos',  // <--- PON TU REPO AQUÍ (ej: app-soporte)
-            FILE: 'db.json'
-        };
-
-        const QUOTES = ["La excelencia no es un acto, es un hábito.","Si puedes soñarlo, puedes hacerlo.","La tecnología es mejor cuando une a las personas.","Hazlo con pasión o no lo hagas.","Un error es una oportunidad para aprender."];
+        // CONFIGURACIÓN REPO
+        const GH = { USER: 'leoemg365', REPO: 'Formatos', FILE: 'db.json' };
         
-        // DATOS EN MEMORIA
-        let cloudData = { clipboard: [], passwords: [] }; // Viene de GitHub
-        let localData = { notes: [], reminders: [], theme: 'light' }; // Se guarda en el navegador
+        let db = { clipboard: [], passwords: [], responses: [], news: [] };
         let isAdmin = false;
-        let ghToken = localStorage.getItem('gh_admin_token') || '';
-        let fileSha = null; // Necesario para actualizar en GitHub
-
+        let adminPass = ''; // Se guarda temporalmente al loguear
+        let ghToken = '';
+        let fileSha = null;
+        let currentRespFilter = 'General';
+        
+        // Alarma
         let dailyExitTime = null;
         let alarmTriggered = false;
-        let currentNagId = null;
         const alarmAudio = document.getElementById('alarm-sound');
-        let currentNoteFilter = 'General';
+        
+        // Pending Action
+        let pendingCallback = null;
 
         window.onload = function() {
-            // Inicializar UI
+            // Init Clock UI
             const selHour = document.getElementById('ts-hour');
             for(let i=1; i<=12; i++) { let opt = document.createElement('option'); opt.value = i; opt.text = i; selHour.appendChild(opt); }
-            document.getElementById('daily-quote').innerText = QUOTES[Math.floor(Math.random() * QUOTES.length)];
             
-            // Cargar datos locales
-            const savedLocal = localStorage.getItem('netAdminLocal_v8');
-            if(savedLocal) {
-                localData = JSON.parse(savedLocal);
-                if(localData.theme === 'dark') document.body.classList.add('dark-mode');
-            }
+            // Check Theme
+            if(localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode');
             
-            setInterval(checkTime, 30000); 
-            setInterval(checkReminders, 20000);
+            // Cargar Token guardado si existe
+            const savedToken = localStorage.getItem('gh_token');
+            if(savedToken) document.getElementById('token-admin').value = savedToken;
+
+            setInterval(checkTime, 30000);
         };
 
-        // --- 1. LOGIN ---
-        function attemptLogin() {
-            const user = document.getElementById('login-user').value.trim();
-            const pass = document.getElementById('login-pass').value.trim();
-            
-            // Lógica de Acceso Fija
-            if(user === 'Soporte' && pass === '45637954') {
-                isAdmin = false;
-                completeLogin('Soporte');
-            } else if (user === 'Admin' && pass === '45637954') {
-                isAdmin = true;
-                if(!ghToken) alert("⚠️ Eres Admin pero no has guardado el Token de GitHub. No podrás editar.");
-                completeLogin('Administrador');
+        // --- 1. LOGIN SYSTEM ---
+        function switchLoginMode(mode) {
+            if(mode === 'admin') {
+                document.getElementById('login-title').innerText = "Acceso Admin";
+                document.getElementById('login-mode-support').classList.add('hidden');
+                document.getElementById('login-mode-admin').classList.remove('hidden');
             } else {
-                alert("Usuario o Contraseña incorrectos");
+                document.getElementById('login-title').innerText = "Acceso Soporte";
+                document.getElementById('login-mode-support').classList.remove('hidden');
+                document.getElementById('login-mode-admin').classList.add('hidden');
             }
         }
 
-        function completeLogin(name) {
-            // Configurar hora salida
+        function setExitTime() {
             let h = parseInt(document.getElementById('ts-hour').value);
             const m = document.getElementById('ts-min').value;
             const ampm = document.getElementById('ts-ampm').value;
             if(ampm === 'PM' && h !== 12) h += 12; if(ampm === 'AM' && h === 12) h = 0;
             dailyExitTime = `${String(h).padStart(2,'0')}:${m}`;
+            document.getElementById('display-time').innerText = `${document.getElementById('ts-hour').value}:${m} ${ampm}`;
+        }
 
-            // UI
+        function loginSupport() {
+            const p = document.getElementById('pass-support').value;
+            if(p !== '45637954') return alert("Contraseña Incorrecta");
+            isAdmin = false;
+            enterApp("Soporte");
+        }
+
+        function loginAdmin() {
+            const p = document.getElementById('pass-admin').value;
+            const t = document.getElementById('token-admin').value;
+            
+            // CONTRASEÑA ADMIN (Puedes cambiarla aquí)
+            if(p !== 'admin123') return alert("Contraseña Admin Incorrecta");
+            if(!t) return alert("Se requiere Token de GitHub");
+            
+            isAdmin = true;
+            adminPass = p;
+            ghToken = t;
+            localStorage.setItem('gh_token', t); // Guardar token localmente
+            enterApp("Administrador");
+        }
+
+        function enterApp(name) {
+            setExitTime();
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('app-container').classList.add('visible');
             document.getElementById('username-display').innerText = name;
-            document.getElementById('display-time').innerText = `${document.getElementById('ts-hour').value}:${m} ${ampm}`;
+            if(isAdmin) document.getElementById('admin-badge').style.display = 'inline-block';
             
-            if(isAdmin) {
-                document.getElementById('admin-badge').style.display = 'inline-block';
-            }
-
-            // Descargar datos de la nube
-            fetchFromGitHub();
-            renderLocal(); // Notas y recordatorios
+            if ("Notification" in window) Notification.requestPermission();
+            fetchData();
         }
 
-        function toggleAdminPanel() {
-            document.getElementById('admin-token-area').classList.toggle('hidden');
-        }
-        function saveToken() {
-            const t = document.getElementById('admin-token').value.trim();
-            if(t) { localStorage.setItem('gh_admin_token', t); ghToken = t; alert("Token Guardado"); }
-        }
-        function logout() { location.reload(); }
-
-        // --- 2. GITHUB SYNC (API) ---
-        async function fetchFromGitHub() {
+        // --- 2. DATA & GITHUB ---
+        async function fetchData() {
             const status = document.getElementById('sync-status');
-            status.innerText = "☁️ Sincronizando...";
-            
-            const url = `https://api.github.com/repos/${GH_CONFIG.USER}/${GH_CONFIG.REPO}/contents/${GH_CONFIG.FILE}`;
-            
+            const url = `https://api.github.com/repos/${GH.USER}/${GH.REPO}/contents/${GH.FILE}`;
+            const headers = isAdmin ? { 'Authorization': `token ${ghToken}` } : {}; // Soporte lee público (si repo es publico)
+
             try {
-                // Si hay token lo usamos (incluso Soporte puede necesitarlo si el repo es privado)
-                // Para repo público, Soporte no necesita headers.
-                const headers = {};
-                // Si el repo es privado y eres soporte, esto fallará a menos que usemos un proxy o un token read-only hardcodeado.
-                // Asumimos Repo Público para Soporte, Repo Cualquiera para Admin con Token.
-                if(isAdmin && ghToken) headers['Authorization'] = `token ${ghToken}`;
-                
-                const response = await fetch(url, { headers });
-                if(!response.ok) throw new Error("Error conexión GitHub");
-                
-                const data = await response.json();
-                fileSha = data.sha; // Importante para updates
-                
-                // Decodificar Base64 (con soporte UTF8)
-                const content = decodeURIComponent(escape(atob(data.content)));
-                cloudData = JSON.parse(content);
-                
-                status.innerText = "☁️ Actualizado";
-                status.style.color = "var(--success)";
-                renderCloud();
-            } catch (err) {
-                console.error(err);
-                status.innerText = "⚠️ Error Nube (Lectura)";
-                status.style.color = "var(--danger)";
-                // Cargar backup local si existe de sesiones previas? No, por seguridad requerimos red.
+                const res = await fetch(url, { headers });
+                if(!res.ok) throw new Error("Error Red");
+                const data = await res.json();
+                fileSha = data.sha;
+                db = JSON.parse(decodeURIComponent(escape(atob(data.content))));
+                status.innerText = "☁️ En línea"; status.style.color = "var(--success)";
+                renderAll();
+            } catch(e) {
+                console.log(e);
+                status.innerText = "⚠️ Error carga"; status.style.color = "var(--danger)";
             }
         }
 
-        async function pushToGitHub() {
-            if(!isAdmin || !ghToken) return alert("No tienes permisos de escritura (Token faltante)");
-            
-            const status = document.getElementById('sync-status');
-            status.innerText = "☁️ Guardando...";
-            
-            const url = `https://api.github.com/repos/${GH_CONFIG.USER}/${GH_CONFIG.REPO}/contents/${GH_CONFIG.FILE}`;
-            
+        async function pushData() {
+            const status = document.getElementById('sync-status'); status.innerText = "☁️ Guardando...";
+            const url = `https://api.github.com/repos/${GH.USER}/${GH.REPO}/contents/${GH.FILE}`;
+            const body = {
+                message: "Update via App",
+                content: btoa(unescape(encodeURIComponent(JSON.stringify(db, null, 2)))),
+                sha: fileSha
+            };
             try {
-                // Encode UTF8 to Base64
-                const contentStr = JSON.stringify(cloudData, null, 2);
-                const contentBase64 = btoa(unescape(encodeURIComponent(contentStr)));
-                
-                const body = {
-                    message: "Update via NetAdmin App",
-                    content: contentBase64,
-                    sha: fileSha
-                };
-
-                const response = await fetch(url, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `token ${ghToken}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(body)
-                });
-
-                if(response.ok) {
-                    const resData = await response.json();
-                    fileSha = resData.content.sha; // Actualizar SHA
-                    status.innerText = "☁️ Guardado OK";
-                    setTimeout(()=>status.innerText="☁️ En línea", 2000);
-                } else {
-                    throw new Error("Error al guardar");
-                }
-            } catch (err) {
-                status.innerText = "⚠️ Error al Guardar";
-                alert("Error al subir cambios a GitHub. Revisa tu Token.");
-            }
+                const res = await fetch(url, { method:'PUT', headers: {'Authorization': `token ${ghToken}`, 'Content-Type': 'application/json'}, body: JSON.stringify(body) });
+                if(res.ok) { 
+                    fileSha = (await res.json()).content.sha; 
+                    status.innerText = "☁️ Guardado"; setTimeout(()=>status.innerText="☁️ En línea", 2000);
+                    renderAll();
+                } else throw new Error();
+            } catch(e) { alert("Error al guardar en GitHub"); }
         }
 
-        // --- 3. RENDER CLOUD DATA (LINKS & PASS) ---
-        function renderCloud() {
-            // Clipboard
-            const clipDiv = document.getElementById('view-clip'); clipDiv.innerHTML = '';
-            cloudData.clipboard.forEach((list, lIdx) => {
-                const box = createListBox(list.title, 'clipboard', lIdx);
-                const grid = box.querySelector('.grid');
-                list.cards.forEach((c, cIdx) => {
-                    grid.appendChild(createCard(c, 'clipboard', lIdx, cIdx));
-                });
-                if(isAdmin) appendAddBtn(grid, 'clipboard', lIdx);
-                clipDiv.appendChild(box);
-            });
-            if(isAdmin) appendNewListBtn(clipDiv, 'clipboard');
-
-            // Passwords
-            const passDiv = document.getElementById('view-pass'); passDiv.innerHTML = '';
-            cloudData.passwords.forEach((list, lIdx) => {
-                const box = createListBox(list.title, 'passwords', lIdx);
-                const grid = box.querySelector('.grid');
-                list.cards.forEach((c, cIdx) => {
-                    grid.appendChild(createCard(c, 'passwords', lIdx, cIdx));
-                });
-                if(isAdmin) appendAddBtn(grid, 'passwords', lIdx);
-                passDiv.appendChild(box);
-            });
-            if(isAdmin) appendNewListBtn(passDiv, 'passwords');
-        }
-
-        // Helper Render Functions
-        function createListBox(title, type, lIdx) {
-            const div = document.createElement('div'); div.className = 'list-box';
-            let delBtn = isAdmin ? `<button class="mini-btn" style="color:red" onclick="deleteList('${type}', ${lIdx})">x</button>` : '';
-            div.innerHTML = `<div class="list-head"><span>${title}</span>${delBtn}</div><div class="grid"></div>`;
-            return div;
-        }
-
-        function createCard(c, type, lIdx, cIdx) {
-            const d = document.createElement('div');
-            // Solo el admin ve el botón de borrar
-            const actions = isAdmin ? `<div class="actions"><button class="mini-btn" onclick="deleteCard('${type}', ${lIdx}, ${cIdx})">🗑️</button></div>` : '';
-            
-            if(type === 'clipboard') {
-                d.className = 'card';
-                d.onclick = (e) => { if(!e.target.closest('button')) copy(c.content); };
-                d.innerHTML = `<div class="card-label">${c.label}</div><div class="card-val">${c.content}</div>${actions}`;
-            } else {
-                d.className = 'card pass-card';
-                d.innerHTML = `<div class="card-label">${c.label}</div>
-                               <div class="cred-row"><span>👤 <span class="cred-val-fix">${c.user}</span></span><button class="mini-btn" onclick="copy('${c.user}')">C</button></div>
-                               <div class="cred-row"><span class="blur">🔑 <span class="cred-val-fix">${c.pass}</span></span><button class="mini-btn" onclick="copy('${c.pass}')">C</button></div>${actions}`;
-            }
-            return d;
-        }
-
-        function appendAddBtn(grid, type, lIdx) {
-            const add = document.createElement('div'); add.className = 'card btn-add'; 
-            add.style.border='2px dashed #ccc'; add.style.display='flex'; add.style.justifyContent='center'; add.innerText='+';
-            add.onclick = () => addItem(type, lIdx);
-            grid.appendChild(add);
-        }
-
-        function appendNewListBtn(container, type) {
-            const btn = document.createElement('button'); btn.className='btn-large'; 
-            btn.style.background='transparent'; btn.style.border='2px dashed #ccc'; btn.style.color='#777'; btn.innerText='+ Nueva Lista';
-            btn.onclick = () => addList(type);
-            container.appendChild(btn);
-        }
-
-        // --- 4. ADMIN ACTIONS (CLOUD MODIFICATION) ---
-        function addItem(type, lIdx) {
-            if(type === 'clipboard') {
-                const l = prompt("Título:"); const c = prompt("Contenido:");
-                if(l && c) { cloudData.clipboard[lIdx].cards.push({id:Date.now(), label:l, content:c}); pushToGitHub(); renderCloud(); }
-            } else {
-                const l = prompt("Equipo:"); const u = prompt("Usuario:"); const p = prompt("Contraseña:");
-                if(l && u && p) { cloudData.passwords[lIdx].cards.push({id:Date.now(), label:l, user:u, pass:p}); pushToGitHub(); renderCloud(); }
-            }
-        }
-        function addList(type) {
-            const t = prompt("Nombre de la Lista:");
-            if(t) { cloudData[type].push({id:Date.now(), title:t, cards:[]}); pushToGitHub(); renderCloud(); }
-        }
-        function deleteCard(type, lIdx, cIdx) {
-            if(confirm("¿Borrar elemento de la Nube?")) { cloudData[type][lIdx].cards.splice(cIdx, 1); pushToGitHub(); renderCloud(); }
-        }
-        function deleteList(type, lIdx) {
-            if(confirm("¿Borrar Lista COMPLETA de la Nube?")) { cloudData[type].splice(lIdx, 1); pushToGitHub(); renderCloud(); }
-        }
-
-        // --- 5. LOCAL DATA (NOTES & REMINDERS) ---
-        function renderLocal() {
-            renderNotes(); renderReminders();
-        }
-        function saveLocal() {
-            localStorage.setItem('netAdminLocal_v8', JSON.stringify(localData));
-        }
-
-        // Notes Logic
-        function renderNotes() {
-            const grid = document.getElementById('notes-grid'); grid.innerHTML = '';
-            localData.notes.filter(n => n.filter === currentNoteFilter).forEach((n) => {
-                const d = document.createElement('div'); d.className = 'card note-card';
-                d.innerHTML = `<div>${n.text}</div><div class="actions"><button class="mini-btn" onclick="delNote(${n.id})">🗑️</button></div>`;
-                grid.appendChild(d);
-            });
-            document.querySelectorAll('.pill').forEach(p => p.classList.toggle('active', p.innerText.includes(currentNoteFilter)));
-        }
-        function filterNotes(f) { currentNoteFilter = f; renderNotes(); }
-        function addNote() { const t = prompt("Nota:"); if(t) { localData.notes.push({id:Date.now(), text:t, filter:currentNoteFilter}); saveLocal(); renderNotes(); }}
-        function delNote(id) { if(confirm("Borrar?")) { localData.notes = localData.notes.filter(n => n.id !== id); saveLocal(); renderNotes(); }}
-
-        // Reminders Logic
-        function renderReminders() {
-            const list = document.getElementById('reminders-list'); list.innerHTML = '';
-            localData.reminders.forEach((r) => {
-                const d = document.createElement('div'); d.className = 'card reminder-card'; if(r.done) d.style.opacity = '0.6';
-                d.innerHTML = `<div><div class="reminder-time">${r.displayTime}</div><div>${r.text}</div></div><div>${!r.done ? `<button class="mini-btn" onclick="completeReminder(${r.id})">✅</button>` : ''}<button class="mini-btn" style="color:red" onclick="delReminder(${r.id})">🗑️</button></div>`;
-                list.appendChild(d);
-            });
-        }
-        function addReminder() {
-            const txt = prompt("Recordar:"); if(!txt) return;
-            const h = prompt("Hora (0-23):"); const m = prompt("Min (0-59):");
-            if(h && m) { localData.reminders.push({id:Date.now(), text:txt, time:`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`, displayTime: `${h}:${m}`, done:false}); saveLocal(); renderReminders(); }
-        }
-        function completeReminder(id) { const r = localData.reminders.find(x=>x.id===id); if(r) r.done = true; saveLocal(); renderReminders(); if(currentNagId === id) dismissNag(); }
-        function delReminder(id) { localData.reminders = localData.reminders.filter(x=>x.id!==id); saveLocal(); renderReminders(); }
-
-        // --- UTILS ---
+        // --- 3. RENDER ---
         function switchTab(t) {
             document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active')); event.target.classList.add('active');
-            ['clip','pass','notes','reminders'].forEach(v => document.getElementById(`view-${v}`).classList.add('hidden'));
+            ['clip','pass','resp','news'].forEach(v => document.getElementById(`view-${v}`).classList.add('hidden'));
             document.getElementById(`view-${t}`).classList.remove('hidden');
-            if(t==='notes') renderNotes(); if(t==='reminders') renderReminders();
         }
-        function toggleTheme() { document.body.classList.toggle('dark-mode'); localData.theme = document.body.classList.contains('dark-mode')?'dark':'light'; saveLocal(); }
+
+        function renderAll() {
+            renderGeneric('clipboard', 'view-clip');
+            renderGeneric('passwords', 'view-pass');
+            renderResp();
+            renderNews();
+        }
+
+        // Render Links & Pass
+        function renderGeneric(type, divId) {
+            const div = document.getElementById(divId); div.innerHTML='';
+            db[type].forEach((list, lIdx) => {
+                const box = document.createElement('div'); box.className='list-box';
+                // Solo Admin ve botón borrar lista
+                let delBtn = isAdmin ? `<button class="mini-btn" style="color:red" onclick="reqAdmin(()=>delList('${type}',${lIdx}))">x</button>` : '';
+                box.innerHTML = `<div class="list-head"><span>${list.title}</span>${delBtn}</div><div class="grid"></div>`;
+                
+                const grid = box.querySelector('.grid');
+                list.cards.forEach((c, cIdx) => {
+                    const d = document.createElement('div');
+                    // Solo Admin ve acciones
+                    const act = isAdmin ? `<div class="actions"><button class="mini-btn" onclick="reqAdmin(()=>delCard('${type}',${lIdx},${cIdx}))">🗑️</button></div>` : '';
+                    
+                    if(type==='clipboard') {
+                        d.className='card'; d.onclick=(e)=>{if(!e.target.closest('button'))copy(c.content)};
+                        d.innerHTML=`<div class="card-label">${c.label}</div><div class="card-val">${c.content}</div>${act}`;
+                    } else {
+                        d.className='card pass-card';
+                        d.innerHTML=`<div class="card-label">${c.label}</div><div class="cred-row"><span>👤 ${c.user}</span><button class="mini-btn" onclick="copy('${c.user}')">C</button></div><div class="cred-row"><span class="blur">🔑 ${c.pass}</span><button class="mini-btn" onclick="copy('${c.pass}')">C</button></div>${act}`;
+                    }
+                    grid.appendChild(d);
+                });
+                // Botón +
+                if(isAdmin) {
+                    const add = document.createElement('div'); add.className='card btn-add'; add.innerText='+'; add.onclick=()=>reqAdmin(()=>addItem(type,lIdx));
+                    grid.appendChild(add);
+                }
+                div.appendChild(box);
+            });
+            // Botón + Lista
+            if(isAdmin) {
+                const btn = document.createElement('button'); btn.className='btn-large'; btn.style.background='transparent'; btn.style.border='2px dashed #ccc'; btn.style.color='#777'; btn.innerText='+ Lista';
+                btn.onclick=()=>reqAdmin(()=>addList(type));
+                div.appendChild(btn);
+            }
+        }
+
+        // Render Respuestas (Ex-Notas)
+        function renderResp() {
+            const grid = document.getElementById('resp-grid'); grid.innerHTML = '';
+            // Buscar la lista que coincide con el filtro
+            const targetList = db.responses.find(r => r.title === currentRespFilter);
+            
+            if(targetList) {
+                // Find index for editing
+                const lIdx = db.responses.indexOf(targetList);
+                
+                targetList.cards.forEach((c, cIdx) => {
+                    const d = document.createElement('div'); d.className = 'card resp-card';
+                    const act = isAdmin ? `<div class="actions"><button class="mini-btn" onclick="reqAdmin(()=>delCardResp(${lIdx},${cIdx}))">🗑️</button></div>` : '';
+                    d.onclick=(e)=>{if(!e.target.closest('button'))copy(c.content)};
+                    d.innerHTML = `<div class="card-label">${c.label}</div><div class="card-val" style="white-space:pre-wrap">${c.content}</div>${act}`;
+                    grid.appendChild(d);
+                });
+            } else {
+                grid.innerHTML = '<div style="color:#999; text-align:center">No hay respuestas en esta categoría</div>';
+            }
+
+            // Pills UI
+            document.querySelectorAll('.pill').forEach(p => p.classList.toggle('active', p.innerText.includes(currentRespFilter)));
+            
+            // Admin Tools
+            const tools = document.getElementById('resp-admin-tools'); tools.innerHTML = '';
+            if(isAdmin && targetList) {
+                tools.innerHTML = `<button class="btn-large" style="background:transparent; border:2px dashed #ccc; color:#777" onclick="reqAdmin(()=>addRespItem())">+ Nueva Respuesta en ${currentRespFilter}</button>`;
+            }
+        }
+        function filterResp(f) { currentRespFilter = f; renderResp(); }
+
+        // Render Noticias
+        function renderNews() {
+            const grid = document.getElementById('news-grid'); grid.innerHTML = '';
+            db.news.forEach((n, idx) => {
+                const d = document.createElement('div'); d.className = 'card news-card';
+                const act = isAdmin ? `<div class="actions"><button class="mini-btn" onclick="reqAdmin(()=>delNews(${idx}))">🗑️</button></div>` : '';
+                d.innerHTML = `<div class="news-date">📅 ${n.date}</div><div class="news-title">${n.title}</div><div style="white-space:pre-wrap">${n.content}</div>${act}`;
+                grid.appendChild(d);
+            });
+            const tools = document.getElementById('news-admin-tools'); tools.innerHTML = '';
+            if(isAdmin) tools.innerHTML = `<button class="btn-large" style="background:transparent; border:2px dashed #ccc; color:#777" onclick="reqAdmin(()=>addNews())">+ Comunicado</button>`;
+        }
+
+        // --- 4. ADMIN LOGIC ---
+        function reqAdmin(callback) {
+            if(!isAdmin) return;
+            pendingCallback = callback;
+            document.getElementById('sec-pin').value = '';
+            document.getElementById('security-modal').style.display = 'flex';
+            document.getElementById('sec-pin').focus();
+        }
+        function confirmAdminAction() {
+            if(document.getElementById('sec-pin').value === adminPass) {
+                document.getElementById('security-modal').style.display = 'none';
+                if(pendingCallback) pendingCallback();
+            } else alert("Contraseña Incorrecta");
+        }
+
+        // CRUD
+        function addItem(type, lIdx) {
+            if(type==='clipboard'){const l=prompt("Título");const c=prompt("IP/Link"); if(l&&c) db.clipboard[lIdx].cards.push({id:Date.now(), label:l, content:c});}
+            else{const l=prompt("Equipo");const u=prompt("User");const p=prompt("Pass"); if(l&&u&&p) db.passwords[lIdx].cards.push({id:Date.now(), label:l, user:u, pass:p});}
+            pushData();
+        }
+        function addList(type) { const t=prompt("Nombre Lista"); if(t) db[type].push({id:Date.now(), title:t, cards:[]}); pushData(); }
+        function delCard(type, l, c) { if(confirm("Borrar?")) { db[type][l].cards.splice(c,1); pushData(); } }
+        function delList(type, l) { if(confirm("Borrar Lista?")) { db[type].splice(l,1); pushData(); } }
+
+        function addRespItem() {
+            // Busca indice basado en filtro actual
+            const list = db.responses.find(r => r.title === currentRespFilter);
+            if(!list) return alert("Error en estructura JSON: Falta categoría " + currentRespFilter);
+            const l = prompt("Título (ej: Saludo)"); const c = prompt("Texto de Respuesta");
+            if(l&&c) { list.cards.push({id:Date.now(), label:l, content:c}); pushData(); }
+        }
+        function delCardResp(lIdx, cIdx) { if(confirm("Borrar?")) { db.responses[lIdx].cards.splice(cIdx,1); pushData(); } }
+
+        function addNews() {
+            const t = prompt("Título"); const c = prompt("Mensaje");
+            const d = new Date().toLocaleDateString();
+            if(t&&c) { db.news.unshift({id:Date.now(), date:d, title:t, content:c}); pushData(); }
+        }
+        function delNews(idx) { if(confirm("Borrar?")) { db.news.splice(idx,1); pushData(); } }
+
+        // --- UTILS ---
         async function copy(x) { try{await navigator.clipboard.writeText(x); showToast();}catch{const t=document.createElement('textarea');t.value=x;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);showToast();} }
         function showToast() { const t=document.getElementById('toast'); t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1500); }
-
-        // ALARMS
+        function toggleTheme() { document.body.classList.toggle('dark-mode'); localStorage.setItem('theme', document.body.classList.contains('dark-mode')?'dark':'light'); }
+        
         function checkTime() { 
             if(!dailyExitTime || alarmTriggered) return;
             const now = new Date(); const [h, m] = dailyExitTime.split(':'); const exit = new Date(); exit.setHours(h, m, 0);
             if((exit - now)/1000/60 <= 60 && (exit - now) > 0) { alarmTriggered = true; document.getElementById('backup-modal').style.display = 'flex'; try{alarmAudio.play()}catch(e){} }
         }
-        function checkReminders() {
-            const now = new Date(); const nowStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-            localData.reminders.forEach(r => {
-                if(!r.done && r.time === nowStr) {
-                    if(currentNagId !== r.id) { currentNagId = r.id; document.getElementById('nag-text').innerText = r.text; document.getElementById('nag-modal').style.display = 'flex'; try { alarmAudio.play(); } catch(e){} if ("Notification" in window) new Notification("🔔 Recordatorio", { body: r.text }); }
-                    else { try { alarmAudio.play(); } catch(e){} }
-                }
-            });
-        }
-        function stopAlarm() { document.getElementById('backup-modal').style.display='none'; alarmAudio.pause(); }
-        function dismissNag() { document.getElementById('nag-modal').style.display = 'none'; alarmAudio.pause(); alarmAudio.currentTime = 0; if(currentNagId) completeReminder(currentNagId); currentNagId = null; }
-
     </script>
 </body>
 </html>
