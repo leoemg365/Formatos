@@ -2,44 +2,76 @@
   "clipboard": [
     {
       "id": 1,
-      "title": "OLTs Zulia",
+      "title": "OLTs Principales",
       "cards": [
-        {
-          "id": 101,
-          "label": "OLT Maracaibo",
-          "content": "10.10.20.2"
-        },
-        {
-          "id": 102,
-          "label": "OLT Cabimas",
-          "content": "10.10.30.5"
-        },
-        {
-          "id": 1771445588134,
-          "label": "OLT Ciudad Ojeda",
-          "content": "10.10.10.10"
-        }
+        {"id": 101, "label": "OLT Cabimas", "content": "10.10.20.2"},
+        {"id": 102, "label": "OLT Maracaibo", "content": "10.10.20.5"}
+      ]
+    },
+    {
+      "title": "Routers Borde",
+      "cards": [
+        {"id": 103, "label": "Mikrotik Principal", "content": "192.168.88.1"}
       ]
     }
   ],
   "passwords": [
     {
       "id": 2,
-      "title": "Accesos Maestros",
+      "title": "Accesos de Red",
       "cards": [
-        {
-          "id": 201,
-          "label": "ZTE Principal",
-          "user": "admin",
-          "pass": "gpon1234"
-        },
-        {
-          "id": 202,
-          "label": "Huawei Borde",
-          "user": "root",
-          "pass": "adminHW"
-        }
+        {"id": 201, "label": "Admin OLT", "user": "root", "pass": "admin123"},
+        {"id": 202, "label": "Acceso ONU", "user": "user", "pass": "user1234"}
       ]
+    }
+  ],
+  "responses": [
+    {
+      "id": 30,
+      "title": "General",
+      "cards": [
+        {"id": 301, "label": "Falla Masiva", "content": "Estimado cliente, presentamos una falla general en su zona. Personal técnico trabajando."},
+        {"id": 302, "label": "Pedir Datos", "content": "Por favor indíquenos: Nombre del titular y número de cédula."},
+        {"id": 303, "label": "Reiniciar", "content": "Desconecte el equipo de la electricidad por 10 segundos y vuelva a conectar."}
+      ]
+    },
+    {
+      "id": 31,
+      "title": "Día",
+      "cards": [
+        {"id": 311, "label": "Saludo AM", "content": "¡Buenos días! Gracias por contactar a Soporte Espiral. ¿En qué podemos ayudarle?"},
+        {"id": 312, "label": "Despedida AM", "content": "Muchas gracias, que tenga un excelente día."}
+      ]
+    },
+    {
+      "id": 32,
+      "title": "Tarde",
+      "cards": [
+        {"id": 321, "label": "Saludo PM", "content": "¡Buenas tardes! Soporte Técnico a su orden."},
+        {"id": 322, "label": "Despedida PM", "content": "Feliz tarde, quedamos atentos a cualquier novedad."}
+      ]
+    },
+    {
+      "id": 33,
+      "title": "Noche",
+      "cards": [
+        {"id": 331, "label": "Saludo Noche", "content": "Buenas noches. Le atiende el turno de guardia. Indique su requerimiento."},
+        {"id": 332, "label": "Cierre Noche", "content": "El soporte presencial funciona hasta las 6PM. Dejaremos su caso reportado para mañana a primera hora."}
+      ]
+    }
+  ],
+  "news": [
+    {
+      "id": 401,
+      "date": "18/02/2026",
+      "title": "⚠️ Mantenimiento",
+      "content": "Esta noche a las 11:00 PM se realizará actualización del servidor."
+    },
+    {
+      "id": 402,
+      "date": "15/02/2026",
+      "title": "Uniforme",
+      "content": "Recordatorio: Uso obligatorio de la camisa nueva el lunes."
     }
   ]
 }
