@@ -141,14 +141,7 @@
     {
       "id": 2,
       "title": "Accesos de Red",
-      "cards": [
-        {
-          "id": 201,
-          "label": "Admin OLT",
-          "user": "root",
-          "pass": "admin123"
-        }
-      ]
+      "cards": []
     }
   ],
   "responses": [
