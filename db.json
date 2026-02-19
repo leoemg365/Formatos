@@ -59,6 +59,11 @@
           "id": 1771462981443,
           "label": "Generica 2",
           "content": "192.168.0.1"
+        },
+        {
+          "id": 1771463010315,
+          "label": "Router LB-Link",
+          "content": "192.168.16.1"
         }
       ]
     }
