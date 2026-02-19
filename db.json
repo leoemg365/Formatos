@@ -28,6 +28,11 @@
           "id": 1771462788884,
           "label": "OLT - Nueva Jayana",
           "content": "https://38.10.254.10:8084/"
+        },
+        {
+          "id": 1771462824076,
+          "label": "OLT - Mecocal",
+          "content": "https://172.112.1.2/"
         }
       ]
     },
