@@ -3,13 +3,7 @@
     {
       "id": 1,
       "title": "OLTs Principales",
-      "cards": [
-        {
-          "id": 101,
-          "label": "OLT Cabimas",
-          "content": "10.10.20.2"
-        }
-      ]
+      "cards": []
     },
     {
       "title": "Routers Borde",
