@@ -23,6 +23,11 @@
           "id": 1771462756780,
           "label": "OLT - Los Taques",
           "content": "https://10.5.8.6/"
+        },
+        {
+          "id": 1771462788884,
+          "label": "OLT - Nueva Jayana",
+          "content": "https://38.10.254.10:8084/"
         }
       ]
     },
