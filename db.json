@@ -117,6 +117,11 @@
           "id": 1771463265946,
           "label": "TuCineTV Admin",
           "content": "http://latam.tucine.tv:8080/IUwEzuMdFrHe/login.php?referrer=/series.php"
+        },
+        {
+          "id": 1771463289786,
+          "label": "Descarga TuCineTV",
+          "content": "https://bit.ly/tucine3"
         }
       ]
     }
