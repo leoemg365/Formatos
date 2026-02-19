@@ -18,6 +18,11 @@
           "id": 1771462700868,
           "label": "OLT - Ciudad Ojeda 2",
           "content": "https://38.51.204.32:8989/"
+        },
+        {
+          "id": 1771462756780,
+          "label": "OLT - Los Taques",
+          "content": "https://10.5.8.6/"
         }
       ]
     },
