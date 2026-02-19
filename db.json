@@ -48,13 +48,7 @@
     },
     {
       "title": "Routers Borde",
-      "cards": [
-        {
-          "id": 103,
-          "label": "Mikrotik Principal",
-          "content": "192.168.88.1"
-        }
-      ]
+      "cards": []
     }
   ],
   "passwords": [
