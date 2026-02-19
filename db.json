@@ -69,6 +69,11 @@
           "id": 1771463034499,
           "label": "Router Xiaomi",
           "content": "192.168.31.1"
+        },
+        {
+          "id": 1771463058619,
+          "label": "Router Holax",
+          "content": "192.168.100.1"
         }
       ]
     }
