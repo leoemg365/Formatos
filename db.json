@@ -147,6 +147,12 @@
           "label": "Acceso Generico",
           "user": "admin",
           "pass": "admin"
+        },
+        {
+          "id": 1771463553457,
+          "label": "Antena Ubiquiti",
+          "user": "tecnoven",
+          "pass": "Tecno45637954"
         }
       ]
     }
