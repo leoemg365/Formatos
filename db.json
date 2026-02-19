@@ -101,7 +101,13 @@
     {
       "id": 1771463207178,
       "title": "Otros",
-      "cards": []
+      "cards": [
+        {
+          "id": 1771463225755,
+          "label": "Ozmap",
+          "content": "https://tecnoven.ozmap.com.br:9994/"
+        }
+      ]
     }
   ],
   "passwords": [
