@@ -171,6 +171,12 @@
           "label": "OLTs Punto Fijo",
           "user": "soporteZulia",
           "pass": "Tecn*4563..1"
+        },
+        {
+          "id": 1771463762472,
+          "label": "ONU-Router VSOL",
+          "user": "user",
+          "pass": "admin12345678"
         }
       ]
     }
