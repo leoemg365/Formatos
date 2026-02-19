@@ -137,13 +137,7 @@
       ]
     }
   ],
-  "passwords": [
-    {
-      "id": 2,
-      "title": "Accesos de Red",
-      "cards": []
-    }
-  ],
+  "passwords": [],
   "responses": [
     {
       "id": 30,
