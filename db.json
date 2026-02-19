@@ -147,12 +147,6 @@
           "label": "Admin OLT",
           "user": "root",
           "pass": "admin123"
-        },
-        {
-          "id": 202,
-          "label": "Acceso ONU",
-          "user": "user",
-          "pass": "user1234"
         }
       ]
     }
