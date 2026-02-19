@@ -137,7 +137,13 @@
       ]
     }
   ],
-  "passwords": [],
+  "passwords": [
+    {
+      "id": 1771463483049,
+      "title": "Credenciales",
+      "cards": []
+    }
+  ],
   "responses": [
     {
       "id": 30,
