@@ -112,7 +112,13 @@
     {
       "id": 1771463249954,
       "title": "TuCineTV",
-      "cards": []
+      "cards": [
+        {
+          "id": 1771463265946,
+          "label": "TuCineTV Admin",
+          "content": "http://latam.tucine.tv:8080/IUwEzuMdFrHe/login.php?referrer=/series.php"
+        }
+      ]
     }
   ],
   "passwords": [
