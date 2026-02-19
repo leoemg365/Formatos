@@ -74,6 +74,11 @@
           "id": 1771463058619,
           "label": "Router Holax",
           "content": "192.168.100.1"
+        },
+        {
+          "id": 1771463075052,
+          "label": "Router Dahua",
+          "content": "192.168.10.110"
         }
       ]
     }
