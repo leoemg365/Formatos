@@ -137,13 +137,7 @@
       ]
     }
   ],
-  "passwords": [
-    {
-      "id": 1771463462697,
-      "title": "Acceso Generico",
-      "cards": []
-    }
-  ],
+  "passwords": [],
   "responses": [
     {
       "id": 30,
