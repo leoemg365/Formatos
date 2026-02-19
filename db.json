@@ -153,6 +153,12 @@
           "label": "Antena Ubiquiti",
           "user": "tecnoven",
           "pass": "Tecno45637954"
+        },
+        {
+          "id": 1771463590129,
+          "label": "Antenas AP",
+          "user": "soporte",
+          "pass": "Tecn*45637954"
         }
       ]
     }
