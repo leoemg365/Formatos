@@ -13,6 +13,11 @@
           "id": 1771462680332,
           "label": "OLT - Ciudad Ojeda",
           "content": "https://telmaserca.smartolt.com/"
+        },
+        {
+          "id": 1771462700868,
+          "label": "OLT - Ciudad Ojeda 2",
+          "content": "https://38.51.204.32:8989/"
         }
       ]
     },
