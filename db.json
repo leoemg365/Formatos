@@ -128,7 +128,13 @@
     {
       "id": 1771463329770,
       "title": "Números de teléfono",
-      "cards": []
+      "cards": [
+        {
+          "id": 1771463362050,
+          "label": "Soporte Técnico Atención al Cliente",
+          "content": "0261-3358326"
+        }
+      ]
     }
   ],
   "passwords": [
