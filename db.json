@@ -3,7 +3,13 @@
     {
       "id": 1,
       "title": "OLTs Principales",
-      "cards": []
+      "cards": [
+        {
+          "id": 1771462631333,
+          "label": "OLT - Maracaibo",
+          "content": "https://tecnovenca.smartolt.com/"
+        }
+      ]
     },
     {
       "title": "Routers Borde",
