@@ -8,6 +8,11 @@
           "id": 1771462631333,
           "label": "OLT - Maracaibo",
           "content": "https://tecnovenca.smartolt.com/"
+        },
+        {
+          "id": 1771462680332,
+          "label": "OLT - Ciudad Ojeda",
+          "content": "https://telmaserca.smartolt.com/"
         }
       ]
     },
