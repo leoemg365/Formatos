@@ -8,11 +8,6 @@
           "id": 101,
           "label": "OLT Cabimas",
           "content": "10.10.20.2"
-        },
-        {
-          "id": 102,
-          "label": "OLT Maracaibo",
-          "content": "10.10.20.5"
         }
       ]
     },
