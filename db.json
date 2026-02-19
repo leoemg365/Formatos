@@ -141,7 +141,14 @@
     {
       "id": 1771463483049,
       "title": "Credenciales",
-      "cards": []
+      "cards": [
+        {
+          "id": 1771463507447,
+          "label": "Acceso Generico",
+          "user": "admin",
+          "pass": "admin"
+        }
+      ]
     }
   ],
   "responses": [
