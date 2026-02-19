@@ -38,6 +38,11 @@
           "id": 1771462856596,
           "label": "OLT - 1 Los Pedros",
           "content": "https://38.7.1.152:8081/"
+        },
+        {
+          "id": 1771462882771,
+          "label": "OLT - 2 Los Pedros",
+          "content": "https://38.7.1.152:8082/"
         }
       ]
     },
