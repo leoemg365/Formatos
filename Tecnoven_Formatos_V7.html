@@ -338,7 +338,27 @@
         <label>Preformados</label><div class="counter-control"><button data-type="preformados" data-action="decrease">-</button><span data-type="preformados">0</span><button data-type="preformados" data-action="increase">+</button></div>
         <label>Grapas y Clavos</label><div class="counter-control"><button data-type="grapas" data-action="decrease">-</button><span data-type="grapas">0</span><button data-type="grapas" data-action="increase">+</button></div>
         <label>Ramplug y Tornillos</label><div class="counter-control"><button data-type="ramplug" data-action="decrease">-</button><span data-type="ramplug">0</span><button data-type="ramplug" data-action="increase">+</button></div>
-        <label>Técnicos</label><select id="tecnicosSelect"><option value="">-- Selecciona técnico --</option><option value="Alejandro Blanco">Alejandro Blanco</option><option value="Alejandro Soto">Alejandro Soto</option><option value="Danny Perez">Danny Perez</option><option value="Keiver Zambrano">Keiver Zambrano</option><option value="Mayckkol Fuenmayor">Mayckkol Fuenmayor</option><option value="Alfonso Solarte">Alfonso Solarte</option><option value="Anddy Bravo">Anddy Bravo</option><option value="Alexander Zambrano">Alexander Zambrano</option><option value="Josue Utria">Josue Utria</option><option value="Leonardo Montiel">Leonardo Montiel</option><option value="Hebert Vargas">Hebert Vargas</option><option value="Pedro Linares">Pedro Linares</option><option value="Jose Luis Gonzalez">Jose Luis Gonzalez</option><option value="Ricardo Valencia">Ricardo Valencia</option><option value="Jonathan Bravo">Jonathan Bravo</option><option value="Antonio Roo">Antonio Roo</option><option value="Otro">Otro</option></select>
+        <label>Técnicos</label>
+        <select id="tecnicosSelect">
+            <option value="">-- Selecciona técnico --</option>
+            <option value="Alejandro Blanco">Alejandro Blanco</option>
+            <option value="Alejandro Soto">Alejandro Soto</option>
+            <option value="Alexander Zambrano">Alexander Zambrano</option>
+            <option value="Alfonso Solarte">Alfonso Solarte</option>
+            <option value="Anddy Bravo">Anddy Bravo</option>
+            <option value="Antonio Roo">Antonio Roo</option>
+            <option value="Danny Perez">Danny Perez</option>
+            <option value="Hebert Vargas">Hebert Vargas</option>
+            <option value="Jonathan Bravo">Jonathan Bravo</option>
+            <option value="Jose Luis Gonzalez">Jose Luis Gonzalez</option>
+            <option value="Josue Utria">Josue Utria</option>
+            <option value="Keiver Zambrano">Keiver Zambrano</option>
+            <option value="Leonardo Montiel">Leonardo Montiel</option>
+            <option value="Mayckkol Fuenmayor">Mayckkol Fuenmayor</option>
+            <option value="Pedro Linares">Pedro Linares</option>
+            <option value="Ricardo Valencia">Ricardo Valencia</option>
+            <option value="Otro">Otro</option>
+        </select>
         <div class="chips" id="chipsContainer"></div>
         <input id="otroNombre" placeholder="Escribe otro nombre">
         <label for="cobro">Cobrar</label><input id="cobro">
@@ -348,7 +368,7 @@
     </div>
 
     <div id="ficha-inalambrico" class="content-section">
-        <h2>Conetido de Inalambrico
+        <h2>Contenido de Inalambrico
         </h2>
     </div>
     <div id="proceso-activacion" class="content-section">
@@ -382,6 +402,10 @@
   
   <div id="messageBox" class="message-box"></div>
 
+<a href="https://wa.me" target="_blank">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" style="width:50px;height:50px;">
+</a>
+  
   <div class="modal-overlay" id="updatesModal">
     <div class="modal-content">
       <h2 id="updatesTitle">🚀 Novedades de la Versión</h2>
@@ -392,9 +416,9 @@
 
   <footer style="text-align:center; color:white; margin-top:32px; font-size:0.92em; opacity:0.8;">
     Plataforma de Reportes y Formatos<br>
-    Versión V0.7.8<br>
+    Versión V1.0.0<br>
     Todos los derechos reservados<br>
-    © 2025 Espiral - Leonardo Montiel<br>
+    © 2026 Espiral - Leonardo Montiel<br>
     <a href="https://wa.me/584121982608">Contáctanos</a>
   </footer>
 
@@ -403,13 +427,13 @@
     
         const $ = id => document.getElementById(id);
         
-        const APP_VERSION = '0.7.8'; 
+        const APP_VERSION = '1.0.0'; 
         const updateFeatures = [
-            `<li><span class="chip new">Nuevo</span>Se ha añadido la ventana de novedades para informarte de los cambios.</li>`,
-            `<li><span class="chip new">Nuevo</span>Inventario, ahora puedes pegar el texto generado y se guardará relación</li>`,
-            `<li><span class="chip new">Nuevo</span>Sección de Instalación Inalambrica</li>`,
-            `<li><span class="chip improved">Mejora</span>En desarrollo extracción de seriales ZTE</li>`,
-            `<li><span class="chip fixed">Corregido</span>Nombres</li>`,
+            `<li><span class="chip new">Nuevo</span>Se ha añadió esta ventana de novedades para informarte de los cambios.</li>`,
+            `<li><span class="chip new">Nuevo</span>Sí tienes alguna sugerencia, nos indicas en el botón de Contáctanos al final</li>`,
+            `<li><span class="chip new">Nuevo</span>Se añadió el botón de WhatsApp para ir rápidamente</li>`,
+            `<li><span class="chip improved">Mejora</span>Extracción de QR ONUS Pendrives</li>`,
+            `<li><span class="chip fixed">Corregido</span>Nombres en orden alfabetico</li>`,
         ];
 
         const navMenu = document.querySelector('.nav-menu');
