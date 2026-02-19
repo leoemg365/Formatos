@@ -165,6 +165,12 @@
           "label": "ONU ZTE",
           "user": "admin",
           "pass": "Tecn*45637954"
+        },
+        {
+          "id": 1771463727777,
+          "label": "OLTs Punto Fijo",
+          "user": "soporteZulia",
+          "pass": "Tecn*4563..1"
         }
       ]
     }
