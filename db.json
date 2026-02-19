@@ -33,6 +33,11 @@
           "id": 1771462824076,
           "label": "OLT - Mecocal",
           "content": "https://172.112.1.2/"
+        },
+        {
+          "id": 1771462856596,
+          "label": "OLT - 1 Los Pedros",
+          "content": "https://38.7.1.152:8081/"
         }
       ]
     },
