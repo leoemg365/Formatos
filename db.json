@@ -159,6 +159,12 @@
           "label": "Antenas AP",
           "user": "soporte",
           "pass": "Tecn*45637954"
+        },
+        {
+          "id": 1771463632481,
+          "label": "ONU ZTE",
+          "user": "admin",
+          "pass": "Tecn*45637954"
         }
       ]
     }
