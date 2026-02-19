@@ -211,6 +211,11 @@
           "id": 1771464042871,
           "label": "Saludo",
           "content": "¡Buenos días! Gracias por contactarnos. ¿En qué podemos ayudarle?"
+        },
+        {
+          "id": 1771464084887,
+          "label": "Despedida",
+          "content": "Estamos siempre a su orden, que tenga un excelente día."
         }
       ]
     },
