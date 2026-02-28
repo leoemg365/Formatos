@@ -282,7 +282,7 @@
         
         // Obtenemos el nombre del restaurante de la URL (Ej: index.html?res=sucursal1)
         const urlParams = new URLSearchParams(window.location.search);
-        const tenantFolder = urlParams.get('res') || 'default'; // 'default' si no hay parametro
+        const tenantFolder = urlParams.get('res') || 'restaurante1'; // 'default' si no hay parametro
         
         document.getElementById('tenant-badge').innerText = tenantFolder;
 
