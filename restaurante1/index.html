@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tidy POS - Multi-Tenant Cloud</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --bg-dark: #1e222d; --bg-card: #2d3343; --accent: #ff6b00; }
+        body { background-color: var(--bg-dark); color: white; font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        
+        /* Inputs & UI */
+        input, select, textarea { background-color: #1a1e29 !important; border: 1px solid #3f4759 !important; color: white !important; outline: none; transition: 0.2s; }
+        input:focus, select:focus, textarea:focus { border-color: var(--accent) !important; }
+
+        /* Estados de Mesa */
+        .mesa-card { transition: all 0.2s; }
+        .mesa-card:active { transform: scale(0.95); }
+        
+        .status-libre { background-color: #bbf7d0; color: #166534; }
+        .status-ocupada { background-color: #2d3343; border: 2px solid #3b82f6; color: white; }
+        .status-espera { background-color: #2d3343; border: 2px solid #ef4444; color: #ef4444; animation: pulse-red 2s infinite; }
+        .status-preparacion { background-color: #2d3343; border: 2px solid #fbbf24; color: #fbbf24; }
+        .status-listo { background-color: #10b981; color: white; animation: pulse-green 1.5s infinite; border: 2px solid #059669; }
+        .status-limpieza { background-color: #6b7280; color: white; opacity: 0.7; }
+
+        @keyframes pulse-green { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
+        @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 50% { box-shadow: 0 0 0 5px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+
+        .nav-active { background-color: #3f4759; color: white; border: 1px solid #4b5563; }
+        .nav-btn { color: #9ca3af; }
+        
+        /* Login Overlay */
+        #login-screen { position: fixed; inset: 0; z-index: 100; background-color: #1e222d; display: flex; align-items: center; justify-content: center; }
+
+        /* Sync Overlay (Bloqueo de concurrencia) */
+        #sync-overlay { position: fixed; inset: 0; z-index: 9999; background: rgba(30, 34, 45, 0.9); backdrop-blur: 8px; display: none; flex-direction: column; align-items: center; justify-content: center; }
+        .spinner { width: 50px; height: 50px; border: 4px solid rgba(255, 107, 0, 0.2); border-left-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden bg-[#1e222d]">
+
+    <div id="sync-overlay">
+        <div class="spinner mb-4"></div>
+        <p class="text-white font-black tracking-widest text-sm uppercase">Sincronizando Nube...</p>
+        <p id="sync-msg" class="text-gray-400 text-xs mt-2 font-mono">Verificando base de datos</p>
+    </div>
+
+    <div id="login-screen">
+        <div class="bg-[#2d3343] p-8 rounded-[2rem] w-full max-w-sm shadow-2xl border border-gray-700 text-center relative">
+            <span id="tenant-badge" class="absolute top-4 right-4 bg-orange-500/20 text-orange-500 text-[10px] font-bold px-2 py-1 rounded uppercase">...</span>
+            <div class="w-16 h-16 bg-orange-500 rounded-2xl flex items-center justify-center text-white font-black text-3xl shadow-lg mx-auto mb-6">T</div>
+            <h2 class="text-2xl font-black mb-1">Bienvenido</h2>
+            <p class="text-gray-400 text-xs mb-8">Inicia sesión en el sistema</p>
+            
+            <div class="space-y-4 text-left">
+                <div>
+                    <label class="text-[10px] font-bold uppercase text-gray-500 ml-2">Usuario</label>
+                    <input type="text" id="login-user" class="w-full p-4 rounded-xl font-bold bg-[#1a1e29]" placeholder="Ej: admin">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold uppercase text-gray-500 ml-2">Contraseña</label>
+                    <input type="password" id="login-pass" class="w-full p-4 rounded-xl font-bold bg-[#1a1e29]" placeholder="••••••">
+                </div>
+            </div>
+            
+            <button onclick="login()" class="w-full mt-8 bg-orange-500 hover:bg-orange-600 text-white py-4 rounded-xl font-bold uppercase tracking-widest shadow-lg shadow-orange-500/20 transition">Entrar</button>
+            <p id="login-error" class="text-red-500 text-xs font-bold mt-4 hidden">Credenciales incorrectas</p>
+        </div>
+    </div>
+
+    <header class="px-4 py-3 bg-[#1e222d] shrink-0 z-50 border-b border-gray-800 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center text-white font-black text-xl shadow-lg">T</div>
+            <div>
+                <h1 class="text-xl font-black tracking-tight leading-none">Tidy</h1>
+                <div class="text-[10px] font-mono text-gray-400 mt-1">
+                    <span id="user-display" class="text-white font-bold mr-2">Admin</span>
+                    TASA: <span class="text-green-400 font-bold text-xs">Bs <span id="header-tasa">0.00</span></span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="flex gap-2">
+             <button onclick="switchContext('config')" id="btn-conf" class="text-xs font-bold px-4 py-2 rounded-lg bg-[#2d3343] text-gray-300 border border-gray-700 hover:text-white transition hidden"><i class="fas fa-cog mr-1"></i> Config</button>
+             <button onclick="logout()" class="bg-red-500/10 text-red-500 px-3 py-2 rounded-lg text-xs font-bold hover:bg-red-500 hover:text-white transition"><i class="fas fa-power-off"></i></button>
+        </div>
+    </header>
+
+    <div id="navbar-sticky" class="sticky top-0 z-40 bg-[#1e222d]/95 backdrop-blur-md px-4 py-2 border-b border-gray-800 shadow-md transition-all">
+        <div class="bg-[#2d3343] p-1 rounded-xl flex gap-1 max-w-lg mx-auto shadow-inner">
+            <button onclick="showSection('mesas')" id="nav-mesas" class="section-btn nav-active flex-1 py-2 text-xs md:text-sm font-bold rounded-lg transition-all">Mesas</button>
+            <button onclick="showSection('cocina')" id="nav-cocina" class="section-btn nav-btn flex-1 py-2 text-xs md:text-sm font-bold rounded-lg transition-all">Cocina <span id="badge-cocina" class="hidden w-2 h-2 bg-red-500 rounded-full inline-block mb-0.5 ml-1"></span></button>
+            <button onclick="showSection('caja')" id="nav-caja" class="section-btn nav-btn flex-1 py-2 text-xs md:text-sm font-bold rounded-lg transition-all">Caja</button>
+        </div>
+    </div>
+
+    <main class="flex-1 overflow-y-auto p-4 md:p-6 no-scrollbar relative">
+        <section id="sec-mesas" class="app-view max-w-6xl mx-auto">
+            <div id="grid-mesas" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4"></div>
+        </section>
+
+        <section id="sec-cocina" class="app-view hidden max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 h-full">
+                <div class="space-y-3">
+                    <h3 class="text-xs font-bold text-red-400 uppercase tracking-widest border-b border-red-500/30 pb-2 mb-2">Nuevas</h3>
+                    <div id="col-espera" class="space-y-3 pb-10"></div>
+                </div>
+                <div class="space-y-3">
+                    <h3 class="text-xs font-bold text-yellow-400 uppercase tracking-widest border-b border-yellow-500/30 pb-2 mb-2">Cocinando</h3>
+                    <div id="col-preparacion" class="space-y-3 pb-10"></div>
+                </div>
+                <div class="space-y-3">
+                    <h3 class="text-xs font-bold text-green-400 uppercase tracking-widest border-b border-green-500/30 pb-2 mb-2">Listas</h3>
+                    <div id="col-listo" class="space-y-3 pb-10"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="sec-caja" class="app-view hidden max-w-5xl mx-auto">
+            <h3 class="text-sm font-bold text-gray-300 mb-4 uppercase tracking-widest">Cuentas Pendientes</h3>
+            <div id="list-caja" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8"></div>
+            
+            <div class="pt-4 border-t border-gray-700">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xs font-bold text-orange-500 uppercase">Historial de Ventas</h3>
+                    <button onclick="clearHistory()" class="text-[10px] text-red-400 hover:text-red-300">Borrar Historial</button>
+                </div>
+                <div class="bg-[#2d3343] rounded-2xl overflow-hidden border border-gray-700 shadow-xl">
+                    <table class="w-full text-xs text-left">
+                        <thead class="bg-black/20 text-gray-400">
+                            <tr><th class="p-3">Hora</th><th class="p-3">Mesa</th><th class="p-3">Total</th><th class="p-3 text-center">Ticket</th></tr>
+                        </thead>
+                        <tbody id="sales-history" class="divide-y divide-gray-700/50 text-gray-300"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="sec-config" class="hidden max-w-2xl mx-auto space-y-6 mt-2 pb-20">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-black text-white">Configuración</h2>
+                <button onclick="switchContext('home')" class="text-xs font-bold bg-white/10 px-4 py-2 rounded-lg">Volver</button>
+            </div>
+            
+            <div class="bg-[#2d3343] p-6 rounded-2xl border border-gray-700">
+                <h4 class="text-orange-500 font-bold text-xs uppercase mb-4">Negocio</h4>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-[10px] text-gray-400 uppercase font-bold">Tasa (Bs)</label>
+                        <input type="number" id="cfg-tasa" class="w-full p-3 rounded-xl font-bold mt-1">
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-gray-400 uppercase font-bold">Total Mesas</label>
+                        <div class="flex gap-2 mt-1">
+                            <input type="number" id="cfg-mesas" class="w-full p-3 rounded-xl font-bold">
+                            <button onclick="updateSettings()" class="bg-blue-600 px-3 rounded-xl font-bold text-xs">OK</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-[#2d3343] p-6 rounded-2xl border border-gray-700">
+                <h4 class="text-orange-500 font-bold text-xs uppercase mb-2">Plantilla Recibo (WhatsApp)</h4>
+                <p class="text-[10px] text-gray-400 mb-4">Variables: {mesa}, {total}, {totalBs}, {items}, {fecha}, {hora}</p>
+                <textarea id="cfg-template" rows="4" class="w-full p-3 rounded-xl text-xs font-mono"></textarea>
+                <button onclick="updateSettings()" class="mt-2 w-full bg-blue-600 py-2 rounded-xl font-bold text-xs">Guardar Plantilla</button>
+            </div>
+
+            <div class="bg-[#2d3343] p-6 rounded-2xl border border-gray-700">
+                <h4 class="text-orange-500 font-bold text-xs uppercase mb-4">Usuarios y Permisos</h4>
+                <div class="flex gap-2 mb-4">
+                    <input type="text" id="new-user" placeholder="Usuario" class="w-full p-3 rounded-xl text-xs">
+                    <input type="text" id="new-pass" placeholder="Clave" class="w-full p-3 rounded-xl text-xs">
+                    <select id="new-role" class="p-3 rounded-xl text-xs">
+                        <option value="mesero">Mesero</option>
+                        <option value="cocina">Cocina</option>
+                        <option value="caja">Caja</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                    <button onclick="addUser()" class="bg-green-600 w-12 rounded-xl text-white"><i class="fas fa-plus"></i></button>
+                </div>
+                <div id="users-list" class="space-y-2 max-h-40 overflow-y-auto"></div>
+            </div>
+
+            <div class="bg-[#2d3343] p-6 rounded-2xl border border-gray-700">
+                <h4 class="text-orange-500 font-bold text-xs uppercase mb-4">Menú</h4>
+                <div class="flex gap-2 mb-4">
+                    <input type="text" id="new-name" placeholder="Nombre" class="flex-[2] p-3 rounded-xl text-xs">
+                    <input type="number" id="new-price" placeholder="$" class="flex-1 p-3 rounded-xl text-xs">
+                    <button onclick="addDish()" class="bg-green-600 w-12 rounded-xl text-white"><i class="fas fa-plus"></i></button>
+                </div>
+                <div id="crud-list" class="space-y-2 max-h-60 overflow-y-auto"></div>
+            </div>
+        </section>
+    </main>
+
+    <div id="modal-orden" class="fixed inset-0 bg-black/90 hidden z-50 flex items-end md:items-center justify-center p-0 md:p-4 backdrop-blur-sm">
+        <div class="bg-[#2d3343] w-full md:w-[480px] rounded-t-[2rem] md:rounded-[2rem] p-6 shadow-2xl flex flex-col max-h-[90vh] border border-white/5">
+            <div class="flex justify-between items-center mb-6">
+                <h2 id="modal-mesa-title" class="text-2xl font-black">Mesa</h2>
+                <button onclick="closeModalOrden()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20"><i class="fas fa-times"></i></button>
+            </div>
+
+            <div id="prev-items-container" class="hidden mb-4 bg-black/20 p-3 rounded-xl border border-gray-700">
+                <p class="text-[10px] font-bold text-gray-400 uppercase mb-2">En Preparación / Listos:</p>
+                <div id="prev-items-list" class="space-y-1 opacity-70 text-sm max-h-24 overflow-y-auto"></div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto no-scrollbar space-y-3">
+                <select id="sel-dish" onchange="updatePriceInput()" class="w-full p-4 rounded-xl text-sm font-bold bg-[#1a1e29] border-gray-600">
+                    <option value="">Seleccionar...</option>
+                </select>
+                <input type="text" id="ord-notes" placeholder="Notas (Ej: Sin cebolla)" class="w-full p-4 rounded-xl text-sm bg-[#1a1e29] border-gray-600">
+                
+                <div class="flex gap-3">
+                    <div class="flex-1 bg-black/20 p-2 rounded-xl flex items-center justify-between border border-gray-700">
+                        <button onclick="modVal('ord-qty', -1)" class="w-10 h-10 text-gray-400 hover:text-white font-bold text-xl">-</button>
+                        <input type="number" id="ord-qty" value="1" class="bg-transparent border-none text-center w-8 p-0 font-bold">
+                        <button onclick="modVal('ord-qty', 1)" class="w-10 h-10 text-gray-400 hover:text-white font-bold text-xl">+</button>
+                    </div>
+                    <div class="flex-[1.5] bg-black/20 p-2 rounded-xl flex items-center border border-gray-700 px-4">
+                        <span class="text-gray-500 mr-2">$</span>
+                        <input type="number" id="ord-price" class="bg-transparent border-none w-full p-0 font-bold text-lg">
+                    </div>
+                </div>
+                
+                <button onclick="addItemToTemp()" class="w-full bg-gray-600 hover:bg-gray-500 text-white py-3 rounded-xl font-bold text-xs uppercase flex items-center justify-center gap-2"><i class="fas fa-plus"></i> Agregar Item</button>
+
+                <div class="bg-[#1a1e29] rounded-xl p-4 border border-gray-700 min-h-[100px]">
+                    <div id="temp-items-list" class="space-y-2 mb-2"></div>
+                    <div class="flex justify-between border-t border-gray-700 pt-3 mt-4">
+                        <span class="text-xs uppercase font-bold text-gray-500">Nuevo Total</span>
+                        <span class="font-black text-xl text-orange-500">$<span id="temp-total">0.00</span></span>
+                    </div>
+                </div>
+            </div>
+            <button id="btn-emitir" onclick="emitirOrden()" class="w-full mt-4 bg-[#10b981] text-white py-4 rounded-xl font-bold text-sm uppercase shadow-lg shadow-green-500/20">Confirmar</button>
+        </div>
+    </div>
+
+    <div id="modal-pos" class="fixed inset-0 bg-black/90 hidden z-[60] flex items-end md:items-center justify-center p-0 md:p-4 backdrop-blur-sm">
+        <div class="bg-[#2d3343] w-full md:w-[450px] rounded-t-[2.5rem] md:rounded-[2.5rem] p-6 shadow-2xl border border-white/5">
+            <h2 class="text-xl font-black mb-1">Caja POS</h2>
+            <p class="text-xs text-gray-400 mb-6">Mesa <span id="pos-mesa-id" class="text-white font-bold"></span></p>
+
+            <div class="flex gap-2 mb-6">
+                <div class="flex-1 bg-black/30 p-3 rounded-xl text-center border border-gray-700">
+                    <p class="text-[9px] uppercase font-bold text-gray-500">Total USD</p>
+                    <p class="text-2xl font-black">$<span id="pos-total-usd">0.00</span></p>
+                </div>
+                <div class="flex-1 bg-black/30 p-3 rounded-xl text-center border border-gray-700">
+                    <p class="text-[9px] uppercase font-bold text-gray-500">Total Bs</p>
+                    <p class="text-xl font-bold text-green-400">Bs <span id="pos-total-bs">0.00</span></p>
+                </div>
+            </div>
+
+            <div class="space-y-3 mb-6">
+                <div class="relative"><i class="fas fa-money-bill-wave absolute left-4 top-4 text-green-500"></i><input type="number" id="pay-cash" oninput="calcPOS()" placeholder="Efectivo ($)" class="w-full p-3.5 pl-10 rounded-xl text-sm font-bold bg-[#1a1e29] border-gray-600"></div>
+                <div class="relative"><i class="fas fa-credit-card absolute left-4 top-4 text-blue-400"></i><input type="number" id="pay-card" oninput="calcPOS()" placeholder="Tarjeta / Zelle ($)" class="w-full p-3.5 pl-10 rounded-xl text-sm font-bold bg-[#1a1e29] border-gray-600"></div>
+                <div class="relative"><i class="fas fa-university absolute left-4 top-4 text-purple-400"></i><input type="number" id="pay-bs" oninput="calcPOS()" placeholder="Pago Móvil (Bs)" class="w-full p-3.5 pl-10 rounded-xl text-sm font-bold bg-[#1a1e29] border-gray-600"></div>
+            </div>
+
+            <div class="bg-black/20 p-3 rounded-xl flex justify-between items-center mb-4 border border-gray-700">
+                <div class="text-left"><p class="text-[10px] uppercase font-bold text-gray-500">Resta USD</p><p id="pos-restante-usd" class="text-lg font-black text-red-500">$0.00</p></div>
+                <div class="text-right border-l border-gray-600 pl-4"><p class="text-[10px] uppercase font-bold text-gray-500">Resta Bs</p><p id="pos-restante-bs" class="text-lg font-black text-red-500">Bs 0.00</p></div>
+            </div>
+
+            <div class="flex gap-3">
+                <button onclick="closePOS()" class="flex-1 bg-white/5 text-gray-400 py-3 rounded-xl font-bold text-xs">CANCELAR</button>
+                <button id="btn-pay-confirm" onclick="confirmarPago()" class="flex-[2] bg-gray-600 text-gray-400 py-3 rounded-xl font-black uppercase tracking-wider cursor-not-allowed">Finalizar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. CONFIGURACIÓN GITHUB MULTI-TENANT ---
+        
+        // Obtenemos el nombre del restaurante de la URL (Ej: index.html?res=sucursal1)
+        const urlParams = new URLSearchParams(window.location.search);
+        const tenantFolder = urlParams.get('res') || 'default'; // 'default' si no hay parametro
+        
+        document.getElementById('tenant-badge').innerText = tenantFolder;
+
+        const GH_CONFIG = {
+            token: "TU_TOKEN_AQUI", // REEMPLAZA ESTO
+            owner: "tu_usuario_github", // REEMPLAZA ESTO
+            repo: "app", // TU REPOSITORIO
+            path: `${tenantFolder}/config.json`, // Carpeta dinámica
+            branch: "main"
+        };
+
+        // Estado Global
+        let db = { mesas: [], cocina: [], menu: [], users: [], salesHistory: [], tasa: 0, tableCount: 0, receiptTemplate: "" };
+        let currentUser = null;
+        let activeMesa = null;
+        let tempItems = [];
+
+        // --- 2. COMUNICACIÓN GITHUB API ---
+        function setSyncMode(isActive, msg = "Procesando...") {
+            document.getElementById('sync-overlay').style.display = isActive ? 'flex' : 'none';
+            document.getElementById('sync-msg').innerText = msg;
+        }
+
+        async function loadFromGitHub(showOverlay = true) {
+            if(showOverlay) setSyncMode(true, "Descargando datos...");
+            const url = `https://api.github.com/repos/${GH_CONFIG.owner}/${GH_CONFIG.repo}/contents/${GH_CONFIG.path}?ref=${GH_CONFIG.branch}`;
+            
+            try {
+                const response = await fetch(url, { headers: { "Authorization": `token ${GH_CONFIG.token}` } });
+                if (response.ok) {
+                    const fileData = await response.json();
+                    const content = decodeURIComponent(escape(atob(fileData.content)));
+                    db = JSON.parse(content);
+                } else {
+                    console.warn("No se encontró el archivo remoto. Verifica la carpeta: " + tenantFolder);
+                    alert("No se encontró la base de datos de " + tenantFolder);
+                }
+            } catch (e) {
+                console.error("Error de conexión:", e);
+                alert("Sin conexión a Internet");
+            } finally {
+                if(showOverlay) setSyncMode(false);
+                renderAll();
+                initSettingsInputs();
+            }
+        }
+
+        async function saveDB() {
+            setSyncMode(true, "Guardando en la nube...");
+            const url = `https://api.github.com/repos/${GH_CONFIG.owner}/${GH_CONFIG.repo}/contents/${GH_CONFIG.path}`;
+            const headers = { "Authorization": `token ${GH_CONFIG.token}`, "Accept": "application/vnd.github.v3+json" };
+
+            try {
+                // Obtenemos el SHA más reciente
+                const getFile = await fetch(url, { headers });
+                if (!getFile.ok) throw new Error("No se pudo obtener el archivo base");
+                const fileData = await getFile.json();
+                
+                // Subimos nuestro 'db' actual (sobrescribe la nube)
+                const newContent = btoa(unescape(encodeURIComponent(JSON.stringify(db, null, 2))));
+
+                const response = await fetch(url, {
+                    method: "PUT",
+                    headers: { ...headers, "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        message: `POS Update - ${currentUser ? currentUser.user : 'Auto'}`,
+                        content: newContent,
+                        sha: fileData.sha,
+                        branch: GH_CONFIG.branch
+                    })
+                });
+
+                if (!response.ok) throw new Error("Conflicto al guardar (Status: " + response.status + ")");
+                
+                console.log("Guardado Exitoso");
+            } catch (error) {
+                console.error("Error al sincronizar:", error);
+                alert("Hubo un problema al guardar. Posible conflicto con otro dispositivo. Por favor, recarga la página.");
+                loadFromGitHub(); // Forzamos recarga si hay error
+            } finally {
+                setSyncMode(false);
+                renderAll();
+            }
+        }
+
+        // AUTO-REFRESH (Cada 15 segs)
+        setInterval(async () => {
+            if(!currentUser) return; // Si no ha iniciado sesión, no hacemos nada
+            
+            // Solo refresca si los modales están cerrados para no interrumpir al usuario
+            const mOrd = document.getElementById('modal-orden').classList.contains('hidden');
+            const mPos = document.getElementById('modal-pos').classList.contains('hidden');
+            const mConf = document.getElementById('sec-config').classList.contains('hidden');
+
+            if (mOrd && mPos && mConf) {
+                console.log("Auto-sync...");
+                await loadFromGitHub(false); // Falso para no mostrar la pantalla negra de bloqueo
+            }
+        }, 15000);
+
+        // --- 3. AUTH SYSTEM ---
+        async function login() {
+            setSyncMode(true, "Validando...");
+            // Siempre descargamos la BD fresca antes de validar para tener las últimas contraseñas
+            await loadFromGitHub(false); 
+            setSyncMode(false);
+
+            const u = document.getElementById('login-user').value;
+            const p = document.getElementById('login-pass').value;
+            const user = db.users.find(x => x.user === u && x.pass === p);
+            
+            if(user) {
+                currentUser = user;
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('user-display').innerText = user.user;
+                applyPermissions();
+                renderAll();
+            } else {
+                document.getElementById('login-error').style.display = 'block';
+            }
+        }
+
+        function logout() { location.reload(); }
+
+        function applyPermissions() {
+            const role = currentUser.role;
+            const btnConf = document.getElementById('btn-conf');
+            const navMesas = document.getElementById('nav-mesas');
+            const navCocina = document.getElementById('nav-cocina');
+            const navCaja = document.getElementById('nav-caja');
+            
+            btnConf.classList.add('hidden');
+            [navMesas, navCocina, navCaja].forEach(n => n.classList.remove('hidden'));
+
+            if(role === 'admin') btnConf.classList.remove('hidden');
+            else if (role === 'mesero') { navCocina.classList.add('hidden'); navCaja.classList.add('hidden'); showSection('mesas'); }
+            else if (role === 'cocina') { navMesas.classList.add('hidden'); navCaja.classList.add('hidden'); showSection('cocina'); }
+            else if (role === 'caja') { navMesas.classList.add('hidden'); navCocina.classList.add('hidden'); showSection('caja'); }
+        }
+
+        // --- 4. CORE UI ---
+        function initSettingsInputs() {
+            if(document.getElementById('cfg-tasa')) document.getElementById('cfg-tasa').value = db.tasa || 0;
+            if(document.getElementById('cfg-mesas')) document.getElementById('cfg-mesas').value = db.tableCount || 0;
+            if(document.getElementById('cfg-template')) document.getElementById('cfg-template').value = db.receiptTemplate || "";
+        }
+
+        function switchContext(ctx) {
+            const configSec = document.getElementById('sec-config');
+            const nav = document.getElementById('navbar-sticky');
+            if(ctx === 'config') {
+                document.querySelectorAll('.app-view').forEach(s => s.classList.add('hidden'));
+                configSec.classList.remove('hidden'); nav.classList.add('hidden');
+            } else {
+                configSec.classList.add('hidden'); nav.classList.remove('hidden'); showSection('mesas');
+            }
+        }
+
+        function showSection(sec) {
+            document.querySelectorAll('.app-view').forEach(s => s.classList.add('hidden'));
+            document.getElementById('sec-' + sec).classList.remove('hidden');
+            document.querySelectorAll('.section-btn').forEach(b => { b.classList.remove('nav-active'); b.classList.add('nav-btn'); });
+            const map = {'mesas':0, 'cocina':1, 'caja':2};
+            if(map[sec] !== undefined) document.querySelectorAll('.section-btn')[map[sec]].classList.add('nav-active');
+        }
+
+        // --- 5. LOGICA MESAS ---
+        function clickMesa(id) {
+            if(!currentUser || currentUser.role === 'cocina' || currentUser.role === 'caja') return;
+            activeMesa = id;
+            tempItems = [];
+            const mesa = db.mesas.find(m => m.id === id);
+
+            if (mesa.status === 'limpieza') {
+                if(confirm('¿Mesa limpia?')) { 
+                    mesa.status = 'libre'; mesa.items = []; mesa.total = 0; mesa.orderCount = 0; 
+                    saveDB(); 
+                }
+                return;
+            }
+
+            document.getElementById('modal-mesa-title').innerText = `Mesa ${id}`;
+            const prevCont = document.getElementById('prev-items-container');
+            if(mesa.items && mesa.items.length > 0) {
+                prevCont.classList.remove('hidden');
+                document.getElementById('prev-items-list').innerHTML = mesa.items.map(i => `<div class="flex justify-between items-center"><span>${i.qty}x ${i.nombre} <span class="text-[10px] italic">${i.notes||''}</span></span>${(currentUser.role==='admin') ? `<button onclick="adminDeleteItem(${id}, '${i.id}')" class="text-red-500 text-xs ml-2"><i class="fas fa-trash"></i></button>` : ''}</div>`).join('');
+            } else prevCont.classList.add('hidden');
+
+            document.getElementById('sel-dish').innerHTML = '<option value="">Seleccionar...</option>' + (db.menu||[]).map(p => `<option value="${p.id}">${p.nombre}</option>`).join('');
+            document.getElementById('ord-qty').value = 1; document.getElementById('ord-price').value = ''; document.getElementById('ord-notes').value = '';
+
+            const btn = document.getElementById('btn-emitir');
+            if(mesa.status === 'listo') {
+                btn.innerText = "Entregar Pedido"; btn.onclick = () => entregarPedido(id);
+                btn.className = "w-full mt-4 bg-blue-600 text-white py-4 rounded-xl font-bold uppercase shadow-lg animate-pulse";
+            } else {
+                btn.innerText = "Confirmar Orden"; btn.onclick = emitirOrden;
+                btn.className = "w-full mt-4 bg-[#10b981] text-white py-4 rounded-xl font-bold uppercase shadow-lg";
+            }
+            renderTempItems();
+            document.getElementById('modal-orden').classList.remove('hidden');
+        }
+
+        function adminDeleteItem(mesaId, itemId) {
+            if(confirm('¿Admin: Eliminar este item?')) {
+                const mesa = db.mesas.find(m => m.id === mesaId);
+                mesa.items = mesa.items.filter(i => i.id !== itemId);
+                mesa.total = mesa.items.reduce((a,b)=>a+(b.qty*b.precio),0);
+                saveDB(); closeModalOrden();
+            }
+        }
+
+        function addItemToTemp() {
+            const pid = document.getElementById('sel-dish').value; if(!pid) return;
+            const item = db.menu.find(p => p.id == pid);
+            const qty = parseFloat(document.getElementById('ord-qty').value);
+            const price = parseFloat(document.getElementById('ord-price').value);
+            const notes = document.getElementById('ord-notes').value;
+            if(qty > 0) { tempItems.push({ id: Date.now().toString(), nombre: item.nombre, qty, precio: price, notes }); renderTempItems(); }
+        }
+
+        function renderTempItems() {
+            let total = 0;
+            document.getElementById('temp-items-list').innerHTML = tempItems.map((i, idx) => { total += i.qty * i.precio; return `<div class="flex justify-between text-xs text-gray-300 border-b border-gray-700 pb-2"><div>${i.qty}x ${i.nombre}</div><button onclick="tempItems.splice(${idx},1);renderTempItems()" class="text-red-500"><i class="fas fa-trash"></i></button></div>`; }).join('');
+            document.getElementById('temp-total').innerText = total.toFixed(2);
+        }
+
+        function emitirOrden() {
+            const mesa = db.mesas.find(m => m.id === activeMesa);
+            if(tempItems.length > 0) {
+                mesa.items = [...(mesa.items||[]), ...tempItems];
+                mesa.total = mesa.items.reduce((a,b) => a + (b.qty * b.precio), 0);
+                mesa.status = 'espera'; mesa.orderCount = (mesa.orderCount||0)+1;
+                db.cocina = db.cocina || [];
+                db.cocina.push({ id: Date.now(), mesaId: mesa.id, items: [...tempItems], status: 'espera', time: new Date(), orderNum: mesa.orderCount });
+                closeModalOrden(); saveDB();
+            }
+        }
+
+        function entregarPedido(id) {
+            db.cocina = (db.cocina||[]).filter(o => !(o.mesaId === id && o.status === 'listo'));
+            db.mesas.find(m => m.id === id).status = 'ocupada';
+            closeModalOrden(); saveDB();
+        }
+
+        function cocinaMover(oid, status) {
+            const order = db.cocina.find(o => o.id === oid); order.status = status;
+            const mesa = db.mesas.find(m => m.id === order.mesaId);
+            if(status === 'preparacion') mesa.status = 'preparacion';
+            if(status === 'listo') mesa.status = 'listo';
+            saveDB();
+        }
+
+        // --- 6. CAJA ---
+        function openPOS(id) {
+            activeMesa = id; const mesa = db.mesas.find(m => m.id === id);
+            document.getElementById('pos-mesa-id').innerText = id;
+            document.getElementById('pos-total-usd').innerText = (mesa.total||0).toFixed(2);
+            document.getElementById('pos-total-bs').innerText = ((mesa.total||0) * db.tasa).toFixed(2);
+            ['pay-cash','pay-card','pay-bs'].forEach(i => document.getElementById(i).value='');
+            calcPOS(); document.getElementById('modal-pos').classList.remove('hidden');
+        }
+
+        function calcPOS() {
+            const mesa = db.mesas.find(m => m.id === activeMesa);
+            const paid = (parseFloat(document.getElementById('pay-cash').value)||0) + (parseFloat(document.getElementById('pay-card').value)||0) + ((parseFloat(document.getElementById('pay-bs').value)||0) / db.tasa);
+            const rest = mesa.total - paid;
+            const btn = document.getElementById('btn-pay-confirm');
+            document.getElementById('pos-restante-usd').innerText = rest <= 0.01 ? "PAGADO" : `$${rest.toFixed(2)}`;
+            document.getElementById('pos-restante-bs').innerText = rest <= 0.01 ? "PAGADO" : `Bs ${(rest*db.tasa).toFixed(2)}`;
+            btn.disabled = rest > 0.01; btn.classList.toggle('bg-[#10b981]', rest <= 0.01); btn.classList.toggle('text-white', rest <= 0.01); btn.classList.toggle('cursor-not-allowed', rest > 0.01);
+        }
+
+        function confirmarPago() {
+            const mesa = db.mesas.find(m => m.id === activeMesa);
+            db.salesHistory = db.salesHistory || [];
+            db.salesHistory.unshift({ date: new Date().toLocaleDateString(), time: new Date().toLocaleTimeString(), mesa: mesa.id, total: mesa.total.toFixed(2), items: [...mesa.items] });
+            mesa.status = 'limpieza'; closePOS(); saveDB();
+        }
+
+        function clearHistory() { if(confirm('Borrar todo el historial?')) { db.salesHistory = []; saveDB(); } }
+
+        // --- 7. CONFIG & CRUDS ---
+        function updateSettings() {
+            db.tasa = parseFloat(document.getElementById('cfg-tasa').value);
+            db.receiptTemplate = document.getElementById('cfg-template').value;
+            const count = parseInt(document.getElementById('cfg-mesas').value) || 12;
+            db.tableCount = count;
+            const old = db.mesas || [];
+            db.mesas = Array.from({length: count}, (_, i) => old.find(m=>m.id===i+1) || { id: i+1, status: 'libre', items: [], total: 0, orderCount: 0 });
+            saveDB();
+        }
+        function addDish() { const n = document.getElementById('new-name').value, p = parseFloat(document.getElementById('new-price').value); if(n && p) { db.menu = db.menu||[]; db.menu.push({id:Date.now(), nombre:n, precio:p}); document.getElementById('new-name').value=''; document.getElementById('new-price').value=''; saveDB(); } }
+        function deleteDish(id) { db.menu = db.menu.filter(m => m.id !== id); saveDB(); }
+        function addUser() { const u = document.getElementById('new-user').value, p = document.getElementById('new-pass').value, r = document.getElementById('new-role').value; if(u && p) { db.users = db.users||[]; db.users.push({id:Date.now(), user:u, pass:p, role:r}); saveDB(); document.getElementById('new-user').value=''; document.getElementById('new-pass').value=''; } }
+        function deleteUser(id) { if(confirm('Eliminar usuario?')) { db.users = db.users.filter(u => u.id !== id); saveDB(); } }
+
+        // --- 8. RENDERIZADORES ---
+        function renderAll() {
+            document.getElementById('header-tasa').innerText = (db.tasa||0).toFixed(2);
+            renderMesas(); renderCocina(); renderCaja(); renderUsers();
+            document.getElementById('crud-list').innerHTML = (db.menu||[]).map(p => `<div class="flex justify-between bg-black/20 p-2 rounded text-sm mb-1"><span>${p.nombre}</span><div class="flex gap-3"><span class="text-orange-500 font-bold">$${p.precio}</span><button onclick="deleteDish(${p.id})" class="text-red-500"><i class="fas fa-trash"></i></button></div></div>`).join('');
+        }
+
+        function renderMesas() {
+            document.getElementById('grid-mesas').innerHTML = (db.mesas||[]).map(m => {
+                let st='status-libre', lbl='Libre', icn='utensils';
+                if(m.status==='ocupada'){st='status-ocupada'; lbl='Comiendo'; icn='user';}
+                if(m.status==='espera'){st='status-espera'; lbl='Enviado'; icn='clock';}
+                if(m.status==='preparacion'){st='status-preparacion'; lbl='Cocinando'; icn='fire';}
+                if(m.status==='listo'){st='status-listo'; lbl='¡LISTO!'; icn='check-double';}
+                if(m.status==='limpieza'){st='status-limpieza'; lbl='Limpiar'; icn='broom';}
+                return `<button onclick="clickMesa(${m.id})" class="mesa-card relative w-full aspect-square rounded-[1.5rem] flex flex-col items-center justify-center shadow-lg ${st}"><span class="text-[10px] font-bold uppercase opacity-60">Mesa</span><span class="text-3xl font-black my-1">${m.id}</span><div class="flex items-center gap-1 bg-black/20 px-2 rounded"><i class="fas fa-${icn} text-[10px]"></i><span class="text-[9px] font-bold uppercase">${lbl}</span></div></button>`;
+            }).join('');
+        }
+
+        function renderCocina() {
+            const cols = { espera: document.getElementById('col-espera'), preparacion: document.getElementById('col-preparacion'), listo: document.getElementById('col-listo') };
+            Object.values(cols).forEach(c=>c.innerHTML='');
+            (db.cocina||[]).forEach(o => {
+                let badge = o.orderNum > 1 ? '<span class="bg-purple-600 text-white text-[9px] px-1 rounded animate-pulse">2da</span>' : '';
+                let btn = '', border = '';
+                if(o.status==='espera'){ border='border-red-500'; btn=`<button onclick="cocinaMover(${o.id},'preparacion')" class="w-full bg-yellow-600 py-2 rounded text-xs font-bold mt-2">COCINAR</button>`; }
+                else if(o.status==='preparacion'){ border='border-yellow-500'; btn=`<button onclick="cocinaMover(${o.id},'listo')" class="w-full bg-green-600 py-2 rounded text-xs font-bold mt-2">LISTO</button>`; }
+                else if(o.status==='listo'){ border='border-green-500'; btn=`<div class="text-center text-xs text-green-400 font-bold mt-2">¡ESPERANDO ENTREGA!</div>`; }
+                const card = `<div class="bg-[#2d3343] p-4 rounded-xl shadow border-l-4 ${border} mb-3"><div class="flex justify-between font-bold mb-2"><span>Mesa ${o.mesaId} ${badge}</span><span class="text-xs text-gray-400">${new Date(o.time).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</span></div><div class="space-y-1 text-sm text-gray-300 border-t border-gray-700 pt-2">${o.items.map(i=>`<div>${i.qty}x ${i.nombre} <span class="italic text-gray-500 text-xs">${i.notes||''}</span></div>`).join('')}</div>${btn}</div>`;
+                if(cols[o.status]) cols[o.status].innerHTML+=card;
+            });
+            document.getElementById('badge-cocina').style.display = (db.cocina||[]).length>0 ? 'inline-block':'none';
+        }
+
+        function renderCaja() {
+            const list = document.getElementById('list-caja');
+            const toCollect = (db.mesas||[]).filter(m => m.total > 0 && m.status !== 'libre' && m.status !== 'limpieza');
+            list.innerHTML = toCollect.map(m => `<div class="bg-[#2d3343] p-5 rounded-2xl shadow-lg border border-gray-700 relative"><div class="flex justify-between font-bold mb-2"><span>Mesa ${m.id}</span><span class="text-green-400">$${m.total.toFixed(2)}</span></div><button onclick="openPOS(${m.id})" class="w-full bg-white text-black py-3 rounded-xl font-bold uppercase text-xs hover:bg-gray-200">Cobrar</button></div>`).join('');
+            document.getElementById('sales-history').innerHTML = (db.salesHistory||[]).map(s => {
+                let itemsTxt = s.items.map(i => `${i.qty}x ${i.nombre}`).join('%0A');
+                let tpl = db.receiptTemplate || "";
+                let msg = tpl.replace('{mesa}', s.mesa).replace('{total}', s.total).replace('{totalBs}', (s.total * db.tasa).toFixed(2)).replace('{items}', itemsTxt).replace('{fecha}', s.date).replace('{hora}', s.time);
+                return `<tr><td class="p-3 opacity-70">${s.time}</td><td class="p-3">Mesa ${s.mesa}</td><td class="p-3 font-bold text-green-400">$${s.total}</td><td class="p-3 text-center"><a href="https://wa.me/?text=${encodeURIComponent(msg)}" target="_blank" class="bg-green-600 text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-green-500 mx-auto"><i class="fab fa-whatsapp"></i></a></td></tr>`;
+            }).join('');
+        }
+
+        function renderUsers() { document.getElementById('users-list').innerHTML = (db.users||[]).map(u => `<div class="flex justify-between bg-black/20 p-2 rounded text-xs mb-1"><span>${u.user} (${u.role})</span>${u.role!=='admin'||u.user!=='admin'?`<button onclick="deleteUser(${u.id})" class="text-red-500"><i class="fas fa-trash"></i></button>`:''}</div>`).join(''); }
+        function updatePriceInput(){ const i=(db.menu||[]).find(p=>p.id==document.getElementById('sel-dish').value); if(i)document.getElementById('ord-price').value=i.precio.toFixed(2); }
+        function modVal(id,v){ const e=document.getElementById(id); e.value=Math.max(0,(parseFloat(e.value)||0)+v); }
+        function closeModalOrden(){ document.getElementById('modal-orden').classList.add('hidden'); }
+        function closePOS(){ document.getElementById('modal-pos').classList.add('hidden'); }
+
+        // Inicializamos intentando descargar de GitHub
+        // loadFromGitHub() se llama automáticamente al final o al loguear.
+        
+    </script>
+</body>
+</html>
