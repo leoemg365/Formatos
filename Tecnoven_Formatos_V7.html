@@ -219,6 +219,17 @@
       text-align: center;
     }
 
+    .whatsappIcon {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 60px;
+      height: 60px;
+      z-index: 1001;
+      transition: transform 0.3s ease;
+
+    }
+
     /* Estilos para el Modal de Novedades */
     #updatesBody ul {
       padding-left: 20px;
@@ -364,6 +375,9 @@
         <label for="cobro">Cobrar</label><input id="cobro">
         <label for="observacion">Observación</label><textarea id="observacion"></textarea>
         <div class="actions"><button class="btn" id="btnGenerarInst">Generar</button><button class="btn" id="btnCopiarInst">Copiar</button><button class="btn alt" id="btnNuevoInst">Nuevo Formato</button></div>
+        <a href="https://wa.me" target="_blank">
+        <img src="icons8-whatsapp.gif" class="whatsappIcon" alt="WhatsApp">
+        </a>
         <div class="output" id="resultadoInst"></div>
     </div>
 
@@ -401,10 +415,6 @@
   </div>
   
   <div id="messageBox" class="message-box"></div>
-
-<a href="https://wa.me" target="_blank">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" style="width:50px;height:50px;">
-</a>
   
   <div class="modal-overlay" id="updatesModal">
     <div class="modal-content">
