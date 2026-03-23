@@ -211,6 +211,11 @@
           "id": 1774290178274,
           "label": "Falla Proveedor",
           "content": "Apreciado cliente, le informamos que en estos momentos estamos presentando un inconveniente a nivel de proveedor. Le ofrecemos nuestras más sinceras disculpas por las molestias que esto pueda ocasionar. Ya nos comunicamos con nuestro proveedor para que pueda ser solventado en la brevedad posible *Agradecemos su confianza en TECNOVEN #SomosMásQueInternet*\n\nSi aún persiste algún inconveniente, por favor, comuníquese con nosotros. Estamos a su disposición para brindarle la mejor atención.\n\n*#TecnovenSomosmásqueInternet*"
+        },
+        {
+          "id": 1774290226113,
+          "label": "Incidencia",
+          "content": "Apreciado cliente, le informamos que en estos momentos estamos experimentando un inconveniente donde conecta su servicio. Le ofrecemos nuestras más sinceras disculpas por las molestias que esto pueda ocasionar. Estamos trabajando arduamente para solucionar el inconveniente y restablecer el servicio lo antes posible. *Agradecemos su confianza en\nTECNOVEN #SomosMásQueInternet*"
         }
       ]
     },
