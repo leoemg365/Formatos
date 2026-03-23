@@ -263,6 +263,11 @@
           "id": 332,
           "label": "Cierre Noche",
           "content": "El soporte presencial funciona hasta las 6PM. Dejaremos su caso reportado para mañana a primera hora."
+        },
+        {
+          "id": 1774287433520,
+          "label": "Ayudar",
+          "content": "Buenas noches, en qué podemos ayudarle? "
         }
       ]
     }
