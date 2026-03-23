@@ -53,6 +53,11 @@
           "id": 1774304290549,
           "label": "OLT - LOS PEDROS 1",
           "content": "https://38.7.1.152:8081/"
+        },
+        {
+          "id": 1774304308044,
+          "label": "OLT - LOS PEDROS 2",
+          "content": "https://38.51.214.128:8082/"
         }
       ]
     },
