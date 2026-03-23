@@ -272,5 +272,12 @@
       ]
     }
   ],
-  "news": []
+  "news": [
+    {
+      "id": 1774287660376,
+      "date": "23/3/2026",
+      "title": "Contador de Carácteres",
+      "content": "Próximamente"
+    }
+  ]
 }
