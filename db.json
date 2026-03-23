@@ -293,5 +293,12 @@
       ]
     }
   ],
-  "news": []
+  "news": [
+    {
+      "id": 1774296621135,
+      "date": "23/3/2026",
+      "title": "Instalaciones",
+      "content": "Clientes instalados del 1 al 7 les corresponde fecha de corte los 05. Clientes instalado del 8 al 18 les corresponde fecha de corte para los 15. Clientes instalados del 19 al 31 le corresponde fecha de corte para los 05"
+    }
+  ]
 }
