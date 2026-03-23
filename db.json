@@ -257,12 +257,5 @@
       ]
     }
   ],
-  "news": [
-    {
-      "id": 401,
-      "date": "18/02/2026",
-      "title": "⚠️ Mantenimiento",
-      "content": "Esta noche a las 11:00 PM se realizará actualización del servidor."
-    }
-  ]
+  "news": []
 }
