@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NetAdmin</title>
+    <title>NetAdmin Pro v10</title>
     <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/4565/4565968.png" type="image/x-icon">
     <style>
         :root {
@@ -17,7 +17,7 @@
             --text-main: #e4e6eb; --text-sec: #b0b3b8; --border: #3e4042;
         }
         * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg-body); color: var(--text-main); margin: 0; padding: 0; transition: 0.3s; height: 100vh; overflow-y: auto; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg-body); color: var(--text-main); margin: 0; padding: 0; transition: 0.3s; height: 100vh; overflow-x: hidden; }
 
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         input[type=number] { -moz-appearance: textfield; }
@@ -29,72 +29,77 @@
         .welcome-box { background: var(--bg-surface); padding: 30px; border-radius: 20px; box-shadow: var(--shadow); max-width: 400px; width: 100%; border: 1px solid var(--border); }
         .logo { font-size: 3rem; margin-bottom: 10px; }
         
-        .big-input { width: 100%; padding: 15px; border-radius: var(--radius); border: 2px solid var(--border); background: var(--bg-input); font-size: 1.1rem; text-align: center; color: var(--text-main); margin-bottom: 15px; }
-        .btn-large { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: var(--radius); font-size: 1rem; font-weight: bold; cursor: pointer; }
+        .big-input { width: 100%; padding: 15px; border-radius: var(--radius); border: 2px solid var(--border); background: var(--bg-input); font-size: 1.1rem; text-align: left; color: var(--text-main); margin-bottom: 15px; resize: vertical; font-family: inherit; }
+        .btn-large { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: var(--radius); font-size: 1rem; font-weight: bold; cursor: pointer; transition: transform 0.1s; }
+        .btn-large:active { transform: scale(0.98); }
         
-        /* APP */
-        #app-container { max-width: 900px; margin: 0 auto; padding: 20px; display: none; padding-bottom: 60px; }
-        #app-container.visible { display: block; animation: fadeIn 0.5s; }
+        /* APP CONTAINER */
+        #app-container { max-width: 1000px; margin: 0 auto; padding: 15px; display: none; padding-bottom: 80px; }
+        #app-container.visible { display: block; animation: fadeIn 0.4s; }
 
         .app-header-grid { display: grid; grid-template-columns: 1fr auto; gap: 15px; margin-bottom: 20px; align-items: center; }
         .quote-box { background: linear-gradient(135deg, var(--primary), #0056b3); color: white; padding: 15px; border-radius: var(--radius); font-size: 0.9rem; font-style: italic; box-shadow: var(--shadow); position: relative; overflow: hidden; }
         
         .controls { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
-        .btn-icon { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px; width: 40px; height: 40px; cursor: pointer; font-size: 1.2rem; }
+        .btn-icon { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px; width: 40px; height: 40px; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; }
 
-        /* TABS */
-        .tabs-container { overflow-x: auto; padding-bottom: 5px; margin-bottom: 20px; }
-        .tabs { display: flex; background: var(--bg-surface); padding: 5px; border-radius: 15px; box-shadow: var(--shadow); min-width: 360px; }
-        .tab { flex: 1; text-align: center; padding: 12px 5px; border-radius: 10px; cursor: pointer; color: var(--text-sec); font-weight: 600; font-size: 0.9rem; white-space: nowrap; }
+        /* TABS RESPONSIVE */
+        .tabs-container { overflow-x: auto; padding-bottom: 10px; margin-bottom: 15px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+        .tabs-container::-webkit-scrollbar { display: none; }
+        .tabs { display: flex; background: var(--bg-surface); padding: 5px; border-radius: 15px; box-shadow: var(--shadow); width: max-content; min-width: 100%; gap: 5px; }
+        .tab { flex: 1; text-align: center; padding: 12px 15px; border-radius: 10px; cursor: pointer; color: var(--text-sec); font-weight: 600; font-size: 0.9rem; white-space: nowrap; transition: 0.2s; }
         .tab.active { background: var(--primary); color: white; }
 
         /* FILTROS RESPUESTAS */
-        .sub-filters { display: flex; gap: 10px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; }
-        .pill { padding: 6px 12px; border-radius: 20px; background: var(--bg-input); cursor: pointer; font-size: 0.85rem; color: var(--text-sec); border: 1px solid transparent; white-space: nowrap; }
+        .sub-filters { display: flex; gap: 10px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+        .sub-filters::-webkit-scrollbar { display: none; }
+        .pill { padding: 8px 16px; border-radius: 20px; background: var(--bg-input); cursor: pointer; font-size: 0.85rem; color: var(--text-sec); border: 1px solid transparent; white-space: nowrap; transition: 0.2s; }
         .pill.active { background: var(--bg-surface); border-color: var(--primary); color: var(--primary); font-weight: bold; }
 
-        /* LISTAS & CARDS */
-        .list-box { background: var(--bg-surface); border-radius: var(--radius); padding: 15px; margin-bottom: 15px; border: 1px solid var(--border); }
-        .list-head { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+        /* GRID Y TARJETAS */
+        .list-box { background: var(--bg-surface); border-radius: var(--radius); padding: 15px; margin-bottom: 20px; border: 1px solid var(--border); }
+        .list-head { display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 1.1rem; margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
         
-        .card { background: var(--bg-body); border: 1px solid var(--border); border-radius: 8px; padding: 12px; position: relative; cursor: pointer; border-left: 4px solid var(--border); overflow: hidden; }
-        .card:active { transform: scale(0.98); }
-        .card-label { font-weight: bold; font-size: 0.9rem; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .card-val { font-size: 0.8rem; color: var(--text-sec); font-family: monospace; white-space: normal; overflow-wrap: anywhere; word-break: break-all; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.2; }
+        .card { background: var(--bg-body); border: 1px solid var(--border); border-radius: 10px; padding: 15px; position: relative; cursor: pointer; border-left: 5px solid var(--border); transition: transform 0.1s, box-shadow 0.2s; }
+        .card:active { transform: scale(0.97); }
+        .card-label { font-weight: bold; font-size: 0.95rem; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 40px; }
+        .card-val { font-size: 0.85rem; color: var(--text-sec); font-family: monospace; white-space: normal; overflow-wrap: anywhere; word-break: break-word; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4; }
 
-        /* Actions */
-        .actions { position: absolute; top: 5px; right: 5px; display: block; background: rgba(255,255,255,0.8); border-radius: 4px; }
-        .mini-btn { font-size: 10px; padding: 2px 5px; background: white; border: 1px solid #ccc; border-radius: 4px; cursor: pointer; }
+        /* BOTONES FLOTANTES DE LA TARJETA (Ojo y Borrar) */
+        .actions { position: absolute; top: 8px; right: 8px; display: flex; gap: 4px; background: var(--bg-body); border-radius: 6px; padding: 2px; }
+        .mini-btn { font-size: 12px; width: 28px; height: 28px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .mini-btn:hover { background: var(--bg-input); }
 
         /* TIPOS DE CARDS */
-        .pass-card { border-top: 4px solid var(--danger); border-left: 0; }
-        .resp-card { border-left: 4px solid var(--warning); background: #fffceb; color: #5c4e06; }
+        .pass-card { border-top: 5px solid var(--danger); border-left: 1px solid var(--border); }
+        .resp-card { border-left: 5px solid var(--warning); background: #fffceb; color: #5c4e06; }
         body.dark-mode .resp-card { background: #423805; color: #e6dbb5; }
-        
-        .news-card { border-left: 4px solid var(--primary); cursor: default; }
+        .news-card { border-left: 5px solid var(--primary); cursor: default; }
         .news-date { font-size: 0.75rem; color: var(--text-sec); margin-bottom: 5px; }
-        .news-title { font-weight: bold; font-size: 1rem; margin-bottom: 5px; color: var(--primary); }
+        .news-title { font-weight: bold; font-size: 1.05rem; margin-bottom: 5px; color: var(--primary); }
         
-        .cred-row { display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.03); padding: 5px; border-radius: 4px; margin-top: 5px; font-size: 0.85rem; }
-        .blur { filter: blur(4px); cursor: pointer; transition: 0.2s; }
+        .cred-row { display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.04); padding: 8px; border-radius: 6px; margin-top: 8px; font-size: 0.85rem; }
+        .blur { filter: blur(5px); cursor: pointer; transition: 0.3s; }
         .blur:hover { filter: blur(0); }
 
-        /* CLOCK & MODALS */
-        .time-selector { display: flex; gap: 5px; background: var(--bg-input); padding: 10px; border-radius: 8px; margin-bottom: 15px; border: 1px solid var(--primary); }
-        .ts-select { flex: 1; padding: 10px; border-radius: 6px; border: 1px solid #ccc; font-size: 1rem; text-align: center; background: var(--bg-surface); color: var(--text-main); }
+        /* CLOCK Y HERRAMIENTAS */
+        .time-selector { display: flex; gap: 5px; background: var(--bg-input); padding: 10px; border-radius: 10px; margin-bottom: 20px; border: 1px solid var(--primary); }
+        .ts-select { flex: 1; padding: 12px; border-radius: 8px; border: 1px solid var(--border); font-size: 1rem; text-align: center; background: var(--bg-surface); color: var(--text-main); appearance: none; }
         
-        .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6); z-index: 3000; display: none; justify-content: center; align-items: center; }
-        .alert-box { background: var(--bg-surface); padding: 25px; border-radius: 20px; text-align: center; max-width: 300px; border: 2px solid var(--primary); }
-        .alert-danger { border-color: var(--danger); animation: shake 0.5s infinite; }
+        .btn-add { border: 2px dashed var(--border); display: flex; justify-content: center; align-items: center; font-weight: bold; color: var(--text-sec); min-height: 80px; background: transparent; }
         
-        #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 10px 20px; border-radius: 20px; opacity: 0; pointer-events: none; transition: 0.3s; z-index: 5000; }
-        #toast.show { opacity: 1; transform: translateY(-10px); }
+        /* MODALES NATIVOS CUSTOM */
+        .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); z-index: 3000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s ease; padding: 15px; }
+        .modal-overlay.show { opacity: 1; pointer-events: auto; }
+        .alert-box { background: var(--bg-surface); padding: 25px; border-radius: 20px; width: 100%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); transform: translateY(20px); transition: 0.3s ease; display: flex; flex-direction: column; }
+        .modal-overlay.show .alert-box { transform: translateY(0); }
+        .alert-danger { border-top: 5px solid var(--danger); text-align: center; }
+        
+        #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px); background: #333; color: white; padding: 12px 24px; border-radius: 30px; opacity: 0; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.2); pointer-events: none; transition: 0.3s; z-index: 5000; }
+        #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-        .btn-add { border: 2px dashed #ccc; display: flex; justify-content: center; align-items: center; font-weight: bold; color: #777; min-height: 50px; }
-
-        @keyframes fadeIn { from{opacity:0} to{opacity:1} }
-        @keyframes shake { 0% { transform: rotate(0deg); } 25% { transform: rotate(5deg); } 75% { transform: rotate(-5deg); } 100% { transform: rotate(0deg); } }
+        @keyframes fadeIn { from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)} }
     </style>
 </head>
 <body>
@@ -104,7 +109,7 @@
             <div class="logo">📡</div>
             <h2 id="login-title">Acceso Soporte</h2>
             
-            <label style="display:block; font-size:0.85rem; color:var(--text-sec); margin-bottom:5px">Hora de Salida:</label>
+            <label style="display:block; font-size:0.85rem; color:var(--text-sec); margin-bottom:5px; text-align:left;">Hora de Salida:</label>
             <div class="time-selector">
                 <select id="ts-hour" class="ts-select"></select>
                 <select id="ts-min" class="ts-select"><option value="00">00</option><option value="30">30</option></select>
@@ -112,16 +117,16 @@
             </div>
 
             <div id="login-mode-support">
-                <input type="password" id="pass-support" class="big-input" placeholder="Contraseña de Soporte">
+                <input type="password" id="pass-support" class="big-input" placeholder="Contraseña de Soporte" style="text-align:center" onkeydown="if(event.key==='Enter') loginSupport()">
                 <button class="btn-large" onclick="loginSupport()">Ingresar</button>
-                <p style="margin-top:20px; font-size:0.8rem; cursor:pointer; color:var(--text-sec)" onclick="switchLoginMode('admin')">¿Eres Administrador?</p>
+                <p style="margin-top:20px; font-size:0.85rem; cursor:pointer; color:var(--text-sec); font-weight:bold" onclick="switchLoginMode('admin')">¿Eres Administrador?</p>
             </div>
 
             <div id="login-mode-admin" class="hidden">
-                <input type="password" id="pass-admin" class="big-input" placeholder="Contraseña Admin">
-                <input type="password" id="token-admin" class="big-input" placeholder="Token GitHub (ghp_...)" style="font-size:0.8rem">
+                <input type="password" id="pass-admin" class="big-input" placeholder="Contraseña Admin" style="text-align:center" onkeydown="if(event.key==='Enter') loginAdmin()">
+                <input type="password" id="token-admin" class="big-input" placeholder="Token GitHub (ghp_...)" style="font-size:0.8rem; text-align:center" onkeydown="if(event.key==='Enter') loginAdmin()">
                 <button class="btn-large" style="background-color:var(--text-main)" onclick="loginAdmin()">Acceso Total</button>
-                <p style="margin-top:20px; font-size:0.8rem; cursor:pointer; color:var(--text-sec)" onclick="switchLoginMode('support')">Volver a Soporte</p>
+                <p style="margin-top:20px; font-size:0.85rem; cursor:pointer; color:var(--text-sec); font-weight:bold" onclick="switchLoginMode('support')">Volver a Soporte</p>
             </div>
         </div>
     </div>
@@ -130,23 +135,23 @@
         <div class="app-header-grid">
             <div class="quote-box" id="daily-quote">"La calidad de tu trabajo es tu firma."</div>
             <div style="text-align: right;">
-                <div style="font-weight:bold"><span id="username-display">Soporte</span> <span id="admin-badge" style="display:none; background:red; color:white; font-size:0.7rem; padding:2px 5px; border-radius:4px">ADMIN</span></div>
-                <div style="font-size:0.8rem; color:var(--text-sec)">Salida: <span id="display-time">--:--</span></div>
+                <div style="font-weight:bold; font-size:1.1rem"><span id="username-display">Soporte</span> <span id="admin-badge" style="display:none; background:var(--danger); color:white; font-size:0.7rem; padding:3px 6px; border-radius:6px; vertical-align:middle">ADMIN</span></div>
+                <div style="font-size:0.85rem; color:var(--text-sec); margin-top:4px">Salida: <strong id="display-time">--:--</strong></div>
             </div>
         </div>
 
-        <div class="controls" style="margin-bottom: 15px;">
-            <span id="sync-status" style="margin-right:auto; font-size:0.8rem; display:flex; align-items:center; color:var(--text-sec)">☁️ Conectando...</span>
-            <button class="btn-icon" onclick="toggleTheme()" title="Tema">🌓</button>
-            <button class="btn-icon" onclick="location.reload()" title="Salir">🔒</button>
+        <div class="controls" style="margin-bottom: 20px;">
+            <span id="sync-status" style="margin-right:auto; font-size:0.85rem; display:flex; align-items:center; color:var(--text-sec); font-weight:bold">☁️ Conectando...</span>
+            <button class="btn-icon" onclick="toggleTheme()" title="Cambiar Tema">🌓</button>
+            <button class="btn-icon" onclick="logoutApp()" title="Cerrar Sesión">🔒</button>
         </div>
 
         <div class="tabs-container">
             <div class="tabs">
-                <div class="tab active" onclick="switchTab('clip')">📋 Links</div>
-                <div class="tab" onclick="switchTab('pass')">🔐 Pass</div>
+                <div class="tab active" onclick="switchTab('clip')">📋 Links y OLTs</div>
+                <div class="tab" onclick="switchTab('pass')">🔐 Contraseñas</div>
                 <div class="tab" onclick="switchTab('resp')">💬 Respuestas</div>
-                <div class="tab" onclick="switchTab('news')">📢 Comunicados</div>
+                <div class="tab" onclick="switchTab('news')">📢 Novedades</div>
                 <div class="tab" onclick="switchTab('tools')">🛠️ Herramientas</div>
             </div>
         </div>
@@ -161,8 +166,8 @@
                 <div class="pill" onclick="filterResp('Tarde')">⛅ Tarde</div>
                 <div class="pill" onclick="filterResp('Noche')">🌙 Noche</div>
             </div>
-            <div id="resp-grid" class="grid" style="display:flex; flex-direction:column; gap:10px;"></div>
-            <div id="resp-admin-tools"></div>
+            <div id="resp-grid" class="grid" style="display:flex; flex-direction:column; gap:12px;"></div>
+            <div id="resp-admin-tools" style="margin-top:15px"></div>
         </div>
 
         <div id="view-news" class="hidden">
@@ -170,83 +175,137 @@
             <div id="news-admin-tools" style="margin-top:15px"></div>
         </div>
 
-        <footer style="text-align:center; color:var(--text-sec); margin-top:32px; font-size:0.92em; opacity:0.8;">
-            NetAdmin Soporte v1.0<br>© 2026 Leonardo Montiel
-            <a href="https://wa.me/584121982608" target="_blank">
-            <button>Contáctame en WhatsApp</button>
+        <div id="view-tools" class="hidden">
+            <div class="list-box">
+                <div class="list-head"><span>📝 Formato de Texto y Contadores</span></div>
+                
+                <textarea id="tool-text" class="big-input" rows="6" placeholder="Pega el mensaje del cliente o tu nota aquí..." oninput="updateTools()"></textarea>
+                
+                <div style="display:flex; justify-content:space-between; background:var(--bg-input); padding:10px 15px; border-radius:8px; font-size:0.95rem; margin-bottom:15px; font-weight:bold;">
+                    <span>Caracteres: <span id="char-count" style="color:var(--primary)">0</span></span>
+                    <span>Palabras: <span id="word-count" style="color:var(--primary)">0</span></span>
+                </div>
+                
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:10px;">
+                    <button class="btn-large" style="background:var(--bg-surface); color:var(--text-main); border:1px solid var(--border)" onclick="formatText('UPPER')">MAYÚSCULAS</button>
+                    <button class="btn-large" style="background:var(--bg-surface); color:var(--text-main); border:1px solid var(--border)" onclick="formatText('LOWER')">minúsculas</button>
+                    <button class="btn-large" style="background:var(--bg-surface); color:var(--text-main); border:1px solid var(--border)" onclick="formatText('TITLE')">Tipo Título</button>
+                    <button class="btn-large" style="grid-column: 1 / -1; margin-top:10px" onclick="copyToolText()">📋 Copiar Resultado</button>
+                </div>
+            </div>
+        </div>
+
+        <footer style="text-align:center; color:var(--text-sec); margin-top:40px; font-size:0.9em; opacity:0.8;">
+            NetAdmin Soporte Pro v10.0<br>© 2026 Espiral - Leonardo Montiel<br>
+            <a href="https://wa.me/584121982608" target="_blank" style="text-decoration:none; display:inline-block; margin-top:12px;">
+                <button style="padding:8px 20px; border-radius:20px; border:1px solid var(--border); background:var(--bg-surface); color:var(--text-main); cursor:pointer; font-weight:bold;">Soporte Técnico / Developer</button>
             </a>
         </footer>
     </div>
 
-    <div id="backup-modal" class="modal-overlay">
-        <div class="alert-box alert-danger">
-            <div style="font-size:3rem">🚨</div>
-            <h3 style="color:var(--danger)">FIN DE TURNO</h3>
-            <p>Falta 1 hora para tu salida.<br>Verifica pendientes.</p>
-            <button class="btn-large" onclick="document.getElementById('backup-modal').style.display='none'; alarmAudio.pause()">ENTENDIDO</button>
-        </div>
-    </div>
-
-    <div id="security-modal" class="modal-overlay">
-        <div class="alert-box">
-            <h3>🛡️ Confirmar</h3>
-            <p>Confirma con tu contraseña Admin</p>
-            <input type="password" id="sec-pin" class="big-input">
+    <div id="preview-modal" class="modal-overlay">
+        <div class="alert-box" style="text-align: left;">
+            <h3 id="preview-title" style="margin-top:0; color:var(--primary); border-bottom:1px solid var(--border); padding-bottom:10px;">Título</h3>
+            <div id="preview-content" style="white-space:pre-wrap; max-height: 50vh; overflow-y:auto; margin:15px 0; font-size:0.95rem; line-height:1.5; color:var(--text-main); word-break: break-word;"></div>
             <div style="display:flex; gap:10px; margin-top:10px">
-                <button class="btn-large" style="background:#ccc" onclick="document.getElementById('security-modal').style.display='none'">X</button>
-                <button class="btn-large" onclick="confirmAdminAction()">OK</button>
+                <button class="btn-large" style="background:var(--bg-input); color:var(--text-main)" onclick="closeModal('preview-modal')">Cerrar</button>
+                <button class="btn-large" onclick="copyFromPreview()">📋 Copiar</button>
             </div>
         </div>
     </div>
 
+    <div id="form-modal" class="modal-overlay">
+        <div class="alert-box" style="text-align: left;">
+            <h3 id="form-title" style="margin-top:0; color:var(--primary)">Agregar</h3>
+            <div id="form-inputs" style="display:flex; flex-direction:column; gap:10px; margin: 15px 0;"></div>
+            <div style="display:flex; gap:10px;">
+                <button class="btn-large" style="background:var(--bg-input); color:var(--text-main)" onclick="closeModal('form-modal')">Cancelar</button>
+                <button class="btn-large" id="form-submit">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="confirm-modal" class="modal-overlay">
+        <div class="alert-box alert-danger">
+            <h3 id="confirm-title" style="margin-top:0">¿Estás seguro?</h3>
+            <p id="confirm-msg" style="color:var(--text-sec); margin-bottom:20px">Esta acción no se puede deshacer.</p>
+            
+            <div id="confirm-pin-area" class="hidden">
+                <input type="password" id="sec-pin" class="big-input" placeholder="Tu Contraseña Admin" style="text-align:center" onkeydown="if(event.key==='Enter') document.getElementById('confirm-btn-ok').click()">
+            </div>
+
+            <div style="display:flex; gap:10px;">
+                <button class="btn-large" style="background:var(--bg-input); color:var(--text-main)" onclick="closeModal('confirm-modal')">Cancelar</button>
+                <button class="btn-large" id="confirm-btn-ok" style="background:var(--danger)">Sí, Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="alarm-modal" class="modal-overlay">
+        <div class="alert-box alert-danger">
+            <div style="font-size:3.5rem; margin-bottom:10px">🚨</div>
+            <h3 style="color:var(--danger); margin:0 0 10px 0;">FIN DE TURNO</h3>
+            <p style="margin-bottom:20px">Falta 1 hora para tu salida.<br>Verifica tus pendientes y cierres.</p>
+            <button class="btn-large" onclick="stopAlarm()">ENTENDIDO</button>
+        </div>
+    </div>
+
     <div id="toast">Copiado</div>
-    <audio id="alarm-sound" loop src="data:audio/mp3;base64,//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq" type="audio/mpeg"></audio>
+    <audio id="alarm-sound" loop src="data:audio/mp3;base64,//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq"></audio>
 
     <script>
-        // CONFIGURACIÓN REPO
+        // CONFIGURACIÓN GITHUB (EDITAR AQUÍ)
         const GH = { USER: 'leoemg365', REPO: 'Formatos', FILE: 'db.json' };
         
         let db = { clipboard: [], passwords: [], responses: [], news: [] };
         let isAdmin = false;
-        let adminPass = ''; // Se guarda temporalmente al loguear
+        let adminPass = ''; 
         let ghToken = '';
         let fileSha = null;
         let currentRespFilter = 'General';
         
-        // Alarma
+        // Reloj y Estado
         let dailyExitTime = null;
         let alarmTriggered = false;
         const alarmAudio = document.getElementById('alarm-sound');
         
-        // Pending Action
-        let pendingCallback = null;
+        // Control de Modales
+        let formCallback = null;
+        let confirmCallback = null;
+        let textToCopyFromPreview = "";
 
         window.onload = function() {
-            // Init Clock UI
+            // Generar horas 1-12
             const selHour = document.getElementById('ts-hour');
             for(let i=1; i<=12; i++) { let opt = document.createElement('option'); opt.value = i; opt.text = i; selHour.appendChild(opt); }
             
-            // Check Theme
+            // Tema
             if(localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode');
             
-            // Cargar Token guardado si existe
+            // Cargar Token si existe
             const savedToken = localStorage.getItem('gh_token');
             if(savedToken) document.getElementById('token-admin').value = savedToken;
 
             setInterval(checkTime, 30000);
+
+            // AUTO LOGIN (Sesión Guardada)
+            const session = JSON.parse(localStorage.getItem('netAdminSession'));
+            if(session) {
+                isAdmin = session.isAdmin;
+                adminPass = session.adminPass;
+                ghToken = session.ghToken;
+                dailyExitTime = session.exitTime;
+                enterApp(session.name, true);
+            }
         };
 
         // --- 1. LOGIN SYSTEM ---
         function switchLoginMode(mode) {
-            if(mode === 'admin') {
-                document.getElementById('login-title').innerText = "Acceso Admin";
-                document.getElementById('login-mode-support').classList.add('hidden');
-                document.getElementById('login-mode-admin').classList.remove('hidden');
-            } else {
-                document.getElementById('login-title').innerText = "Acceso Soporte";
-                document.getElementById('login-mode-support').classList.remove('hidden');
-                document.getElementById('login-mode-admin').classList.add('hidden');
-            }
+            document.getElementById('login-title').innerText = mode === 'admin' ? "Acceso Admin" : "Acceso Soporte";
+            document.getElementById('login-mode-support').classList.toggle('hidden', mode === 'admin');
+            document.getElementById('login-mode-admin').classList.toggle('hidden', mode !== 'admin');
+            if(mode === 'support') document.getElementById('pass-support').focus();
+            else document.getElementById('pass-admin').focus();
         }
 
         function setExitTime() {
@@ -255,33 +314,42 @@
             const ampm = document.getElementById('ts-ampm').value;
             if(ampm === 'PM' && h !== 12) h += 12; if(ampm === 'AM' && h === 12) h = 0;
             dailyExitTime = `${String(h).padStart(2,'0')}:${m}`;
-            document.getElementById('display-time').innerText = `${document.getElementById('ts-hour').value}:${m} ${ampm}`;
         }
 
         function loginSupport() {
             const p = document.getElementById('pass-support').value;
             if(p !== '45637954') return alert("Contraseña Incorrecta");
             isAdmin = false;
-            enterApp("Soporte");
+            enterApp("Soporte", false);
         }
 
         function loginAdmin() {
             const p = document.getElementById('pass-admin').value;
-            const t = document.getElementById('token-admin').value;
+            const t = document.getElementById('token-admin').value.trim();
             
-            // CONTRASEÑA ADMIN (Puedes cambiarla aquí)
             if(p !== '0800') return alert("Contraseña Admin Incorrecta");
-            if(!t) return alert("Se requiere Token de GitHub");
+            if(!t) return alert("Se requiere Token de GitHub para editar.");
             
-            isAdmin = true;
-            adminPass = p;
-            ghToken = t;
-            localStorage.setItem('gh_token', t); // Guardar token localmente
-            enterApp("Administrador");
+            isAdmin = true; adminPass = p; ghToken = t;
+            localStorage.setItem('gh_token', t);
+            enterApp("Administrador", false);
         }
 
-        function enterApp(name) {
-            setExitTime();
+        function enterApp(name, isAuto = false) {
+            if(!isAuto) {
+                setExitTime();
+                localStorage.setItem('netAdminSession', JSON.stringify({
+                    name: name, isAdmin: isAdmin, adminPass: adminPass, ghToken: ghToken, exitTime: dailyExitTime
+                }));
+            }
+            // Restaurar visual de hora
+            if(dailyExitTime) {
+                let [h, m] = dailyExitTime.split(':');
+                let ampm = h >= 12 ? 'PM' : 'AM';
+                let h12 = h % 12 || 12;
+                document.getElementById('display-time').innerText = `${h12}:${m} ${ampm}`;
+            }
+
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('app-container').classList.add('visible');
             document.getElementById('username-display').innerText = name;
@@ -291,11 +359,18 @@
             fetchData();
         }
 
-        // --- 2. DATA & GITHUB ---
+        function logoutApp() {
+            openConfirm("Cerrar Sesión", "¿Seguro que deseas salir y borrar la sesión actual?", false, () => {
+                localStorage.removeItem('netAdminSession');
+                location.reload();
+            });
+        }
+
+        // --- 2. GITHUB SYNC ---
         async function fetchData() {
             const status = document.getElementById('sync-status');
             const url = `https://api.github.com/repos/${GH.USER}/${GH.REPO}/contents/${GH.FILE}`;
-            const headers = isAdmin ? { 'Authorization': `token ${ghToken}` } : {}; // Soporte lee público (si repo es publico)
+            const headers = isAdmin ? { 'Authorization': `token ${ghToken}` } : {}; 
 
             try {
                 const res = await fetch(url, { headers });
@@ -303,36 +378,32 @@
                 const data = await res.json();
                 fileSha = data.sha;
                 db = JSON.parse(decodeURIComponent(escape(atob(data.content))));
-                status.innerText = "☁️ En línea"; status.style.color = "var(--success)";
+                status.innerHTML = "☁️ <span>Conectado</span>"; status.style.color = "var(--success)";
                 renderAll();
             } catch(e) {
                 console.log(e);
-                status.innerText = "⚠️ Error carga"; status.style.color = "var(--danger)";
+                status.innerHTML = "⚠️ <span>Sin conexión</span>"; status.style.color = "var(--danger)";
             }
         }
 
         async function pushData() {
-            const status = document.getElementById('sync-status'); status.innerText = "☁️ Guardando...";
+            const status = document.getElementById('sync-status'); status.innerHTML = "☁️ <span>Guardando...</span>";
             const url = `https://api.github.com/repos/${GH.USER}/${GH.REPO}/contents/${GH.FILE}`;
-            const body = {
-                message: "Update via App",
-                content: btoa(unescape(encodeURIComponent(JSON.stringify(db, null, 2)))),
-                sha: fileSha
-            };
+            const body = { message: "Update via WebApp", content: btoa(unescape(encodeURIComponent(JSON.stringify(db, null, 2)))), sha: fileSha };
             try {
                 const res = await fetch(url, { method:'PUT', headers: {'Authorization': `token ${ghToken}`, 'Content-Type': 'application/json'}, body: JSON.stringify(body) });
                 if(res.ok) { 
                     fileSha = (await res.json()).content.sha; 
-                    status.innerText = "☁️ Guardado"; setTimeout(()=>status.innerText="☁️ En línea", 2000);
+                    status.innerHTML = "☁️ <span>Guardado</span>"; setTimeout(()=>status.innerHTML="☁️ <span>Conectado</span>", 2500);
                     renderAll();
                 } else throw new Error();
-            } catch(e) { alert("Error al guardar en GitHub"); }
+            } catch(e) { alert("Error al subir a GitHub. Verifica tu Token."); status.innerHTML = "⚠️ <span>Error Nube</span>"; }
         }
 
-        // --- 3. RENDER ---
+        // --- 3. RENDER UI ---
         function switchTab(t) {
             document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active')); event.target.classList.add('active');
-            ['clip','pass','resp','news'].forEach(v => document.getElementById(`view-${v}`).classList.add('hidden'));
+            ['clip','pass','resp','news','tools'].forEach(v => document.getElementById(`view-${v}`).classList.add('hidden'));
             document.getElementById(`view-${t}`).classList.remove('hidden');
         }
 
@@ -343,73 +414,76 @@
             renderNews();
         }
 
-        // Render Links & Pass
         function renderGeneric(type, divId) {
             const div = document.getElementById(divId); div.innerHTML='';
             db[type].forEach((list, lIdx) => {
                 const box = document.createElement('div'); box.className='list-box';
-                // Solo Admin ve botón borrar lista
-                let delBtn = isAdmin ? `<button class="mini-btn" style="color:red" onclick="reqAdmin(()=>delList('${type}',${lIdx}))">x</button>` : '';
+                let delBtn = isAdmin ? `<button class="btn-icon" style="color:var(--danger); border:none; width:30px; height:30px; font-size:1rem" onclick="reqAdminDel(()=>delList('${type}',${lIdx}))">🗑️</button>` : '';
                 box.innerHTML = `<div class="list-head"><span>${list.title}</span>${delBtn}</div><div class="grid"></div>`;
                 
                 const grid = box.querySelector('.grid');
                 list.cards.forEach((c, cIdx) => {
                     const d = document.createElement('div');
-                    // Solo Admin ve acciones
-                    const act = isAdmin ? `<div class="actions"><button class="mini-btn" onclick="reqAdmin(()=>delCard('${type}',${lIdx},${cIdx}))">🗑️</button></div>` : '';
+                    
+                    // Botones de Acción (Ojo siempre, Basura solo admin)
+                    let actionsHtml = `<div class="actions">
+                        <button class="mini-btn" title="Ver completo" onclick="event.stopPropagation(); openPreview('${c.label}', \`${type==='passwords' ? `Usuario: ${c.user}\nClave: ${c.pass}` : c.content}\`, \`${type==='passwords'? c.pass : c.content}\`)">👁️</button>
+                        ${isAdmin ? `<button class="mini-btn" style="color:var(--danger);" onclick="event.stopPropagation(); reqAdminDel(()=>delCard('${type}',${lIdx},${cIdx}))">🗑️</button>` : ''}
+                    </div>`;
                     
                     if(type==='clipboard') {
-                        d.className='card'; d.onclick=(e)=>{if(!e.target.closest('button'))copy(c.content)};
-                        d.innerHTML=`<div class="card-label">${c.label}</div><div class="card-val">${c.content}</div>${act}`;
+                        d.className='card'; d.onclick=()=>copy(c.content);
+                        d.innerHTML=`<div class="card-label">${c.label}</div><div class="card-val">${c.content}</div>${actionsHtml}`;
                     } else {
                         d.className='card pass-card';
-                        d.innerHTML=`<div class="card-label">${c.label}</div><div class="cred-row"><span>👤 ${c.user}</span><button class="mini-btn" onclick="copy('${c.user}')">C</button></div><div class="cred-row"><span class="blur">🔑 ${c.pass}</span><button class="mini-btn" onclick="copy('${c.pass}')">C</button></div>${act}`;
+                        d.innerHTML=`<div class="card-label">${c.label}</div>
+                        <div class="cred-row"><span>👤 <strong style="color:var(--text-main)">${c.user}</strong></span><button class="mini-btn" style="width:auto; padding:2px 8px" onclick="event.stopPropagation(); copy('${c.user}')">Copiar</button></div>
+                        <div class="cred-row"><span class="blur">🔑 <strong>${c.pass}</strong></span><button class="mini-btn" style="width:auto; padding:2px 8px" onclick="event.stopPropagation(); copy('${c.pass}')">Copiar</button></div>${actionsHtml}`;
                     }
                     grid.appendChild(d);
                 });
-                // Botón +
                 if(isAdmin) {
-                    const add = document.createElement('div'); add.className='card btn-add'; add.innerText='+'; add.onclick=()=>reqAdmin(()=>addItem(type,lIdx));
+                    const add = document.createElement('div'); add.className='card btn-add'; add.innerHTML='<span>+ Nueva Tarjeta</span>'; 
+                    add.onclick=()=> openForm("Nueva Tarjeta", type==='clipboard' ? [{id:'f_title', p:'Título (Ej: OLT Centro)'}, {id:'f_val', p:'IP / Link', type:'textarea'}] : [{id:'f_title', p:'Equipo'}, {id:'f_user', p:'Usuario'}, {id:'f_pass', p:'Contraseña'}], (vals) => {
+                        if(type==='clipboard') db[type][lIdx].cards.push({id:Date.now(), label:vals[0], content:vals[1]});
+                        else db[type][lIdx].cards.push({id:Date.now(), label:vals[0], user:vals[1], pass:vals[2]});
+                        pushData();
+                    });
                     grid.appendChild(add);
                 }
                 div.appendChild(box);
             });
-            // Botón + Lista
             if(isAdmin) {
-                const btn = document.createElement('button'); btn.className='btn-large'; btn.style.background='transparent'; btn.style.border='2px dashed #ccc'; btn.style.color='#777'; btn.innerText='+ Lista';
-                btn.onclick=()=>reqAdmin(()=>addList(type));
+                const btn = document.createElement('button'); btn.className='btn-large'; btn.style.background='var(--bg-input)'; btn.style.color='var(--text-main)'; btn.innerHTML='+ Crear Nueva Lista';
+                btn.onclick=()=> openForm("Nueva Lista", [{id:'l_name', p:'Nombre de la Lista'}], (v)=>{ db[type].push({id:Date.now(), title:v[0], cards:[]}); pushData(); });
                 div.appendChild(btn);
             }
         }
 
-        // Render Respuestas (Ex-Notas)
+        // Render Respuestas
         function renderResp() {
             const grid = document.getElementById('resp-grid'); grid.innerHTML = '';
-            // Buscar la lista que coincide con el filtro
             const targetList = db.responses.find(r => r.title === currentRespFilter);
             
             if(targetList) {
-                // Find index for editing
                 const lIdx = db.responses.indexOf(targetList);
-                
                 targetList.cards.forEach((c, cIdx) => {
                     const d = document.createElement('div'); d.className = 'card resp-card';
-                    const act = isAdmin ? `<div class="actions"><button class="mini-btn" onclick="reqAdmin(()=>delCardResp(${lIdx},${cIdx}))">🗑️</button></div>` : '';
-                    d.onclick=(e)=>{if(!e.target.closest('button'))copy(c.content)};
-                    d.innerHTML = `<div class="card-label">${c.label}</div><div class="card-val" style="white-space:pre-wrap">${c.content}</div>${act}`;
+                    d.onclick=()=>copy(c.content);
+                    let actionsHtml = `<div class="actions">
+                        <button class="mini-btn" title="Ver completo" onclick="event.stopPropagation(); openPreview('${c.label}', \`${c.content}\`, \`${c.content}\`)">👁️</button>
+                        ${isAdmin ? `<button class="mini-btn" style="color:var(--danger);" onclick="event.stopPropagation(); reqAdminDel(()=>delCardResp(${lIdx},${cIdx}))">🗑️</button>` : ''}
+                    </div>`;
+                    d.innerHTML = `<div class="card-label">${c.label}</div><div class="card-val">${c.content}</div>${actionsHtml}`;
                     grid.appendChild(d);
                 });
-            } else {
-                grid.innerHTML = '<div style="color:#999; text-align:center">No hay respuestas en esta categoría</div>';
-            }
+            } else grid.innerHTML = '<div style="color:var(--text-sec); text-align:center; padding:20px; width:100%">No hay respuestas configuradas en esta categoría.</div>';
 
-            // Pills UI
             document.querySelectorAll('.pill').forEach(p => p.classList.toggle('active', p.innerText.includes(currentRespFilter)));
-            
-            // Admin Tools
             const tools = document.getElementById('resp-admin-tools'); tools.innerHTML = '';
+            
             if(isAdmin && targetList) {
-                tools.innerHTML = `<button class="btn-large" style="background:transparent; border:2px dashed #ccc; color:#777" onclick="reqAdmin(()=>addRespItem())">+ Nueva Respuesta en ${currentRespFilter}</button>`;
+                tools.innerHTML = `<button class="btn-large" style="background:var(--bg-input); color:var(--text-main)" onclick="openForm('Nueva Respuesta', [{id:'r_t', p:'Título corto'}, {id:'r_c', p:'Texto a copiar', type:'textarea'}], (v)=>{ db.responses[db.responses.indexOf(targetList)].cards.push({id:Date.now(), label:v[0], content:v[1]}); pushData(); })">+ Agregar a ${currentRespFilter}</button>`;
             }
         }
         function filterResp(f) { currentRespFilter = f; renderResp(); }
@@ -417,67 +491,143 @@
         // Render Noticias
         function renderNews() {
             const grid = document.getElementById('news-grid'); grid.innerHTML = '';
+            if(db.news.length === 0) grid.innerHTML = '<div style="color:var(--text-sec); text-align:center; padding:20px">No hay comunicados recientes.</div>';
+            
             db.news.forEach((n, idx) => {
                 const d = document.createElement('div'); d.className = 'card news-card';
-                const act = isAdmin ? `<div class="actions"><button class="mini-btn" onclick="reqAdmin(()=>delNews(${idx}))">🗑️</button></div>` : '';
-                d.innerHTML = `<div class="news-date">📅 ${n.date}</div><div class="news-title">${n.title}</div><div style="white-space:pre-wrap">${n.content}</div>${act}`;
+                let actionsHtml = `<div class="actions">
+                        <button class="mini-btn" title="Ver completo" onclick="openPreview('${n.title}', \`${n.content}\`, '')">👁️</button>
+                        ${isAdmin ? `<button class="mini-btn" style="color:var(--danger);" onclick="reqAdminDel(()=>delNews(${idx}))">🗑️</button>` : ''}
+                    </div>`;
+                d.innerHTML = `<div class="news-date">📅 ${n.date}</div><div class="news-title">${n.title}</div><div class="card-val">${n.content}</div>${actionsHtml}`;
                 grid.appendChild(d);
             });
             const tools = document.getElementById('news-admin-tools'); tools.innerHTML = '';
-            if(isAdmin) tools.innerHTML = `<button class="btn-large" style="background:transparent; border:2px dashed #ccc; color:#777" onclick="reqAdmin(()=>addNews())">+ Comunicado</button>`;
+            if(isAdmin) tools.innerHTML = `<button class="btn-large" style="background:var(--bg-input); color:var(--text-main)" onclick="openForm('Nuevo Comunicado', [{id:'n_t', p:'Título'}, {id:'n_c', p:'Cuerpo del mensaje', type:'textarea'}], (v)=>{ db.news.unshift({id:Date.now(), date: new Date().toLocaleDateString(), title:v[0], content:v[1]}); pushData(); })">+ Redactar Comunicado</button>`;
         }
 
-        // --- 4. ADMIN LOGIC ---
-        function reqAdmin(callback) {
+        // --- 4. HERRAMIENTAS ---
+        function updateTools() {
+            const text = document.getElementById('tool-text').value;
+            document.getElementById('char-count').innerText = text.length;
+            document.getElementById('word-count').innerText = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+        }
+        function formatText(type) {
+            const el = document.getElementById('tool-text');
+            if(type === 'UPPER') el.value = el.value.toUpperCase();
+            if(type === 'LOWER') el.value = el.value.toLowerCase();
+            if(type === 'TITLE') el.value = el.value.toLowerCase().replace(/(?:^|\s)\S/g, a => a.toUpperCase());
+            updateTools();
+        }
+        function copyToolText() {
+            const val = document.getElementById('tool-text').value;
+            if(val.trim() !== '') copy(val);
+        }
+
+        // --- 5. MODALES Y UI NATIVA ---
+        function openModal(id) { 
+            const m = document.getElementById(id);
+            m.classList.remove('hidden'); // Fallback
+            m.style.display = 'flex';
+            setTimeout(() => m.classList.add('show'), 10);
+        }
+        function closeModal(id) { 
+            const m = document.getElementById(id);
+            m.classList.remove('show');
+            setTimeout(() => { m.style.display = 'none'; m.classList.add('hidden'); }, 300);
+        }
+
+        // PREVIEW MODAL
+        function openPreview(title, viewText, copyText) {
+            document.getElementById('preview-title').innerText = title;
+            document.getElementById('preview-content').innerText = viewText;
+            textToCopyFromPreview = copyText;
+            openModal('preview-modal');
+        }
+        function copyFromPreview() {
+            if(textToCopyFromPreview) copy(textToCopyFromPreview);
+            closeModal('preview-modal');
+        }
+
+        // FORM MODAL (Agregar cosas)
+        function openForm(title, fields, onSubmit) {
+            document.getElementById('form-title').innerText = title;
+            const container = document.getElementById('form-inputs');
+            container.innerHTML = '';
+            
+            fields.forEach((f, index) => {
+                let el = document.createElement(f.type === 'textarea' ? 'textarea' : 'input');
+                el.className = 'big-input'; el.id = f.id; el.placeholder = f.p;
+                if(f.type === 'textarea') el.rows = 4;
+                else el.type = 'text';
+                
+                // Soporte para Enter (Solo en inputs normales)
+                if(f.type !== 'textarea') {
+                    el.onkeydown = (e) => { if(e.key === 'Enter') document.getElementById('form-submit').click(); };
+                }
+                container.appendChild(el);
+            });
+            
+            formCallback = () => {
+                const values = fields.map(f => document.getElementById(f.id).value.trim());
+                if(values.some(v => !v)) return alert("Completa todos los campos");
+                onSubmit(values);
+                closeModal('form-modal');
+            };
+            document.getElementById('form-submit').onclick = formCallback;
+            openModal('form-modal');
+            setTimeout(() => document.getElementById(fields[0].id).focus(), 100);
+        }
+
+        // CONFIRM MODAL (Borrar / Salir)
+        function openConfirm(title, msg, requirePin, onConfirm) {
+            document.getElementById('confirm-title').innerText = title;
+            document.getElementById('confirm-msg').innerText = msg;
+            const pinArea = document.getElementById('confirm-pin-area');
+            const pinInput = document.getElementById('sec-pin');
+            
+            if(requirePin) {
+                pinArea.classList.remove('hidden');
+                pinInput.value = '';
+            } else {
+                pinArea.classList.add('hidden');
+            }
+
+            confirmCallback = () => {
+                if(requirePin && pinInput.value !== adminPass) return alert("Contraseña de Admin incorrecta");
+                onConfirm();
+                closeModal('confirm-modal');
+            };
+            document.getElementById('confirm-btn-ok').onclick = confirmCallback;
+            openModal('confirm-modal');
+            if(requirePin) setTimeout(() => pinInput.focus(), 100);
+        }
+
+        // Funciones CRUD envolventes con el modal de confirmación
+        function reqAdminDel(callback) {
             if(!isAdmin) return;
-            pendingCallback = callback;
-            document.getElementById('sec-pin').value = '';
-            document.getElementById('security-modal').style.display = 'flex';
-            document.getElementById('sec-pin').focus();
+            openConfirm("Autorización Requerida", "Verifica tu identidad para eliminar datos de la nube.", true, callback);
         }
-        function confirmAdminAction() {
-            if(document.getElementById('sec-pin').value === adminPass) {
-                document.getElementById('security-modal').style.display = 'none';
-                if(pendingCallback) pendingCallback();
-            } else alert("Contraseña Incorrecta");
-        }
-
-        // CRUD
-        function addItem(type, lIdx) {
-            if(type==='clipboard'){const l=prompt("Título");const c=prompt("IP/Link"); if(l&&c) db.clipboard[lIdx].cards.push({id:Date.now(), label:l, content:c});}
-            else{const l=prompt("Equipo");const u=prompt("User");const p=prompt("Pass"); if(l&&u&&p) db.passwords[lIdx].cards.push({id:Date.now(), label:l, user:u, pass:p});}
-            pushData();
-        }
-        function addList(type) { const t=prompt("Nombre Lista"); if(t) db[type].push({id:Date.now(), title:t, cards:[]}); pushData(); }
-        function delCard(type, l, c) { if(confirm("Borrar?")) { db[type][l].cards.splice(c,1); pushData(); } }
-        function delList(type, l) { if(confirm("Borrar Lista?")) { db[type].splice(l,1); pushData(); } }
-
-        function addRespItem() {
-            // Busca indice basado en filtro actual
-            const list = db.responses.find(r => r.title === currentRespFilter);
-            if(!list) return alert("Error en estructura JSON: Falta categoría " + currentRespFilter);
-            const l = prompt("Título (ej: Saludo)"); const c = prompt("Texto de Respuesta");
-            if(l&&c) { list.cards.push({id:Date.now(), label:l, content:c}); pushData(); }
-        }
-        function delCardResp(lIdx, cIdx) { if(confirm("Borrar?")) { db.responses[lIdx].cards.splice(cIdx,1); pushData(); } }
-
-        function addNews() {
-            const t = prompt("Título"); const c = prompt("Mensaje");
-            const d = new Date().toLocaleDateString();
-            if(t&&c) { db.news.unshift({id:Date.now(), date:d, title:t, content:c}); pushData(); }
-        }
-        function delNews(idx) { if(confirm("Borrar?")) { db.news.splice(idx,1); pushData(); } }
+        function delCard(type, l, c) { db[type][l].cards.splice(c,1); pushData(); }
+        function delList(type, l) { db[type].splice(l,1); pushData(); }
+        function delCardResp(lIdx, cIdx) { db.responses[lIdx].cards.splice(cIdx,1); pushData(); }
+        function delNews(idx) { db.news.splice(idx,1); pushData(); }
 
         // --- UTILS ---
-        async function copy(x) { try{await navigator.clipboard.writeText(x); showToast();}catch{const t=document.createElement('textarea');t.value=x;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);showToast();} }
-        function showToast() { const t=document.getElementById('toast'); t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1500); }
+        async function copy(x) { 
+            try { await navigator.clipboard.writeText(x); showToast(); } 
+            catch { const t=document.createElement('textarea'); t.value=x; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t); showToast(); } 
+        }
+        function showToast() { const t=document.getElementById('toast'); t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 2000); }
         function toggleTheme() { document.body.classList.toggle('dark-mode'); localStorage.setItem('theme', document.body.classList.contains('dark-mode')?'dark':'light'); }
         
         function checkTime() { 
             if(!dailyExitTime || alarmTriggered) return;
             const now = new Date(); const [h, m] = dailyExitTime.split(':'); const exit = new Date(); exit.setHours(h, m, 0);
-            if((exit - now)/1000/60 <= 60 && (exit - now) > 0) { alarmTriggered = true; document.getElementById('backup-modal').style.display = 'flex'; try{alarmAudio.play()}catch(e){} }
+            if((exit - now)/1000/60 <= 60 && (exit - now) > 0) { alarmTriggered = true; openModal('alarm-modal'); try{alarmAudio.play()}catch(e){} }
         }
+        function stopAlarm() { closeModal('alarm-modal'); alarmAudio.pause(); }
+
     </script>
 </body>
 </html>
