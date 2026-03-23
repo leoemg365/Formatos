@@ -198,11 +198,6 @@
       "title": "General",
       "cards": [
         {
-          "id": 301,
-          "label": "Falla Masiva",
-          "content": "Estimado cliente, presentamos una falla general en su zona. Personal técnico trabajando."
-        },
-        {
           "id": 302,
           "label": "Pedir Datos",
           "content": "Por favor indíquenos: Nombre del titular y número de cédula."
