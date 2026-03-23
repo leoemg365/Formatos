@@ -221,6 +221,11 @@
           "id": 1774290293376,
           "label": "Verificacion de Servicio por Llamada (OPERATIVO)",
           "content": "Nos comunicamos con usted vía llamada y nos informo que su servicio se encuentra funcionando correctamente.\nRecuerde que si presenta cualquier inconveniente con el servicio, nosotros por esta vía estamos a su orden."
+        },
+        {
+          "id": 1774290328816,
+          "label": "Verificacion de Servicio por Llamada (Sin Respuesta)",
+          "content": "Nos comunicamos con usted vía Whatsapp y vía llamada, pero no contamos con respuesta de su parte.  \nVerificamos que su servicio se encuentra activo y disfrutando de consumo, por este motivo se procedera a cerrar su chat.\nSi presenta cualquier inconveniente con el servicio nos informa, nosotros por esta vía estaremos atentos."
         }
       ]
     },
