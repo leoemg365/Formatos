@@ -182,6 +182,12 @@
           "label": "ONU-Router VSOL",
           "user": "user",
           "pass": "admin12345678"
+        },
+        {
+          "id": 1774290107403,
+          "label": "Antenas Ramon",
+          "user": "admin",
+          "pass": "tecnoseg5140"
         }
       ]
     }
