@@ -30,11 +30,6 @@
           "content": "https://172.112.1.2/"
         },
         {
-          "id": 1771462882771,
-          "label": "OLT - 2 Los Pedros",
-          "content": "https://38.7.1.152:8082/"
-        },
-        {
           "id": 1774283945635,
           "label": "OLT - Ciudad Ojeda 2 Router 129",
           "content": "http://192.168.20.2/action/login.html"
