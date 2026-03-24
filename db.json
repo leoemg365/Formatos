@@ -1,4 +1,9 @@
 {
+  {
+  "config": {
+    "supportPass": "45637954",
+    "adminPass": "0800"
+  },
   "clipboard": [
     {
       "id": 1,
