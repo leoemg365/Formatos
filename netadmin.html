@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NetAdmin Pro v13</title>
+    <title>NetAdmin Pro v13.1</title>
     <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/4565/4565968.png" type="image/x-icon">
     <style>
         :root {
@@ -224,7 +224,7 @@
                 <div class="list-head"><span>📑 Generador de Reportes Corporativos</span></div>
                 
                 <label class="form-label">Operador (Guardado automático)</label>
-                <input type="text" id="rep-operador" class="big-input" placeholder="Tu Nombre / Apellido" oninput="saveRepName(); updateLivePreview()">
+                <input type="text" id="rep-operador" class="big-input" placeholder="Tu Nombre / Apellido" oninput="updateLivePreview()">
 
                 <div class="sub-filters" style="margin-bottom:20px; margin-top:10px;">
                     <div class="pill active" id="pill-r1" onclick="switchRepMode(1)">Soporte</div>
@@ -382,7 +382,7 @@
         </div>
 
         <footer style="text-align:center; color:var(--text-sec); margin-top:40px; font-size:0.9em; opacity:0.8;">
-            NetAdmin Soporte Pro v13.0<br>© 2026 Espiral - Leonardo Montiel<br>
+            NetAdmin Soporte Pro v13.1<br>© 2026 Espiral - Leonardo Montiel<br>
             <a href="https://wa.me/584121982608" target="_blank" style="text-decoration:none; display:inline-block; margin-top:12px;">
                 <button style="padding:8px 20px; border-radius:20px; border:1px solid var(--border); background:var(--bg-surface); color:var(--text-main); cursor:pointer; font-weight:bold;">Soporte Técnico / Developer</button>
             </a>
@@ -438,7 +438,7 @@
     <audio id="alarm-sound" loop src="data:audio/mp3;base64,//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq"></audio>
 
     <script>
-        // CONFIGURACIÓN GITHUB (EDITAR AQUÍ)
+        // CONFIGURACIÓN GITHUB
         const GH = { USER: 'leoemg365', REPO: 'Formatos', FILE: 'db.json' };
         
         let db = null;
@@ -459,15 +459,20 @@
             });
             document.getElementById('r4-fecha').value = new Date().toLocaleDateString('es-VE');
 
+            // Cargar Nombre guardado
             const savedName = localStorage.getItem('report_operator');
             if(savedName) document.getElementById('rep-operador').value = savedName;
+            
+            // Cargar Horas guardadas de Reportes
+            loadRepTimes();
+
             if(localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode');
             const savedToken = localStorage.getItem('gh_token');
             if(savedToken) document.getElementById('token-admin').value = savedToken;
 
             setInterval(checkTime, 30000);
 
-            // AUTO LOGIN CON VALIDACIÓN SILENCIOSA
+            // AUTO LOGIN
             const session = JSON.parse(localStorage.getItem('netAdminSession'));
             if(session) {
                 isAdmin = session.isAdmin; adminPass = session.adminPass; ghToken = session.ghToken; dailyExitTime = session.exitTime;
@@ -475,7 +480,7 @@
             }
         };
 
-        // --- 1. LOGIN CONECTADO A GITHUB (NUEVO) ---
+        // --- 1. LOGIN SYSTEM ---
         function switchLoginMode(mode) {
             document.getElementById('login-title').innerText = mode === 'admin' ? "Acceso Admin" : "Acceso Soporte";
             document.getElementById('login-mode-support').classList.toggle('hidden', mode === 'admin');
@@ -492,40 +497,29 @@
         async function authLogin(mode) {
             const btn = mode === 'admin' ? document.getElementById('btn-login-admin') : document.getElementById('btn-login-support');
             const loader = btn.querySelector('.loader'); const span = btn.querySelector('span:not(.loader)');
-            
             loader.style.display = 'inline-block'; span.innerText = 'Verificando...'; btn.disabled = true;
 
             try {
-                // Descargar DB en vivo para validar clave
                 const url = `https://api.github.com/repos/${GH.USER}/${GH.REPO}/contents/${GH.FILE}`;
                 const res = await fetch(url);
                 if(!res.ok) throw new Error("Error al conectar con la Nube");
-                const data = await res.json();
-                fileSha = data.sha;
+                const data = await res.json(); fileSha = data.sha;
                 db = JSON.parse(decodeURIComponent(escape(atob(data.content))));
-                
-                // Si la BD antigua no tiene config, la creamos (Migración)
                 if(!db.config) db.config = { supportPass: "45637954", adminPass: "0800" };
 
                 if(mode === 'support') {
                     const p = document.getElementById('pass-support').value;
                     if(p !== db.config.supportPass) throw new Error("Contraseña Incorrecta");
-                    isAdmin = false;
-                    enterApp("Soporte", false);
+                    isAdmin = false; enterApp("Soporte", false);
                 } else {
-                    const p = document.getElementById('pass-admin').value;
-                    const t = document.getElementById('token-admin').value.trim();
+                    const p = document.getElementById('pass-admin').value; const t = document.getElementById('token-admin').value.trim();
                     if(p !== db.config.adminPass) throw new Error("Contraseña Admin Incorrecta");
                     if(!t) throw new Error("Falta Token de GitHub");
-                    
                     isAdmin = true; adminPass = p; ghToken = t; localStorage.setItem('gh_token', t);
                     enterApp("Administrador", false);
                 }
-            } catch(e) {
-                alert(e.message);
-            } finally {
-                loader.style.display = 'none'; span.innerText = mode === 'admin' ? 'Acceso Total' : 'Ingresar'; btn.disabled = false;
-            }
+            } catch(e) { alert(e.message); } 
+            finally { loader.style.display = 'none'; span.innerText = mode === 'admin' ? 'Acceso Total' : 'Ingresar'; btn.disabled = false; }
         }
 
         function enterApp(name, isAuto = false) {
@@ -541,22 +535,14 @@
             document.getElementById('login-screen').classList.add('hidden'); document.getElementById('app-container').classList.add('visible');
             document.getElementById('username-display').innerText = name;
             
-            if(isAdmin) {
-                document.getElementById('admin-badge').style.display = 'inline-block';
-                document.getElementById('admin-security-box').classList.remove('hidden');
-            }
-            
+            if(isAdmin) { document.getElementById('admin-badge').style.display = 'inline-block'; document.getElementById('admin-security-box').classList.remove('hidden'); }
             if ("Notification" in window) Notification.requestPermission();
             
-            // Si es auto-login, la DB no se ha descargado en el Auth, hay que bajarla
             if(isAuto && !db) fetchData(); 
             else {
                 document.getElementById('sync-status').innerHTML = "☁️ <span>Conectado</span>"; document.getElementById('sync-status').style.color = "var(--success)";
                 renderAll(); updateLivePreview();
-                if(isAdmin) { // Prellenar campos de seguridad admin
-                    document.getElementById('cfg-sup-pass').value = db.config.supportPass;
-                    document.getElementById('cfg-adm-pass').value = db.config.adminPass;
-                }
+                if(isAdmin) { document.getElementById('cfg-sup-pass').value = db.config.supportPass; document.getElementById('cfg-adm-pass').value = db.config.adminPass; }
             }
         }
 
@@ -564,7 +550,7 @@
             openConfirm("Cerrar Sesión", "¿Seguro que deseas salir y borrar la sesión actual?", false, () => { localStorage.removeItem('netAdminSession'); location.reload(); });
         }
 
-        // --- 2. GITHUB SYNC (MANTENIMIENTO DE DATOS) ---
+        // --- 2. GITHUB SYNC ---
         async function fetchData() {
             const status = document.getElementById('sync-status');
             const url = `https://api.github.com/repos/${GH.USER}/${GH.REPO}/contents/${GH.FILE}`;
@@ -627,7 +613,7 @@
         }
 
         function renderAll() {
-            if(!db) return; // Evitar render sin datos
+            if(!db) return;
             renderGeneric('clipboard', 'view-clip'); renderGeneric('passwords', 'view-pass'); renderResp(); renderNews(); filterUniversal();
         }
 
@@ -683,9 +669,30 @@
             if(isAdmin) tools.innerHTML = `<button class="btn-large" style="background:var(--bg-input); color:var(--text-main)" onclick="reqAdminAddNews()">+ Redactar Comunicado</button>`;
         }
 
-        // --- 5. GENERADOR DE REPORTES v12.0 ---
+        // --- 5. GENERADOR DE REPORTES Y STORAGE ---
         function saveRepName() { localStorage.setItem('report_operator', document.getElementById('rep-operador').value); }
         
+        function saveRepTimes() {
+            const times = {
+                r1: { hin: document.getElementById('r1-hin').value, min: document.getElementById('r1-min').value, ain: document.getElementById('r1-ain').value, hout: document.getElementById('r1-hout').value, mout: document.getElementById('r1-mout').value, aout: document.getElementById('r1-aout').value },
+                r2: { h: document.getElementById('r2-h').value, m: document.getElementById('r2-m').value, a: document.getElementById('r2-a').value },
+                r3: { hin: document.getElementById('r3-hin').value, min: document.getElementById('r3-min').value, ain: document.getElementById('r3-ain').value, hout: document.getElementById('r3-hout').value, mout: document.getElementById('r3-mout').value, aout: document.getElementById('r3-aout').value }
+            };
+            localStorage.setItem('report_times', JSON.stringify(times));
+        }
+
+        function loadRepTimes() {
+            const savedStr = localStorage.getItem('report_times');
+            if (savedStr) {
+                try {
+                    const t = JSON.parse(savedStr);
+                    if(t.r1) { document.getElementById('r1-hin').value = t.r1.hin; document.getElementById('r1-min').value = t.r1.min; document.getElementById('r1-ain').value = t.r1.ain; document.getElementById('r1-hout').value = t.r1.hout; document.getElementById('r1-mout').value = t.r1.mout; document.getElementById('r1-aout').value = t.r1.aout; }
+                    if(t.r2) { document.getElementById('r2-h').value = t.r2.h; document.getElementById('r2-m').value = t.r2.m; document.getElementById('r2-a').value = t.r2.a; }
+                    if(t.r3) { document.getElementById('r3-hin').value = t.r3.hin; document.getElementById('r3-min').value = t.r3.min; document.getElementById('r3-ain').value = t.r3.ain; document.getElementById('r3-hout').value = t.r3.hout; document.getElementById('r3-mout').value = t.r3.mout; document.getElementById('r3-aout').value = t.r3.aout; }
+                } catch(e) {}
+            }
+        }
+
         function switchRepMode(mode) {
             currentRepMode = mode;
             for(let i=1; i<=4; i++) {
@@ -720,6 +727,7 @@
         }
 
         function updateLivePreview() {
+            saveRepTimes(); // Guardar horas cada vez que se actualiza el form
             const op = document.getElementById('rep-operador').value || "[Tu Nombre]";
             let htmlText = ""; let plainText = "";
 
@@ -808,7 +816,6 @@
             setTimeout(() => document.getElementById(fields[0].id).focus(), 100);
         }
 
-        // SEGURIDAD Y CONFIGURACIÓN ADMIN
         function updateSystemPasswords(type) {
             const newPass = type === 'support' ? document.getElementById('cfg-sup-pass').value.trim() : document.getElementById('cfg-adm-pass').value.trim();
             if(!newPass) return alert("La contraseña no puede estar vacía");
