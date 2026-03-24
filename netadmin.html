@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NetAdmin Pro v12</title>
+    <title>NetAdmin Pro v13</title>
     <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/4565/4565968.png" type="image/x-icon">
     <style>
         :root {
@@ -24,7 +24,6 @@
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         input[type=number] { -moz-appearance: textfield; }
 
-        /* PANTALLAS */
         .screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body); z-index: 2000; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; text-align: center; }
         .hidden { display: none !important; }
 
@@ -33,10 +32,10 @@
         
         .big-input { width: 100%; padding: 12px 15px; border-radius: var(--radius); border: 2px solid var(--border); background: var(--bg-input); font-size: 1rem; color: var(--text-main); margin-bottom: 12px; font-family: inherit; transition: border 0.2s; }
         .big-input:focus { border-color: var(--primary); }
-        .btn-large { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: var(--radius); font-size: 1rem; font-weight: bold; cursor: pointer; transition: transform 0.1s; }
+        .btn-large { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: var(--radius); font-size: 1rem; font-weight: bold; cursor: pointer; transition: transform 0.1s; display: flex; justify-content: center; align-items: center; gap: 8px;}
         .btn-large:active { transform: scale(0.98); }
+        .btn-large:disabled { opacity: 0.7; cursor: not-allowed; }
         
-        /* APP CONTAINER */
         #app-container { max-width: 1000px; margin: 0 auto; padding: 15px; display: none; padding-bottom: 80px; }
         #app-container.visible { display: block; animation: fadeIn 0.4s; }
 
@@ -46,25 +45,21 @@
         .controls { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; align-items: center; margin-bottom: 15px; }
         .btn-icon { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px; width: 40px; height: 40px; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; }
 
-        /* SEARCH BAR */
         .search-container { position: relative; width: 100%; margin-bottom: 15px; }
         .search-container input { width: 100%; padding: 12px 15px 12px 40px; border-radius: 30px; border: 2px solid var(--border); background: var(--bg-surface); color: var(--text-main); font-size: 1rem; }
         .search-container span { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); font-size: 1.2rem; }
 
-        /* TABS RESPONSIVE */
         .tabs-container { overflow-x: auto; padding-bottom: 10px; margin-bottom: 15px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
         .tabs-container::-webkit-scrollbar { display: none; }
         .tabs { display: flex; background: var(--bg-surface); padding: 5px; border-radius: 15px; box-shadow: var(--shadow); width: max-content; min-width: 100%; gap: 5px; }
         .tab { flex: 1; text-align: center; padding: 12px 15px; border-radius: 10px; cursor: pointer; color: var(--text-sec); font-weight: 600; font-size: 0.9rem; white-space: nowrap; transition: 0.2s; }
         .tab.active { background: var(--primary); color: white; }
 
-        /* FILTROS RESPUESTAS Y REPORTES */
         .sub-filters { display: flex; gap: 10px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
         .sub-filters::-webkit-scrollbar { display: none; }
         .pill { padding: 8px 16px; border-radius: 20px; background: var(--bg-input); cursor: pointer; font-size: 0.85rem; color: var(--text-sec); border: 1px solid transparent; white-space: nowrap; transition: 0.2s; font-weight: bold; }
         .pill.active { background: var(--bg-surface); border-color: var(--primary); color: var(--primary); }
 
-        /* GRID Y TARJETAS */
         .list-box { background: var(--bg-surface); border-radius: var(--radius); padding: 15px; margin-bottom: 20px; border: 1px solid var(--border); }
         .list-head { display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 1.1rem; margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
@@ -74,7 +69,6 @@
         .card-label { font-weight: bold; font-size: 0.95rem; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 60px; }
         .card-val { font-size: 0.85rem; color: var(--text-sec); font-family: monospace; white-space: normal; overflow-wrap: anywhere; word-break: break-word; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4; }
 
-        /* BOTONES FLOTANTES */
         .actions { position: absolute; top: 8px; right: 8px; display: flex; gap: 4px; background: var(--bg-body); border-radius: 6px; padding: 2px; }
         .mini-btn { font-size: 13px; width: 30px; height: 30px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
         .mini-btn:hover { background: var(--bg-input); }
@@ -90,7 +84,6 @@
         .blur { filter: blur(5px); cursor: pointer; transition: 0.3s; }
         .blur:hover { filter: blur(0); }
 
-        /* HERRAMIENTAS - REPORTE Y FORMULARIOS */
         .form-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: flex-start; }
         .form-row > div { flex: 1; }
         .form-label { display: block; font-size: 0.85rem; color: var(--text-sec); margin-bottom: 4px; font-weight: bold; }
@@ -103,12 +96,10 @@
         
         .btn-add { border: 2px dashed var(--border); display: flex; justify-content: center; align-items: center; font-weight: bold; color: var(--text-sec); min-height: 80px; background: transparent; }
         
-        /* BURBUJA WHATSAPP LIVE */
         .wp-bubble { background: var(--wp-bg); border: 1px solid var(--wp-border); border-radius: 12px; padding: 15px; margin-top: 20px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; white-space: pre-wrap; font-size: 0.95rem; line-height: 1.4; color: var(--text-main); position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .wp-bubble strong { color: var(--text-main); }
         .wp-label { position: absolute; top: -10px; left: 15px; background: var(--primary); color: white; font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; font-weight: bold; }
 
-        /* MODALES NATIVOS CUSTOM */
         .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); z-index: 3000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s ease; padding: 15px; }
         .modal-overlay.show { opacity: 1; pointer-events: auto; }
         .alert-box { background: var(--bg-surface); padding: 25px; border-radius: 20px; width: 100%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); transform: translateY(20px); transition: 0.3s ease; display: flex; flex-direction: column; max-height: 90vh; overflow-y: auto;}
@@ -118,6 +109,9 @@
         #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px); background: #333; color: white; padding: 12px 24px; border-radius: 30px; opacity: 0; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.2); pointer-events: none; transition: 0.3s; z-index: 5000; text-align: center; }
         #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+        /* Loader */
+        .loader { border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top: 3px solid white; width: 20px; height: 20px; animation: spin 1s linear infinite; display: none; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         @keyframes fadeIn { from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)} }
     </style>
 </head>
@@ -136,15 +130,15 @@
             </div>
 
             <div id="login-mode-support">
-                <input type="password" id="pass-support" class="big-input" placeholder="Contraseña de Soporte" style="text-align:center" onkeydown="if(event.key==='Enter') loginSupport()">
-                <button class="btn-large" onclick="loginSupport()">Ingresar</button>
+                <input type="password" id="pass-support" class="big-input" placeholder="Contraseña de Soporte" style="text-align:center" onkeydown="if(event.key==='Enter') authLogin('support')">
+                <button class="btn-large" id="btn-login-support" onclick="authLogin('support')"><span class="loader"></span> <span>Ingresar</span></button>
                 <p style="margin-top:20px; font-size:0.85rem; cursor:pointer; color:var(--text-sec); font-weight:bold" onclick="switchLoginMode('admin')">¿Eres Administrador?</p>
             </div>
 
             <div id="login-mode-admin" class="hidden">
-                <input type="password" id="pass-admin" class="big-input" placeholder="Contraseña Admin" style="text-align:center" onkeydown="if(event.key==='Enter') loginAdmin()">
-                <input type="password" id="token-admin" class="big-input" placeholder="Token GitHub (ghp_...)" style="font-size:0.8rem; text-align:center" onkeydown="if(event.key==='Enter') loginAdmin()">
-                <button class="btn-large" style="background-color:var(--text-main)" onclick="loginAdmin()">Acceso Total</button>
+                <input type="password" id="pass-admin" class="big-input" placeholder="Contraseña Admin" style="text-align:center" onkeydown="if(event.key==='Enter') authLogin('admin')">
+                <input type="password" id="token-admin" class="big-input" placeholder="Token GitHub (ghp_...)" style="font-size:0.8rem; text-align:center" onkeydown="if(event.key==='Enter') authLogin('admin')">
+                <button class="btn-large" id="btn-login-admin" style="background-color:var(--text-main)" onclick="authLogin('admin')"><span class="loader"></span> <span>Acceso Total</span></button>
                 <p style="margin-top:20px; font-size:0.85rem; cursor:pointer; color:var(--text-sec); font-weight:bold" onclick="switchLoginMode('support')">Volver a Soporte</p>
             </div>
         </div>
@@ -201,6 +195,31 @@
 
         <div id="view-tools" class="hidden">
             
+            <div id="admin-security-box" class="list-box hidden" style="border:2px solid var(--danger);">
+                <div class="list-head" style="color:var(--danger)"><span>⚙️ Seguridad y Accesos (Admin)</span></div>
+                <p style="font-size:0.85rem; color:var(--text-sec); margin-top:0">Cambia las contraseñas de acceso a la App. Los cambios se aplicarán inmediatamente.</p>
+                
+                <div class="form-row" style="align-items:flex-end">
+                    <div style="flex:2">
+                        <label class="form-label">Contraseña de Soporte</label>
+                        <input type="text" id="cfg-sup-pass" class="big-input" style="margin-bottom:0">
+                    </div>
+                    <div style="flex:1">
+                        <button class="btn-large" style="background:var(--danger)" onclick="reqAdminDel(()=>updateSystemPasswords('support'))">Actualizar</button>
+                    </div>
+                </div>
+
+                <div class="form-row" style="align-items:flex-end; margin-top:15px">
+                    <div style="flex:2">
+                        <label class="form-label">Contraseña de Administrador</label>
+                        <input type="text" id="cfg-adm-pass" class="big-input" style="margin-bottom:0">
+                    </div>
+                    <div style="flex:1">
+                        <button class="btn-large" style="background:var(--danger)" onclick="reqAdminDel(()=>updateSystemPasswords('admin'))">Actualizar</button>
+                    </div>
+                </div>
+            </div>
+
             <div class="list-box">
                 <div class="list-head"><span>📑 Generador de Reportes Corporativos</span></div>
                 
@@ -363,7 +382,7 @@
         </div>
 
         <footer style="text-align:center; color:var(--text-sec); margin-top:40px; font-size:0.9em; opacity:0.8;">
-            NetAdmin Soporte Pro v12.0<br>© 2026 Espiral - Leonardo Montiel<br>
+            NetAdmin Soporte Pro v13.0<br>© 2026 Espiral - Leonardo Montiel<br>
             <a href="https://wa.me/584121982608" target="_blank" style="text-decoration:none; display:inline-block; margin-top:12px;">
                 <button style="padding:8px 20px; border-radius:20px; border:1px solid var(--border); background:var(--bg-surface); color:var(--text-main); cursor:pointer; font-weight:bold;">Soporte Técnico / Developer</button>
             </a>
@@ -373,7 +392,7 @@
     <div id="preview-modal" class="modal-overlay">
         <div class="alert-box" style="text-align: left;">
             <h3 id="preview-title" style="margin-top:0; color:var(--primary); border-bottom:1px solid var(--border); padding-bottom:10px;">Título</h3>
-            <div id="preview-content" style="white-space:pre-wrap; max-height: 50vh; overflow-y:auto; margin:15px 0; font-size:0.95rem; line-height:1.5; color:var(--text-main); word-break: break-word;"></div>
+            <div id="preview-content" style="white-space:pre-wrap; margin:15px 0; font-size:0.95rem; line-height:1.5; color:var(--text-main); word-break: break-word;"></div>
             <div style="display:flex; gap:10px; margin-top:10px">
                 <button class="btn-large" style="background:var(--bg-input); color:var(--text-main)" onclick="closeModal('preview-modal')">Cerrar</button>
                 <button class="btn-large" id="btn-copy-preview" onclick="copyFromPreview()">📋 Copiar</button>
@@ -422,28 +441,24 @@
         // CONFIGURACIÓN GITHUB (EDITAR AQUÍ)
         const GH = { USER: 'leoemg365', REPO: 'Formatos', FILE: 'db.json' };
         
-        let db = { clipboard: [], passwords: [], responses: [], news: [] };
+        let db = null;
         let isAdmin = false; let adminPass = ''; let ghToken = ''; let fileSha = null;
         let currentRespFilter = 'General';
         
         let dailyExitTime = null; let alarmTriggered = false; const alarmAudio = document.getElementById('alarm-sound');
         let formCallback = null; let confirmCallback = null; let textToCopyFromPreview = "";
         
-        // Variables Reportes
         let currentRepMode = 1; let r4Status = 'PRESENTADA'; let finalReportAsterisks = "";
 
         window.onload = function() {
-            // Rellenar todos los selects de horas 1-12
             const hourSelects = ['ts-hour','r1-hin','r1-hout','r2-h','r3-hin','r3-hout','r4-hin','r4-hout'];
             hourSelects.forEach(id => {
                 const el = document.getElementById(id);
                 for(let i=1; i<=12; i++) el.appendChild(new Option(i, i));
-                if(id.includes('hin')) el.value = "7"; if(id.includes('hout')) el.value = "7"; // Por defecto 7
+                if(id.includes('hin') || id.includes('hout')) el.value = "7";
             });
-            // Fecha de hoy por defecto en Rep 4
             document.getElementById('r4-fecha').value = new Date().toLocaleDateString('es-VE');
 
-            // Cargar datos locales
             const savedName = localStorage.getItem('report_operator');
             if(savedName) document.getElementById('rep-operador').value = savedName;
             if(localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode');
@@ -452,7 +467,7 @@
 
             setInterval(checkTime, 30000);
 
-            // AUTO LOGIN
+            // AUTO LOGIN CON VALIDACIÓN SILENCIOSA
             const session = JSON.parse(localStorage.getItem('netAdminSession'));
             if(session) {
                 isAdmin = session.isAdmin; adminPass = session.adminPass; ghToken = session.ghToken; dailyExitTime = session.exitTime;
@@ -460,7 +475,7 @@
             }
         };
 
-        // --- 1. LOGIN SYSTEM ---
+        // --- 1. LOGIN CONECTADO A GITHUB (NUEVO) ---
         function switchLoginMode(mode) {
             document.getElementById('login-title').innerText = mode === 'admin' ? "Acceso Admin" : "Acceso Soporte";
             document.getElementById('login-mode-support').classList.toggle('hidden', mode === 'admin');
@@ -474,18 +489,43 @@
             dailyExitTime = `${String(h).padStart(2,'0')}:${m}`;
         }
 
-        function loginSupport() {
-            const p = document.getElementById('pass-support').value;
-            if(p !== '45637954') return alert("Contraseña Incorrecta");
-            isAdmin = false; enterApp("Soporte", false);
-        }
+        async function authLogin(mode) {
+            const btn = mode === 'admin' ? document.getElementById('btn-login-admin') : document.getElementById('btn-login-support');
+            const loader = btn.querySelector('.loader'); const span = btn.querySelector('span:not(.loader)');
+            
+            loader.style.display = 'inline-block'; span.innerText = 'Verificando...'; btn.disabled = true;
 
-        function loginAdmin() {
-            const p = document.getElementById('pass-admin').value; const t = document.getElementById('token-admin').value.trim();
-            if(p !== '0800') return alert("Contraseña Admin Incorrecta");
-            if(!t) return alert("Se requiere Token de GitHub para editar.");
-            isAdmin = true; adminPass = p; ghToken = t; localStorage.setItem('gh_token', t);
-            enterApp("Administrador", false);
+            try {
+                // Descargar DB en vivo para validar clave
+                const url = `https://api.github.com/repos/${GH.USER}/${GH.REPO}/contents/${GH.FILE}`;
+                const res = await fetch(url);
+                if(!res.ok) throw new Error("Error al conectar con la Nube");
+                const data = await res.json();
+                fileSha = data.sha;
+                db = JSON.parse(decodeURIComponent(escape(atob(data.content))));
+                
+                // Si la BD antigua no tiene config, la creamos (Migración)
+                if(!db.config) db.config = { supportPass: "45637954", adminPass: "0800" };
+
+                if(mode === 'support') {
+                    const p = document.getElementById('pass-support').value;
+                    if(p !== db.config.supportPass) throw new Error("Contraseña Incorrecta");
+                    isAdmin = false;
+                    enterApp("Soporte", false);
+                } else {
+                    const p = document.getElementById('pass-admin').value;
+                    const t = document.getElementById('token-admin').value.trim();
+                    if(p !== db.config.adminPass) throw new Error("Contraseña Admin Incorrecta");
+                    if(!t) throw new Error("Falta Token de GitHub");
+                    
+                    isAdmin = true; adminPass = p; ghToken = t; localStorage.setItem('gh_token', t);
+                    enterApp("Administrador", false);
+                }
+            } catch(e) {
+                alert(e.message);
+            } finally {
+                loader.style.display = 'none'; span.innerText = mode === 'admin' ? 'Acceso Total' : 'Ingresar'; btn.disabled = false;
+            }
         }
 
         function enterApp(name, isAuto = false) {
@@ -500,17 +540,31 @@
 
             document.getElementById('login-screen').classList.add('hidden'); document.getElementById('app-container').classList.add('visible');
             document.getElementById('username-display').innerText = name;
-            if(isAdmin) document.getElementById('admin-badge').style.display = 'inline-block';
+            
+            if(isAdmin) {
+                document.getElementById('admin-badge').style.display = 'inline-block';
+                document.getElementById('admin-security-box').classList.remove('hidden');
+            }
             
             if ("Notification" in window) Notification.requestPermission();
-            fetchData(); updateLivePreview(); // Init rep preview
+            
+            // Si es auto-login, la DB no se ha descargado en el Auth, hay que bajarla
+            if(isAuto && !db) fetchData(); 
+            else {
+                document.getElementById('sync-status').innerHTML = "☁️ <span>Conectado</span>"; document.getElementById('sync-status').style.color = "var(--success)";
+                renderAll(); updateLivePreview();
+                if(isAdmin) { // Prellenar campos de seguridad admin
+                    document.getElementById('cfg-sup-pass').value = db.config.supportPass;
+                    document.getElementById('cfg-adm-pass').value = db.config.adminPass;
+                }
+            }
         }
 
         function logoutApp() {
             openConfirm("Cerrar Sesión", "¿Seguro que deseas salir y borrar la sesión actual?", false, () => { localStorage.removeItem('netAdminSession'); location.reload(); });
         }
 
-        // --- 2. GITHUB SYNC ---
+        // --- 2. GITHUB SYNC (MANTENIMIENTO DE DATOS) ---
         async function fetchData() {
             const status = document.getElementById('sync-status');
             const url = `https://api.github.com/repos/${GH.USER}/${GH.REPO}/contents/${GH.FILE}`;
@@ -519,8 +573,11 @@
                 const res = await fetch(url, { headers }); if(!res.ok) throw new Error();
                 const data = await res.json(); fileSha = data.sha;
                 db = JSON.parse(decodeURIComponent(escape(atob(data.content))));
+                if(!db.config) db.config = { supportPass: "45637954", adminPass: "0800" };
+                
                 status.innerHTML = "☁️ <span>Conectado</span>"; status.style.color = "var(--success)";
-                renderAll();
+                renderAll(); updateLivePreview();
+                if(isAdmin) { document.getElementById('cfg-sup-pass').value = db.config.supportPass; document.getElementById('cfg-adm-pass').value = db.config.adminPass; }
             } catch(e) { status.innerHTML = "⚠️ <span>Sin conexión</span>"; status.style.color = "var(--danger)"; }
         }
 
@@ -570,6 +627,7 @@
         }
 
         function renderAll() {
+            if(!db) return; // Evitar render sin datos
             renderGeneric('clipboard', 'view-clip'); renderGeneric('passwords', 'view-pass'); renderResp(); renderNews(); filterUniversal();
         }
 
@@ -631,19 +689,14 @@
         function switchRepMode(mode) {
             currentRepMode = mode;
             for(let i=1; i<=4; i++) {
-                document.getElementById(`pill-r${i}`).classList.remove('active');
-                document.getElementById(`pill-r${i}`).style.background = '';
-                document.getElementById(`pill-r${i}`).style.color = '';
+                document.getElementById(`pill-r${i}`).classList.remove('active'); document.getElementById(`pill-r${i}`).style.background = ''; document.getElementById(`pill-r${i}`).style.color = '';
                 document.getElementById(`rep-mode-${i}`).classList.add('hidden');
             }
             const activePill = document.getElementById(`pill-r${mode}`);
-            activePill.classList.add('active');
-            if(mode === 4) { activePill.style.background = 'var(--danger)'; activePill.style.color = 'white'; }
-            document.getElementById(`rep-mode-${mode}`).classList.remove('hidden');
-            updateLivePreview();
+            activePill.classList.add('active'); if(mode === 4) { activePill.style.background = 'var(--danger)'; activePill.style.color = 'white'; }
+            document.getElementById(`rep-mode-${mode}`).classList.remove('hidden'); updateLivePreview();
         }
 
-        // Helpers R1
         function calcAtendidosR1() {
             let c = parseInt(document.getElementById('r1-cer').value) || 0; let p = parseInt(document.getElementById('r1-pen').value) || 0;
             document.getElementById('r1-ate').innerText = c + p;
@@ -651,7 +704,6 @@
         function toggleR1Inst() { document.getElementById('r1-inst').classList.toggle('hidden', !document.getElementById('r1-chk-inst').checked); }
         function toggleR1Otro() { document.getElementById('r1-otro-txt').classList.toggle('hidden', !document.getElementById('r1-chk-otro').checked); }
 
-        // Helpers R4 (Emergencias)
         function setR4Status(status) {
             r4Status = status;
             document.getElementById('btn-r4-pres').style.background = status === 'PRESENTADA' ? 'var(--danger)' : 'var(--bg-surface)';
@@ -659,29 +711,24 @@
             document.getElementById('btn-r4-solv').style.background = status === 'SOLVENTADA' ? 'var(--success)' : 'var(--bg-surface)';
             document.getElementById('btn-r4-solv').style.color = status === 'SOLVENTADA' ? 'white' : 'var(--text-main)';
             document.getElementById('btn-r4-solv').style.borderColor = status === 'SOLVENTADA' ? 'var(--success)' : 'var(--border)';
-            document.getElementById('r4-hora-fin-box').classList.toggle('hidden', status === 'PRESENTADA');
-            updateLivePreview();
+            document.getElementById('r4-hora-fin-box').classList.toggle('hidden', status === 'PRESENTADA'); updateLivePreview();
         }
         function toggleR4Device() {
             const t = document.getElementById('r4-tipo').value;
             document.querySelectorAll('.r4-is-nap').forEach(el => el.classList.toggle('hidden', t !== 'NAP'));
-            document.querySelectorAll('.r4-is-nodo').forEach(el => el.classList.toggle('hidden', t === 'NAP'));
-            updateLivePreview();
+            document.querySelectorAll('.r4-is-nodo').forEach(el => el.classList.toggle('hidden', t === 'NAP')); updateLivePreview();
         }
 
-        // EL MOTOR DE PREVISUALIZACIÓN (MAGIA)
         function updateLivePreview() {
             const op = document.getElementById('rep-operador').value || "[Tu Nombre]";
-            let htmlText = ""; let plainText = ""; // html para pantalla, plain (con *) para copiar
+            let htmlText = ""; let plainText = "";
 
             if(currentRepMode === 1) {
                 const hi = `${document.getElementById('r1-hin').value}:${document.getElementById('r1-min').value} ${document.getElementById('r1-ain').value}`;
                 const ho = `${document.getElementById('r1-hout').value}:${document.getElementById('r1-mout').value} ${document.getElementById('r1-aout').value}`;
                 const cer = parseInt(document.getElementById('r1-cer').value) || 0; const pen = parseInt(document.getElementById('r1-pen').value) || 0;
                 let instHtml = document.getElementById('r1-chk-inst').checked ? `\nInstalaciones: ${document.getElementById('r1-inst').value || 0}` : "";
-                
-                let acts = [];
-                document.querySelectorAll('.r1-act:checked').forEach(c => acts.push(c.value));
+                let acts = []; document.querySelectorAll('.r1-act:checked').forEach(c => acts.push(c.value));
                 if(document.getElementById('r1-chk-otro').checked) acts.push(document.getElementById('r1-otro-txt').value || "Otra");
                 let actStr = acts.length > 0 ? acts.join(" / ") : "Ninguna";
 
@@ -690,8 +737,7 @@
             } 
             else if(currentRepMode === 2) {
                 const h = `${document.getElementById('r2-h').value}:${document.getElementById('r2-m').value} ${document.getElementById('r2-a').value}`;
-                let muns = []; document.querySelectorAll('.r2-mun:checked').forEach(c => muns.push(c.value));
-                let munStr = muns.length > 0 ? muns.join("-") : "Ninguno";
+                let muns = []; document.querySelectorAll('.r2-mun:checked').forEach(c => muns.push(c.value)); let munStr = muns.length > 0 ? muns.join("-") : "Ninguno";
                 const cha = document.getElementById('r2-chats').value || 0; const fac = document.getElementById('r2-fac').value || 0; const cer = document.getElementById('r2-cer').value || 0;
                 
                 htmlText = `<strong>Entrega de Guardia:</strong> ${op}\n<strong>Hora:</strong> ${h}\n<strong>Administración:</strong> ${munStr}\nNúmero de chats reasignado: ${cha}\nFacturas Fiscales: ${fac}\nCasos Cerrados: ${cer}`;
@@ -719,26 +765,19 @@
                 plainText = `*EMERGENCIA ${r4Status}*\nDepartamento de Soporte Técnico TECNOVEN SERVICES, C.A.\nFecha: ${f}\nHora: ${hi}\nHora fin: ${ho}\n*${eqStr} ${st}*\nZona: ${zo}\nClientes Afectados: ${cl}`;
             }
 
-            document.getElementById('live-preview-box').innerHTML = htmlText;
-            finalReportAsterisks = plainText; // Se guarda en memoria para copiar
+            document.getElementById('live-preview-box').innerHTML = htmlText; finalReportAsterisks = plainText; 
         }
 
-        function copyGeneratedReport() {
-            if(finalReportAsterisks) copy(finalReportAsterisks);
-        }
+        function copyGeneratedReport() { if(finalReportAsterisks) copy(finalReportAsterisks); }
 
         // --- 6. HERRAMIENTAS TEXTO RÁPIDO ---
         function updateTextTools() {
-            const text = document.getElementById('tool-text').value;
-            document.getElementById('char-count').innerText = text.length;
-            document.getElementById('word-count').innerText = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+            const text = document.getElementById('tool-text').value; document.getElementById('char-count').innerText = text.length; document.getElementById('word-count').innerText = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
         }
         function formatText(type) {
             const el = document.getElementById('tool-text');
-            if(type === 'UPPER') el.value = el.value.toUpperCase();
-            if(type === 'LOWER') el.value = el.value.toLowerCase();
-            if(type === 'TITLE') el.value = el.value.toLowerCase().replace(/(?:^|\s)\S/g, a => a.toUpperCase());
-            updateTextTools();
+            if(type === 'UPPER') el.value = el.value.toUpperCase(); if(type === 'LOWER') el.value = el.value.toLowerCase();
+            if(type === 'TITLE') el.value = el.value.toLowerCase().replace(/(?:^|\s)\S/g, a => a.toUpperCase()); updateTextTools();
         }
         function copyToolText() { const val = document.getElementById('tool-text').value; if(val.trim() !== '') copy(val); }
 
@@ -748,8 +787,7 @@
 
         function openPreview(title, viewText, copyText) {
             document.getElementById('preview-title').innerText = title; document.getElementById('preview-content').innerText = viewText; textToCopyFromPreview = copyText;
-            document.getElementById('btn-copy-preview').style.display = copyText ? 'block' : 'none';
-            openModal('preview-modal');
+            document.getElementById('btn-copy-preview').style.display = copyText ? 'block' : 'none'; openModal('preview-modal');
         }
         function copyFromPreview() { if(textToCopyFromPreview) copy(textToCopyFromPreview); closeModal('preview-modal'); }
 
@@ -770,6 +808,14 @@
             setTimeout(() => document.getElementById(fields[0].id).focus(), 100);
         }
 
+        // SEGURIDAD Y CONFIGURACIÓN ADMIN
+        function updateSystemPasswords(type) {
+            const newPass = type === 'support' ? document.getElementById('cfg-sup-pass').value.trim() : document.getElementById('cfg-adm-pass').value.trim();
+            if(!newPass) return alert("La contraseña no puede estar vacía");
+            if(type === 'support') db.config.supportPass = newPass; else db.config.adminPass = newPass;
+            pushData();
+        }
+
         function reqAdminDel(callback) { if(!isAdmin) return; openConfirm("Autorización", "Verifica tu identidad.", true, callback); }
         function openConfirm(title, msg, requirePin, onConfirm) {
             document.getElementById('confirm-title').innerText = title; document.getElementById('confirm-msg').innerText = msg;
@@ -782,9 +828,7 @@
 
         function reqAdminAddCard(type, lIdx) {
             let fields = type==='clipboard' ? [{id:'f_title', p:'Título'}, {id:'f_val', p:'IP/Link', type:'textarea'}] : [{id:'f_title', p:'Equipo'}, {id:'f_user', p:'Usuario'}, {id:'f_pass', p:'Contraseña'}];
-            openForm("Nueva Tarjeta", fields, (v) => {
-                if(type==='clipboard') db[type][lIdx].cards.push({id:Date.now(), label:v[0], content:v[1]}); else db[type][lIdx].cards.push({id:Date.now(), label:v[0], user:v[1], pass:v[2]}); pushData();
-            });
+            openForm("Nueva Tarjeta", fields, (v) => { if(type==='clipboard') db[type][lIdx].cards.push({id:Date.now(), label:v[0], content:v[1]}); else db[type][lIdx].cards.push({id:Date.now(), label:v[0], user:v[1], pass:v[2]}); pushData(); });
         }
         function reqAdminAddResp(lIdx) { openForm("Nueva Respuesta", [{id:'r_t', p:'Título'}, {id:'r_c', p:'Texto', type:'textarea'}], (v)=>{ db.responses[lIdx].cards.push({id:Date.now(), label:v[0], content:v[1]}); pushData(); }); }
         function reqAdminAddNews() { openForm("Comunicado", [{id:'n_t', p:'Título'}, {id:'n_c', p:'Mensaje', type:'textarea'}], (v)=>{ db.news.unshift({id:Date.now(), date: new Date().toLocaleDateString('es-VE'), title:v[0], content:v[1]}); pushData(); }); }
@@ -795,14 +839,13 @@
             let fields = type==='clipboard' ? [{id:'f_title', p:'Título', value: item.label}, {id:'f_val', p:'Contenido', type:'textarea', value: item.content}] : [{id:'f_title', p:'Equipo', value: item.label}, {id:'f_user', p:'Usuario', value: item.user}, {id:'f_pass', p:'Contraseña', value: item.pass}];
             openForm("Editar Tarjeta", fields, (v) => { item.label = v[0]; if(type==='clipboard') item.content = v[1]; else { item.user = v[1]; item.pass = v[2]; } pushData(); });
         }
-        function reqAdminEditCardResp(lIdx, cIdx) {
-            let item = db.responses[lIdx].cards[cIdx]; openForm("Editar Respuesta", [{id:'r_t', p:'Título', value: item.label}, {id:'r_c', p:'Texto', type:'textarea', value: item.content}], (v)=>{ item.label = v[0]; item.content = v[1]; pushData(); });
-        }
+        function reqAdminEditCardResp(lIdx, cIdx) { let item = db.responses[lIdx].cards[cIdx]; openForm("Editar Respuesta", [{id:'r_t', p:'Título', value: item.label}, {id:'r_c', p:'Texto', type:'textarea', value: item.content}], (v)=>{ item.label = v[0]; item.content = v[1]; pushData(); }); }
         function reqAdminEditNews(idx) { let item = db.news[idx]; openForm("Editar Comunicado", [{id:'n_t', p:'Título', value: item.title}, {id:'n_c', p:'Cuerpo', type:'textarea', value: item.content}], (v)=>{ item.title = v[0]; item.content = v[1]; pushData(); }); }
 
         function delCard(type, l, c) { db[type][l].cards.splice(c,1); pushData(); } function delList(type, l) { db[type].splice(l,1); pushData(); } function delCardResp(lIdx, cIdx) { db.responses[lIdx].cards.splice(cIdx,1); pushData(); } function delNews(idx) { db.news.splice(idx,1); pushData(); }
 
         async function copy(x) { 
+            document.getElementById('toast').innerText = "Copiado al portapapeles ✅";
             try { await navigator.clipboard.writeText(x); showToast(); } 
             catch { const t=document.createElement('textarea'); t.value=x; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t); showToast(); } 
         }
