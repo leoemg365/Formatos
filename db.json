@@ -274,18 +274,18 @@
           "content": "Buenos días, nos indica por favor Nombre del titular y número de Cédula."
         },
         {
-          "id": 1774496265351,
-          "label": "Preguntar por servicio",
-          "content": "Buenos días, nos indica por favor ¿cómo le funciona el servicio en estos momentos?",
-          "subcat": "Servicio",
-          "color": "info"
-        },
-        {
           "id": 1774511219630,
           "label": "Pago registrado + De nada",
           "content": "Buenos días, pago registrado correctamente y servicio activo ✅\n\n¡Estamos siempre a su disposición! Nos complace mucho poder ayudarle. Le agradecemos su confianza en Tecnoven.",
           "subcat": "Pagos",
           "color": "exito"
+        },
+        {
+          "id": 1774496265351,
+          "label": "Preguntar por servicio",
+          "content": "Buenos días, nos indica por favor ¿cómo le funciona el servicio en estos momentos?",
+          "subcat": "Servicio",
+          "color": "info"
         },
         {
           "id": 1774511682575,
