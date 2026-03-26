@@ -220,6 +220,11 @@
           "id": 1774290328816,
           "label": "Verificacion de Servicio por Llamada (Sin Respuesta)",
           "content": "Nos comunicamos con usted vía Whatsapp y vía llamada, pero no contamos con respuesta de su parte.  \nVerificamos que su servicio se encuentra activo y disfrutando de consumo, por este motivo se procedera a cerrar su chat.\nSi presenta cualquier inconveniente con el servicio nos informa, nosotros por esta vía estaremos atentos."
+        },
+        {
+          "id": 1774510805656,
+          "label": "Nodo DOWN",
+          "content": "Estimado cliente:\n\nLe informamos que actualmente experimentamos una incidencia, ya el equipo encargado se encuentra trabajando en el inconveniente para darle solución.\nLamentamos los inconvenientes que esto pueda causar y agradecemos su confianza.\n\nAtentamente,\nEl Equipo de Soporte"
         }
       ]
     },
