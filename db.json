@@ -353,6 +353,11 @@
           "id": 1774496229256,
           "label": "Preguntar por servicio",
           "content": "Buenas noches, nos indica por favor ¿cómo le funciona el servicio en estos momentos?"
+        },
+        {
+          "id": 1774496795255,
+          "label": "Confirmar servicio",
+          "content": "¿Nos confirma por favor que el servicio funcione normalmente?"
         }
       ]
     }
