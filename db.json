@@ -250,7 +250,9 @@
         {
           "id": 1774487041929,
           "label": "Pago registrado",
-          "content": "Buenos días, pago registrado correctamente y servicio activo ✅"
+          "content": "Buenos días, pago registrado correctamente y servicio activo ✅",
+          "subcat": "Pagos",
+          "color": "exito"
         },
         {
           "id": 1774495432461,
