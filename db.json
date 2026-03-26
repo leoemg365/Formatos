@@ -295,7 +295,9 @@
         {
           "id": 1774512500409,
           "label": "Con servicio",
-          "content": "Visualizamos a nivel de sistema que su servicio se encuentra activo y presentando consumo, si presenta algún inconveniente nuevamente nos indica. recuerde que estamos siempre a su disposición y nos complace mucho poder ayudarle esperamos que este muy bien y tenga un excelente día. Le agradecemos su confianza en Tecnoven."
+          "content": "Visualizamos a nivel de sistema que su servicio se encuentra activo y presentando consumo, si presenta algún inconveniente nuevamente nos indica. recuerde que estamos siempre a su disposición y nos complace mucho poder ayudarle esperamos que este muy bien y tenga un excelente día. Le agradecemos su confianza en Tecnoven.",
+          "subcat": "Servicio",
+          "color": "info"
         }
       ]
     },
