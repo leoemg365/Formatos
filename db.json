@@ -235,7 +235,9 @@
         {
           "id": 1771464042871,
           "label": "Saludo",
-          "content": "¡Buenos días! Gracias por contactarnos. ¿En qué podemos ayudarle?"
+          "content": "¡Buenos días! Gracias por contactarnos. ¿En qué podemos ayudarle?",
+          "subcat": "Saludos",
+          "color": "neutro"
         },
         {
           "id": 1771464084887,
