@@ -202,11 +202,6 @@
       "title": "General",
       "cards": [
         {
-          "id": 302,
-          "label": "Pedir Datos",
-          "content": "Por favor indíquenos: Nombre del titular y número de cédula."
-        },
-        {
           "id": 303,
           "label": "Reiniciar",
           "content": "Desconecte el equipo de la electricidad por 10 segundos y vuelva a conectar."
