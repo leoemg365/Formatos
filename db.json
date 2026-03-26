@@ -264,6 +264,13 @@
           "color": "exito"
         },
         {
+          "id": 1774511219630,
+          "label": "Pago registrado + De nada",
+          "content": "Buenos días, pago registrado correctamente y servicio activo ✅\n\n¡Estamos siempre a su disposición! Nos complace mucho poder ayudarle. Le agradecemos su confianza en Tecnoven.",
+          "subcat": "Pagos",
+          "color": "exito"
+        },
+        {
           "id": 1774492834537,
           "label": "Ayudar 2",
           "content": "¿Algo más en qué podamos ayudarle?"
@@ -272,13 +279,6 @@
           "id": 1774492918593,
           "label": "Pedir datos",
           "content": "Buenos días, nos indica por favor Nombre del titular y número de Cédula."
-        },
-        {
-          "id": 1774511219630,
-          "label": "Pago registrado + De nada",
-          "content": "Buenos días, pago registrado correctamente y servicio activo ✅\n\n¡Estamos siempre a su disposición! Nos complace mucho poder ayudarle. Le agradecemos su confianza en Tecnoven.",
-          "subcat": "Pagos",
-          "color": "exito"
         },
         {
           "id": 1774496265351,
