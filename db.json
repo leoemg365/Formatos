@@ -318,6 +318,11 @@
           "id": 1774487069633,
           "label": "Pago registrado",
           "content": "Buenas noches, pago registrado correctamente y servicio activo ✅"
+        },
+        {
+          "id": 1774493011736,
+          "label": "Pedir datos",
+          "content": "Buenas noches, nos indica por favor Nombre del titular y número de Cédula."
         }
       ]
     }
