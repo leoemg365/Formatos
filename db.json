@@ -253,14 +253,14 @@
           "content": "Buenos días, pago registrado correctamente y servicio activo ✅"
         },
         {
-          "id": 1774492834537,
-          "label": "Ayudar 2",
-          "content": "¿Algo más en qué podamos ayudarle?"
-        },
-        {
           "id": 1774495432461,
           "label": "Pago registrado 2 - Icaro tarda en activar",
           "content": "Buenos días, pago registrado correctamente y servicio activo ✅\nEn 5 minutos contará con servicio."
+        },
+        {
+          "id": 1774492834537,
+          "label": "Ayudar 2",
+          "content": "¿Algo más en qué podamos ayudarle?"
         },
         {
           "id": 1774492918593,
