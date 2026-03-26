@@ -276,6 +276,11 @@
           "id": 1774511219630,
           "label": "Pago registrado + De nada",
           "content": "Buenos días, pago registrado correctamente y servicio activo ✅\n\n¡Estamos siempre a su disposición! Nos complace mucho poder ayudarle. Le agradecemos su confianza en Tecnoven."
+        },
+        {
+          "id": 1774511682575,
+          "label": "Confirmar servicio",
+          "content": "Buenos días, nos confirma por favor que cuente con servicio en estos momentos?"
         }
       ]
     },
