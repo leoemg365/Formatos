@@ -261,6 +261,11 @@
           "id": 1774492918593,
           "label": "Pedir datos",
           "content": "Buenos días, nos indica por favor Nombre del titular y número de Cédula."
+        },
+        {
+          "id": 1774495432461,
+          "label": "Pago registrado 2 - Icaro tarda en activar",
+          "content": "Buenos días, pago registrado correctamente y servicio activo ✅\nEn 5 minutos contará con servicio."
         }
       ]
     },
