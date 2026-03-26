@@ -204,12 +204,23 @@
         {
           "id": 1774290178274,
           "label": "Falla Proveedor",
-          "content": "Apreciado cliente, le informamos que en estos momentos estamos presentando un inconveniente a nivel de proveedor. Le ofrecemos nuestras más sinceras disculpas por las molestias que esto pueda ocasionar. Ya nos comunicamos con nuestro proveedor para que pueda ser solventado en la brevedad posible *Agradecemos su confianza en TECNOVEN #SomosMásQueInternet*\n\nSi aún persiste algún inconveniente, por favor, comuníquese con nosotros. Estamos a su disposición para brindarle la mejor atención.\n\n*#TecnovenSomosmásqueInternet*"
+          "content": "Apreciado cliente, le informamos que en estos momentos estamos presentando un inconveniente a nivel de proveedor. Le ofrecemos nuestras más sinceras disculpas por las molestias que esto pueda ocasionar. Ya nos comunicamos con nuestro proveedor para que pueda ser solventado en la brevedad posible *Agradecemos su confianza en TECNOVEN #SomosMásQueInternet*\n\nSi aún persiste algún inconveniente, por favor, comuníquese con nosotros. Estamos a su disposición para brindarle la mejor atención.\n\n*#TecnovenSomosmásqueInternet*",
+          "subcat": "Falla proveedor",
+          "color": "urgente"
         },
         {
           "id": 1774290226113,
           "label": "Incidencia",
-          "content": "Apreciado cliente, le informamos que en estos momentos estamos experimentando un inconveniente donde conecta su servicio. Le ofrecemos nuestras más sinceras disculpas por las molestias que esto pueda ocasionar. Estamos trabajando arduamente para solucionar el inconveniente y restablecer el servicio lo antes posible. *Agradecemos su confianza en\nTECNOVEN #SomosMásQueInternet*"
+          "content": "Apreciado cliente, le informamos que en estos momentos estamos experimentando un inconveniente donde conecta su servicio. Le ofrecemos nuestras más sinceras disculpas por las molestias que esto pueda ocasionar. Estamos trabajando arduamente para solucionar el inconveniente y restablecer el servicio lo antes posible. *Agradecemos su confianza en\nTECNOVEN #SomosMásQueInternet*",
+          "subcat": "Falla Interna",
+          "color": "urgente"
+        },
+        {
+          "id": 1774510805656,
+          "label": "Nodo DOWN",
+          "content": "Estimado cliente:\n\nLe informamos que actualmente experimentamos una incidencia, ya el equipo encargado se encuentra trabajando en el inconveniente para darle solución.\nLamentamos los inconvenientes que esto pueda causar y agradecemos su confianza.\n\nAtentamente,\nEl Equipo de Soporte",
+          "subcat": "Falla Interna",
+          "color": "urgente"
         },
         {
           "id": 1774290293376,
@@ -220,11 +231,6 @@
           "id": 1774290328816,
           "label": "Verificacion de Servicio por Llamada (Sin Respuesta)",
           "content": "Nos comunicamos con usted vía Whatsapp y vía llamada, pero no contamos con respuesta de su parte.  \nVerificamos que su servicio se encuentra activo y disfrutando de consumo, por este motivo se procedera a cerrar su chat.\nSi presenta cualquier inconveniente con el servicio nos informa, nosotros por esta vía estaremos atentos."
-        },
-        {
-          "id": 1774510805656,
-          "label": "Nodo DOWN",
-          "content": "Estimado cliente:\n\nLe informamos que actualmente experimentamos una incidencia, ya el equipo encargado se encuentra trabajando en el inconveniente para darle solución.\nLamentamos los inconvenientes que esto pueda causar y agradecemos su confianza.\n\nAtentamente,\nEl Equipo de Soporte"
         }
       ]
     },
