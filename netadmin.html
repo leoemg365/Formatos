@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NetAdmin Pro v13.1</title>
+    <title>NetAdmin Pro v15</title>
     <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/4565/4565968.png" type="image/x-icon">
     <style>
         :root {
@@ -43,42 +43,59 @@
         .quote-box { background: linear-gradient(135deg, var(--primary), #0056b3); color: white; padding: 15px; border-radius: var(--radius); font-size: 0.9rem; font-style: italic; box-shadow: var(--shadow); }
         
         .controls { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; align-items: center; margin-bottom: 15px; }
-        .btn-icon { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px; width: 40px; height: 40px; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; }
+        .btn-icon { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px; width: 40px; height: 40px; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; position: relative; }
 
         .search-container { position: relative; width: 100%; margin-bottom: 15px; }
         .search-container input { width: 100%; padding: 12px 15px 12px 40px; border-radius: 30px; border: 2px solid var(--border); background: var(--bg-surface); color: var(--text-main); font-size: 1rem; }
         .search-container span { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); font-size: 1.2rem; }
 
+        /* TABS Y NOTIFICACIONES */
         .tabs-container { overflow-x: auto; padding-bottom: 10px; margin-bottom: 15px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
         .tabs-container::-webkit-scrollbar { display: none; }
         .tabs { display: flex; background: var(--bg-surface); padding: 5px; border-radius: 15px; box-shadow: var(--shadow); width: max-content; min-width: 100%; gap: 5px; }
-        .tab { flex: 1; text-align: center; padding: 12px 15px; border-radius: 10px; cursor: pointer; color: var(--text-sec); font-weight: 600; font-size: 0.9rem; white-space: nowrap; transition: 0.2s; }
+        .tab { flex: 1; text-align: center; padding: 12px 15px; border-radius: 10px; cursor: pointer; color: var(--text-sec); font-weight: 600; font-size: 0.9rem; white-space: nowrap; transition: 0.2s; position: relative; }
         .tab.active { background: var(--primary); color: white; }
+        .badge { position: absolute; top: 2px; right: 2px; background: var(--danger); color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 10px; font-weight: bold; display: none; animation: pop 0.3s; }
 
-        .sub-filters { display: flex; gap: 10px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+        /* PÍLDORAS / SUBCATEGORÍAS */
+        .sub-filters { display: flex; gap: 10px; margin-bottom: 10px; overflow-x: auto; padding-bottom: 5px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
         .sub-filters::-webkit-scrollbar { display: none; }
-        .pill { padding: 8px 16px; border-radius: 20px; background: var(--bg-input); cursor: pointer; font-size: 0.85rem; color: var(--text-sec); border: 1px solid transparent; white-space: nowrap; transition: 0.2s; font-weight: bold; }
+        .pill { padding: 6px 14px; border-radius: 20px; background: var(--bg-input); cursor: pointer; font-size: 0.85rem; color: var(--text-sec); border: 1px solid transparent; white-space: nowrap; transition: 0.2s; font-weight: bold; }
         .pill.active { background: var(--bg-surface); border-color: var(--primary); color: var(--primary); }
+        .pill-sec { padding: 4px 10px; font-size: 0.8rem; background: transparent; border: 1px dashed var(--border); }
+        .pill-sec.active { background: var(--primary); color: white; border-color: var(--primary); }
 
         .list-box { background: var(--bg-surface); border-radius: var(--radius); padding: 15px; margin-bottom: 20px; border: 1px solid var(--border); }
-        .list-head { display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 1.1rem; margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+        .list-head { display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 1.1rem; margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 8px; gap:10px; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
         
-        .card { background: var(--bg-body); border: 1px solid var(--border); border-radius: 10px; padding: 15px; position: relative; cursor: pointer; border-left: 5px solid var(--border); transition: transform 0.1s; }
+        .card { background: var(--bg-body); border: 1px solid var(--border); border-radius: 10px; padding: 15px; position: relative; cursor: pointer; border-left: 5px solid var(--border); transition: transform 0.1s; display: flex; flex-direction: column; }
         .card:active { transform: scale(0.97); }
-        .card-label { font-weight: bold; font-size: 0.95rem; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 60px; }
-        .card-val { font-size: 0.85rem; color: var(--text-sec); font-family: monospace; white-space: normal; overflow-wrap: anywhere; word-break: break-word; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4; }
+        .card-label { font-weight: bold; font-size: 0.95rem; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 80px; }
+        .card-val { font-size: 0.85rem; color: var(--text-sec); font-family: monospace; white-space: normal; overflow-wrap: anywhere; word-break: break-word; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4; flex-grow: 1; }
 
-        .actions { position: absolute; top: 8px; right: 8px; display: flex; gap: 4px; background: var(--bg-body); border-radius: 6px; padding: 2px; }
-        .mini-btn { font-size: 13px; width: 30px; height: 30px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        /* COLORES DE TARJETAS RESPUESTAS */
+        .color-neutro { border-left-color: var(--border); }
+        .color-info { border-left-color: var(--primary); background: rgba(24, 119, 242, 0.05); }
+        .color-exito { border-left-color: var(--success); background: rgba(66, 183, 42, 0.05); }
+        .color-aviso { border-left-color: var(--warning); background: rgba(247, 185, 40, 0.05); }
+        .color-urgente { border-left-color: var(--danger); background: rgba(255, 77, 79, 0.05); }
+        body.dark-mode .color-info { background: rgba(24, 119, 242, 0.15); }
+        body.dark-mode .color-exito { background: rgba(66, 183, 42, 0.15); }
+        body.dark-mode .color-aviso { background: rgba(247, 185, 40, 0.15); }
+        body.dark-mode .color-urgente { background: rgba(255, 77, 79, 0.15); }
+
+        /* ACCIONES Y REORDENAMIENTO */
+        .actions { position: absolute; top: 8px; right: 8px; display: flex; gap: 4px; background: var(--bg-body); border-radius: 6px; padding: 2px; border: 1px solid var(--border); z-index: 10; }
+        .mini-btn { font-size: 13px; width: 26px; height: 26px; background: var(--bg-surface); border: none; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
         .mini-btn:hover { background: var(--bg-input); }
+        .move-btn { color: var(--primary); font-size: 11px; }
 
         .pass-card { border-top: 5px solid var(--danger); border-left: 1px solid var(--border); }
-        .resp-card { border-left: 5px solid var(--warning); background: #fffceb; color: #5c4e06; }
-        body.dark-mode .resp-card { background: #423805; color: #e6dbb5; }
         .news-card { border-left: 5px solid var(--primary); cursor: default; }
-        .news-date { font-size: 0.75rem; color: var(--text-sec); margin-bottom: 5px; }
-        .news-title { font-weight: bold; font-size: 1.05rem; margin-bottom: 5px; color: var(--primary); padding-right: 60px; }
+        .news-cat { position: absolute; top: 8px; left: 15px; font-size: 0.65rem; background: var(--primary); color: white; padding: 2px 6px; border-radius: 10px; font-weight: bold; }
+        .news-date { font-size: 0.75rem; color: var(--text-sec); margin-top: 15px; margin-bottom: 5px; }
+        .news-title { font-weight: bold; font-size: 1.05rem; margin-bottom: 5px; color: var(--primary); padding-right: 80px; }
         
         .cred-row { display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.04); padding: 8px; border-radius: 6px; margin-top: 8px; font-size: 0.85rem; }
         .blur { filter: blur(5px); cursor: pointer; transition: 0.3s; }
@@ -102,16 +119,16 @@
 
         .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); z-index: 3000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s ease; padding: 15px; }
         .modal-overlay.show { opacity: 1; pointer-events: auto; }
-        .alert-box { background: var(--bg-surface); padding: 25px; border-radius: 20px; width: 100%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); transform: translateY(20px); transition: 0.3s ease; display: flex; flex-direction: column; max-height: 90vh; overflow-y: auto;}
+        .alert-box { background: var(--bg-surface); padding: 25px; border-radius: 20px; width: 100%; max-width: 450px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); transform: translateY(20px); transition: 0.3s ease; display: flex; flex-direction: column; max-height: 90vh; overflow-y: auto;}
         .modal-overlay.show .alert-box { transform: translateY(0); }
         .alert-danger { border-top: 5px solid var(--danger); text-align: center; }
         
         #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px); background: #333; color: white; padding: 12px 24px; border-radius: 30px; opacity: 0; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.2); pointer-events: none; transition: 0.3s; z-index: 5000; text-align: center; }
         #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-        /* Loader */
         .loader { border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top: 3px solid white; width: 20px; height: 20px; animation: spin 1s linear infinite; display: none; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes pop { 0% { transform: scale(0); } 80% { transform: scale(1.2); } 100% { transform: scale(1); } }
         @keyframes fadeIn { from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)} }
     </style>
 </head>
@@ -156,7 +173,7 @@
         <div class="controls">
             <span id="sync-status" style="margin-right:auto; font-size:0.85rem; display:flex; align-items:center; color:var(--text-sec); font-weight:bold">☁️ Conectando...</span>
             <button class="btn-icon" onclick="toggleTheme()" title="Cambiar Tema">🌓</button>
-            <button class="btn-icon" onclick="logoutApp()" title="Cerrar Sesión">🔒</button>
+            <button class="btn-icon" onclick="openSettings()" title="Ajustes del Sistema">⚙️</button>
         </div>
 
         <div class="search-container">
@@ -168,8 +185,8 @@
             <div class="tabs">
                 <div class="tab active" onclick="switchTab('clip')">📋 Links / OLTs</div>
                 <div class="tab" onclick="switchTab('pass')">🔐 Contraseñas</div>
-                <div class="tab" onclick="switchTab('resp')">💬 Respuestas</div>
-                <div class="tab" onclick="switchTab('news')">📢 Novedades</div>
+                <div class="tab" id="tab-resp" onclick="switchTab('resp')">💬 Respuestas <span class="badge" id="badge-resp">1</span></div>
+                <div class="tab" id="tab-news" onclick="switchTab('news')">📢 Novedades <span class="badge" id="badge-news">1</span></div>
                 <div class="tab" onclick="switchTab('tools')">🛠️ Herramientas</div>
             </div>
         </div>
@@ -178,59 +195,41 @@
         <div id="view-pass" class="searchable-view hidden"></div>
         
         <div id="view-resp" class="searchable-view hidden">
-            <div class="sub-filters" id="resp-filters">
-                <div class="pill active" onclick="filterResp('General')">General</div>
-                <div class="pill" onclick="filterResp('Día')">🌞 Día</div>
-                <div class="pill" onclick="filterResp('Tarde')">⛅ Tarde</div>
-                <div class="pill" onclick="filterResp('Noche')">🌙 Noche</div>
+            <div class="sub-filters" id="resp-filters-main">
+                <div class="pill active" onclick="filterRespMain('General')">General</div>
+                <div class="pill" onclick="filterRespMain('Día')">🌞 Día</div>
+                <div class="pill" onclick="filterRespMain('Tarde')">⛅ Tarde</div>
+                <div class="pill" onclick="filterRespMain('Noche')">🌙 Noche</div>
             </div>
+            <div class="sub-filters" id="resp-filters-sub"></div>
+
             <div id="resp-grid" class="grid" style="display:flex; flex-direction:column; gap:12px;"></div>
             <div id="resp-admin-tools" style="margin-top:15px"></div>
         </div>
 
         <div id="view-news" class="searchable-view hidden">
+            <div class="sub-filters" id="news-filters"></div>
+            
             <div id="news-grid" style="display:flex; flex-direction:column; gap:15px;"></div>
             <div id="news-admin-tools" style="margin-top:15px"></div>
         </div>
 
         <div id="view-tools" class="hidden">
             
-            <div id="admin-security-box" class="list-box hidden" style="border:2px solid var(--danger);">
-                <div class="list-head" style="color:var(--danger)"><span>⚙️ Seguridad y Accesos (Admin)</span></div>
-                <p style="font-size:0.85rem; color:var(--text-sec); margin-top:0">Cambia las contraseñas de acceso a la App. Los cambios se aplicarán inmediatamente.</p>
-                
-                <div class="form-row" style="align-items:flex-end">
-                    <div style="flex:2">
-                        <label class="form-label">Contraseña de Soporte</label>
-                        <input type="text" id="cfg-sup-pass" class="big-input" style="margin-bottom:0">
-                    </div>
-                    <div style="flex:1">
-                        <button class="btn-large" style="background:var(--danger)" onclick="reqAdminDel(()=>updateSystemPasswords('support'))">Actualizar</button>
-                    </div>
-                </div>
-
-                <div class="form-row" style="align-items:flex-end; margin-top:15px">
-                    <div style="flex:2">
-                        <label class="form-label">Contraseña de Administrador</label>
-                        <input type="text" id="cfg-adm-pass" class="big-input" style="margin-bottom:0">
-                    </div>
-                    <div style="flex:1">
-                        <button class="btn-large" style="background:var(--danger)" onclick="reqAdminDel(()=>updateSystemPasswords('admin'))">Actualizar</button>
-                    </div>
-                </div>
+            <div class="sub-filters" style="margin-bottom:20px; justify-content:center;">
+                <div class="pill active" id="pill-tool-rep" onclick="switchToolMode('rep')">📑 Reportes Corporativos</div>
+                <div class="pill" id="pill-tool-fmt" onclick="switchToolMode('fmt')">🔤 Formateador de Texto</div>
             </div>
 
-            <div class="list-box">
-                <div class="list-head"><span>📑 Generador de Reportes Corporativos</span></div>
-                
+            <div id="tool-box-rep" class="list-box">
                 <label class="form-label">Operador (Guardado automático)</label>
                 <input type="text" id="rep-operador" class="big-input" placeholder="Tu Nombre / Apellido" oninput="updateLivePreview()">
 
                 <div class="sub-filters" style="margin-bottom:20px; margin-top:10px;">
-                    <div class="pill active" id="pill-r1" onclick="switchRepMode(1)">Soporte</div>
-                    <div class="pill" id="pill-r2" onclick="switchRepMode(2)">Administración</div>
-                    <div class="pill" id="pill-r3" onclick="switchRepMode(3)">Empresarial</div>
-                    <div class="pill" id="pill-r4" onclick="switchRepMode(4)" style="color:var(--danger); border-color:var(--danger)">Emergencias</div>
+                    <div class="pill pill-sec active" id="pill-r1" onclick="switchRepMode(1)">Soporte</div>
+                    <div class="pill pill-sec" id="pill-r2" onclick="switchRepMode(2)">Administración</div>
+                    <div class="pill pill-sec" id="pill-r3" onclick="switchRepMode(3)">Empresarial</div>
+                    <div class="pill pill-sec" id="pill-r4" onclick="switchRepMode(4)" style="color:var(--danger); border-color:var(--danger)">Emergencias</div>
                 </div>
 
                 <div id="rep-mode-1" class="rep-container">
@@ -291,7 +290,6 @@
                 <div id="rep-mode-3" class="rep-container hidden">
                     <label class="form-label">Actividad</label>
                     <input type="text" class="big-input" value="Empresarial" readonly style="background:var(--bg-body)">
-                    
                     <div class="form-row">
                         <div>
                             <label class="form-label">Desde</label>
@@ -337,18 +335,12 @@
                             <select id="r4-tipo" class="big-input" style="margin:0; width:30%" onchange="toggleR4Device()">
                                 <option value="NAP">NAP</option><option value="Nodo">Nodo</option><option value="PON">PON</option>
                             </select>
-                            
-                            <select id="r4-nap-city" class="big-input r4-is-nap" style="margin:0; width:30%" onchange="updateLivePreview()">
-                                <option value="MCBO">MCBO</option><option value="CBMS">CBMS</option><option value="SFCO">SFCO</option>
-                            </select>
+                            <select id="r4-nap-city" class="big-input r4-is-nap" style="margin:0; width:30%" onchange="updateLivePreview()"><option value="MCBO">MCBO</option><option value="CBMS">CBMS</option><option value="SFCO">SFCO</option></select>
                             <input type="number" id="r4-nap-num" class="big-input r4-is-nap" placeholder="Ej: 1348" style="margin:0; width:40%" oninput="updateLivePreview()">
-                            
                             <input type="text" id="r4-nodo-nom" class="big-input r4-is-nodo hidden" placeholder="Nombre (Ej: Maranorte)" style="margin:0; width:70%" oninput="updateLivePreview()">
                         </div>
                         <label class="form-label">Estatus del Equipo</label>
-                        <select id="r4-estatus" class="big-input" onchange="updateLivePreview()">
-                            <option value="DOWN">DOWN (Caído)</option><option value="UP">UP (Arriba)</option>
-                        </select>
+                        <select id="r4-estatus" class="big-input" onchange="updateLivePreview()"><option value="DOWN">DOWN (Caído)</option><option value="UP">UP (Arriba)</option></select>
                     </div>
 
                     <div class="form-row">
@@ -365,9 +357,8 @@
                 <button class="btn-large" style="margin-top:20px; font-size:1.1rem" onclick="copyGeneratedReport()">📋 Copiar Reporte</button>
             </div>
 
-            <div class="list-box">
-                <div class="list-head"><span>🔤 Formateador Rápido</span></div>
-                <textarea id="tool-text" class="big-input" rows="3" placeholder="Pega texto para convertir mayúsculas o contar..." oninput="updateTextTools()"></textarea>
+            <div id="tool-box-fmt" class="list-box hidden">
+                <textarea id="tool-text" class="big-input" rows="5" placeholder="Pega texto para convertir mayúsculas o contar..." oninput="updateTextTools()"></textarea>
                 <div style="display:flex; justify-content:space-between; font-size:0.9rem; margin-bottom:10px; font-weight:bold; color:var(--text-sec)">
                     <span>Caracteres: <span id="char-count" style="color:var(--primary)">0</span></span>
                     <span>Palabras: <span id="word-count" style="color:var(--primary)">0</span></span>
@@ -382,11 +373,33 @@
         </div>
 
         <footer style="text-align:center; color:var(--text-sec); margin-top:40px; font-size:0.9em; opacity:0.8;">
-            NetAdmin Soporte Pro v13.1<br>© 2026 Espiral - Leonardo Montiel<br>
+            NetAdmin Soporte Pro v15.0<br>© 2026 Espiral - Leonardo Montiel<br>
             <a href="https://wa.me/584121982608" target="_blank" style="text-decoration:none; display:inline-block; margin-top:12px;">
                 <button style="padding:8px 20px; border-radius:20px; border:1px solid var(--border); background:var(--bg-surface); color:var(--text-main); cursor:pointer; font-weight:bold;">Soporte Técnico / Developer</button>
             </a>
         </footer>
+    </div>
+
+    <div id="settings-modal" class="modal-overlay">
+        <div class="alert-box" style="text-align: left;">
+            <h3 style="margin-top:0; color:var(--primary); border-bottom:1px solid var(--border); padding-bottom:10px;">⚙️ Ajustes del Sistema</h3>
+            
+            <div id="admin-security-box" class="hidden" style="margin-bottom:20px">
+                <div style="color:var(--danger); font-weight:bold; margin-bottom:10px">Seguridad y Accesos (Admin)</div>
+                <div class="form-row" style="align-items:flex-end; margin-bottom:10px">
+                    <div style="flex:2"><label class="form-label">Clave Soporte</label><input type="text" id="cfg-sup-pass" class="big-input" style="margin-bottom:0"></div>
+                    <div style="flex:1"><button class="btn-large" style="background:var(--danger)" onclick="reqAdminDel(()=>updateSystemPasswords('support'))">Actualizar</button></div>
+                </div>
+                <div class="form-row" style="align-items:flex-end">
+                    <div style="flex:2"><label class="form-label">Clave Admin</label><input type="text" id="cfg-adm-pass" class="big-input" style="margin-bottom:0"></div>
+                    <div style="flex:1"><button class="btn-large" style="background:var(--danger)" onclick="reqAdminDel(()=>updateSystemPasswords('admin'))">Actualizar</button></div>
+                </div>
+                <hr style="border:0; border-top:1px solid var(--border); margin:20px 0;">
+            </div>
+
+            <button class="btn-large" style="background:var(--danger); margin-bottom:10px" onclick="logoutApp()">🚪 Cerrar Sesión</button>
+            <button class="btn-large" style="background:var(--bg-input); color:var(--text-main)" onclick="closeModal('settings-modal')">Cancelar</button>
+        </div>
     </div>
 
     <div id="preview-modal" class="modal-overlay">
@@ -443,7 +456,9 @@
         
         let db = null;
         let isAdmin = false; let adminPass = ''; let ghToken = ''; let fileSha = null;
-        let currentRespFilter = 'General';
+        
+        let currentRespFilterMain = 'General'; let currentRespFilterSub = 'Todas';
+        let currentNewsFilter = 'Todas';
         
         let dailyExitTime = null; let alarmTriggered = false; const alarmAudio = document.getElementById('alarm-sound');
         let formCallback = null; let confirmCallback = null; let textToCopyFromPreview = "";
@@ -459,11 +474,8 @@
             });
             document.getElementById('r4-fecha').value = new Date().toLocaleDateString('es-VE');
 
-            // Cargar Nombre guardado
             const savedName = localStorage.getItem('report_operator');
             if(savedName) document.getElementById('rep-operador').value = savedName;
-            
-            // Cargar Horas guardadas de Reportes
             loadRepTimes();
 
             if(localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode');
@@ -472,7 +484,6 @@
 
             setInterval(checkTime, 30000);
 
-            // AUTO LOGIN
             const session = JSON.parse(localStorage.getItem('netAdminSession'));
             if(session) {
                 isAdmin = session.isAdmin; adminPass = session.adminPass; ghToken = session.ghToken; dailyExitTime = session.exitTime;
@@ -541,14 +552,13 @@
             if(isAuto && !db) fetchData(); 
             else {
                 document.getElementById('sync-status').innerHTML = "☁️ <span>Conectado</span>"; document.getElementById('sync-status').style.color = "var(--success)";
-                renderAll(); updateLivePreview();
+                renderAll(); updateLivePreview(); checkNotifications();
                 if(isAdmin) { document.getElementById('cfg-sup-pass').value = db.config.supportPass; document.getElementById('cfg-adm-pass').value = db.config.adminPass; }
             }
         }
 
-        function logoutApp() {
-            openConfirm("Cerrar Sesión", "¿Seguro que deseas salir y borrar la sesión actual?", false, () => { localStorage.removeItem('netAdminSession'); location.reload(); });
-        }
+        function openSettings() { openModal('settings-modal'); }
+        function logoutApp() { openConfirm("Cerrar Sesión", "¿Seguro que deseas salir y borrar la sesión actual?", false, () => { localStorage.removeItem('netAdminSession'); location.reload(); }); }
 
         // --- 2. GITHUB SYNC ---
         async function fetchData() {
@@ -562,7 +572,7 @@
                 if(!db.config) db.config = { supportPass: "45637954", adminPass: "0800" };
                 
                 status.innerHTML = "☁️ <span>Conectado</span>"; status.style.color = "var(--success)";
-                renderAll(); updateLivePreview();
+                renderAll(); updateLivePreview(); checkNotifications();
                 if(isAdmin) { document.getElementById('cfg-sup-pass').value = db.config.supportPass; document.getElementById('cfg-adm-pass').value = db.config.adminPass; }
             } catch(e) { status.innerHTML = "⚠️ <span>Sin conexión</span>"; status.style.color = "var(--danger)"; }
         }
@@ -574,21 +584,51 @@
             try {
                 const res = await fetch(url, { method:'PUT', headers: {'Authorization': `token ${ghToken}`, 'Content-Type': 'application/json'}, body: JSON.stringify(body) });
                 if(res.ok) { 
-                    fileSha = (await res.json()).content.sha; status.innerHTML = "☁️ <span>Guardado</span>"; setTimeout(()=>status.innerHTML="☁️ <span>Conectado</span>", 2500); renderAll();
+                    fileSha = (await res.json()).content.sha; status.innerHTML = "☁️ <span>Guardado</span>"; setTimeout(()=>status.innerHTML="☁️ <span>Conectado</span>", 2500); 
+                    renderAll(); checkNotifications();
                 } else throw new Error();
             } catch(e) { alert("Error al subir a GitHub. Verifica tu Token."); status.innerHTML = "⚠️ <span>Error Nube</span>"; }
         }
 
-        // --- 3. BÚSQUEDA UNIVERSAL ---
+        // --- 3. NOTIFICACIONES (BADGES) ---
+        function checkNotifications() {
+            if(!db) return;
+            // News
+            let maxNewsId = db.news.length > 0 ? Math.max(...db.news.map(n => n.id)) : 0;
+            let lastSeenNews = parseInt(localStorage.getItem('lastSeenNews')) || 0;
+            let bNews = document.getElementById('badge-news');
+            let unseenNews = db.news.filter(n => n.id > lastSeenNews).length;
+            if(unseenNews > 0 && document.getElementById('view-news').classList.contains('hidden')) { bNews.innerText = unseenNews; bNews.style.display = 'inline-block'; } 
+            else { bNews.style.display = 'none'; if(!document.getElementById('view-news').classList.contains('hidden')) localStorage.setItem('lastSeenNews', maxNewsId); }
+
+            // Responses
+            let maxRespId = 0; let unseenResp = 0; let lastSeenResp = parseInt(localStorage.getItem('lastSeenResp')) || 0;
+            db.responses.forEach(list => list.cards.forEach(c => { maxRespId = Math.max(maxRespId, c.id); if(c.id > lastSeenResp) unseenResp++; }));
+            let bResp = document.getElementById('badge-resp');
+            if(unseenResp > 0 && document.getElementById('view-resp').classList.contains('hidden')) { bResp.innerText = unseenResp; bResp.style.display = 'inline-block'; } 
+            else { bResp.style.display = 'none'; if(!document.getElementById('view-resp').classList.contains('hidden')) localStorage.setItem('lastSeenResp', maxRespId); }
+        }
+
+        // --- 4. RENDER UI PRINCIPAL ---
+        function switchTab(t) {
+            document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active')); event.target.classList.add('active');
+            ['clip','pass','resp','news','tools'].forEach(v => document.getElementById(`view-${v}`).classList.add('hidden'));
+            document.getElementById(`view-${t}`).classList.remove('hidden');
+            document.getElementById('search-bar').value = ''; filterUniversal();
+            checkNotifications(); // Limpia badge si es necesario
+        }
+
         function filterUniversal() {
             const query = document.getElementById('search-bar').value.toLowerCase();
             const views = document.querySelectorAll('.searchable-view:not(.hidden)');
             if(query.trim() === '') {
                 document.querySelectorAll('.card, .list-box').forEach(el => el.style.display = '');
-                if(!document.getElementById('view-resp').classList.contains('hidden')) filterResp(currentRespFilter);
+                if(!document.getElementById('view-resp').classList.contains('hidden')) filterRespSub(currentRespFilterSub);
+                if(!document.getElementById('view-news').classList.contains('hidden')) filterNews(currentNewsFilter);
                 return;
             }
             if(!document.getElementById('view-resp').classList.contains('hidden')) document.querySelectorAll('#view-resp .card').forEach(c => c.style.display = '');
+            if(!document.getElementById('view-news').classList.contains('hidden')) document.querySelectorAll('#view-news .card').forEach(c => c.style.display = '');
 
             views.forEach(view => {
                 view.querySelectorAll('.list-box, #resp-grid, #news-grid').forEach(container => {
@@ -604,29 +644,30 @@
             });
         }
 
-        // --- 4. RENDER UI PRINCIPAL ---
-        function switchTab(t) {
-            document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active')); event.target.classList.add('active');
-            ['clip','pass','resp','news','tools'].forEach(v => document.getElementById(`view-${v}`).classList.add('hidden'));
-            document.getElementById(`view-${t}`).classList.remove('hidden');
-            document.getElementById('search-bar').value = ''; filterUniversal();
-        }
-
         function renderAll() {
             if(!db) return;
             renderGeneric('clipboard', 'view-clip'); renderGeneric('passwords', 'view-pass'); renderResp(); renderNews(); filterUniversal();
+        }
+
+        function getMoveBtnsHtml(type, lIdx, cIdx, arrLength) {
+            if(!isAdmin) return '';
+            let up = cIdx > 0 ? `<button class="mini-btn move-btn" title="Subir" onclick="event.stopPropagation(); moveCard('${type}',${lIdx},${cIdx},-1)">⬆️</button>` : '';
+            let down = cIdx < arrLength - 1 ? `<button class="mini-btn move-btn" title="Bajar" onclick="event.stopPropagation(); moveCard('${type}',${lIdx},${cIdx},1)">⬇️</button>` : '';
+            return up + down;
         }
 
         function renderGeneric(type, divId) {
             const div = document.getElementById(divId); div.innerHTML='';
             db[type].forEach((list, lIdx) => {
                 const box = document.createElement('div'); box.className='list-box';
-                let adminBtns = isAdmin ? `<div style="display:flex; gap:5px"><button class="mini-btn" title="Editar Lista" onclick="reqAdminEditList('${type}',${lIdx})">✏️</button><button class="mini-btn" style="color:var(--danger);" onclick="reqAdminDel(()=>delList('${type}',${lIdx}))">🗑️</button></div>` : '';
+                let moveListBtns = isAdmin ? (lIdx > 0 ? `<button class="mini-btn move-btn" onclick="moveList('${type}',${lIdx},-1)">⬆️</button>` : '') + (lIdx < db[type].length - 1 ? `<button class="mini-btn move-btn" onclick="moveList('${type}',${lIdx},1)">⬇️</button>` : '') : '';
+                let adminBtns = isAdmin ? `<div style="display:flex; gap:5px">${moveListBtns}<button class="mini-btn" title="Editar Lista" onclick="reqAdminEditList('${type}',${lIdx})">✏️</button><button class="mini-btn" style="color:var(--danger);" onclick="reqAdminDel(()=>delList('${type}',${lIdx}))">🗑️</button></div>` : '';
                 box.innerHTML = `<div class="list-head"><span>${list.title}</span>${adminBtns}</div><div class="grid"></div>`;
                 const grid = box.querySelector('.grid');
                 list.cards.forEach((c, cIdx) => {
                     const d = document.createElement('div');
                     let actHtml = `<div class="actions">
+                        ${getMoveBtnsHtml(type, lIdx, cIdx, list.cards.length)}
                         <button class="mini-btn" title="Ver completo" onclick="event.stopPropagation(); openPreview('${c.label}', \`${type==='passwords' ? `Usuario: ${c.user}\nClave: ${c.pass}` : c.content}\`, \`${type==='passwords'? c.pass : c.content}\`)">👁️</button>
                         ${isAdmin ? `<button class="mini-btn" onclick="event.stopPropagation(); reqAdminEditCard('${type}',${lIdx},${cIdx})">✏️</button><button class="mini-btn" style="color:var(--danger);" onclick="event.stopPropagation(); reqAdminDel(()=>delCard('${type}',${lIdx},${cIdx}))">🗑️</button>` : ''}
                     </div>`;
@@ -642,43 +683,108 @@
 
         function renderResp() {
             const grid = document.getElementById('resp-grid'); grid.innerHTML = '';
-            const targetList = db.responses.find(r => r.title === currentRespFilter);
+            const targetList = db.responses.find(r => r.title === currentRespFilterMain);
+            let subcats = new Set(['Todas']);
+
             if(targetList) {
                 const lIdx = db.responses.indexOf(targetList);
                 targetList.cards.forEach((c, cIdx) => {
-                    const d = document.createElement('div'); d.className = 'card resp-card'; d.onclick=()=>copy(c.content);
-                    let actHtml = `<div class="actions"><button class="mini-btn" onclick="event.stopPropagation(); openPreview('${c.label}', \`${c.content}\`, \`${c.content}\`)">👁️</button>${isAdmin ? `<button class="mini-btn" onclick="event.stopPropagation(); reqAdminEditCardResp(${lIdx},${cIdx})">✏️</button><button class="mini-btn" style="color:var(--danger);" onclick="event.stopPropagation(); reqAdminDel(()=>delCardResp(${lIdx},${cIdx}))">🗑️</button>` : ''}</div>`;
-                    d.innerHTML = `<div class="card-label">${c.label}</div><div class="card-val">${c.content}</div>${actHtml}`; grid.appendChild(d);
+                    if(c.subcat) subcats.add(c.subcat);
+                    // Filter logic
+                    if(currentRespFilterSub !== 'Todas' && c.subcat !== currentRespFilterSub) return;
+
+                    const d = document.createElement('div'); 
+                    d.className = `card resp-card color-${c.color || 'neutro'}`; 
+                    d.onclick=()=>copy(c.content);
+                    let actHtml = `<div class="actions">
+                        ${getMoveBtnsHtml('responses', lIdx, cIdx, targetList.cards.length)}
+                        <button class="mini-btn" onclick="event.stopPropagation(); openPreview('${c.label}', \`${c.content}\`, \`${c.content}\`)">👁️</button>
+                        ${isAdmin ? `<button class="mini-btn" onclick="event.stopPropagation(); reqAdminEditCardResp(${lIdx},${cIdx})">✏️</button><button class="mini-btn" style="color:var(--danger);" onclick="event.stopPropagation(); reqAdminDel(()=>delCardResp(${lIdx},${cIdx}))">🗑️</button>` : ''}
+                    </div>`;
+                    let subBadge = c.subcat && c.subcat !== 'General' ? `<span style="font-size:0.7rem; color:var(--text-sec); display:block; margin-bottom:2px">📁 ${c.subcat}</span>` : '';
+                    d.innerHTML = `${subBadge}<div class="card-label">${c.label}</div><div class="card-val">${c.content}</div>${actHtml}`; grid.appendChild(d);
                 });
             } else grid.innerHTML = '<div style="color:var(--text-sec); text-align:center; padding:20px; width:100%">No hay respuestas aquí.</div>';
-            document.querySelectorAll('#resp-filters .pill').forEach(p => p.classList.toggle('active', p.innerText.includes(currentRespFilter)));
+            
+            // Build Sub-filters
+            const subFilterBox = document.getElementById('resp-filters-sub'); subFilterBox.innerHTML = '';
+            if(subcats.size > 1) {
+                subcats.forEach(sc => {
+                    const p = document.createElement('div'); p.className = `pill pill-sec ${sc === currentRespFilterSub ? 'active' : ''}`;
+                    p.innerText = sc; p.onclick = () => filterRespSub(sc); subFilterBox.appendChild(p);
+                });
+            }
+
+            document.querySelectorAll('#resp-filters-main .pill').forEach(p => p.classList.toggle('active', p.innerText.includes(currentRespFilterMain)));
             const tools = document.getElementById('resp-admin-tools'); tools.innerHTML = '';
-            if(isAdmin && targetList) tools.innerHTML = `<button class="btn-large" style="background:var(--bg-input); color:var(--text-main)" onclick="reqAdminAddResp(${db.responses.indexOf(targetList)})">+ Agregar a ${currentRespFilter}</button>`;
+            if(isAdmin && targetList) tools.innerHTML = `<button class="btn-large" style="background:var(--bg-input); color:var(--text-main)" onclick="reqAdminAddResp(${db.responses.indexOf(targetList)})">+ Agregar a ${currentRespFilterMain}</button>`;
         }
-        function filterResp(f) { currentRespFilter = f; document.getElementById('search-bar').value=''; renderResp(); }
+        function filterRespMain(f) { currentRespFilterMain = f; currentRespFilterSub = 'Todas'; document.getElementById('search-bar').value=''; renderResp(); }
+        function filterRespSub(f) { currentRespFilterSub = f; renderResp(); }
 
         function renderNews() {
             const grid = document.getElementById('news-grid'); grid.innerHTML = '';
-            if(db.news.length === 0) grid.innerHTML = '<div style="color:var(--text-sec); text-align:center; padding:20px">No hay comunicados.</div>';
+            let cats = new Set(['Todas']);
+            
             db.news.forEach((n, idx) => {
+                if(n.cat) cats.add(n.cat);
+                if(currentNewsFilter !== 'Todas' && n.cat !== currentNewsFilter) return;
+
                 const d = document.createElement('div'); d.className = 'card news-card';
-                let actHtml = `<div class="actions"><button class="mini-btn" onclick="openPreview('${n.title}', \`${n.content}\`, '')">👁️</button>${isAdmin ? `<button class="mini-btn" onclick="reqAdminEditNews(${idx})">✏️</button><button class="mini-btn" style="color:var(--danger);" onclick="reqAdminDel(()=>delNews(${idx}))">🗑️</button>` : ''}</div>`;
-                d.innerHTML = `<div class="news-date">📅 ${n.date}</div><div class="news-title">${n.title}</div><div class="card-val">${n.content}</div>${actHtml}`; grid.appendChild(d);
+                let actHtml = `<div class="actions">
+                        ${isAdmin && idx > 0 ? `<button class="mini-btn move-btn" onclick="moveList('news',${idx},-1)">⬆️</button>` : ''}
+                        ${isAdmin && idx < db.news.length - 1 ? `<button class="mini-btn move-btn" onclick="moveList('news',${idx},1)">⬇️</button>` : ''}
+                        <button class="mini-btn" onclick="openPreview('${n.title}', \`${n.content}\`, '')">👁️</button>
+                        ${isAdmin ? `<button class="mini-btn" onclick="reqAdminEditNews(${idx})">✏️</button><button class="mini-btn" style="color:var(--danger);" onclick="reqAdminDel(()=>delNews(${idx}))">🗑️</button>` : ''}
+                    </div>`;
+                let catBadge = n.cat ? `<div class="news-cat">${n.cat}</div>` : '';
+                d.innerHTML = `${catBadge}<div class="news-date">📅 ${n.date}</div><div class="news-title">${n.title}</div><div class="card-val">${n.content}</div>${actHtml}`; grid.appendChild(d);
             });
+
+            // Build Sub-filters
+            const subFilterBox = document.getElementById('news-filters'); subFilterBox.innerHTML = '';
+            if(cats.size > 1) {
+                cats.forEach(sc => {
+                    const p = document.createElement('div'); p.className = `pill pill-sec ${sc === currentNewsFilter ? 'active' : ''}`;
+                    p.innerText = sc; p.onclick = () => filterNews(sc); subFilterBox.appendChild(p);
+                });
+            }
+
+            if(grid.innerHTML === '') grid.innerHTML = '<div style="color:var(--text-sec); text-align:center; padding:20px; width:100%">No hay comunicados.</div>';
+            
             const tools = document.getElementById('news-admin-tools'); tools.innerHTML = '';
             if(isAdmin) tools.innerHTML = `<button class="btn-large" style="background:var(--bg-input); color:var(--text-main)" onclick="reqAdminAddNews()">+ Redactar Comunicado</button>`;
         }
+        function filterNews(f) { currentNewsFilter = f; document.getElementById('search-bar').value=''; renderNews(); }
 
-        // --- 5. GENERADOR DE REPORTES Y STORAGE ---
-        function saveRepName() { localStorage.setItem('report_operator', document.getElementById('rep-operador').value); }
-        
+        // --- REORDENAMIENTO ---
+        function moveCard(type, lIdx, cIdx, dir) {
+            let arr = db[type][lIdx].cards;
+            if (dir === -1 && cIdx > 0) [arr[cIdx-1], arr[cIdx]] = [arr[cIdx], arr[cIdx-1]];
+            else if (dir === 1 && cIdx < arr.length - 1) [arr[cIdx+1], arr[cIdx]] = [arr[cIdx], arr[cIdx+1]];
+            pushData();
+        }
+        function moveList(type, idx, dir) {
+            let arr = db[type];
+            if (dir === -1 && idx > 0) [arr[idx-1], arr[idx]] = [arr[idx], arr[idx-1]];
+            else if (dir === 1 && idx < arr.length - 1) [arr[idx+1], arr[idx]] = [arr[idx], arr[idx+1]];
+            pushData();
+        }
+
+        // --- 5. HERRAMIENTAS v15 ---
+        function switchToolMode(mode) {
+            document.getElementById('pill-tool-rep').classList.toggle('active', mode === 'rep');
+            document.getElementById('pill-tool-fmt').classList.toggle('active', mode === 'fmt');
+            document.getElementById('tool-box-rep').classList.toggle('hidden', mode !== 'rep');
+            document.getElementById('tool-box-fmt').classList.toggle('hidden', mode !== 'fmt');
+        }
+
         function saveRepTimes() {
             const times = {
                 r1: { hin: document.getElementById('r1-hin').value, min: document.getElementById('r1-min').value, ain: document.getElementById('r1-ain').value, hout: document.getElementById('r1-hout').value, mout: document.getElementById('r1-mout').value, aout: document.getElementById('r1-aout').value },
                 r2: { h: document.getElementById('r2-h').value, m: document.getElementById('r2-m').value, a: document.getElementById('r2-a').value },
                 r3: { hin: document.getElementById('r3-hin').value, min: document.getElementById('r3-min').value, ain: document.getElementById('r3-ain').value, hout: document.getElementById('r3-hout').value, mout: document.getElementById('r3-mout').value, aout: document.getElementById('r3-aout').value }
-            };
-            localStorage.setItem('report_times', JSON.stringify(times));
+            }; localStorage.setItem('report_times', JSON.stringify(times));
         }
 
         function loadRepTimes() {
@@ -700,34 +806,27 @@
                 document.getElementById(`rep-mode-${i}`).classList.add('hidden');
             }
             const activePill = document.getElementById(`pill-r${mode}`);
-            activePill.classList.add('active'); if(mode === 4) { activePill.style.background = 'var(--danger)'; activePill.style.color = 'white'; }
+            activePill.classList.add('active'); if(mode === 4) { activePill.style.background = 'var(--danger)'; activePill.style.color = 'white'; border: 'none'}
             document.getElementById(`rep-mode-${mode}`).classList.remove('hidden'); updateLivePreview();
         }
 
-        function calcAtendidosR1() {
-            let c = parseInt(document.getElementById('r1-cer').value) || 0; let p = parseInt(document.getElementById('r1-pen').value) || 0;
-            document.getElementById('r1-ate').innerText = c + p;
-        }
+        function calcAtendidosR1() { let c = parseInt(document.getElementById('r1-cer').value) || 0; let p = parseInt(document.getElementById('r1-pen').value) || 0; document.getElementById('r1-ate').innerText = c + p; }
         function toggleR1Inst() { document.getElementById('r1-inst').classList.toggle('hidden', !document.getElementById('r1-chk-inst').checked); }
         function toggleR1Otro() { document.getElementById('r1-otro-txt').classList.toggle('hidden', !document.getElementById('r1-chk-otro').checked); }
 
         function setR4Status(status) {
             r4Status = status;
-            document.getElementById('btn-r4-pres').style.background = status === 'PRESENTADA' ? 'var(--danger)' : 'var(--bg-surface)';
-            document.getElementById('btn-r4-pres').style.color = status === 'PRESENTADA' ? 'white' : 'var(--text-main)';
-            document.getElementById('btn-r4-solv').style.background = status === 'SOLVENTADA' ? 'var(--success)' : 'var(--bg-surface)';
-            document.getElementById('btn-r4-solv').style.color = status === 'SOLVENTADA' ? 'white' : 'var(--text-main)';
-            document.getElementById('btn-r4-solv').style.borderColor = status === 'SOLVENTADA' ? 'var(--success)' : 'var(--border)';
+            document.getElementById('btn-r4-pres').style.background = status === 'PRESENTADA' ? 'var(--danger)' : 'var(--bg-surface)'; document.getElementById('btn-r4-pres').style.color = status === 'PRESENTADA' ? 'white' : 'var(--text-main)';
+            document.getElementById('btn-r4-solv').style.background = status === 'SOLVENTADA' ? 'var(--success)' : 'var(--bg-surface)'; document.getElementById('btn-r4-solv').style.color = status === 'SOLVENTADA' ? 'white' : 'var(--text-main)'; document.getElementById('btn-r4-solv').style.borderColor = status === 'SOLVENTADA' ? 'var(--success)' : 'var(--border)';
             document.getElementById('r4-hora-fin-box').classList.toggle('hidden', status === 'PRESENTADA'); updateLivePreview();
         }
         function toggleR4Device() {
             const t = document.getElementById('r4-tipo').value;
-            document.querySelectorAll('.r4-is-nap').forEach(el => el.classList.toggle('hidden', t !== 'NAP'));
-            document.querySelectorAll('.r4-is-nodo').forEach(el => el.classList.toggle('hidden', t === 'NAP')); updateLivePreview();
+            document.querySelectorAll('.r4-is-nap').forEach(el => el.classList.toggle('hidden', t !== 'NAP')); document.querySelectorAll('.r4-is-nodo').forEach(el => el.classList.toggle('hidden', t === 'NAP')); updateLivePreview();
         }
 
         function updateLivePreview() {
-            saveRepTimes(); // Guardar horas cada vez que se actualiza el form
+            saveRepTimes(); localStorage.setItem('report_operator', document.getElementById('rep-operador').value);
             const op = document.getElementById('rep-operador').value || "[Tu Nombre]";
             let htmlText = ""; let plainText = "";
 
@@ -772,24 +871,16 @@
                 htmlText = `<strong>EMERGENCIA ${r4Status}</strong>\nDepartamento de Soporte Técnico TECNOVEN SERVICES, C.A.\nFecha: ${f}\nHora: ${hi}\nHora fin: ${ho}\n<strong>${eqStr} ${st}</strong>\nZona: ${zo}\nClientes Afectados: ${cl}`;
                 plainText = `*EMERGENCIA ${r4Status}*\nDepartamento de Soporte Técnico TECNOVEN SERVICES, C.A.\nFecha: ${f}\nHora: ${hi}\nHora fin: ${ho}\n*${eqStr} ${st}*\nZona: ${zo}\nClientes Afectados: ${cl}`;
             }
-
             document.getElementById('live-preview-box').innerHTML = htmlText; finalReportAsterisks = plainText; 
         }
 
         function copyGeneratedReport() { if(finalReportAsterisks) copy(finalReportAsterisks); }
 
-        // --- 6. HERRAMIENTAS TEXTO RÁPIDO ---
-        function updateTextTools() {
-            const text = document.getElementById('tool-text').value; document.getElementById('char-count').innerText = text.length; document.getElementById('word-count').innerText = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
-        }
-        function formatText(type) {
-            const el = document.getElementById('tool-text');
-            if(type === 'UPPER') el.value = el.value.toUpperCase(); if(type === 'LOWER') el.value = el.value.toLowerCase();
-            if(type === 'TITLE') el.value = el.value.toLowerCase().replace(/(?:^|\s)\S/g, a => a.toUpperCase()); updateTextTools();
-        }
+        function updateTextTools() { const text = document.getElementById('tool-text').value; document.getElementById('char-count').innerText = text.length; document.getElementById('word-count').innerText = text.trim() === '' ? 0 : text.trim().split(/\s+/).length; }
+        function formatText(type) { const el = document.getElementById('tool-text'); if(type === 'UPPER') el.value = el.value.toUpperCase(); if(type === 'LOWER') el.value = el.value.toLowerCase(); if(type === 'TITLE') el.value = el.value.toLowerCase().replace(/(?:^|\s)\S/g, a => a.toUpperCase()); updateTextTools(); }
         function copyToolText() { const val = document.getElementById('tool-text').value; if(val.trim() !== '') copy(val); }
 
-        // --- 7. MODALES Y EDICIÓN CRUD ---
+        // --- 7. MODALES, FORMS Y CRUD AVANZADO ---
         function openModal(id) { const m = document.getElementById(id); m.classList.remove('hidden'); m.style.display = 'flex'; setTimeout(() => m.classList.add('show'), 10); }
         function closeModal(id) { const m = document.getElementById(id); m.classList.remove('show'); setTimeout(() => { m.style.display = 'none'; m.classList.add('hidden'); }, 300); }
 
@@ -802,14 +893,29 @@
         function openForm(title, fields, onSubmit) {
             document.getElementById('form-title').innerText = title; const container = document.getElementById('form-inputs'); container.innerHTML = '';
             fields.forEach(f => {
-                let el = document.createElement(f.type === 'textarea' ? 'textarea' : 'input'); el.className = 'big-input'; el.id = f.id; el.placeholder = f.p;
-                if(f.value) el.value = f.value; if(f.type === 'textarea') el.rows = 4; else el.type = 'text';
-                if(f.type !== 'textarea') el.onkeydown = (e) => { if(e.key === 'Enter') document.getElementById('form-submit').click(); };
-                container.appendChild(el);
+                let el;
+                if(f.type === 'select') {
+                    el = document.createElement('select'); el.className = 'big-input';
+                    f.options.forEach(opt => { const o = document.createElement('option'); o.value = opt.v; o.text = opt.l; el.appendChild(o); });
+                } else if(f.type === 'datalist') {
+                    el = document.createElement('input'); el.type = 'text'; el.className = 'big-input'; el.setAttribute('list', f.id+'-list');
+                    let dl = document.createElement('datalist'); dl.id = f.id+'-list';
+                    f.options.forEach(opt => { const o = document.createElement('option'); o.value = opt; dl.appendChild(o); });
+                    container.appendChild(dl);
+                } else {
+                    el = document.createElement(f.type === 'textarea' ? 'textarea' : 'input'); el.className = 'big-input';
+                    if(f.type === 'textarea') el.rows = 4; else el.type = 'text';
+                    if(f.type !== 'textarea') el.onkeydown = (e) => { if(e.key === 'Enter') document.getElementById('form-submit').click(); };
+                }
+                el.id = f.id; el.placeholder = f.p || ''; if(f.value) el.value = f.value;
+                
+                let wrapper = document.createElement('div');
+                if(f.l) { let lbl = document.createElement('label'); lbl.className = 'form-label'; lbl.innerText = f.l; wrapper.appendChild(lbl); }
+                wrapper.appendChild(el); container.appendChild(wrapper);
             });
             formCallback = () => {
                 const values = fields.map(f => document.getElementById(f.id).value.trim());
-                if(values.some(v => !v)) return alert("Completa todos los campos");
+                if(values.some(v => !v && f.required !== false)) return alert("Completa los campos principales");
                 onSubmit(values); closeModal('form-modal');
             };
             document.getElementById('form-submit').onclick = formCallback; openModal('form-modal');
@@ -833,21 +939,59 @@
             if(requirePin) setTimeout(() => pinInput.focus(), 100);
         }
 
+        // CRUD CON SUBCATEGORÍAS Y COLORES
         function reqAdminAddCard(type, lIdx) {
             let fields = type==='clipboard' ? [{id:'f_title', p:'Título'}, {id:'f_val', p:'IP/Link', type:'textarea'}] : [{id:'f_title', p:'Equipo'}, {id:'f_user', p:'Usuario'}, {id:'f_pass', p:'Contraseña'}];
             openForm("Nueva Tarjeta", fields, (v) => { if(type==='clipboard') db[type][lIdx].cards.push({id:Date.now(), label:v[0], content:v[1]}); else db[type][lIdx].cards.push({id:Date.now(), label:v[0], user:v[1], pass:v[2]}); pushData(); });
         }
-        function reqAdminAddResp(lIdx) { openForm("Nueva Respuesta", [{id:'r_t', p:'Título'}, {id:'r_c', p:'Texto', type:'textarea'}], (v)=>{ db.responses[lIdx].cards.push({id:Date.now(), label:v[0], content:v[1]}); pushData(); }); }
-        function reqAdminAddNews() { openForm("Comunicado", [{id:'n_t', p:'Título'}, {id:'n_c', p:'Mensaje', type:'textarea'}], (v)=>{ db.news.unshift({id:Date.now(), date: new Date().toLocaleDateString('es-VE'), title:v[0], content:v[1]}); pushData(); }); }
+        
+        function reqAdminAddResp(lIdx) { 
+            let existingCats = [...new Set(db.responses[lIdx].cards.map(c => c.subcat).filter(Boolean))];
+            openForm("Nueva Respuesta", [
+                {id:'r_t', l:'Título', p:'Ej: Saludo'}, 
+                {id:'r_sc', l:'Subcategoría (Opcional)', type:'datalist', options: existingCats, p:'Ej: Pagos', required: false},
+                {id:'r_col', l:'Color', type:'select', options: [{v:'neutro', l:'⚪ Neutro'}, {v:'info', l:'🔵 Información'}, {v:'exito', l:'🟢 Éxito / Pagos'}, {v:'aviso', l:'🟡 Advertencia'}, {v:'urgente', l:'🔴 Urgente'}]},
+                {id:'r_c', l:'Mensaje a copiar', type:'textarea'}
+            ], (v)=>{ db.responses[lIdx].cards.push({id:Date.now(), label:v[0], subcat:v[1], color:v[2], content:v[3]}); pushData(); }); 
+        }
+
+        function reqAdminAddNews() { 
+            let existingCats = [...new Set(db.news.map(n => n.cat).filter(Boolean))];
+            openForm("Comunicado", [
+                {id:'n_t', l:'Título', p:'Ej: Mantenimiento'}, 
+                {id:'n_c', l:'Categoría (Opcional)', type:'datalist', options: existingCats, p:'Ej: Administrativo', required: false},
+                {id:'n_msg', l:'Mensaje', type:'textarea'}
+            ], (v)=>{ db.news.unshift({id:Date.now(), date: new Date().toLocaleDateString('es-VE'), title:v[0], cat:v[1], content:v[2]}); pushData(); }); 
+        }
 
         function reqAdminEditList(type, lIdx) { openForm("Editar Lista", [{id:'l_name', p:'Nombre', value: db[type][lIdx].title}], (v)=>{ db[type][lIdx].title = v[0]; pushData(); }); }
+        
         function reqAdminEditCard(type, lIdx, cIdx) {
             let item = db[type][lIdx].cards[cIdx];
             let fields = type==='clipboard' ? [{id:'f_title', p:'Título', value: item.label}, {id:'f_val', p:'Contenido', type:'textarea', value: item.content}] : [{id:'f_title', p:'Equipo', value: item.label}, {id:'f_user', p:'Usuario', value: item.user}, {id:'f_pass', p:'Contraseña', value: item.pass}];
             openForm("Editar Tarjeta", fields, (v) => { item.label = v[0]; if(type==='clipboard') item.content = v[1]; else { item.user = v[1]; item.pass = v[2]; } pushData(); });
         }
-        function reqAdminEditCardResp(lIdx, cIdx) { let item = db.responses[lIdx].cards[cIdx]; openForm("Editar Respuesta", [{id:'r_t', p:'Título', value: item.label}, {id:'r_c', p:'Texto', type:'textarea', value: item.content}], (v)=>{ item.label = v[0]; item.content = v[1]; pushData(); }); }
-        function reqAdminEditNews(idx) { let item = db.news[idx]; openForm("Editar Comunicado", [{id:'n_t', p:'Título', value: item.title}, {id:'n_c', p:'Cuerpo', type:'textarea', value: item.content}], (v)=>{ item.title = v[0]; item.content = v[1]; pushData(); }); }
+        
+        function reqAdminEditCardResp(lIdx, cIdx) { 
+            let item = db.responses[lIdx].cards[cIdx]; 
+            let existingCats = [...new Set(db.responses[lIdx].cards.map(c => c.subcat).filter(Boolean))];
+            openForm("Editar Respuesta", [
+                {id:'r_t', l:'Título', value: item.label}, 
+                {id:'r_sc', l:'Subcategoría', type:'datalist', options: existingCats, value: item.subcat || '', required: false},
+                {id:'r_col', l:'Color', type:'select', value: item.color || 'neutro', options: [{v:'neutro', l:'⚪ Neutro'}, {v:'info', l:'🔵 Información'}, {v:'exito', l:'🟢 Éxito'}, {v:'aviso', l:'🟡 Advertencia'}, {v:'urgente', l:'🔴 Urgente'}]},
+                {id:'r_c', l:'Mensaje', type:'textarea', value: item.content}
+            ], (v)=>{ item.label = v[0]; item.subcat = v[1]; item.color = v[2]; item.content = v[3]; pushData(); }); 
+        }
+
+        function reqAdminEditNews(idx) { 
+            let item = db.news[idx]; 
+            let existingCats = [...new Set(db.news.map(n => n.cat).filter(Boolean))];
+            openForm("Editar Comunicado", [
+                {id:'n_t', l:'Título', value: item.title}, 
+                {id:'n_c', l:'Categoría', type:'datalist', options: existingCats, value: item.cat || '', required: false},
+                {id:'n_msg', l:'Cuerpo', type:'textarea', value: item.content}
+            ], (v)=>{ item.title = v[0]; item.cat = v[1]; item.content = v[2]; pushData(); }); 
+        }
 
         function delCard(type, l, c) { db[type][l].cards.splice(c,1); pushData(); } function delList(type, l) { db[type].splice(l,1); pushData(); } function delCardResp(lIdx, cIdx) { db.responses[lIdx].cards.splice(cIdx,1); pushData(); } function delNews(idx) { db.news.splice(idx,1); pushData(); }
 
