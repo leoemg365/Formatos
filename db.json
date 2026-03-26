@@ -256,6 +256,11 @@
           "id": 1774492834537,
           "label": "Ayudar 2",
           "content": "¿Algo más en qué podamos ayudarle?"
+        },
+        {
+          "id": 1774492918593,
+          "label": "Pedir datos",
+          "content": "Nos indica por favor Nombre del titular y número de Cédula."
         }
       ]
     },
