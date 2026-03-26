@@ -274,7 +274,9 @@
         {
           "id": 1774496265351,
           "label": "Preguntar por servicio",
-          "content": "Buenos días, nos indica por favor ¿cómo le funciona el servicio en estos momentos?"
+          "content": "Buenos días, nos indica por favor ¿cómo le funciona el servicio en estos momentos?",
+          "subcat": "Servicio",
+          "color": "info"
         },
         {
           "id": 1774511219630,
