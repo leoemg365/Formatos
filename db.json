@@ -277,6 +277,11 @@
           "id": 1774287413486,
           "label": "Ayudar",
           "content": "Buenas tardes, en qué podemos ayudarle?"
+        },
+        {
+          "id": 1774487055336,
+          "label": "Pago registrado",
+          "content": "Buenas tardes, pago registrado correctamente y servicio activo ✅"
         }
       ]
     },
