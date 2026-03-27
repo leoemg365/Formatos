@@ -365,12 +365,23 @@
         {
           "id": 1774487055336,
           "label": "Pago registrado",
-          "content": "Buenas tardes, pago registrado correctamente y servicio activo ✅"
+          "content": "Buenas tardes, pago registrado correctamente y servicio activo ✅",
+          "subcat": "Pagos",
+          "color": "exito"
         },
         {
           "id": 1774495450701,
           "label": "Pago registrado 2 - Icaro tarda en activar",
-          "content": "Buenas tardes, pago registrado correctamente y servicio activo ✅\nEn 5 minutos contará con servicio."
+          "content": "Buenas tardes, pago registrado correctamente y servicio activo ✅\nEn 5 minutos contará con servicio.",
+          "subcat": "Pagos",
+          "color": "exito"
+        },
+        {
+          "id": 1774609666551,
+          "label": "Pago registrado + De nada",
+          "subcat": "Pagos",
+          "color": "exito",
+          "content": "Buenos días, pago registrado correctamente y servicio activo ✅\n\n¡Estamos siempre a su disposición! Nos complace mucho poder ayudarle. Le agradecemos su confianza en Tecnoven."
         },
         {
           "id": 1774492992328,
@@ -380,7 +391,9 @@
         {
           "id": 1774496241399,
           "label": "Preguntar por servicio",
-          "content": "Buenas tardes, nos indica por favor ¿cómo le funciona el servicio en estos momentos?"
+          "content": "Buenas tardes, nos indica por favor ¿cómo le funciona el servicio en estos momentos?",
+          "subcat": "Servicio",
+          "color": "info"
         },
         {
           "id": 1774583311190,
