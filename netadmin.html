@@ -464,6 +464,39 @@
     <audio id="alarm-sound" loop src="data:audio/mp3;base64,//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq"></audio>
 
     <script>
+        /*
+ * Copyright (c) 2026 [Leonardo Montiel / Espiral].
+ * Todos los derechos reservados.
+ *
+ * Este código es propiedad intelectual de [Leonardo Montiel - Empresa: Espiral].
+ * Prohibida su reproducción o distribución sin autorización.
+ */
+        // --- 🛡️ PROTECCIÓN ANTI-CURIOSOS ---
+        // 1. Bloquear clic derecho (Menú contextual)
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+        // 2. Bloquear atajos de teclado para desarrolladores
+        document.addEventListener('keydown', function(e) {
+            // Bloquear F12
+            if (e.key === 'F12' || e.keyCode === 123) {
+                e.preventDefault();
+                return false;
+            }
+            // Bloquear Ctrl + Shift + I  y  Ctrl + Shift + J (Consola e Inspector)
+            if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j')) {
+                e.preventDefault();
+                return false;
+            }
+            // Bloquear Ctrl + U (Ver código fuente)
+            if (e.ctrlKey && (e.key === 'U' || e.key === 'u')) {
+                e.preventDefault();
+                return false;
+            }
+        });
+        //LEONARDOMONTIEL
+        
         // CONFIGURACIÓN GITHUB
         const GH = { USER: 'leoemg365', REPO: 'Formatos', FILE: 'db.json' };
         
