@@ -372,12 +372,16 @@
         {
           "id": 1774487069633,
           "label": "Pago registrado",
-          "content": "Buenas noches, pago registrado correctamente y servicio activo ✅"
+          "content": "Buenas noches, pago registrado correctamente y servicio activo ✅",
+          "subcat": "Pagos",
+          "color": "exito"
         },
         {
           "id": 1774495467677,
           "label": "Pago registrado 2 - Icaro tarda en activar",
-          "content": "Buenas noches, pago registrado correctamente y servicio activo ✅\nEn 5 minutos contará con servicio."
+          "content": "Buenas noches, pago registrado correctamente y servicio activo ✅\nEn 5 minutos contará con servicio.",
+          "subcat": "Pagos",
+          "color": "exito"
         },
         {
           "id": 1774573380524,
