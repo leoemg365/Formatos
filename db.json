@@ -231,6 +231,27 @@
           "id": 1774290328816,
           "label": "Verificacion de Servicio por Llamada (Sin Respuesta)",
           "content": "Nos comunicamos con usted vía Whatsapp y vía llamada, pero no contamos con respuesta de su parte.  \nVerificamos que su servicio se encuentra activo y disfrutando de consumo, por este motivo se procedera a cerrar su chat.\nSi presenta cualquier inconveniente con el servicio nos informa, nosotros por esta vía estaremos atentos."
+        },
+        {
+          "id": 1774581395025,
+          "label": "Visita Gratis",
+          "subcat": "Ticket",
+          "color": "neutro",
+          "content": "Agendaremos un ticket de visita técnica para que los técnicos vayan a su localidad a solucionar el inconveniente. Los técnicos se estarán comunicando con usted para acordar la visita ya que cuentan con varios trabajos pendientes."
+        },
+        {
+          "id": 1774581447865,
+          "label": "Visita Paga",
+          "subcat": "Ticket",
+          "color": "neutro",
+          "content": "Agendaremos un ticket de visita técnica para que los técnicos vayan a su localidad a solucionar el inconveniente, tenga en cuenta que sí la falla es local el costo de la visita es de $5, en caso que la falla sea externa el costo de la visita será exonerado."
+        },
+        {
+          "id": 1774581493641,
+          "label": "Visita Inalambrico",
+          "subcat": "Ticket",
+          "color": "neutro",
+          "content": "Agendaremos un ticket de visita técnica para que los técnicos vayan a su localidad a solucionar el problema, tenga en cuenta que el costo de la visita es de $5 + materiales que se utilicen (en caso que se utilicen)."
         }
       ]
     },
