@@ -337,7 +337,7 @@
         {
           "id": 321,
           "label": "Saludo PM",
-          "content": "¡Buenas tardes! Soporte Técnico a su orden.",
+          "content": "¡Buenas tardes! Gracias por contactarnos. ¿En qué podemos ayudarle?",
           "subcat": "Saludos",
           "color": "neutro"
         },
@@ -418,17 +418,30 @@
         {
           "id": 331,
           "label": "Saludo Noche",
-          "content": "Buenas noches. Le atiende el turno de guardia. Indique su requerimiento."
+          "content": "¡Buenas noches! Gracias por contactarnos. ¿En qué podemos ayudarle?",
+          "subcat": "Saludos",
+          "color": "neutro"
         },
         {
           "id": 332,
           "label": "Cierre Noche",
-          "content": "El soporte presencial funciona hasta las 6PM. Dejaremos su caso reportado para mañana a primera hora."
+          "content": "Estaremos atentos ante cualquier solicitud, feliz noche",
+          "subcat": "Saludos",
+          "color": "neutro"
         },
         {
           "id": 1774287433520,
           "label": "Ayudar",
-          "content": "Buenas noches, ¿en qué podemos ayudarle?"
+          "content": "Buenas noches, ¿en qué podemos ayudarle?",
+          "subcat": "Saludos",
+          "color": "neutro"
+        },
+        {
+          "id": 1774609821724,
+          "label": "Ayudar 2",
+          "subcat": "Saludos",
+          "color": "neutro",
+          "content": "¿Algo más en qué podamos ayudarle?"
         },
         {
           "id": 1774487069633,
@@ -459,12 +472,16 @@
         {
           "id": 1774496229256,
           "label": "Preguntar por servicio",
-          "content": "Buenas noches, nos indica por favor ¿cómo le funciona el servicio en estos momentos?"
+          "content": "Buenas noches, nos indica por favor ¿cómo le funciona el servicio en estos momentos?",
+          "subcat": "Servicio",
+          "color": "info"
         },
         {
           "id": 1774496795255,
           "label": "Confirmar servicio",
-          "content": "¿Nos confirma por favor que el servicio funcione normalmente?"
+          "content": "¿Nos confirma por favor que el servicio funcione normalmente?",
+          "subcat": "Servicio",
+          "color": "info"
         },
         {
           "id": 1774583331495,
