@@ -225,12 +225,16 @@
         {
           "id": 1774290293376,
           "label": "Verificacion de Servicio por Llamada (OPERATIVO)",
-          "content": "Nos comunicamos con usted vía llamada y nos informo que su servicio se encuentra funcionando correctamente.\nRecuerde que si presenta cualquier inconveniente con el servicio, nosotros por esta vía estamos a su orden."
+          "content": "Nos comunicamos con usted vía llamada y nos informo que su servicio se encuentra funcionando correctamente.\nRecuerde que si presenta cualquier inconveniente con el servicio, nosotros por esta vía estamos a su orden.",
+          "subcat": "Verificación de servicio",
+          "color": "neutro"
         },
         {
           "id": 1774290328816,
           "label": "Verificacion de Servicio por Llamada (Sin Respuesta)",
-          "content": "Nos comunicamos con usted vía Whatsapp y vía llamada, pero no contamos con respuesta de su parte.  \nVerificamos que su servicio se encuentra activo y disfrutando de consumo, por este motivo se procedera a cerrar su chat.\nSi presenta cualquier inconveniente con el servicio nos informa, nosotros por esta vía estaremos atentos."
+          "content": "Nos comunicamos con usted vía Whatsapp y vía llamada, pero no contamos con respuesta de su parte.  \nVerificamos que su servicio se encuentra activo y disfrutando de consumo, por este motivo se procedera a cerrar su chat.\nSi presenta cualquier inconveniente con el servicio nos informa, nosotros por esta vía estaremos atentos.",
+          "subcat": "Verificación de servicio",
+          "color": "neutro"
         },
         {
           "id": 1774581395025,
@@ -495,18 +499,18 @@
   ],
   "news": [
     {
+      "id": 1774296621135,
+      "date": "23/3/2026",
+      "title": "Instalaciones",
+      "content": "*Clientes instalados del 1 al 7 les corresponde fecha de corte los 05. \n\n*Clientes instalado del 8 al 18 les corresponde fecha de corte para los 15. \n\n*Clientes instalados del 19 al 31 le corresponde fecha de corte para los 05.",
+      "cat": "Administración"
+    },
+    {
       "id": 1774532051796,
       "date": "26/3/2026",
       "title": "Técnicos Zulia",
       "cat": "Técnicos",
       "content": "Matancera: José González \n\nChamarreta: Hebert y Alfonso \n\nMaranorte: Alejandro Soto"
-    },
-    {
-      "id": 1774296621135,
-      "date": "23/3/2026",
-      "title": "Instalaciones",
-      "content": "Clientes instalados del 1 al 7 les corresponde fecha de corte los 05. Clientes instalado del 8 al 18 les corresponde fecha de corte para los 15. Clientes instalados del 19 al 31 le corresponde fecha de corte para los 05",
-      "cat": "Administración"
     }
   ]
 }
