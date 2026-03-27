@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Espiral</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --primary: #2563eb;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --danger: #ef4444; /* Color para notificaciones */
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Estilos del Buscador */
+        .search-container {
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 2.5rem;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem; /* Espacio para el icono */
+            font-size: 1.1rem;
+            border: 2px solid transparent;
+            border-radius: 50px; /* Bordes redondeados modernos */
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            outline: none;
+            transition: all 0.3s ease;
+            box-sizing: border-box; /* Para que el padding no rompa el ancho */
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1.2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+        }
+
+        /* Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        /* Tarjetas */
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 2rem;
+            text-decoration: none;
+            color: var(--text-dark);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            border: 1px solid rgba(0,0,0,0.05);
+            position: relative; /* Necesario para posicionar el badge */
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary);
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .card h3 {
+            margin: 0.5rem 0;
+            font-size: 1.2rem;
+        }
+
+        .card p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        /* Estilo del Badge (Notificación) */
+        .badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: var(--danger);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        /* Animación suave para llamar la atención */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        /* Clase para ocultar tarjetas al filtrar */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Bienvenido al Panel</h1>
+
+    <div class="search-container">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" id="searchInput" class="search-input" placeholder="Buscar herramienta (ej: facturas, stock...)">
+    </div>
+
+    <div class="dashboard-grid" id="cardGrid">
+        
+        <a href="https://leoemg365.github.io/Formatos/netadmin.html" class="card">
+            <span class="badge">1 alertas</span>
+            <div class="card-icon"><i class="fa-notdog fa-solid fa-desktop"></i>></div>
+            <h3>NetAdmin</h3>
+            <p>Gestor de Portapapeles</p>
+        </a>
+
+        <a href="https://leoemg365.github.io/Formatos/inventario.html" class="card">
+            <div class="card-icon"><i class="fas fa-boxes"></i></div>
+            <h3>Inventario</h3>
+            <p>Control de stock y almacén</p>
+        </a>
+
+        <a href="/finanzas" class="card">
+            <div class="card-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+            <h3>Finanzas</h3>
+            <p>Facturación y Balances</p>
+        </a>
+
+        <a href="https://leoemg365.github.io/Formatos/Tecnoven_Formatos_V7.html" class="card">
+            <div class="card-icon"><i class="fas fa-clipboard-list"></i></div>
+            <h3>Redacción de Reportes</h3>
+            <p>Formatos y reportes</p>
+        </a>
+
+        <a href="/tools" class="card">
+            <div class="card-icon"><i class="fas fa-clipboard-list"></i></div>
+            <h3>Herramientas</h3>
+            <p>Portapapeles y notas</p>
+        </a>
+
+        <a href="/settings" class="card">
+            <div class="card-icon"><i class="fas fa-cogs"></i></div>
+            <h3>Configuración</h3>
+            <p>Ajustes generales</p>
+        </a>
+
+    </div>
+
+    <script>
+        // Seleccionamos el input y todas las tarjetas
+        const searchInput = document.getElementById('searchInput');
+        const cards = document.querySelectorAll('.card');
+
+        // Escuchamos cada vez que el usuario suelta una tecla
+        searchInput.addEventListener('keyup', (e) => {
+            const term = e.target.value.toLowerCase(); // Convertimos a minúsculas
+
+            cards.forEach(card => {
+                // Obtenemos el título (h3) y la descripción (p) de cada tarjeta
+                const title = card.querySelector('h3').textContent.toLowerCase();
+                const desc = card.querySelector('p').textContent.toLowerCase();
+
+                // Si el término está en el título O en la descripción
+                if (title.includes(term) || desc.includes(term)) {
+                    card.classList.remove('hidden'); // Mostrar
+                } else {
+                    card.classList.add('hidden'); // Ocultar
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
