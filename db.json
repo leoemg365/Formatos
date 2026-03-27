@@ -19,6 +19,11 @@
           "content": "https://telmaserca.smartolt.com/"
         },
         {
+          "id": 1774283945635,
+          "label": "OLT - Ciudad Ojeda 2 Router 129",
+          "content": "http://192.168.20.2/action/login.html"
+        },
+        {
           "id": 1771462756780,
           "label": "OLT - Los Taques",
           "content": "https://10.5.8.6/"
@@ -32,11 +37,6 @@
           "id": 1771462824076,
           "label": "OLT - Mecocal",
           "content": "https://172.112.1.2/"
-        },
-        {
-          "id": 1774283945635,
-          "label": "OLT - Ciudad Ojeda 2 Router 129",
-          "content": "http://192.168.20.2/action/login.html"
         },
         {
           "id": 1774284008211,
