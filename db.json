@@ -277,6 +277,11 @@
           "content": "Buenos días, ¿en qué podemos ayudarle?"
         },
         {
+          "id": 1774492834537,
+          "label": "Ayudar 2",
+          "content": "¿Algo más en qué podamos ayudarle?"
+        },
+        {
           "id": 1774487041929,
           "label": "Pago registrado",
           "content": "Buenos días, pago registrado correctamente y servicio activo ✅",
@@ -296,11 +301,6 @@
           "content": "Buenos días, pago registrado correctamente y servicio activo ✅\n\n¡Estamos siempre a su disposición! Nos complace mucho poder ayudarle. Le agradecemos su confianza en Tecnoven.",
           "subcat": "Pagos",
           "color": "exito"
-        },
-        {
-          "id": 1774492834537,
-          "label": "Ayudar 2",
-          "content": "¿Algo más en qué podamos ayudarle?"
         },
         {
           "id": 1774492918593,
