@@ -381,7 +381,7 @@
           "label": "Pago registrado + De nada",
           "subcat": "Pagos",
           "color": "exito",
-          "content": "Buenos días, pago registrado correctamente y servicio activo ✅\n\n¡Estamos siempre a su disposición! Nos complace mucho poder ayudarle. Le agradecemos su confianza en Tecnoven."
+          "content": "Buenos tardes, pago registrado correctamente y servicio activo ✅\n\n¡Estamos siempre a su disposición! Nos complace mucho poder ayudarle. Le agradecemos su confianza en Tecnoven."
         },
         {
           "id": 1774492992328,
@@ -394,6 +394,13 @@
           "content": "Buenas tardes, nos indica por favor ¿cómo le funciona el servicio en estos momentos?",
           "subcat": "Servicio",
           "color": "info"
+        },
+        {
+          "id": 1774609718638,
+          "label": "Confirmar servicio",
+          "subcat": "Servicio",
+          "color": "info",
+          "content": "Buenas tardes, nos confirma por favor que cuente con servicio en estos momentos?"
         },
         {
           "id": 1774583311190,
