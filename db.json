@@ -380,6 +380,13 @@
           "content": "Buenas noches, pago registrado correctamente y servicio activo ✅\nEn 5 minutos contará con servicio."
         },
         {
+          "id": 1774573380524,
+          "label": "Pago + decir que registre",
+          "subcat": "Pagos",
+          "color": "exito",
+          "content": "Buenas noches, pago registrado y servicio activo. ✅\n\nRecuerde que para acelerar el proceso puede registrar su pago en nuestro portal a través de este enlace:"
+        },
+        {
           "id": 1774493011736,
           "label": "Pedir datos",
           "content": "Buenas noches, nos indica por favor Nombre del titular y número de Cédula."
