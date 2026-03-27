@@ -337,17 +337,30 @@
         {
           "id": 321,
           "label": "Saludo PM",
-          "content": "¡Buenas tardes! Soporte Técnico a su orden."
+          "content": "¡Buenas tardes! Soporte Técnico a su orden.",
+          "subcat": "Saludos",
+          "color": "neutro"
         },
         {
           "id": 322,
           "label": "Despedida PM",
-          "content": "Feliz tarde, quedamos atentos a cualquier novedad."
+          "content": "Feliz tarde, quedamos atentos a cualquier novedad.",
+          "subcat": "Saludos",
+          "color": "neutro"
         },
         {
           "id": 1774287413486,
           "label": "Ayudar",
-          "content": "Buenas tardes, ¿en qué podemos ayudarle?"
+          "content": "Buenas tardes, ¿en qué podemos ayudarle?",
+          "subcat": "Saludos",
+          "color": "neutro"
+        },
+        {
+          "id": 1774609520137,
+          "label": "Ayudar 2",
+          "subcat": "Saludos",
+          "color": "neutro",
+          "content": "¿Algo más en qué podamos ayudarle?"
         },
         {
           "id": 1774487055336,
