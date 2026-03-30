@@ -192,6 +192,12 @@
           "label": "Antenas Ramon",
           "user": "admin",
           "pass": "tecnoseg5140"
+        },
+        {
+          "id": 1774883697706,
+          "label": "ONU Tecnoven F680",
+          "user": "user",
+          "pass": "user"
         }
       ]
     }
