@@ -269,6 +269,13 @@
           "subcat": "Ticket",
           "color": "neutro",
           "content": "Agendaremos un ticket de visita técnica para que los técnicos vayan a su localidad a solucionar el problema, tenga en cuenta que el costo de la visita es de $5 + materiales que se utilicen (en caso que se utilicen)."
+        },
+        {
+          "id": 1774888612513,
+          "label": "¿Cuando es la visita?",
+          "subcat": "Ticket",
+          "color": "neutro",
+          "content": "Los técnicos se estarán comunicando con usted durante el día ya que cuentan con varios trabajos pendientes, todo depende de su disponibilidad, sí no la llaman el día de hoy ya sería el día de mañana"
         }
       ]
     },
