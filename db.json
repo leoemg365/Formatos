@@ -257,6 +257,13 @@
           "content": "Agendaremos un ticket de visita técnica para que los técnicos vayan a su localidad a solucionar el inconveniente, tenga en cuenta que sí la falla es local el costo de la visita es de $5, en caso que la falla sea externa el costo de la visita será exonerado."
         },
         {
+          "id": 1774888230544,
+          "label": "Visita paga - falla local",
+          "subcat": "Ticket",
+          "color": "neutro",
+          "content": "Agendaremos un ticket de visita técnica para que los técnicos vayan a su localidad a solucionar el inconveniente, tenga en cuenta que el costo de la visita es de $5"
+        },
+        {
           "id": 1774581493641,
           "label": "Visita Inalambrico",
           "subcat": "Ticket",
