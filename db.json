@@ -131,6 +131,16 @@
           "id": 1774610911284,
           "label": "TuCine por MediaFire",
           "content": "https://bit.ly/tucinego"
+        },
+        {
+          "id": 1774972227732,
+          "label": "TuCine Link Largo",
+          "content": "http://multimedia.tecnomovies.com:8181/apk/TuCineTv-V2.apk"
+        },
+        {
+          "id": 1774972427884,
+          "label": "Link TuCine Corto nuevo",
+          "content": "https://bit.ly/TuCine"
         }
       ]
     },
