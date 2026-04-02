@@ -344,6 +344,13 @@
           "color": "exito"
         },
         {
+          "id": 1775112365753,
+          "label": "Pago pendiente",
+          "subcat": "Pagos",
+          "color": "aviso",
+          "content": "Es normal que el pago aparezca como Pendiente, ya que sólo falta que el departamento administrativo lo verifique, luego que lo verifiquen aparecerá como Confirmado y no le aparecerá deuda. Ya su pago está registrado correctamente"
+        },
+        {
           "id": 1774492918593,
           "label": "Pedir datos",
           "content": "Buenos días, nos indica por favor Nombre del titular y número de Cédula."
