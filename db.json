@@ -523,6 +523,13 @@
           "subcat": "Servicio",
           "color": "info",
           "content": "Visualizamos a nivel de sistema que su servicio se encuentra activo y presentando consumo, si presenta algún inconveniente nuevamente nos indica. recuerde que estamos siempre a su disposición y nos complace mucho poder ayudarle esperamos que este muy bien y tenga un excelente día. Le agradecemos su confianza en Tecnoven."
+        },
+        {
+          "id": 1775091677932,
+          "label": "Pago Pendiente",
+          "subcat": "Pagos",
+          "color": "aviso",
+          "content": "Es normal que el pago aparezca como Pendiente, ya que sólo falta que el departamento administrativo lo verifique, luego que lo verifiquen aparecerá como Confirmado y no le aparecerá deuda. Ya su pago está registrado correctamente"
         }
       ]
     }
