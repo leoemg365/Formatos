@@ -530,6 +530,13 @@
           "subcat": "Pagos",
           "color": "aviso",
           "content": "Es normal que el pago aparezca como Pendiente, ya que sólo falta que el departamento administrativo lo verifique, luego que lo verifiquen aparecerá como Confirmado y no le aparecerá deuda. Ya su pago está registrado correctamente"
+        },
+        {
+          "id": 1775092905209,
+          "label": "Con consumo",
+          "subcat": "Servicio",
+          "color": "info",
+          "content": "Buenas noches, apreciamos que cuenta con sus equipos conectados, sin embargo notamos un leve consumo, ¿nos confirma por favor que el servicio funcione con normalidad?"
         }
       ]
     }
