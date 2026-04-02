@@ -344,6 +344,13 @@
           "color": "exito"
         },
         {
+          "id": 1775125808571,
+          "label": "Pago + decir que registre",
+          "subcat": "Pagos",
+          "color": "exito",
+          "content": "Buenos días, recuerde que para acelerar el proceso puede registrar su pago en nuestro portal a través de este enlace:"
+        },
+        {
           "id": 1775112365753,
           "label": "Pago pendiente",
           "subcat": "Pagos",
