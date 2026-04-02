@@ -351,6 +351,13 @@
           "content": "Es normal que el pago aparezca como Pendiente, ya que sólo falta que el departamento administrativo lo verifique, luego que lo verifiquen aparecerá como Confirmado y no le aparecerá deuda. Ya su pago está registrado correctamente"
         },
         {
+          "id": 1775122215410,
+          "label": "Mensaje automático facturación",
+          "subcat": "Pagos",
+          "color": "aviso",
+          "content": "Buenos días, se trata de un mensaje automático del sistema como recordatorio, haga caso omiso ya que cuenta con su pago registrado correctamente, feliz día"
+        },
+        {
           "id": 1774492918593,
           "label": "Pedir datos",
           "content": "Buenos días, nos indica por favor Nombre del titular y número de Cédula."
