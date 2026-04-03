@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NetAdmin Pro v17.1</title>
+    <title>NetAdmin Pro v17.2</title>
     <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/4565/4565968.png" type="image/x-icon">
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <style>
@@ -389,6 +389,7 @@
                     <button class="mini-btn" style="width:auto; padding:5px 15px" onclick="formatText('UPPER')">MAYÚSCULAS</button>
                     <button class="mini-btn" style="width:auto; padding:5px 15px" onclick="formatText('LOWER')">minúsculas</button>
                     <button class="mini-btn" style="width:auto; padding:5px 15px" onclick="formatText('TITLE')">Tipo Título</button>
+                    <button class="mini-btn" style="width:auto; padding:5px 15px; color:var(--danger); border-color:var(--danger)" onclick="document.getElementById('tool-text').value=''; updateTextTools()">🧹 Limpiar</button>
                     <button class="mini-btn" style="width:auto; padding:5px 15px; margin-left:auto; border-color:var(--primary); color:var(--primary)" onclick="copyToolText()">Copiar</button>
                 </div>
             </div>
@@ -411,14 +412,14 @@
                 
                 <div style="display:flex; gap:10px; flex-wrap: wrap;">
                     <button class="btn-large" style="flex:1" onclick="copyOCR()">📋 Copiar</button>
-                    <button class="btn-large" style="flex:1; background:var(--bg-surface); color:var(--text-main); border:1px solid var(--border)" onclick="sendOCRtoFmt()">🔤 Limpiar Texto</button>
+                    <button class="btn-large" style="flex:1; background:var(--bg-surface); color:var(--text-main); border:1px solid var(--border)" onclick="sendOCRtoFmt()">🔤 Pasar a Formateador</button>
                     <button class="btn-large" style="flex:1; background:var(--danger);" onclick="resetOCR()">🔄 Reiniciar</button>
                 </div>
             </div>
         </div>
 
         <footer style="text-align:center; color:var(--text-sec); margin-top:40px; font-size:0.9em; opacity:0.8;">
-            NetAdmin Soporte Pro v17.1<br>© 2026 Espiral - Leonardo Montiel<br>
+            NetAdmin Soporte Pro v17.2<br>© 2026 Espiral - Leonardo Montiel<br>
             <a href="https://wa.me/584121982608" target="_blank" style="text-decoration:none; display:inline-block; margin-top:12px;">
                 <button style="padding:8px 20px; border-radius:20px; border:1px solid var(--border); background:var(--bg-surface); color:var(--text-main); cursor:pointer; font-weight:bold;">Soporte Técnico / Developer</button>
             </a>
@@ -858,7 +859,7 @@
             markUnsaved();
         }
 
-        // --- 5. HERRAMIENTAS Y OCR v17.1 ---
+        // --- 5. HERRAMIENTAS Y OCR v17.2 ---
         function switchToolMode(mode) {
             currentToolMode = mode;
             ['rep', 'fmt', 'ocr'].forEach(m => {
@@ -867,7 +868,6 @@
             });
         }
 
-        // OCR CORE FUNCTION
         async function processOCR(file) {
             if(!file) return;
             const reader = new FileReader();
@@ -877,7 +877,7 @@
                 
                 img.src = e.target.result; 
                 img.style.display = 'inline-block';
-                instructions.style.display = 'none'; // Oculta icono de cámara
+                instructions.style.display = 'none';
                 
                 const status = document.getElementById('ocr-status');
                 const bar = document.getElementById('ocr-bar');
@@ -885,7 +885,7 @@
                 const resultBox = document.getElementById('ocr-result');
                 
                 bar.style.display = 'block';
-                resultBox.value = ''; // Limpia textos anteriores
+                resultBox.value = '';
                 status.innerHTML = "⏳ Iniciando motor OCR...";
                 status.style.color = "var(--primary)";
 
@@ -913,7 +913,6 @@
             reader.readAsDataURL(file);
         }
 
-        // NUEVO: Función para Reiniciar OCR
         function resetOCR() {
             document.getElementById('ocr-input').value = '';
             document.getElementById('ocr-img-preview').src = '';
