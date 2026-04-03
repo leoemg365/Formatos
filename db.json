@@ -572,6 +572,13 @@
           "subcat": "Servicio",
           "color": "info",
           "content": "Buenas noches, apreciamos que cuenta con sus equipos conectados, sin embargo notamos un leve consumo, ¿nos confirma por favor que el servicio funcione con normalidad?"
+        },
+        {
+          "id": 1775181048754,
+          "label": "ONU en LOS",
+          "subcat": "ONU LOS",
+          "color": "aviso",
+          "content": "Buenas noches, apreciamos que su equipo en estos momentos está desconectado, nos pasa por favor fotos de los equipos en donde se reflejen las luces y los cables por favor?"
         }
       ]
     }
