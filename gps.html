@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GeoLocator App</title>
+    <title>GeoLocator Simple</title>
     <style>
         :root {
-            --primary: #4f46e5;
-            --bg: #f3f4f6;
-            --card: #ffffff;
-            --text: #1f2937;
+            --primary: #2563eb;
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f8fafc;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', system-ui, sans-serif;
             background-color: var(--bg);
             color: var(--text);
             display: flex;
@@ -25,150 +25,109 @@
 
         .container {
             background: var(--card);
-            padding: 2rem;
-            border-radius: 1rem;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
             text-align: center;
-            width: 90%;
-            max-width: 400px;
+            width: 320px;
         }
 
-        h1 { margin-bottom: 1.5rem; font-size: 1.5rem; color: var(--primary); }
-
-        .status-box {
+        .display {
+            background: #0f172a;
             padding: 1rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.1rem;
+            border: 1px solid #334155;
+            min-height: 24px;
+        }
+
+        .status {
+            font-size: 0.85rem;
             margin-bottom: 1rem;
-            border-radius: 0.5rem;
-            font-size: 0.9rem;
-            background: #e5e7eb;
+            color: #94a3b8;
         }
-
-        .coords-display {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 1.5rem;
-        }
-
-        .coord {
-            background: #f9fafb;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-        }
-
-        .coord label { display: block; font-size: 0.7rem; color: #6b7280; font-weight: bold; }
-        .coord span { font-family: monospace; font-size: 1rem; }
 
         button {
-            cursor: pointer;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: all 0.3s;
             width: 100%;
+            padding: 12px;
+            border-radius: 0.5rem;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
             margin-bottom: 10px;
         }
 
-        .btn-main { background: var(--primary); color: white; }
-        .btn-main:hover { background: #4338ca; }
+        .btn-get { background: var(--primary); color: white; }
+        .btn-get:hover { background: #1d4ed8; }
 
-        .btn-copy { background: #10b981; color: white; display: none; }
+        .btn-copy { 
+            background: #10b981; 
+            color: white; 
+            display: none; /* Se activa al detectar ubicación */
+        }
         .btn-copy:hover { background: #059669; }
 
-        .error { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
-        .success { background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; }
+        .error { color: #f87171; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>GeoLocator</h1>
+    <div id="status" class="status">Listo para detectar</div>
     
-    <div id="status" class="status-box">Presiona el botón para detectar tu ubicación.</div>
+    <div class="display" id="result">- , -</div>
 
-    <div class="coords-display">
-        <div class="coord">
-            <label>LATITUD</label>
-            <span id="lat">-</span>
-        </div>
-        <div class="coord">
-            <label>LONGITUD</label>
-            <span id="lon">-</span>
-        </div>
-    </div>
-
-    <button class="btn-main" onclick="getLocation()">Detectar Ubicación</button>
-    <button id="copyBtn" class="btn-copy" onclick="copyCoords()">Copiar Coordenadas</button>
+    <button class="btn-get" onclick="getLocation()">Obtener Coordenadas</button>
+    <button id="copyBtn" class="btn-copy" onclick="copyToClipboard()">Copiar Datos Unificados</button>
 </div>
 
 <script>
+    const resultDiv = document.getElementById('result');
     const statusDiv = document.getElementById('status');
-    const latSpan = document.getElementById('lat');
-    const lonSpan = document.getElementById('lon');
     const copyBtn = document.getElementById('copyBtn');
 
     function getLocation() {
-        statusDiv.className = "status-box";
         statusDiv.innerText = "Solicitando permiso...";
+        statusDiv.classList.remove('error');
 
-        if (!navigator.geolocation) {
-            updateStatus("Tu navegador no soporta geolocalización.", "error");
-            return;
-        }
-
-        // Configuración de precisión
-        const options = {
-            enableHighAccuracy: true,
-            timeout: 5000,
-            maximumAge: 0
-        };
-
-        navigator.geolocation.getCurrentPosition(showPosition, showError, options);
-    }
-
-    function showPosition(position) {
-        const latitude = position.coords.latitude;
-        const longitude = position.coords.longitude;
-
-        latSpan.innerText = latitude.toFixed(6);
-        lonSpan.innerText = longitude.toFixed(6);
-
-        updateStatus("¡Ubicación detectada con éxito!", "success");
-        copyBtn.style.display = "block";
-    }
-
-    function showError(error) {
-        copyBtn.style.display = "none";
-        latSpan.innerText = "-";
-        lonSpan.innerText = "-";
-
-        switch(error.code) {
-            case error.PERMISSION_DENIED:
-                updateStatus("Permiso denegado. Debes habilitar el GPS.", "error");
-                break;
-            case error.POSITION_UNAVAILABLE:
-                updateStatus("La información de ubicación no está disponible.", "error");
-                break;
-            case error.TIMEOUT:
-                updateStatus("Se agotó el tiempo de espera.", "error");
-                break;
-            case error.UNKNOWN_ERROR:
-                updateStatus("Ocurrió un error desconocido.", "error");
-                break;
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    const lat = pos.coords.latitude.toFixed(6);
+                    const lon = pos.coords.longitude.toFixed(6);
+                    
+                    // Mostramos el formato unificado
+                    resultDiv.innerText = `${lat}, ${lon}`;
+                    
+                    statusDiv.innerText = "¡Ubicación detectada!";
+                    copyBtn.style.display = "block";
+                },
+                (err) => {
+                    statusDiv.innerText = "Error: Permiso denegado";
+                    statusDiv.classList.add('error');
+                },
+                { enableHighAccuracy: true }
+            );
+        } else {
+            statusDiv.innerText = "No compatible con navegador";
         }
     }
 
-    function updateStatus(message, type) {
-        statusDiv.innerText = message;
-        statusDiv.className = "status-box " + type;
-    }
-
-    function copyCoords() {
-        const text = `Latitud: ${latSpan.innerText}, Longitud: ${lonSpan.innerText}`;
-        navigator.clipboard.writeText(text).then(() => {
-            alert("¡Coordenadas copiadas al portapapeles!");
+    function copyToClipboard() {
+        const textToCopy = resultDiv.innerText;
+        
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            const originalText = copyBtn.innerText;
+            copyBtn.innerText = "¡Copiado!";
+            copyBtn.style.background = "#059669";
+            
+            setTimeout(() => {
+                copyBtn.innerText = originalText;
+                copyBtn.style.background = "#10b981";
+            }, 2000);
         });
     }
 </script>
