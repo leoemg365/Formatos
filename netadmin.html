@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NetAdmin Pro v16.1</title>
+    <title>NetAdmin Pro v17.2</title>
     <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/4565/4565968.png" type="image/x-icon">
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <style>
         :root {
             --bg-body: #f0f2f5; --bg-surface: #ffffff; --bg-input: #e4e6eb;
@@ -121,6 +122,13 @@
         .btn-save-batch { background: var(--warning); color: #5c4e06; border: none; padding: 6px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 10px rgba(247, 185, 40, 0.3); animation: pulseWarning 2s infinite; }
         body.dark-mode .btn-save-batch { background: #d49811; color: #fff; }
 
+        /* ESTILOS OCR MEJORADOS */
+        .ocr-zone { border: 3px dashed var(--border); border-radius: 20px; padding: 40px 20px; text-align: center; cursor: pointer; transition: 0.3s; background: var(--bg-body); position: relative; min-height: 150px; display:flex; justify-content: center; align-items: center; flex-direction: column;}
+        .ocr-zone:hover { border-color: var(--primary); background: var(--bg-surface); }
+        .ocr-preview { max-width: 100%; max-height: 250px; border-radius: 10px; display: none; border: 1px solid var(--border); box-shadow: var(--shadow);}
+        .ocr-loader-bar { height: 8px; background: var(--bg-input); border-radius: 10px; margin: 15px 0; display: none; overflow: hidden; }
+        .ocr-progress { height: 100%; background: var(--primary); width: 0%; transition: 0.3s; }
+
         .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); z-index: 3000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s ease; padding: 15px; }
         .modal-overlay.show { opacity: 1; pointer-events: auto; }
         .alert-box { background: var(--bg-surface); padding: 25px; border-radius: 20px; width: 100%; max-width: 450px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); transform: translateY(20px); transition: 0.3s ease; display: flex; flex-direction: column; max-height: 90vh; overflow-y: auto;}
@@ -232,6 +240,7 @@
             <div class="sub-filters" style="margin-bottom:20px; justify-content:center;">
                 <div class="pill active" id="pill-tool-rep" onclick="switchToolMode('rep')">📑 Reportes Corporativos</div>
                 <div class="pill" id="pill-tool-fmt" onclick="switchToolMode('fmt')">🔤 Formateador de Texto</div>
+                <div class="pill" id="pill-tool-ocr" onclick="switchToolMode('ocr')">🖼️ Escáner OCR</div>
             </div>
 
             <div id="tool-box-rep" class="list-box">
@@ -380,13 +389,37 @@
                     <button class="mini-btn" style="width:auto; padding:5px 15px" onclick="formatText('UPPER')">MAYÚSCULAS</button>
                     <button class="mini-btn" style="width:auto; padding:5px 15px" onclick="formatText('LOWER')">minúsculas</button>
                     <button class="mini-btn" style="width:auto; padding:5px 15px" onclick="formatText('TITLE')">Tipo Título</button>
+                    <button class="mini-btn" style="width:auto; padding:5px 15px; color:var(--danger); border-color:var(--danger)" onclick="document.getElementById('tool-text').value=''; updateTextTools()">🧹 Limpiar</button>
                     <button class="mini-btn" style="width:auto; padding:5px 15px; margin-left:auto; border-color:var(--primary); color:var(--primary)" onclick="copyToolText()">Copiar</button>
+                </div>
+            </div>
+
+            <div id="tool-box-ocr" class="list-box hidden">
+                <div class="ocr-zone" onclick="document.getElementById('ocr-input').click()" id="ocr-dropzone">
+                    <div id="ocr-instructions">
+                        <div style="font-size:3rem">📸</div>
+                        <div style="font-weight:bold; margin-top:10px">Haz clic para subir, arrastra una imagen <br>o pega con Ctrl + V</div>
+                    </div>
+                    <input type="file" id="ocr-input" class="hidden" accept="image/*" onchange="processOCR(this.files[0])">
+                    <img id="ocr-img-preview" class="ocr-preview">
+                </div>
+
+                <div class="ocr-loader-bar" id="ocr-bar"><div class="ocr-progress" id="ocr-progress"></div></div>
+                <div id="ocr-status" style="font-size:1.1rem; font-weight:bold; text-align:center; color:var(--primary); margin-bottom:10px; min-height: 25px;"></div>
+
+                <label class="form-label">Texto Extraído</label>
+                <textarea id="ocr-result" class="big-input" rows="6" placeholder="El texto aparecerá aquí después de escanear..."></textarea>
+                
+                <div style="display:flex; gap:10px; flex-wrap: wrap;">
+                    <button class="btn-large" style="flex:1" onclick="copyOCR()">📋 Copiar</button>
+                    <button class="btn-large" style="flex:1; background:var(--bg-surface); color:var(--text-main); border:1px solid var(--border)" onclick="sendOCRtoFmt()">🔤 Pasar a Formateador</button>
+                    <button class="btn-large" style="flex:1; background:var(--danger);" onclick="resetOCR()">🔄 Reiniciar</button>
                 </div>
             </div>
         </div>
 
         <footer style="text-align:center; color:var(--text-sec); margin-top:40px; font-size:0.9em; opacity:0.8;">
-            NetAdmin Soporte Pro v16.1<br>© 2026 Espiral - Leonardo Montiel<br>
+            NetAdmin Soporte Pro v17.2<br>© 2026 Espiral - Leonardo Montiel<br>
             <a href="https://wa.me/584121982608" target="_blank" style="text-decoration:none; display:inline-block; margin-top:12px;">
                 <button style="padding:8px 20px; border-radius:20px; border:1px solid var(--border); background:var(--bg-surface); color:var(--text-main); cursor:pointer; font-weight:bold;">Soporte Técnico / Developer</button>
             </a>
@@ -465,54 +498,34 @@
 
     <script>
         /*
- * Copyright (c) 2026 [Leonardo Montiel / Espiral].
- * Todos los derechos reservados.
- *
- * Este código es propiedad intelectual de [Leonardo Montiel - Empresa: Espiral].
- * Prohibida su reproducción o distribución sin autorización.
- */
+         * Copyright (c) 2026 [Leonardo Montiel / Espiral].
+         * Todos los derechos reservados.
+         */
+        
         // --- 🛡️ PROTECCIÓN ANTI-CURIOSOS ---
-        // 1. Bloquear clic derecho (Menú contextual)
-        document.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-        });
-
-        // 2. Bloquear atajos de teclado para desarrolladores
+        document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
         document.addEventListener('keydown', function(e) {
-            // Bloquear F12
-            if (e.key === 'F12' || e.keyCode === 123) {
-                e.preventDefault();
-                return false;
-            }
-            // Bloquear Ctrl + Shift + I  y  Ctrl + Shift + J (Consola e Inspector)
-            if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j')) {
-                e.preventDefault();
-                return false;
-            }
-            // Bloquear Ctrl + U (Ver código fuente)
-            if (e.ctrlKey && (e.key === 'U' || e.key === 'u')) {
-                e.preventDefault();
-                return false;
-            }
+            if (e.key === 'F12' || e.keyCode === 123) { e.preventDefault(); return false; }
+            if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j')) { e.preventDefault(); return false; }
+            if (e.ctrlKey && (e.key === 'U' || e.key === 'u')) { e.preventDefault(); return false; }
         });
-        //LEONARDOMONTIEL
         
         // CONFIGURACIÓN GITHUB
         const GH = { USER: 'leoemg365', REPO: 'Formatos', FILE: 'db.json' };
         
         let db = null;
         let isAdmin = false; let adminPass = ''; let ghToken = ''; let fileSha = null;
-        let hasUnsavedChanges = false; // MODO EDITOR
+        let hasUnsavedChanges = false; 
         
         let currentRespFilterMain = 'General'; let currentRespFilterSub = 'Todas';
         let currentNewsFilter = 'Todas';
+        let currentToolMode = 'rep'; 
         
         let dailyExitTime = null; let alarmTriggered = false; const alarmAudio = document.getElementById('alarm-sound');
         let formCallback = null; let confirmCallback = null; let textToCopyFromPreview = "";
         
         let currentRepMode = 1; let r4Status = 'PRESENTADA'; let finalReportAsterisks = "";
 
-        // SEGURO ANTI-DESASTRES
         window.onbeforeunload = function() {
             if(hasUnsavedChanges) return "¿Tienes cambios sin guardar. Seguro que quieres salir?";
         };
@@ -542,14 +555,37 @@
                 enterApp(session.name, true);
             }
 
-            // NUEVO: Desbloqueador de Audio con el primer clic en la pantalla
             document.body.addEventListener('click', function unlockAudio() {
                 alarmAudio.play().then(() => {
                     alarmAudio.pause();
                     alarmAudio.currentTime = 0;
-                }).catch(e => {}); // Si falla silenciosamente, lo ignoramos
-                document.body.removeEventListener('click', unlockAudio); // Nos borramos para no estorbar más
+                }).catch(e => {}); 
+                document.body.removeEventListener('click', unlockAudio);
             }, { once: true });
+
+            // OCR: Evento para PEGAR imagen con Ctrl+V
+            document.addEventListener('paste', e => {
+                if(currentToolMode === 'ocr') {
+                    const items = e.clipboardData.items;
+                    for (let i = 0; i < items.length; i++) {
+                        if (items[i].type.indexOf('image') !== -1) {
+                            processOCR(items[i].getAsFile());
+                            break;
+                        }
+                    }
+                }
+            });
+
+            // OCR: Eventos para Drag & Drop
+            const dropzone = document.getElementById('ocr-dropzone');
+            if(dropzone) {
+                dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.style.borderColor = 'var(--primary)'; });
+                dropzone.addEventListener('dragleave', e => { e.preventDefault(); dropzone.style.borderColor = 'var(--border)'; });
+                dropzone.addEventListener('drop', e => {
+                    e.preventDefault(); dropzone.style.borderColor = 'var(--border)';
+                    if(e.dataTransfer.files.length > 0) processOCR(e.dataTransfer.files[0]);
+                });
+            }
         };
 
         // --- 1. LOGIN SYSTEM ---
@@ -608,8 +644,6 @@
             document.getElementById('username-display').innerText = name;
             
             if(isAdmin) { document.getElementById('admin-badge').style.display = 'inline-block'; document.getElementById('admin-security-box').classList.remove('hidden'); }
-            
-            // Pedimos permisos para notificaciones nativas al entrar
             if ("Notification" in window) Notification.requestPermission();
             
             if(isAuto && !db) fetchData(); 
@@ -625,9 +659,7 @@
         function logoutApp() { 
             let msg = hasUnsavedChanges ? "⚠️ TIENES CAMBIOS SIN GUARDAR.\nSi sales ahora, los cambios hechos en esta sesión se perderán para siempre.\n\n¿Seguro que deseas salir y borrar la sesión?" : "¿Seguro que deseas salir y borrar la sesión actual?";
             openConfirm("Cerrar Sesión", msg, false, () => { 
-                hasUnsavedChanges = false; // Desactivar seguro para permitir salir
-                localStorage.removeItem('netAdminSession'); 
-                location.reload(); 
+                hasUnsavedChanges = false; localStorage.removeItem('netAdminSession'); location.reload(); 
             }); 
         }
 
@@ -657,9 +689,7 @@
 
         async function pushData() {
             if(!isAdmin) return;
-            const btn = document.getElementById('btn-save-batch');
-            const loader = document.getElementById('save-loader');
-            const txt = document.getElementById('save-text');
+            const btn = document.getElementById('btn-save-batch'); const loader = document.getElementById('save-loader'); const txt = document.getElementById('save-text');
             loader.style.display = 'inline-block'; txt.innerText = 'Guardando...'; btn.disabled = true;
 
             const url = `https://api.github.com/repos/${GH.USER}/${GH.REPO}/contents/${GH.FILE}`;
@@ -667,12 +697,8 @@
             try {
                 const res = await fetch(url, { method:'PUT', headers: {'Authorization': `token ${ghToken}`, 'Content-Type': 'application/json'}, body: JSON.stringify(body) });
                 if(res.ok) { 
-                    fileSha = (await res.json()).content.sha; 
-                    hasUnsavedChanges = false;
-                    btn.classList.add('hidden');
-                    const status = document.getElementById('sync-status');
-                    status.classList.remove('hidden');
-                    status.innerHTML = "☁️ <span>Guardado con éxito</span>"; 
+                    fileSha = (await res.json()).content.sha; hasUnsavedChanges = false; btn.classList.add('hidden');
+                    const status = document.getElementById('sync-status'); status.classList.remove('hidden'); status.innerHTML = "☁️ <span>Guardado con éxito</span>"; 
                     setTimeout(()=>status.innerHTML="☁️ <span>Conectado</span>", 2500); 
                 } else throw new Error();
             } catch(e) { alert("Error al subir a GitHub. Verifica tu Token."); }
@@ -682,15 +708,12 @@
         // --- 3. NOTIFICACIONES (BADGES) ---
         function checkNotifications() {
             if(!db) return;
-            // News
             let maxNewsId = db.news.length > 0 ? Math.max(...db.news.map(n => n.id)) : 0;
             let lastSeenNews = parseInt(localStorage.getItem('lastSeenNews')) || 0;
-            let bNews = document.getElementById('badge-news');
-            let unseenNews = db.news.filter(n => n.id > lastSeenNews).length;
+            let bNews = document.getElementById('badge-news'); let unseenNews = db.news.filter(n => n.id > lastSeenNews).length;
             if(unseenNews > 0 && document.getElementById('view-news').classList.contains('hidden')) { bNews.innerText = unseenNews; bNews.style.display = 'inline-block'; } 
             else { bNews.style.display = 'none'; if(!document.getElementById('view-news').classList.contains('hidden')) localStorage.setItem('lastSeenNews', maxNewsId); }
 
-            // Responses
             let maxRespId = 0; let unseenResp = 0; let lastSeenResp = parseInt(localStorage.getItem('lastSeenResp')) || 0;
             db.responses.forEach(list => list.cards.forEach(c => { maxRespId = Math.max(maxRespId, c.id); if(c.id > lastSeenResp) unseenResp++; }));
             let bResp = document.getElementById('badge-resp');
@@ -702,9 +725,7 @@
         function switchTab(t) {
             document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active')); event.target.classList.add('active');
             ['clip','pass','resp','news','tools'].forEach(v => document.getElementById(`view-${v}`).classList.add('hidden'));
-            document.getElementById(`view-${t}`).classList.remove('hidden');
-            document.getElementById('search-bar').value = ''; filterUniversal();
-            checkNotifications(); 
+            document.getElementById(`view-${t}`).classList.remove('hidden'); document.getElementById('search-bar').value = ''; filterUniversal(); checkNotifications(); 
         }
 
         function filterUniversal() {
@@ -755,11 +776,7 @@
                 const grid = box.querySelector('.grid');
                 list.cards.forEach((c, cIdx) => {
                     const d = document.createElement('div');
-                    let actHtml = `<div class="actions">
-                        ${getMoveBtnsHtml(type, lIdx, cIdx, list.cards.length)}
-                        <button class="mini-btn" title="Ver completo" onclick="event.stopPropagation(); openPreview('${c.label}', \`${type==='passwords' ? `Usuario: ${c.user}\nClave: ${c.pass}` : c.content}\`, \`${type==='passwords'? c.pass : c.content}\`)">👁️</button>
-                        ${isAdmin ? `<button class="mini-btn" onclick="event.stopPropagation(); reqAdminEditCard('${type}',${lIdx},${cIdx})">✏️</button><button class="mini-btn" style="color:var(--danger);" onclick="event.stopPropagation(); reqAdminDel(()=>delCard('${type}',${lIdx},${cIdx}))">🗑️</button>` : ''}
-                    </div>`;
+                    let actHtml = `<div class="actions">${getMoveBtnsHtml(type, lIdx, cIdx, list.cards.length)}<button class="mini-btn" title="Ver completo" onclick="event.stopPropagation(); openPreview('${c.label}', \`${type==='passwords' ? `Usuario: ${c.user}\nClave: ${c.pass}` : c.content}\`, \`${type==='passwords'? c.pass : c.content}\`)">👁️</button>${isAdmin ? `<button class="mini-btn" onclick="event.stopPropagation(); reqAdminEditCard('${type}',${lIdx},${cIdx})">✏️</button><button class="mini-btn" style="color:var(--danger);" onclick="event.stopPropagation(); reqAdminDel(()=>delCard('${type}',${lIdx},${cIdx}))">🗑️</button>` : ''}</div>`;
                     if(type==='clipboard') { d.className='card'; d.onclick=()=>copy(c.content); d.innerHTML=`<div class="card-label">${c.label}</div><div class="card-val">${c.content}</div>${actHtml}`; } 
                     else { d.className='card pass-card'; d.innerHTML=`<div class="card-label">${c.label}</div><div class="cred-row"><span>👤 <strong style="color:var(--text-main)">${c.user}</strong></span><button class="mini-btn" style="width:auto; padding:2px 8px" onclick="event.stopPropagation(); copy('${c.user}')">Copiar</button></div><div class="cred-row"><span class="blur">🔑 <strong>${c.pass}</strong></span><button class="mini-btn" style="width:auto; padding:2px 8px" onclick="event.stopPropagation(); copy('${c.pass}')">Copiar</button></div>${actHtml}`; }
                     grid.appendChild(d);
@@ -781,14 +798,8 @@
                     if(c.subcat) subcats.add(c.subcat);
                     if(currentRespFilterSub !== 'Todas' && c.subcat !== currentRespFilterSub) return;
 
-                    const d = document.createElement('div'); 
-                    d.className = `card resp-card color-${c.color || 'neutro'}`; 
-                    d.onclick=()=>copy(c.content);
-                    let actHtml = `<div class="actions">
-                        ${getMoveBtnsHtml('responses', lIdx, cIdx, targetList.cards.length)}
-                        <button class="mini-btn" onclick="event.stopPropagation(); openPreview('${c.label}', \`${c.content}\`, \`${c.content}\`)">👁️</button>
-                        ${isAdmin ? `<button class="mini-btn" onclick="event.stopPropagation(); reqAdminEditCardResp(${lIdx},${cIdx})">✏️</button><button class="mini-btn" style="color:var(--danger);" onclick="event.stopPropagation(); reqAdminDel(()=>delCardResp(${lIdx},${cIdx}))">🗑️</button>` : ''}
-                    </div>`;
+                    const d = document.createElement('div'); d.className = `card resp-card color-${c.color || 'neutro'}`; d.onclick=()=>copy(c.content);
+                    let actHtml = `<div class="actions">${getMoveBtnsHtml('responses', lIdx, cIdx, targetList.cards.length)}<button class="mini-btn" onclick="event.stopPropagation(); openPreview('${c.label}', \`${c.content}\`, \`${c.content}\`)">👁️</button>${isAdmin ? `<button class="mini-btn" onclick="event.stopPropagation(); reqAdminEditCardResp(${lIdx},${cIdx})">✏️</button><button class="mini-btn" style="color:var(--danger);" onclick="event.stopPropagation(); reqAdminDel(()=>delCardResp(${lIdx},${cIdx}))">🗑️</button>` : ''}</div>`;
                     let subBadge = c.subcat && c.subcat !== 'General' ? `<span style="font-size:0.7rem; color:var(--text-sec); display:block; margin-bottom:2px">📁 ${c.subcat}</span>` : '';
                     d.innerHTML = `${subBadge}<div class="card-label">${c.label}</div><div class="card-val">${c.content}</div>${actHtml}`; grid.appendChild(d);
                 });
@@ -801,7 +812,6 @@
                     p.innerText = sc; p.onclick = () => filterRespSub(sc); subFilterBox.appendChild(p);
                 });
             }
-
             document.querySelectorAll('#resp-filters-main .pill').forEach(p => p.classList.toggle('active', p.innerText.includes(currentRespFilterMain)));
             const tools = document.getElementById('resp-admin-tools'); tools.innerHTML = '';
             if(isAdmin && targetList) tools.innerHTML = `<button class="btn-large" style="background:var(--bg-input); color:var(--text-main)" onclick="reqAdminAddResp(${db.responses.indexOf(targetList)})">+ Agregar a ${currentRespFilterMain}</button>`;
@@ -810,20 +820,13 @@
         function filterRespSub(f) { currentRespFilterSub = f; renderResp(); }
 
         function renderNews() {
-            const grid = document.getElementById('news-grid'); grid.innerHTML = '';
-            let cats = new Set(['Todas']);
-            
+            const grid = document.getElementById('news-grid'); grid.innerHTML = ''; let cats = new Set(['Todas']);
             db.news.forEach((n, idx) => {
                 if(n.cat) cats.add(n.cat);
                 if(currentNewsFilter !== 'Todas' && n.cat !== currentNewsFilter) return;
 
                 const d = document.createElement('div'); d.className = 'card news-card';
-                let actHtml = `<div class="actions">
-                        ${isAdmin && idx > 0 ? `<button class="mini-btn move-btn" onclick="moveList('news',${idx},-1)">⬆️</button>` : ''}
-                        ${isAdmin && idx < db.news.length - 1 ? `<button class="mini-btn move-btn" onclick="moveList('news',${idx},1)">⬇️</button>` : ''}
-                        <button class="mini-btn" onclick="openPreview('${n.title}', \`${n.content}\`, '')">👁️</button>
-                        ${isAdmin ? `<button class="mini-btn" onclick="reqAdminEditNews(${idx})">✏️</button><button class="mini-btn" style="color:var(--danger);" onclick="reqAdminDel(()=>delNews(${idx}))">🗑️</button>` : ''}
-                    </div>`;
+                let actHtml = `<div class="actions">${isAdmin && idx > 0 ? `<button class="mini-btn move-btn" onclick="moveList('news',${idx},-1)">⬆️</button>` : ''}${isAdmin && idx < db.news.length - 1 ? `<button class="mini-btn move-btn" onclick="moveList('news',${idx},1)">⬇️</button>` : ''}<button class="mini-btn" onclick="openPreview('${n.title}', \`${n.content}\`, '')">👁️</button>${isAdmin ? `<button class="mini-btn" onclick="reqAdminEditNews(${idx})">✏️</button><button class="mini-btn" style="color:var(--danger);" onclick="reqAdminDel(()=>delNews(${idx}))">🗑️</button>` : ''}</div>`;
                 let catBadge = n.cat ? `<div class="news-cat">${n.cat}</div>` : '';
                 d.innerHTML = `${catBadge}<div class="news-date">📅 ${n.date}</div><div class="news-title">${n.title}</div><div class="card-val">${n.content}</div>${actHtml}`; grid.appendChild(d);
             });
@@ -837,7 +840,6 @@
             }
 
             if(grid.innerHTML === '') grid.innerHTML = '<div style="color:var(--text-sec); text-align:center; padding:20px; width:100%">No hay comunicados.</div>';
-            
             const tools = document.getElementById('news-admin-tools'); tools.innerHTML = '';
             if(isAdmin) tools.innerHTML = `<button class="btn-large" style="background:var(--bg-input); color:var(--text-main)" onclick="reqAdminAddNews()">+ Redactar Comunicado</button>`;
         }
@@ -857,14 +859,80 @@
             markUnsaved();
         }
 
-        // --- 5. HERRAMIENTAS v16.1 ---
+        // --- 5. HERRAMIENTAS Y OCR v17.2 ---
         function switchToolMode(mode) {
-            document.getElementById('pill-tool-rep').classList.toggle('active', mode === 'rep');
-            document.getElementById('pill-tool-fmt').classList.toggle('active', mode === 'fmt');
-            document.getElementById('tool-box-rep').classList.toggle('hidden', mode !== 'rep');
-            document.getElementById('tool-box-fmt').classList.toggle('hidden', mode !== 'fmt');
+            currentToolMode = mode;
+            ['rep', 'fmt', 'ocr'].forEach(m => {
+                document.getElementById(`pill-tool-${m}`).classList.toggle('active', mode === m);
+                document.getElementById(`tool-box-${m}`).classList.toggle('hidden', mode !== m);
+            });
         }
 
+        async function processOCR(file) {
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                const img = document.getElementById('ocr-img-preview');
+                const instructions = document.getElementById('ocr-instructions');
+                
+                img.src = e.target.result; 
+                img.style.display = 'inline-block';
+                instructions.style.display = 'none';
+                
+                const status = document.getElementById('ocr-status');
+                const bar = document.getElementById('ocr-bar');
+                const progress = document.getElementById('ocr-progress');
+                const resultBox = document.getElementById('ocr-result');
+                
+                bar.style.display = 'block';
+                resultBox.value = '';
+                status.innerHTML = "⏳ Iniciando motor OCR...";
+                status.style.color = "var(--primary)";
+
+                try {
+                    const result = await Tesseract.recognize(e.target.result, 'spa', {
+                        logger: m => {
+                            if(m.status === 'recognizing text') {
+                                status.innerHTML = `🔍 Escaneando imagen: ${Math.round(m.progress * 100)}%`;
+                                progress.style.width = `${m.progress * 100}%`;
+                            } else {
+                                status.innerHTML = `⏳ Preparando... (${m.status})`;
+                            }
+                        }
+                    });
+                    resultBox.value = result.data.text;
+                    status.innerHTML = "✅ Escaneo completado";
+                    status.style.color = "var(--success)";
+                } catch(err) {
+                    status.innerHTML = "❌ Error al leer la imagen";
+                    status.style.color = "var(--danger)";
+                } finally {
+                    setTimeout(() => { bar.style.display = 'none'; progress.style.width = '0%'; }, 1500);
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function resetOCR() {
+            document.getElementById('ocr-input').value = '';
+            document.getElementById('ocr-img-preview').src = '';
+            document.getElementById('ocr-img-preview').style.display = 'none';
+            document.getElementById('ocr-instructions').style.display = 'block';
+            document.getElementById('ocr-result').value = '';
+            document.getElementById('ocr-status').innerHTML = '';
+            document.getElementById('ocr-bar').style.display = 'none';
+            document.getElementById('ocr-progress').style.width = '0%';
+        }
+
+        function copyOCR() { copy(document.getElementById('ocr-result').value); }
+        
+        function sendOCRtoFmt() { 
+            document.getElementById('tool-text').value = document.getElementById('ocr-result').value; 
+            switchToolMode('fmt'); 
+            updateTextTools();
+        }
+
+        // --- REPORTES ---
         function saveRepTimes() {
             const times = {
                 r1: { hin: document.getElementById('r1-hin').value, min: document.getElementById('r1-min').value, ain: document.getElementById('r1-ain').value, hout: document.getElementById('r1-hout').value, mout: document.getElementById('r1-mout').value, aout: document.getElementById('r1-aout').value },
@@ -1093,7 +1161,7 @@
         function showToastMsg(msg) { const t=document.getElementById('toast'); t.innerText = msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 2500); }
         function toggleTheme() { document.body.classList.toggle('dark-mode'); localStorage.setItem('theme', document.body.classList.contains('dark-mode')?'dark':'light'); }
         
-        // NUEVO: COMPROBADOR DE HORA Y ALARMA NATIVA
+        // COMPROBADOR DE HORA Y ALARMA NATIVA
         function checkTime() { 
             if(!dailyExitTime || alarmTriggered) return; 
             const now = new Date(); const [h, m] = dailyExitTime.split(':'); const exit = new Date(); exit.setHours(h, m, 0); 
@@ -1102,10 +1170,8 @@
                 alarmTriggered = true; 
                 openModal('alarm-modal'); 
                 
-                // 1. Intentar sonar la alarma
                 try { alarmAudio.play(); } catch(e) { console.log("Audio bloqueado por el navegador"); }
                 
-                // 2. Enviar Notificación Nativa al Celular/PC
                 if ("Notification" in window && Notification.permission === "granted") {
                     new Notification("🚨 FIN DE TURNO (NetAdmin)", {
                         body: "Falta 1 hora para tu salida. ¡Recuerda llenar tu Reporte!",
