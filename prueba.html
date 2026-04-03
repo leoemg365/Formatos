@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NetAdmin Pro v17</title>
+    <title>NetAdmin Pro v17.1</title>
     <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/4565/4565968.png" type="image/x-icon">
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <style>
@@ -122,11 +122,11 @@
         .btn-save-batch { background: var(--warning); color: #5c4e06; border: none; padding: 6px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 10px rgba(247, 185, 40, 0.3); animation: pulseWarning 2s infinite; }
         body.dark-mode .btn-save-batch { background: #d49811; color: #fff; }
 
-        /* NUEVO: ESTILOS OCR */
-        .ocr-zone { border: 3px dashed var(--border); border-radius: 20px; padding: 40px 20px; text-align: center; cursor: pointer; transition: 0.3s; background: var(--bg-body); position: relative; }
+        /* ESTILOS OCR MEJORADOS */
+        .ocr-zone { border: 3px dashed var(--border); border-radius: 20px; padding: 40px 20px; text-align: center; cursor: pointer; transition: 0.3s; background: var(--bg-body); position: relative; min-height: 150px; display:flex; justify-content: center; align-items: center; flex-direction: column;}
         .ocr-zone:hover { border-color: var(--primary); background: var(--bg-surface); }
-        .ocr-preview { max-width: 100%; max-height: 200px; margin-top: 15px; border-radius: 10px; display: none; border: 1px solid var(--border); }
-        .ocr-loader-bar { height: 6px; background: var(--bg-input); border-radius: 10px; margin: 15px 0; display: none; overflow: hidden; }
+        .ocr-preview { max-width: 100%; max-height: 250px; border-radius: 10px; display: none; border: 1px solid var(--border); box-shadow: var(--shadow);}
+        .ocr-loader-bar { height: 8px; background: var(--bg-input); border-radius: 10px; margin: 15px 0; display: none; overflow: hidden; }
         .ocr-progress { height: 100%; background: var(--primary); width: 0%; transition: 0.3s; }
 
         .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); z-index: 3000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s ease; padding: 15px; }
@@ -395,27 +395,30 @@
 
             <div id="tool-box-ocr" class="list-box hidden">
                 <div class="ocr-zone" onclick="document.getElementById('ocr-input').click()" id="ocr-dropzone">
-                    <div style="font-size:3rem">📸</div>
-                    <div style="font-weight:bold; margin-top:10px">Haz clic para subir, arrastra una imagen <br>o pega con Ctrl + V</div>
+                    <div id="ocr-instructions">
+                        <div style="font-size:3rem">📸</div>
+                        <div style="font-weight:bold; margin-top:10px">Haz clic para subir, arrastra una imagen <br>o pega con Ctrl + V</div>
+                    </div>
                     <input type="file" id="ocr-input" class="hidden" accept="image/*" onchange="processOCR(this.files[0])">
                     <img id="ocr-img-preview" class="ocr-preview">
                 </div>
 
                 <div class="ocr-loader-bar" id="ocr-bar"><div class="ocr-progress" id="ocr-progress"></div></div>
-                <div id="ocr-status" style="font-size:0.85rem; text-align:center; color:var(--text-sec); margin-bottom:10px"></div>
+                <div id="ocr-status" style="font-size:1.1rem; font-weight:bold; text-align:center; color:var(--primary); margin-bottom:10px; min-height: 25px;"></div>
 
                 <label class="form-label">Texto Extraído</label>
                 <textarea id="ocr-result" class="big-input" rows="6" placeholder="El texto aparecerá aquí después de escanear..."></textarea>
                 
-                <div style="display:flex; gap:10px">
+                <div style="display:flex; gap:10px; flex-wrap: wrap;">
                     <button class="btn-large" style="flex:1" onclick="copyOCR()">📋 Copiar</button>
                     <button class="btn-large" style="flex:1; background:var(--bg-surface); color:var(--text-main); border:1px solid var(--border)" onclick="sendOCRtoFmt()">🔤 Limpiar Texto</button>
+                    <button class="btn-large" style="flex:1; background:var(--danger);" onclick="resetOCR()">🔄 Reiniciar</button>
                 </div>
             </div>
         </div>
 
         <footer style="text-align:center; color:var(--text-sec); margin-top:40px; font-size:0.9em; opacity:0.8;">
-            NetAdmin Soporte Pro v17.0<br>© 2026 Espiral - Leonardo Montiel<br>
+            NetAdmin Soporte Pro v17.1<br>© 2026 Espiral - Leonardo Montiel<br>
             <a href="https://wa.me/584121982608" target="_blank" style="text-decoration:none; display:inline-block; margin-top:12px;">
                 <button style="padding:8px 20px; border-radius:20px; border:1px solid var(--border); background:var(--bg-surface); color:var(--text-main); cursor:pointer; font-weight:bold;">Soporte Técnico / Developer</button>
             </a>
@@ -515,14 +518,13 @@
         
         let currentRespFilterMain = 'General'; let currentRespFilterSub = 'Todas';
         let currentNewsFilter = 'Todas';
-        let currentToolMode = 'rep'; // Controla la sub-pestaña de herramientas
+        let currentToolMode = 'rep'; 
         
         let dailyExitTime = null; let alarmTriggered = false; const alarmAudio = document.getElementById('alarm-sound');
         let formCallback = null; let confirmCallback = null; let textToCopyFromPreview = "";
         
         let currentRepMode = 1; let r4Status = 'PRESENTADA'; let finalReportAsterisks = "";
 
-        // SEGURO ANTI-DESASTRES
         window.onbeforeunload = function() {
             if(hasUnsavedChanges) return "¿Tienes cambios sin guardar. Seguro que quieres salir?";
         };
@@ -552,7 +554,6 @@
                 enterApp(session.name, true);
             }
 
-            // Desbloqueador de Audio
             document.body.addEventListener('click', function unlockAudio() {
                 alarmAudio.play().then(() => {
                     alarmAudio.pause();
@@ -857,7 +858,7 @@
             markUnsaved();
         }
 
-        // --- 5. HERRAMIENTAS Y OCR v17.0 ---
+        // --- 5. HERRAMIENTAS Y OCR v17.1 ---
         function switchToolMode(mode) {
             currentToolMode = mode;
             ['rep', 'fmt', 'ocr'].forEach(m => {
@@ -866,38 +867,62 @@
             });
         }
 
+        // OCR CORE FUNCTION
         async function processOCR(file) {
             if(!file) return;
             const reader = new FileReader();
             reader.onload = async (e) => {
                 const img = document.getElementById('ocr-img-preview');
-                img.src = e.target.result; img.style.display = 'inline-block';
+                const instructions = document.getElementById('ocr-instructions');
+                
+                img.src = e.target.result; 
+                img.style.display = 'inline-block';
+                instructions.style.display = 'none'; // Oculta icono de cámara
                 
                 const status = document.getElementById('ocr-status');
                 const bar = document.getElementById('ocr-bar');
                 const progress = document.getElementById('ocr-progress');
+                const resultBox = document.getElementById('ocr-result');
                 
                 bar.style.display = 'block';
-                status.innerText = "Preparando motor de lectura...";
+                resultBox.value = ''; // Limpia textos anteriores
+                status.innerHTML = "⏳ Iniciando motor OCR...";
+                status.style.color = "var(--primary)";
 
                 try {
                     const result = await Tesseract.recognize(e.target.result, 'spa', {
                         logger: m => {
                             if(m.status === 'recognizing text') {
-                                status.innerText = `Escaneando: ${Math.round(m.progress * 100)}%`;
+                                status.innerHTML = `🔍 Escaneando imagen: ${Math.round(m.progress * 100)}%`;
                                 progress.style.width = `${m.progress * 100}%`;
+                            } else {
+                                status.innerHTML = `⏳ Preparando... (${m.status})`;
                             }
                         }
                     });
-                    document.getElementById('ocr-result').value = result.data.text;
-                    status.innerText = "✅ Escaneo completado";
+                    resultBox.value = result.data.text;
+                    status.innerHTML = "✅ Escaneo completado";
+                    status.style.color = "var(--success)";
                 } catch(err) {
-                    status.innerText = "❌ Error al leer la imagen";
+                    status.innerHTML = "❌ Error al leer la imagen";
+                    status.style.color = "var(--danger)";
                 } finally {
                     setTimeout(() => { bar.style.display = 'none'; progress.style.width = '0%'; }, 1500);
                 }
             };
             reader.readAsDataURL(file);
+        }
+
+        // NUEVO: Función para Reiniciar OCR
+        function resetOCR() {
+            document.getElementById('ocr-input').value = '';
+            document.getElementById('ocr-img-preview').src = '';
+            document.getElementById('ocr-img-preview').style.display = 'none';
+            document.getElementById('ocr-instructions').style.display = 'block';
+            document.getElementById('ocr-result').value = '';
+            document.getElementById('ocr-status').innerHTML = '';
+            document.getElementById('ocr-bar').style.display = 'none';
+            document.getElementById('ocr-progress').style.width = '0%';
         }
 
         function copyOCR() { copy(document.getElementById('ocr-result').value); }
