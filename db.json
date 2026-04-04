@@ -246,6 +246,13 @@
           "color": "urgente"
         },
         {
+          "id": 1775297602662,
+          "label": "Servicio restablecido",
+          "subcat": "Falla proveedor",
+          "color": "info",
+          "content": "Buenos días, servicio restablecido, recuerde que estaremos atentos por esta vía ante cualquier solicitud o inconveniente que presente, feliz día"
+        },
+        {
           "id": 1774290293376,
           "label": "Verificacion de Servicio por Llamada (OPERATIVO)",
           "content": "Nos comunicamos con usted vía llamada y nos informo que su servicio se encuentra funcionando correctamente.\nRecuerde que si presenta cualquier inconveniente con el servicio, nosotros por esta vía estamos a su orden.",
