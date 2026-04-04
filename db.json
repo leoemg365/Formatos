@@ -285,7 +285,7 @@
           "label": "¿Cuando es la visita?",
           "subcat": "Ticket",
           "color": "neutro",
-          "content": "Los técnicos se estarán comunicando con usted durante el día ya que cuentan con varios trabajos pendientes, todo depende de su disponibilidad, sí no la llaman el día de hoy ya sería el día de mañana"
+          "content": "Se ha agendado la visita técnica. Los técnicos se estarán comunicando con usted durante el día ya que cuentan con varios trabajos pendientes, todo depende de su disponibilidad, sí no la llaman el día de hoy ya sería el día de mañana"
         }
       ]
     },
@@ -506,6 +506,13 @@
           "content": "¿Algo más en qué podamos ayudarle?"
         },
         {
+          "id": 1774493011736,
+          "label": "Pedir datos",
+          "content": "Buenas noches, nos indica por favor Nombre del titular y número de Cédula.",
+          "subcat": "Saludos",
+          "color": "neutro"
+        },
+        {
           "id": 1774487069633,
           "label": "Pago registrado",
           "content": "Buenas noches, pago registrado correctamente y servicio activo ✅",
@@ -541,9 +548,11 @@
           "content": "Es normal que el pago aparezca como Pendiente, ya que sólo falta que el departamento administrativo lo verifique, luego que lo verifiquen aparecerá como Confirmado y no le aparecerá deuda. Ya su pago está registrado correctamente"
         },
         {
-          "id": 1774493011736,
-          "label": "Pedir datos",
-          "content": "Buenas noches, nos indica por favor Nombre del titular y número de Cédula."
+          "id": 1775263667681,
+          "label": "No abre el portal",
+          "subcat": "Pagos",
+          "color": "urgente",
+          "content": "Buenas noches, sí desea nos envía el comprobante de pago por esta vía. \nCon lo referente a que no abre su portal de pagos probablemente sea la memoria caché de la aplicación Google Chrome, pruebe borrando la memoria caché o en su lugar abrir el link en una pestaña en modo incógnito."
         },
         {
           "id": 1774496229256,
