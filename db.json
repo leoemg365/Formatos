@@ -225,6 +225,13 @@
           "color": "urgente"
         },
         {
+          "id": 1775267038052,
+          "label": "Falla Proveedor restablecida",
+          "subcat": "Falla proveedor",
+          "color": "exito",
+          "content": "Buenas noches, se trataba de una incidencia en la zona donde conecta su servicio. \nYa en estos momentos el inconveniente ha sido solucionado, verifique por favor el servicio, sí no cuenta con servicio por favor comunicarse por esta vía con nosotros."
+        },
+        {
           "id": 1774290226113,
           "label": "Incidencia",
           "content": "Apreciado cliente, le informamos que en estos momentos estamos experimentando un inconveniente donde conecta su servicio. Le ofrecemos nuestras más sinceras disculpas por las molestias que esto pueda ocasionar. Estamos trabajando arduamente para solucionar el inconveniente y restablecer el servicio lo antes posible. *Agradecemos su confianza en\nTECNOVEN #SomosMásQueInternet*",
