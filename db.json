@@ -300,6 +300,13 @@
           "subcat": "Ticket",
           "color": "neutro",
           "content": "Se ha agendado la visita técnica. Los técnicos se estarán comunicando con usted durante el día ya que cuentan con varios trabajos pendientes, todo depende de su disponibilidad, sí no la llaman el día de hoy ya sería el día de mañana"
+        },
+        {
+          "id": 1775593011570,
+          "label": "TuCine - Pasos para descargar",
+          "subcat": "TuCineTV",
+          "color": "info",
+          "content": "Descargue primeramente la aplicación Downloader. \nSeguidamente coloca este link dentro de la aplicación: https://bit.ly/TuCine\n\nLuego instala la aplicación y al ingresar coloca los siguientes datos:"
         }
       ]
     },
