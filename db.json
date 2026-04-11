@@ -232,6 +232,13 @@
           "content": "Buenas noches, se trataba de una incidencia en la zona donde conecta su servicio. \nYa en estos momentos el inconveniente ha sido solucionado, verifique por favor que cuente nuevamente con el servicio, sí no cuenta con el servicio por favor desconecte los equipos de la electricidad y los vuelve a conectar, en caso de no restablecerse comunicarse por esta vía con nosotros. Feliz noche"
         },
         {
+          "id": 1775882871400,
+          "label": "Falla Interna resuelta corta",
+          "subcat": "Falla Interna",
+          "color": "exito",
+          "content": "Estimado Cliente.\n\nSe trataba de una incidencia en el nodo principal la cuál ya ha sido solucionada. Le invitamos a verificar nuevamente su servicio.\n\nEn caso de no contar con servicio, desconecte y conecte los equipos de la electricidad.\nSí aún persiste algún inconveniente, por favor, comuníquese con nosotros. Estamos a su disposición para brindarle la mejor atención.\n\n#TecnovenSomosmásqueInternet"
+        },
+        {
           "id": 1774290226113,
           "label": "Incidencia",
           "content": "Apreciado cliente, le informamos que en estos momentos estamos experimentando un inconveniente donde conecta su servicio. Le ofrecemos nuestras más sinceras disculpas por las molestias que esto pueda ocasionar. Estamos trabajando arduamente para solucionar el inconveniente y restablecer el servicio lo antes posible. *Agradecemos su confianza en\nTECNOVEN #SomosMásQueInternet*",
