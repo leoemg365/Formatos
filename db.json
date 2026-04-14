@@ -622,6 +622,13 @@
   ],
   "news": [
     {
+      "id": 1776195142207,
+      "date": "14/4/2026",
+      "title": "Planes Zulia",
+      "cat": "Administración",
+      "content": "Cliente con Plan de $13 y $20, debe cancelar el plan de $25. Ya que los otros planes inferiores no están disponibles."
+    },
+    {
       "id": 1774296621135,
       "date": "23/3/2026",
       "title": "Instalaciones",
