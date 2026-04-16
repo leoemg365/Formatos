@@ -470,7 +470,69 @@
                         <button class="btn-large" style="background:var(--bg-surface); color:var(--text-main); border:1px solid var(--border)" onclick="calcInput('.')">.</button>
                     </div>
                 </div>
-
+                        <!-- Contador de clics -->
+                        <div class="floating-counter">
+                            <div id="valor-contador">0</div>
+                            <button id="btn-restar">-</button>
+                            <button id="btn-reset">R</button>
+                            <button id="btn-sumar">+</button>
+                        </div> 
+                        <!-- contador de clics css -->
+                        <style>
+                            .floating-counter {
+                                position: fixed;
+                                bottom: 20px;
+                                right: 20px;
+                                background-color: white;
+                                padding: 15px;
+                                border-radius: 10px;
+                                box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+                                text-align: center;
+                                z-index: 1000;
+                            }
+                            #valor-contador {
+                                font-size: 24px;
+                                font-weight: bold;
+                                margin-bottom: 10px;
+                            }
+                            button {
+                                padding: 5px 10px;
+                                cursor: pointer;
+                            }
+                        </style>
+                        <!-- Contador de clics JS-->
+                        <script>
+                            // 1. Seleccionar elementos
+                                const valorContador = document.getElementById('valor-contador');
+                                const btnSumar = document.getElementById('btn-sumar');
+                                const btnRestar = document.getElementById('btn-restar');
+                                const btnReset = document.getElementById('btn-reset');
+                                
+                                // 2. Inicializar variable de estado
+                                let contador = 0;
+                                
+                                // 3. Funciones de actualización
+                                function actualizarContador() {
+                                    valorContador.textContent = contador;
+                                }
+                                
+                                // 4. Eventos
+                                btnSumar.addEventListener('click', () => {
+                                    contador++;
+                                    actualizarContador();
+                                });
+                                
+                                btnRestar.addEventListener('click', () => {
+                                    contador--;
+                                    actualizarContador();
+                                });
+                                
+                                btnReset.addEventListener('click', () => {
+                                    contador = 0;
+                                    actualizarContador();
+                                });
+                        </script>
+                        
             </div>
         </div>
 
