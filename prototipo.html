@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espiral - Pedidos & Delivery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .hidden { display: none; }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+
+    <nav class="bg-slate-900 text-white p-4 sticky top-0 z-10 shadow-lg">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <h1 class="font-bold text-xl">Espiral App</h1>
+            <div class="flex gap-2 text-xs">
+                <button onclick="showSection('inventory')" class="bg-slate-700 px-3 py-2 rounded">Inv.</button>
+                <button onclick="showSection('orders')" class="bg-slate-700 px-3 py-2 rounded">Pedidos</button>
+                <button onclick="showSection('delivery')" class="bg-slate-700 px-3 py-2 rounded">Delivery</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-xl mx-auto p-4 mb-20">
+
+        <section id="inventory" class="section">
+            <h2 class="text-2xl font-bold mb-4">📦 Inventario</h2>
+            <div class="bg-white p-4 rounded-lg shadow mb-6">
+                <input id="prodName" type="text" placeholder="Nombre del producto" class="w-full border p-2 rounded mb-2">
+                <button onclick="addProduct()" class="w-full bg-blue-600 text-white py-2 rounded font-bold">Añadir Producto</button>
+            </div>
+            <div id="productList" class="space-y-2">
+                </div>
+        </section>
+
+        <section id="orders" class="section hidden">
+            <h2 class="text-2xl font-bold mb-4">📝 Gestión de Pedidos</h2>
+            <button onclick="toggleModal(true)" class="w-full bg-green-600 text-white p-4 rounded-xl font-bold shadow-lg hover:bg-green-700 transition">
+                + Nuevo Pedido de Cliente
+            </button>
+            <p class="text-gray-500 mt-4 text-sm text-center">Aquí se gestionan las órdenes entrantes antes de enviarlas a ruta.</p>
+        </section>
+
+        <section id="delivery" class="section hidden">
+            <h2 class="text-2xl font-bold mb-4">🚚 Hoja de Ruta</h2>
+            <div id="deliveryList" class="space-y-4">
+                </div>
+        </section>
+
+    </main>
+
+    <div id="orderModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden z-20">
+        <div class="bg-white w-full max-w-sm p-6 rounded-2xl shadow-2xl">
+            <h3 class="text-xl font-bold mb-4">Simular Pedido</h3>
+            
+            <label class="block text-sm font-medium text-gray-700">Producto</label>
+            <select id="orderProduct" class="w-full border p-2 rounded mb-3"></select>
+
+            <label class="block text-sm font-medium text-gray-700">Nombre del Cliente</label>
+            <input id="orderClient" type="text" class="w-full border p-2 rounded mb-3">
+
+            <label class="block text-sm font-medium text-gray-700">Teléfono</label>
+            <input id="orderPhone" type="tel" class="w-full border p-2 rounded mb-4">
+
+            <div class="flex gap-2">
+                <button onclick="createOrder()" class="flex-1 bg-blue-600 text-white py-3 rounded-lg font-bold">
+                    Confirmar (GPS Auto)
+                </button>
+                <button onclick="toggleModal(false)" class="bg-gray-200 px-4 py-3 rounded-lg">Cerrar</button>
+            </div>
+            <p id="gpsStatus" class="text-[10px] text-gray-400 mt-2 text-center uppercase tracking-widest italic"></p>
+        </div>
+    </div>
+
+    <script>
+        // --- ESTADO INICIAL ---
+        let products = JSON.parse(localStorage.getItem('products')) || [{id: 1, name: 'Pizza Margarita'}];
+        let orders = JSON.parse(localStorage.getItem('orders')) || [];
+
+        // --- NAVEGACIÓN ---
+        function showSection(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+            renderAll();
+        }
+
+        // --- LÓGICA INVENTARIO ---
+        function addProduct() {
+            const name = document.getElementById('prodName').value;
+            if(!name) return alert("Escribe un nombre");
+            
+            products.push({ id: Date.now(), name });
+            localStorage.setItem('products', JSON.stringify(products));
+            document.getElementById('prodName').value = '';
+            renderAll();
+        }
+
+        // --- LÓGICA PEDIDOS Y MODAL ---
+        function toggleModal(show) {
+            const modal = document.getElementById('orderModal');
+            if(show) {
+                // Llenar select de productos
+                const select = document.getElementById('orderProduct');
+                select.innerHTML = products.map(p => `<option value="${p.name}">${p.name}</option>`).join('');
+                modal.classList.remove('hidden');
+            } else {
+                modal.classList.add('hidden');
+            }
+        }
+
+        function createOrder() {
+            const statusLabel = document.getElementById('gpsStatus');
+            statusLabel.innerText = "Obteniendo ubicación...";
+
+            if (!navigator.geolocation) {
+                alert("Tu navegador no soporta GPS");
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const newOrder = {
+                        id: Date.now(),
+                        client: document.getElementById('orderClient').value,
+                        phone: document.getElementById('orderPhone').value,
+                        product: document.getElementById('orderProduct').value,
+                        coords: {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        }
+                    };
+
+                    orders.push(newOrder);
+                    localStorage.setItem('orders', JSON.stringify(orders));
+                    toggleModal(false);
+                    renderAll();
+                    alert("Pedido enviado a Delivery");
+                },
+                (error) => {
+                    alert("Error al obtener GPS. Asegúrate de dar permisos.");
+                    statusLabel.innerText = "";
+                }
+            );
+        }
+
+        // --- RENDERING ---
+        function renderAll() {
+            // Render Inventario
+            const prodList = document.getElementById('productList');
+            prodList.innerHTML = products.map(p => `
+                <div class="bg-white p-3 rounded shadow flex justify-between items-center">
+                    <span>${p.name}</span>
+                    <button class="text-red-400 text-xs" onclick="deleteProduct(${p.id})">Eliminar</button>
+                </div>
+            `).join('');
+
+            // Render Delivery
+            const deliveryList = document.getElementById('deliveryList');
+            deliveryList.innerHTML = orders.length ? orders.map(o => `
+                <div class="bg-white border-l-4 border-orange-500 p-4 rounded-lg shadow-md">
+                    <div class="flex justify-between items-start mb-2">
+                        <h4 class="font-bold text-lg">${o.product}</h4>
+                        <span class="text-[10px] bg-orange-100 text-orange-600 px-2 py-1 rounded">PENDIENTE</span>
+                    </div>
+                    <p class="text-sm text-gray-700"><strong>Cliente:</strong> ${o.client}</p>
+                    <p class="text-sm text-gray-700 mb-4"><strong>Tel:</strong> ${o.phone}</p>
+                    <div class="flex gap-2">
+                        <button onclick="openMaps(${o.coords.lat}, ${o.coords.lng})" class="flex-1 bg-slate-800 text-white py-2 rounded font-bold text-sm">
+                            📍 Ir a Google Maps
+                        </button>
+                        <button onclick="completeOrder(${o.id})" class="bg-gray-100 px-3 rounded text-gray-400">✓</button>
+                    </div>
+                </div>
+            `).join('') : '<p class="text-center text-gray-400 py-10">No hay entregas pendientes.</p>';
+        }
+
+        function openMaps(lat, lng) {
+            window.open(`https://www.google.com/maps?q=${lat},${lng}`, '_blank');
+        }
+
+        function deleteProduct(id) {
+            products = products.filter(p => p.id !== id);
+            localStorage.setItem('products', JSON.stringify(products));
+            renderAll();
+        }
+
+        function completeOrder(id) {
+            orders = orders.filter(o => o.id !== id);
+            localStorage.setItem('orders', JSON.stringify(orders));
+            renderAll();
+        }
+
+        // Carga inicial
+        renderAll();
+    </script>
+</body>
+</html>
