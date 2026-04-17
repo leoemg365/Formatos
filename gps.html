@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GeoLocator Pro con Mapa</title>
+    <title>GeoLocator Pro + Maps Card</title>
     
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
     <style>
         :root {
@@ -13,6 +13,7 @@
             --bg: #0f172a;
             --card: #1e293b;
             --text: #f8fafc;
+            --google-maps: #34a853;
         }
 
         body {
@@ -20,10 +21,13 @@
             background-color: var(--bg);
             color: var(--text);
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
         }
 
         .container {
@@ -31,36 +35,22 @@
             padding: 2rem;
             border-radius: 1.5rem;
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
-            width: 90%;
-            max-width: 500px;
+            width: 100%;
+            max-width: 450px;
         }
 
-        h1 { margin-top: 0; font-size: 1.5rem; text-align: center; color: var(--primary); }
+        h1 { margin-top: 0; font-size: 1.4rem; text-align: center; color: var(--primary); }
 
-        /* Estilos del Contenedor del Mapa */
         #map {
-            height: 300px; /* Altura del mapa */
+            height: 250px;
             border-radius: 1rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             border: 2px solid #334155;
-            background: #0f172a; /* Color de carga */
-        }
-
-        .display {
-            background: #0f172a;
-            padding: 1rem;
-            border-radius: 0.75rem;
-            margin: 1.5rem 0;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 1.1rem;
-            border: 1px solid #334155;
-            text-align: center;
-            min-height: 24px;
         }
 
         .status {
-            font-size: 0.85rem;
-            margin-bottom: 1rem;
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
             color: #94a3b8;
             text-align: center;
         }
@@ -74,18 +64,46 @@
             cursor: pointer;
             transition: 0.2s;
             margin-bottom: 10px;
-            font-size: 1rem;
         }
 
         .btn-get { background: var(--primary); color: white; }
         .btn-get:hover { background: #1d4ed8; }
 
-        .btn-copy { 
-            background: #10b981; 
-            color: white; 
-            display: none; /* Se activa al detectar ubicación */
+        .btn-copy { background: #10b981; color: white; display: none; }
+
+        /* --- ESTILOS DE LA NUEVA TARJETA DE GOOGLE MAPS --- */
+        .maps-card {
+            display: none; /* Se muestra al obtener ubicación */
+            background: #ffffff;
+            color: #1f2937;
+            padding: 15px;
+            border-radius: 1rem;
+            margin-top: 20px;
+            text-decoration: none;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+            border-left: 6px solid var(--google-maps);
         }
-        .btn-copy:hover { background: #059669; }
+
+        .maps-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+
+        .maps-card-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .maps-icon {
+            font-size: 2rem;
+        }
+
+        .maps-text b { color: var(--google-maps); display: block; margin-bottom: 2px; }
+        .maps-text span { font-family: monospace; font-size: 0.9rem; color: #4b5563; }
 
         .error { color: #f87171; }
     </style>
@@ -94,102 +112,78 @@
 
 <div class="container">
     <h1>GeoLocator Pro</h1>
-    
     <div id="map"></div>
-
     <div id="status" class="status">Listo para detectar</div>
-    
-    <div class="display" id="result">- , -</div>
-
     <button class="btn-get" onclick="getLocation()">Obtener Mi Ubicación</button>
     <button id="copyBtn" class="btn-copy" onclick="copyToClipboard()">Copiar Coordenadas</button>
 </div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<a id="googleMapsCard" href="#" target="_blank" class="maps-card">
+    <div class="maps-card-content">
+        <div class="maps-icon">📍</div>
+        <div class="maps-text">
+            <b>Abrir en Google Maps</b>
+            <span id="coordDisplay">0.000, 0.000</span>
+        </div>
+    </div>
+</a>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
-    const resultDiv = document.getElementById('result');
+    let map, marker;
     const statusDiv = document.getElementById('status');
     const copyBtn = document.getElementById('copyBtn');
-    
-    // VARIABLES DEL MAPA
-    let map;
-    let marker;
+    const mapsCard = document.getElementById('googleMapsCard');
+    const coordDisplay = document.getElementById('coordDisplay');
 
-    // Inicializar el mapa centrado en el mundo
-    function initMap() {
-        // 'map' es el ID del div, [0, 0] son lat/lon inicial, 2 es el zoom
+    // Inicializar mapa vacío
+    function init() {
         map = L.map('map').setView([0, 0], 2);
-
-        // Añadir las "tiles" (imágenes) de OpenStreetMap
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(map);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
     }
-
-    // Ejecutar inicialización al cargar la página
-    initMap();
+    init();
 
     function getLocation() {
-        statusDiv.innerText = "Solicitando permiso y señal GPS...";
-        statusDiv.classList.remove('error');
-
+        statusDiv.innerText = "Solicitando permiso...";
+        
         if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (pos) => {
-                    const lat = pos.coords.latitude;
-                    const lon = pos.coords.longitude;
-                    const precision = pos.coords.accuracy;
-                    
-                    // FORMATO UNIFICADO (para texto)
-                    const unifiedCoords = `${lat.toFixed(6)}, ${lon.toFixed(6)}`;
-                    resultDiv.innerText = unifiedCoords;
-                    
-                    // ACTUALIZAR MAPA
-                    // Centrar vista en el punto con zoom alto (16)
-                    map.setView([lat, lon], 16);
+            navigator.geolocation.getCurrentPosition((pos) => {
+                const lat = pos.coords.latitude;
+                const lon = pos.coords.longitude;
+                const latFixed = lat.toFixed(6);
+                const lonFixed = lon.toFixed(6);
 
-                    // Si ya hay un marcador, quitarlo
-                    if (marker) {
-                        map.removeLayer(marker);
-                    }
+                // 1. Actualizar Mapa
+                map.setView([lat, lon], 16);
+                if (marker) map.removeLayer(marker);
+                marker = L.marker([lat, lon]).addTo(map).bindPopup("¡Estás aquí!").openPopup();
 
-                    // Añadir nuevo marcador con un popup
-                    marker = L.marker([lat, lon]).addTo(map)
-                        .bindPopup(`<b>Estás aquí</b><br>Precisión: ${precision.toFixed(0)}m`)
-                        .openPopup();
-                    
-                    statusDiv.innerText = `¡Ubicación detectada! (Precisión: ${precision.toFixed(0)} metros)`;
-                    copyBtn.style.display = "block";
-                },
-                (err) => {
-                    statusDiv.innerText = "Error: Permiso denegado o GPS sin señal.";
-                    statusDiv.classList.add('error');
-                    console.error(err);
-                },
-                { 
-                    enableHighAccuracy: true, // Forzar uso de GPS si está disponible
-                    timeout: 10000,           // Esperar máximo 10 seg
-                    maximumAge: 0             // No usar ubicación cacheada
-                }
-            );
-        } else {
-            statusDiv.innerText = "Navegador no compatible.";
+                // 2. Actualizar Botón Copiar
+                copyBtn.style.display = "block";
+                copyBtn.setAttribute('data-coords', `${latFixed}, ${lonFixed}`);
+
+                // 3. ACTUALIZAR TARJETA GOOGLE MAPS
+                coordDisplay.innerText = `${latFixed}, ${lonFixed}`;
+                mapsCard.href = `https://www.google.com/maps?q=${latFixed},${lonFixed}`;
+                mapsCard.style.display = "block";
+
+                statusDiv.innerText = "Ubicación detectada correctamente.";
+            }, 
+            (err) => {
+                statusDiv.innerText = "Error al obtener ubicación.";
+                statusDiv.classList.add('error');
+            }, 
+            { enableHighAccuracy: true });
         }
     }
 
     function copyToClipboard() {
-        const textToCopy = resultDiv.innerText;
-        
-        navigator.clipboard.writeText(textToCopy).then(() => {
-            const originalText = copyBtn.innerText;
+        const text = copyBtn.getAttribute('data-coords');
+        navigator.clipboard.writeText(text).then(() => {
+            const oldText = copyBtn.innerText;
             copyBtn.innerText = "¡Copiado!";
-            copyBtn.style.background = "#059669";
-            
-            setTimeout(() => {
-                copyBtn.innerText = originalText;
-                copyBtn.style.background = "#10b981";
-            }, 2000);
+            setTimeout(() => copyBtn.innerText = oldText, 2000);
         });
     }
 </script>
