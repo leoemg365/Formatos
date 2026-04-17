@@ -417,6 +417,13 @@
           "content": "Visualizamos a nivel de sistema que su servicio se encuentra activo y presentando consumo, si presenta algún inconveniente nuevamente nos indica. recuerde que estamos siempre a su disposición y nos complace mucho poder ayudarle esperamos que este muy bien y tenga un excelente día. Le agradecemos su confianza en Tecnoven.",
           "subcat": "Servicio",
           "color": "info"
+        },
+        {
+          "id": 1776416864220,
+          "label": "Configuración de Red WIFI - Dispositivos vinculados",
+          "subcat": "Configuración de Router",
+          "color": "info",
+          "content": "Ingresa en el navegador Chrome, y colocas en la barra de búsqueda: 192.168.1.1 \nSi no sale la página del router, colocas 192.168.0.1.\n \nSeguidamente, te pedirá contraseña; escribes: admin12345678 \nSí no funciona la contraseña colocas: admin\n\nVerás la sección de Clientes o dispositivos y podrás ver la cantidad de dispositivos\n \nLas configuraciones de la red Wi-Fi se encuentran en la sección de Inalámbrico o Wireless (en inglés). De todos modos, al ingresar, pásanos una captura o foto para indicarte con detalle."
         }
       ]
     },
