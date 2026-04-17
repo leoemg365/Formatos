@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoTracker Live 🛰️</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <style>
+        :root {
+            --primary: #6366f1;
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f8fafc;
+            --live: #ef4444;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 1.5rem;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+        }
+
+        /* Indicador de Vivo */
+        .live-indicator {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            color: var(--live);
+            font-weight: bold;
+            font-size: 0.8rem;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .dot {
+            height: 10px;
+            width: 10px;
+            background-color: var(--live);
+            border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
+        #map {
+            height: 300px;
+            border-radius: 1rem;
+            margin-bottom: 1rem;
+            border: 2px solid #334155;
+            z-index: 1;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-box {
+            background: #0f172a;
+            padding: 10px;
+            border-radius: 0.5rem;
+            text-align: center;
+            border: 1px solid #334155;
+        }
+
+        .stat-box small { color: #94a3b8; display: block; font-size: 0.7rem; text-transform: uppercase; }
+        .stat-box span { font-family: monospace; font-size: 0.9rem; }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            border-radius: 0.75rem;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        .btn-track { background: var(--primary); color: white; }
+        .btn-stop { background: #374151; color: white; display: none; }
+
+        .maps-card {
+            display: none;
+            background: #ffffff;
+            color: #1f2937;
+            padding: 15px;
+            border-radius: 1rem;
+            margin-top: 20px;
+            text-decoration: none;
+            width: 100%;
+            max-width: 450px;
+            border-left: 6px solid #34a853;
+        }
+
+        .maps-card b { color: #34a853; display: block; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="liveStatus" class="live-indicator">
+        <div class="dot"></div> MODO TIEMPO REAL ACTIVO
+    </div>
+
+    <div id="map"></div>
+
+    <div class="stats-grid">
+        <div class="stat-box">
+            <small>Coordenadas</small>
+            <span id="coordDisplay">- , -</span>
+        </div>
+        <div class="stat-box">
+            <small>Precisión</small>
+            <span id="accuracyDisplay">-</span>
+        </div>
+    </div>
+
+    <button id="startBtn" class="btn-track" onclick="toggleTracking(true)">Iniciar Seguimiento en Vivo</button>
+    <button id="stopBtn" class="btn-stop" onclick="toggleTracking(false)">Detener Rastreo</button>
+</div>
+
+<a id="googleMapsCard" href="#" target="_blank" class="maps-card">
+    <b>Abrir ruta en Google Maps</b>
+    <small id="cardCoords">Toca para navegar</small>
+</a>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+    let map, marker, circle, watchID;
+    
+    const coordDisplay = document.getElementById('coordDisplay');
+    const accuracyDisplay = document.getElementById('accuracyDisplay');
+    const startBtn = document.getElementById('startBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const liveStatus = document.getElementById('liveStatus');
+    const mapsCard = document.getElementById('googleMapsCard');
+
+    // Inicializar mapa
+    function initMap() {
+        map = L.map('map').setView([0, 0], 2);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+    }
+    initMap();
+
+    function toggleTracking(active) {
+        if (active) {
+            startBtn.style.display = "none";
+            stopBtn.style.display = "block";
+            liveStatus.style.display = "flex";
+
+            // Iniciar modo vigilancia
+            watchID = navigator.geolocation.watchPosition(updatePosition, handleError, {
+                enableHighAccuracy: true,
+                maximumAge: 0
+            });
+        } else {
+            navigator.geolocation.clearWatch(watchID);
+            startBtn.style.display = "block";
+            stopBtn.style.display = "none";
+            liveStatus.style.display = "none";
+            alert("Rastreo detenido.");
+        }
+    }
+
+    function updatePosition(position) {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        const accuracy = position.coords.accuracy;
+
+        const latLon = `${lat.toFixed(6)}, ${lon.toFixed(6)}`;
+        
+        // 1. Actualizar textos
+        coordDisplay.innerText = latLon;
+        accuracyDisplay.innerText = `± ${accuracy.toFixed(1)}m`;
+        document.getElementById('cardCoords').innerText = latLon;
+
+        // 2. Actualizar Mapa
+        map.setView([lat, lon], 17);
+
+        if (marker) {
+            marker.setLatLng([lat, lon]);
+            circle.setLatLng([lat, lon]);
+            circle.setRadius(accuracy);
+        } else {
+            marker = L.marker([lat, lon]).addTo(map).bindPopup("Estás aquí").openPopup();
+            circle = L.circle([lat, lon], { radius: accuracy, color: '#6366f1' }).addTo(map);
+        }
+
+        // 3. Actualizar enlace de Google Maps
+        mapsCard.href = `https://www.google.com/maps?q=${lat},${lon}`;
+        mapsCard.style.display = "block";
+    }
+
+    function handleError(err) {
+        console.warn("Error GPS:", err.message);
+        alert("Asegúrate de tener el GPS encendido y dar permisos.");
+        toggleTracking(false);
+    }
+</script>
+
+</body>
+</html>
