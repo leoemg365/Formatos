@@ -158,6 +158,9 @@
             display: flex;
             gap: 10px;
             align-items: center;
+            cursor: move;       /* Indica que se puede mover */
+            user-select: none;  /* Evita que se seleccione el número al arrastrar */
+            touch-action: none; /* Mejora el comportamiento en tablets */
         }
         button { cursor: pointer; padding: 5px 10px; }
     </style>
@@ -581,13 +584,52 @@
          * Copyright (c) 2026 [Leonardo Montiel / Espiral].
          * Todos los derechos reservados.
          */
+        // Contador clics // 
+            const elContador = document.querySelector('.floating-counter');
             const valor = document.getElementById('valor-contador');
-        let cuenta = 0;
-
-        document.getElementById('btn-sumar').onclick = () => { cuenta++; valor.innerText = cuenta; };
-        document.getElementById('btn-restar').onclick = () => { cuenta--; valor.innerText = cuenta; };
-        document.getElementById('btn-reset').onclick = () => { cuenta = 0; valor.innerText = cuenta; };
-
+            let cuenta = 0;
+            
+            // --- LÓGICA DE TU CONTADOR ---
+            document.getElementById('btn-sumar').onclick = () => { cuenta++; valor.innerText = cuenta; };
+            document.getElementById('btn-restar').onclick = () => { cuenta--; valor.innerText = cuenta; };
+            document.getElementById('btn-reset').onclick = () => { cuenta = 0; valor.innerText = cuenta; };
+            
+            // --- LÓGICA DE ARRASTRE ---
+            let isDragging = false;
+            let offsetX, offsetY;
+            
+            elContador.addEventListener('mousedown', (e) => {
+                // Si haces clic en un botón, NO arrastramos
+                if (e.target.tagName === 'BUTTON') return;
+            
+                isDragging = true;
+                
+                // Obtenemos la posición actual de la caja
+                const rect = elContador.getBoundingClientRect();
+                offsetX = e.clientX - rect.left;
+                offsetY = e.clientY - rect.top;
+            
+                // Cambiamos a posicionamiento absoluto para poder moverlo
+                elContador.style.bottom = 'auto';
+                elContador.style.right = 'auto';
+                elContador.style.left = `${rect.left}px`;
+                elContador.style.top = `${rect.top}px`;
+            });
+            
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+            
+                // Movemos la caja según el mouse
+                let x = e.clientX - offsetX;
+                let y = e.clientY - offsetY;
+            
+                elContador.style.left = `${x}px`;
+                elContador.style.top = `${y}px`;
+            });
+            
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
+            });
          // 1. Definimos las frases en una lista
             const frases = [
                 "La calidad de tu trabajo es tu firma.",
