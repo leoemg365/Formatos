@@ -629,6 +629,13 @@
           "subcat": "ONU LOS",
           "color": "aviso",
           "content": "Buenas noches, apreciamos que su equipo en estos momentos está desconectado, nos pasa por favor fotos de los equipos en donde se reflejen las luces y los cables por favor?"
+        },
+        {
+          "id": 1776488379280,
+          "label": "Paginas o Apps",
+          "subcat": "Lentitud",
+          "color": "neutro",
+          "content": "Buenas noches, ¿nos indica por favor en qué páginas o aplicaciones presenta el inconveniente?"
         }
       ]
     }
