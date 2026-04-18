@@ -588,8 +588,28 @@
         document.getElementById('btn-restar').onclick = () => { cuenta--; valor.innerText = cuenta; };
         document.getElementById('btn-reset').onclick = () => { cuenta = 0; valor.innerText = cuenta; };
 
-
+         // 1. Definimos las frases en una lista
+            const frases = [
+                "La calidad de tu trabajo es tu firma.",
+                "El éxito es la suma de pequeños esfuerzos diarios.",
+                "Hazlo con pasión o no lo hagas.",
+                "La disciplina es el puente entre metas y logros.",
+                "Tu actitud determina tu altitud."
+            ];
         
+            function cambiarFrase() {
+                const contenedorFrase = document.getElementById('daily-quote');
+                
+                // 2. Elegimos una frase al azar
+                const indice = Math.floor(Math.random() * frases.length);
+                
+                // 3. Actualizamos el texto
+                contenedorFrase.textContent = `"${frases[indice]}"`;
+            }
+        
+            // 4. Ejecutar el cambio cada 10 segundos (10000ms)
+            setInterval(cambiarFrase, 10000);
+                
         // --- 🛡️ PROTECCIÓN ANTI-CURIOSOS ---
         document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
         document.addEventListener('keydown', function(e) {
