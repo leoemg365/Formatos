@@ -327,6 +327,20 @@
           "subcat": "TuCineTV",
           "color": "info",
           "content": "Descargue primeramente la aplicación Downloader. \nSeguidamente coloca este link dentro de la aplicación: https://bit.ly/TuCine\n\nLuego instala la aplicación y al ingresar coloca los siguientes datos:"
+        },
+        {
+          "id": 1776701025164,
+          "label": "ONU en LOS",
+          "subcat": "ONU desconectada",
+          "color": "neutro",
+          "content": "Apreciamos que su equipo en estos momentos está desconectado, nos pasa por favor fotos de los equipos en donde se reflejen las luces y los cables por favor?"
+        },
+        {
+          "id": 1776701102099,
+          "label": "ONU en estado LOS",
+          "subcat": "ONU en LOS",
+          "color": "neutro",
+          "content": "Apreciamos que su equipo se encuentra en estado LOS, en este caso tendríamos que agendar un ticket de visita técnica para que vayan a solucionar el inconveniente"
         }
       ]
     },
