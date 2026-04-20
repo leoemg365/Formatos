@@ -301,6 +301,13 @@
           "content": "Agendaremos un ticket de visita técnica para que los técnicos vayan a su localidad a solucionar el inconveniente, tenga en cuenta que el costo de la visita es de $5"
         },
         {
+          "id": 1776697109567,
+          "label": "Inconveniente",
+          "subcat": "Falla proveedor",
+          "color": "urgente",
+          "content": "Apreciado cliente, le informamos que en estos momentos estamos experimentando un inconveniente donde conecta su servicio,  Le ofrecemos nuestras más sinceras disculpas por las molestias que esto pueda ocasionar. Estamos trabajando arduamente para solucionar el inconveniente y restablecer el servicio lo antes posible. Agradecemos su confianza en TECNOVEN #SomosMásQueInternet"
+        },
+        {
           "id": 1774581493641,
           "label": "Visita Inalambrico",
           "subcat": "Ticket",
