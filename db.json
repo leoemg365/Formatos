@@ -508,6 +508,13 @@
           "content": "Buenos tardes, pago registrado correctamente y servicio activo ✅\n\n¡Estamos siempre a su disposición! Nos complace mucho poder ayudarle. Le agradecemos su confianza en Tecnoven."
         },
         {
+          "id": 1776711677930,
+          "label": "Pago pendiente",
+          "subcat": "Pagos",
+          "color": "aviso",
+          "content": "Es normal que el pago aparezca como Pendiente, ya que sólo falta que el departamento administrativo lo verifique, luego que lo verifiquen aparecerá como Confirmado y no le aparecerá deuda. Ya su pago está registrado correctamente"
+        },
+        {
           "id": 1774492992328,
           "label": "Pedir datos",
           "content": "Buenas tardes, nos indica por favor Nombre del titular y número de Cédula."
