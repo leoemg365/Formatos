@@ -690,5 +690,20 @@
       "cat": "Técnicos",
       "content": "Matancera: José González \n\nChamarreta: Hebert y Alfonso \n\nMaranorte: Alejandro Soto \n\nSan Francisco: Anddy y Danny\n\nCabimas: Juan Palma\n\nCiudad Ojeda: Luis Gomez\n\nPunto Fijo: Luis Rojas\n\nMene Mauroa: Luis Guillermo Gonzalez\n\nMecocal:"
     }
+  ],
+  "electricalNodes": [
+    "Matancera",
+    "Chamarreta",
+    "Zafiro",
+    "Florida",
+    "Maranorte",
+    "Faría",
+    "Maranorte",
+    "Palace",
+    "Marfil",
+    "Casco Central",
+    "Richmond",
+    "San Francisco",
+    "Zona Industrial"
   ]
 }
