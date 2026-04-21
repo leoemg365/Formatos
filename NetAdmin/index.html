@@ -8,7 +8,6 @@
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <link rel="stylesheet" href="styles.css">
     <script src="script.js" defer></script>
-    <script src="contador.js"></script>
 </head>
 <body>
     <div id="login-screen" class="screen">
@@ -454,5 +453,15 @@
 
     <div id="toast">Copiado al portapapeles ✅</div>
     <audio id="alarm-sound" loop src="data:audio/mp3;base64,//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq"></audio>
+
+    <dialog id="modalActualizaciones">
+    <h2>🚀 ¡Nuevas funciones disponibles!</h2>
+    <ul>
+        <li><b>Velocidad:</b> Hemos optimizado la carga un 50%.</li>
+        <li><b>Monitoreo:</b> Monitoreo de nodos</li>
+    </ul>
+    <button id="cerrarActualizacion">Entendido, ¡gracias!</button>
+</dialog>
+<script src="modalupdate.js"></script>
 </body>
 </html>

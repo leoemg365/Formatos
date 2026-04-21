@@ -131,6 +131,7 @@
         @keyframes fadeIn { from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)} }
         @keyframes pulseWarning { 0% { box-shadow: 0 0 0 0 rgba(247, 185, 40, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(247, 185, 40, 0); } 100% { box-shadow: 0 0 0 0 rgba(247, 185, 40, 0); } }
 
+        /* Contador de clics flotante */
         .floating-counter {
             position: fixed;
             bottom: 20px;
@@ -149,3 +150,28 @@
             touch-action: none; /* Mejora el comportamiento en tablets */
         }
         button { cursor: pointer; padding: 5px 10px; }
+
+
+        .dialog dialog {
+    border: none;
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    max-width: 400px;
+    text-align: center;
+}
+
+dialog::backdrop {
+    background: rgba(0, 0, 0, 0.6); /* Fondo oscurecido */
+    backdrop-filter: blur(5px); /* Efecto borroso (glassmorphism) */
+}
+
+button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 15px;
+}
