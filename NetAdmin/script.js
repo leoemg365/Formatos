@@ -810,3 +810,58 @@
             }
             isDragging = false;
         });
+        
+        
+        // --- 📱 INSTALACIÓN DE APP (PWA) ---
+let deferredPrompt;
+
+// 1. Registrar el Service Worker
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW Error:', err));
+    });
+}
+
+// 2. Escuchar cuando Android nos da permiso de instalar
+window.addEventListener('beforeinstallprompt', (e) => {
+    // Evitar que Chrome muestre su propio mini-aviso automáticamente
+    e.preventDefault();
+    // Guardar el evento para usarlo luego
+    deferredPrompt = e;
+    
+    // Mostrar nuestro botón mágico "📲"
+    const installBtn = document.getElementById('btn-install-app');
+    installBtn.classList.remove('hidden');
+
+    // Darle la acción al botón
+    installBtn.addEventListener('click', async () => {
+        // Ocultar el botón
+        installBtn.classList.add('hidden');
+        // Mostrar la ventana emergente nativa de Android
+        deferredPrompt.prompt();
+        // Esperar a ver qué responde el usuario
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+            console.log('El técnico instaló la App');
+        }
+        // Limpiar la variable
+        deferredPrompt = null;
+    });
+});
+
+
+// Detector de iOS
+const isIos = () => {
+    const userAgent = window.navigator.userAgent.toLowerCase();
+    return /iphone|ipad|ipod/.test(userAgent);
+};
+
+// Saber si ya está instalada o está en el navegador normal
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+if (isIos() && !isStandalone) {
+    // Aquí puedes lanzar un mensaje Toast que diga: 
+    // "Para instalar en iPhone: Toca 'Compartir' y luego 'Agregar a Inicio'"
+    console.log("Usuario en iOS desde Safari");
+}
+
