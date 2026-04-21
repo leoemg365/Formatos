@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NetAdmin</title>
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/4565/4565968.png" type="image/x-icon">
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
+    <script src="contador.js"></script>
+</head>
+<body>
+    <div id="login-screen" class="screen">
+        <div class="welcome-box">
+            <div class="logo">📡</div>
+            <h2 id="login-title">Acceso Soporte</h2>
+            
+            <label class="form-label" style="text-align:left;">Hora de Salida del Turno:</label>
+            <div class="time-selector" style="margin-bottom: 20px; padding:10px">
+                <select id="ts-hour" class="ts-select"></select>
+                <select id="ts-min" class="ts-select"><option value="00">00</option><option value="30">30</option></select>
+                <select id="ts-ampm" class="ts-select"><option value="PM">PM</option><option value="AM">AM</option></select>
+            </div>
+
+            <div id="login-mode-support">
+                <input type="password" id="pass-support" class="big-input" placeholder="Contraseña de Soporte" style="text-align:center" onkeydown="if(event.key==='Enter') authLogin('support')">
+                <button class="btn-large" id="btn-login-support" onclick="authLogin('support')"><span class="loader"></span> <span>Ingresar</span></button>
+                <p style="margin-top:20px; font-size:0.85rem; cursor:pointer; color:var(--text-sec); font-weight:bold" onclick="switchLoginMode('admin')">¿Eres Administrador?</p>
+            </div>
+
+            <div id="login-mode-admin" class="hidden">
+                <input type="password" id="pass-admin" class="big-input" placeholder="Contraseña Admin" style="text-align:center" onkeydown="if(event.key==='Enter') authLogin('admin')">
+                <input type="password" id="token-admin" class="big-input" placeholder="Token GitHub (ghp_...)" style="font-size:0.8rem; text-align:center" onkeydown="if(event.key==='Enter') authLogin('admin')">
+                <button class="btn-large" id="btn-login-admin" style="background-color:var(--text-main)" onclick="authLogin('admin')"><span class="loader"></span> <span>Acceso Total</span></button>
+                <p style="margin-top:20px; font-size:0.85rem; cursor:pointer; color:var(--text-sec); font-weight:bold" onclick="switchLoginMode('support')">Volver a Soporte</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="app-container">
+        <div class="app-header-grid">
+            <div class="quote-box" id="daily-quote">"La calidad de tu trabajo es tu firma."</div>
+            <div style="text-align: right;">
+                <div style="font-weight:bold; font-size:1.1rem"><span id="username-display">Soporte</span> <span id="admin-badge" style="display:none; background:var(--danger); color:white; font-size:0.7rem; padding:3px 6px; border-radius:6px; vertical-align:middle">ADMIN</span></div>
+                <div style="font-size:0.85rem; color:var(--text-sec); margin-top:4px">Salida: <strong id="display-time">--:--</strong></div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div id="sync-container" style="margin-right:auto; display:flex; align-items:center;">
+                <span id="sync-status" style="font-size:0.85rem; color:var(--text-sec); font-weight:bold">☁️ Conectando...</span>
+                <button id="btn-save-batch" class="btn-save-batch hidden" onclick="pushData()">
+                    <span class="loader loader-dark" id="save-loader"></span>
+                    <span id="save-text">💾 Guardar en la Nube</span>
+                </button>
+            </div>
+            
+            <button class="btn-icon" onclick="toggleTheme()" title="Cambiar Tema">🌓</button>
+            <button class="btn-icon" onclick="openSettings()" title="Ajustes del Sistema">⚙️</button>
+        </div>
+
+        <div class="search-container">
+            <span>🔍</span>
+            <input type="text" id="search-bar" placeholder="Buscar IPs, Notas, fallas..." onkeyup="filterUniversal()">
+        </div>
+
+
+        <!-- El HTML del contador -->
+            <div class="floating-counter">
+                <button id="btn-restar">-</button>
+                <span id="valor-contador">0</span>
+                <button id="btn-sumar">+</button>
+                <button id="btn-reset">C</button>
+            </div>
+            
+
+        <div class="tabs-container">
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('clip')">📋 Links / OLTs</div>
+                <div class="tab" onclick="switchTab('pass')">🔐 Contraseñas</div>
+                <div class="tab" id="tab-resp" onclick="switchTab('resp')">💬 Respuestas <span class="badge" id="badge-resp">1</span></div>
+                <div class="tab" id="tab-news" onclick="switchTab('news')">📢 Novedades <span class="badge" id="badge-news">1</span></div>
+                <div class="tab" onclick="switchTab('tools')">🛠️ Herramientas</div>
+            </div>
+        </div>
+
+        <div id="view-clip" class="searchable-view"></div>
+        <div id="view-pass" class="searchable-view hidden"></div>
+        
+        <div id="view-resp" class="searchable-view hidden">
+            <div class="sub-filters" id="resp-filters-main">
+                <div class="pill active" onclick="filterRespMain('General')">General</div>
+                <div class="pill" onclick="filterRespMain('Día')">🌞 Día</div>
+                <div class="pill" onclick="filterRespMain('Tarde')">⛅ Tarde</div>
+                <div class="pill" onclick="filterRespMain('Noche')">🌙 Noche</div>
+            </div>
+            <div class="sub-filters" id="resp-filters-sub"></div>
+
+            <div id="resp-grid" class="grid" style="display:flex; flex-direction:column; gap:12px;"></div>
+            <div id="resp-admin-tools" style="margin-top:15px"></div>
+        </div>
+
+        <div id="view-news" class="searchable-view hidden">
+            <div class="sub-filters" id="news-filters"></div>
+            
+            <div id="news-grid" style="display:flex; flex-direction:column; gap:15px;"></div>
+            <div id="news-admin-tools" style="margin-top:15px"></div>
+        </div>
+
+        <div id="view-tools" class="hidden">
+            
+            <div class="sub-filters" style="margin-bottom:20px; justify-content:center;">
+                <div class="pill active" id="pill-tool-rep" onclick="switchToolMode('rep')">📑 Reportes Corporativos</div>
+                <div class="pill" id="pill-tool-fmt" onclick="switchToolMode('fmt')">🔤 Formateador de Texto</div>
+                <div class="pill" id="pill-tool-ocr" onclick="switchToolMode('ocr')">🖼️ Escáner OCR</div>
+                <div class="pill" id="pill-tool-calc" onclick="switchToolMode('calc')">🧮 Calculadora</div>
+            </div>
+
+            <div id="tool-box-rep" class="list-box">
+                <label class="form-label">Operador (Guardado automático)</label>
+                <input type="text" id="rep-operador" class="big-input" placeholder="Tu Nombre / Apellido" oninput="updateLivePreview()">
+
+                <div class="sub-filters" style="margin-bottom:20px; margin-top:10px;">
+                    <div class="pill pill-sec active" id="pill-r1" onclick="switchRepMode(1)">Soporte</div>
+                    <div class="pill pill-sec" id="pill-r2" onclick="switchRepMode(2)">Admin</div>
+                    <div class="pill pill-sec" id="pill-r3" onclick="switchRepMode(3)">Empresarial</div>
+                    <div class="pill pill-sec" id="pill-r4" onclick="switchRepMode(4)" style="color:var(--danger); border-color:var(--danger)">Emergencias</div>
+                    <div class="pill pill-sec" id="pill-r5" onclick="switchRepMode(5)">⚡ Eléctrico</div>
+                </div>
+
+                <div id="rep-mode-1" class="rep-container">
+                    <div class="form-row">
+                        <div>
+                            <label class="form-label">Desde</label>
+                            <div class="time-selector"><select id="r1-hin" class="ts-select" onchange="updateLivePreview()"></select><select id="r1-min" class="ts-select" onchange="updateLivePreview()"><option>00</option><option>30</option></select><select id="r1-ain" class="ts-select" onchange="updateLivePreview()"><option>AM</option><option>PM</option></select></div>
+                        </div>
+                        <div>
+                            <label class="form-label">Hasta</label>
+                            <div class="time-selector"><select id="r1-hout" class="ts-select" onchange="updateLivePreview()"></select><select id="r1-mout" class="ts-select" onchange="updateLivePreview()"><option>00</option><option>30</option></select><select id="r1-aout" class="ts-select" onchange="updateLivePreview()"><option>PM</option><option>AM</option></select></div>
+                        </div>
+                    </div>
+                    <div class="form-row" style="margin-top:10px">
+                        <div><label class="form-label">Cerrados</label><input type="number" id="r1-cer" class="big-input" placeholder="0" oninput="calcAtendidosR1(); updateLivePreview()"></div>
+                        <div><label class="form-label">Pendientes</label><input type="number" id="r1-pen" class="big-input" placeholder="0" oninput="calcAtendidosR1(); updateLivePreview()"></div>
+                        <div><label class="form-label" style="color:var(--primary)">Atendidos</label><div id="r1-ate" style="font-size:1.5rem; font-weight:bold; text-align:center; padding-top:10px; color:var(--primary)">0</div></div>
+                    </div>
+                    <div style="margin-top:10px">
+                        <label style="display:flex; align-items:center; gap:8px; font-size:0.9rem; cursor:pointer; font-weight:bold; color:var(--text-sec)">
+                            <input type="checkbox" id="r1-chk-inst" onchange="toggleR1Inst(); updateLivePreview()" style="width:18px; height:18px;">
+                            Incluir Instalaciones
+                        </label>
+                        <input type="number" id="r1-inst" class="big-input hidden" placeholder="Cantidad de Instalaciones" style="margin-top:10px" oninput="updateLivePreview()">
+                    </div>
+                    <div style="margin-top:15px">
+                        <label class="form-label">Actividad del Turno</label>
+                        <div class="chk-group">
+                            <label><input type="checkbox" class="r1-act" value="Monitoreo General" onchange="updateLivePreview()"> Monitoreo General</label>
+                            <label><input type="checkbox" class="r1-act" value="Empresarial" onchange="updateLivePreview()"> Empresarial</label>
+                            <label><input type="checkbox" class="r1-act" value="ATC" checked onchange="updateLivePreview()"> ATC</label>
+                            <label><input type="checkbox" class="r1-act" value="Noche" onchange="updateLivePreview()"> Noche</label>
+                            <label><input type="checkbox" id="r1-chk-otro" onchange="toggleR1Otro(); updateLivePreview()"> Otro</label>
+                        </div>
+                        <input type="text" id="r1-otro-txt" class="big-input hidden" placeholder="Especificar actividad..." style="margin-top:10px" oninput="updateLivePreview()">
+                    </div>
+                </div>
+
+                <div id="rep-mode-2" class="rep-container hidden">
+                    <label class="form-label">Hora de Entrega</label>
+                    <div class="time-selector" style="width:50%; margin-bottom:15px">
+                        <select id="r2-h" class="ts-select" onchange="updateLivePreview()"></select><select id="r2-m" class="ts-select" onchange="updateLivePreview()"><option>00</option><option>30</option></select><select id="r2-a" class="ts-select" onchange="updateLivePreview()"><option>PM</option><option>AM</option></select>
+                    </div>
+                    <label class="form-label">Municipios Administrados</label>
+                    <div class="chk-group" style="margin-bottom:15px">
+                        <label><input type="checkbox" class="r2-mun" value="Maracaibo" checked onchange="updateLivePreview()"> Maracaibo</label>
+                        <label><input type="checkbox" class="r2-mun" value="Cabimas" checked onchange="updateLivePreview()"> Cabimas</label>
+                        <label><input type="checkbox" class="r2-mun" value="Mene de Mauroa" checked onchange="updateLivePreview()"> Mene de Mauroa</label>
+                        <label><input type="checkbox" class="r2-mun" value="Punto Fijo" checked onchange="updateLivePreview()"> Punto Fijo</label>
+                    </div>
+                    <div class="form-row">
+                        <div><label class="form-label">Chats Reasignados</label><input type="number" id="r2-chats" class="big-input" placeholder="0" oninput="updateLivePreview()"></div>
+                        <div><label class="form-label">Facturas Fiscales</label><input type="number" id="r2-fac" class="big-input" placeholder="0" oninput="updateLivePreview()"></div>
+                        <div><label class="form-label">Casos Cerrados</label><input type="number" id="r2-cer" class="big-input" placeholder="0" oninput="updateLivePreview()"></div>
+                    </div>
+                </div>
+
+                <div id="rep-mode-3" class="rep-container hidden">
+                    <label class="form-label">Actividad</label>
+                    <input type="text" class="big-input" value="Empresarial" readonly style="background:var(--bg-body)">
+                    <div class="form-row">
+                        <div>
+                            <label class="form-label">Desde</label>
+                            <div class="time-selector"><select id="r3-hin" class="ts-select" onchange="updateLivePreview()"></select><select id="r3-min" class="ts-select" onchange="updateLivePreview()"><option>00</option><option>30</option></select><select id="r3-ain" class="ts-select" onchange="updateLivePreview()"><option>AM</option><option>PM</option></select></div>
+                        </div>
+                        <div>
+                            <label class="form-label">Hasta</label>
+                            <div class="time-selector"><select id="r3-hout" class="ts-select" onchange="updateLivePreview()"></select><select id="r3-mout" class="ts-select" onchange="updateLivePreview()"><option>00</option><option>30</option></select><select id="r3-aout" class="ts-select" onchange="updateLivePreview()"><option>PM</option><option>AM</option></select></div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div><label class="form-label">Instalaciones</label><input type="number" id="r3-inst" class="big-input" placeholder="0" oninput="updateLivePreview()"></div>
+                        <div><label class="form-label">Informe Instalación</label>
+                            <select id="r3-estatus" class="big-input" onchange="updateLivePreview()">
+                                <option value="En proceso">En proceso</option>
+                                <option value="Finalizado">Finalizado</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="rep-mode-4" class="rep-container hidden">
+                    <div style="display:flex; gap:10px; margin-bottom:15px">
+                        <button id="btn-r4-pres" class="btn-large" style="background:var(--danger); border:2px solid var(--danger)" onclick="setR4Status('PRESENTADA')">PRESENTADA</button>
+                        <button id="btn-r4-solv" class="btn-large" style="background:var(--bg-surface); color:var(--text-main); border:2px solid var(--border)" onclick="setR4Status('SOLVENTADA')">SOLVENTADA</button>
+                    </div>
+
+                    <div class="form-row">
+                        <div><label class="form-label">Fecha</label><input type="text" id="r4-fecha" class="big-input" placeholder="DD/MM/AAAA" oninput="updateLivePreview()"></div>
+                        <div><label class="form-label">Hora Inicio</label>
+                            <div class="time-selector"><select id="r4-hin" class="ts-select" onchange="updateLivePreview()"></select><select id="r4-min" class="ts-select" onchange="updateLivePreview()"><option>00</option><option>05</option><option>15</option><option>30</option><option>45</option></select><select id="r4-ain" class="ts-select" onchange="updateLivePreview()"><option>AM</option><option>PM</option></select></div>
+                        </div>
+                    </div>
+                    
+                    <div id="r4-hora-fin-box" class="hidden" style="margin-bottom:15px">
+                        <label class="form-label">Hora Fin</label>
+                        <div class="time-selector" style="width:50%"><select id="r4-hout" class="ts-select" onchange="updateLivePreview()"></select><select id="r4-mout" class="ts-select" onchange="updateLivePreview()"><option>00</option><option>05</option><option>15</option><option>30</option><option>45</option></select><select id="r4-aout" class="ts-select" onchange="updateLivePreview()"><option>AM</option><option>PM</option></select></div>
+                    </div>
+
+                    <div style="background:var(--bg-body); padding:10px; border-radius:10px; border:1px solid var(--border); margin-bottom:15px">
+                        <label class="form-label">Dispositivo Afectado</label>
+                        <div style="display:flex; gap:10px; margin-bottom:10px">
+                            <select id="r4-tipo" class="big-input" style="margin:0; width:30%" onchange="toggleR4Device()">
+                                <option value="NAP">NAP</option><option value="Nodo">Nodo</option><option value="PON">PON</option>
+                            </select>
+                            <select id="r4-nap-city" class="big-input r4-is-nap" style="margin:0; width:30%" onchange="updateLivePreview()"><option value="MCBO">MCBO</option><option value="CBMS">CBMS</option><option value="SFCO">SFCO</option></select>
+                            <input type="number" id="r4-nap-num" class="big-input r4-is-nap" placeholder="Ej: 1348" style="margin:0; width:40%" oninput="updateLivePreview()">
+                            <input type="text" id="r4-nodo-nom" class="big-input r4-is-nodo hidden" placeholder="Nombre (Ej: Maranorte)" style="margin:0; width:70%" oninput="updateLivePreview()">
+                        </div>
+                        <label class="form-label">Estatus del Equipo</label>
+                        <select id="r4-estatus" class="big-input" onchange="updateLivePreview()"><option value="DOWN">DOWN (Caído)</option><option value="UP">UP (Arriba)</option></select>
+                    </div>
+
+                    <div class="form-row">
+                        <div style="flex:2"><label class="form-label">Zona</label><input type="text" id="r4-zona" class="big-input" placeholder="Ej: Casco Central" oninput="updateLivePreview()"></div>
+                        <div style="flex:1"><label class="form-label">Clientes Afect.</label><input type="number" id="r4-clientes" class="big-input" placeholder="0" oninput="updateLivePreview()"></div>
+                    </div>
+                </div>
+
+                <div id="rep-mode-5" class="rep-container hidden">
+                    <div style="display:flex; gap:10px; margin-bottom:15px">
+                        <button id="btn-r5-act" class="btn-large" style="background:var(--warning); color:#5c4e06;" onclick="setR5Status('ACTIVO')">🔋 RESPALDO ACTIVO</button>
+                        <button id="btn-r5-res" class="btn-large" style="background:var(--bg-surface); color:var(--text-main); border:2px solid var(--border)" onclick="setR5Status('RESTABLECIDO')">⚡ RESTABLECIDO</button>
+                    </div>
+
+                    <div style="background:var(--bg-body); padding:10px; border-radius:10px; border:1px solid var(--border);">
+                        <div class="form-row" style="align-items: flex-end; margin-bottom:0;">
+                            <div style="flex:2">
+                                <label class="form-label">Nodo Afectado</label>
+                                <select id="r5-node-select" class="big-input" style="margin-bottom:0;" onchange="autoFillTimeR5()"></select>
+                            </div>
+                            <div style="flex:1" id="r5-time-box">
+                                <label class="form-label">Hora</label>
+                                <input type="text" id="r5-time-input" class="big-input" placeholder="04:23 PM" style="margin-bottom:0;">
+                            </div>
+                            <div>
+                                <button class="btn-large" onclick="addR5Node()">➕</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="r5-admin-tools" class="hidden" style="margin-top:10px; text-align:right;">
+                        <button class="mini-btn" style="width:auto; padding:5px 15px; border:1px solid var(--primary); color:var(--primary)" onclick="reqAdminEditNodes()">⚙️ Gestionar Lista de Nodos</button>
+                    </div>
+
+                    <div id="r5-nodes-list" style="margin-top:15px; display:flex; flex-direction:column; gap:8px;"></div>
+                </div>
+
+                <div class="wp-bubble">
+                    <div class="wp-label">Vista Previa WhatsApp</div>
+                    <div id="live-preview-box">-- Escribe para generar el reporte --</div>
+                </div>
+
+                <button class="btn-large" style="margin-top:20px; font-size:1.1rem" onclick="copyGeneratedReport()">📋 Copiar Reporte</button>
+            </div>
+
+            <div id="tool-box-fmt" class="list-box hidden">
+                <textarea id="tool-text" class="big-input" rows="5" placeholder="Pega texto para convertir mayúsculas o contar..." oninput="updateTextTools()"></textarea>
+                <div style="display:flex; justify-content:space-between; font-size:0.9rem; margin-bottom:10px; font-weight:bold; color:var(--text-sec)">
+                    <span>Caracteres: <span id="char-count" style="color:var(--primary)">0</span></span>
+                    <span>Palabras: <span id="word-count" style="color:var(--primary)">0</span></span>
+                </div>
+                <div style="display:flex; gap:5px; flex-wrap:wrap">
+                    <button class="mini-btn" style="width:auto; padding:5px 15px" onclick="formatText('UPPER')">MAYÚSCULAS</button>
+                    <button class="mini-btn" style="width:auto; padding:5px 15px" onclick="formatText('LOWER')">minúsculas</button>
+                    <button class="mini-btn" style="width:auto; padding:5px 15px" onclick="formatText('TITLE')">Tipo Título</button>
+                    <button class="mini-btn" style="width:auto; padding:5px 15px; color:var(--danger); border-color:var(--danger)" onclick="document.getElementById('tool-text').value=''; updateTextTools()">🧹 Limpiar</button>
+                    <button class="mini-btn" style="width:auto; padding:5px 15px; margin-left:auto; border-color:var(--primary); color:var(--primary)" onclick="copyToolText()">Copiar</button>
+                </div>
+            </div>
+
+            <div id="tool-box-ocr" class="list-box hidden">
+                <div class="ocr-zone" onclick="document.getElementById('ocr-input').click()" id="ocr-dropzone">
+                    <div id="ocr-instructions">
+                        <div style="font-size:3rem">📸</div>
+                        <div style="font-weight:bold; margin-top:10px">Haz clic para subir, arrastra una imagen <br>o pega con Ctrl + V</div>
+                    </div>
+                    <input type="file" id="ocr-input" class="hidden" accept="image/*" onchange="processOCR(this.files[0])">
+                    <img id="ocr-img-preview" class="ocr-preview">
+                </div>
+
+                <div class="ocr-loader-bar" id="ocr-bar"><div class="ocr-progress" id="ocr-progress"></div></div>
+                <div id="ocr-status" style="font-size:1.1rem; font-weight:bold; text-align:center; color:var(--primary); margin-bottom:10px; min-height: 25px;"></div>
+
+                <label class="form-label">Texto Extraído</label>
+                <textarea id="ocr-result" class="big-input" rows="6" placeholder="El texto aparecerá aquí después de escanear..."></textarea>
+                
+                <div style="display:flex; gap:10px; flex-wrap: wrap;">
+                    <button class="btn-large" style="flex:1" onclick="copyOCR()">📋 Copiar</button>
+                    <button class="btn-large" style="flex:1; background:var(--bg-surface); color:var(--text-main); border:1px solid var(--border)" onclick="sendOCRtoFmt()">🔤 Pasar a Formateador</button>
+                    <button class="btn-large" style="flex:1; background:var(--danger);" onclick="resetOCR()">🔄 Reiniciar</button>
+                </div>
+            </div>
+
+            <div id="tool-box-calc" class="list-box hidden">
+                
+                <div style="background:var(--bg-body); padding:15px; border-radius:10px; border:1px solid var(--border); margin-bottom:15px">
+                    <div style="font-weight:bold; margin-bottom:10px; color:var(--primary)">💱 Conversión Rápida</div>
+                    <div class="form-row">
+                        <div><label class="form-label">Monto ($)</label><input type="number" id="calc-usd" class="big-input" placeholder="Ej: 25" oninput="calcDivisas()"></div>
+                        <div><label class="form-label">Tasa (Bs)</label><input type="number" id="calc-tasa" class="big-input" placeholder="Ej: 474.05" oninput="calcDivisas()"></div>
+                    </div>
+                    <div style="font-size:1.5rem; font-weight:bold; text-align:right; color:var(--success)">Total: <span id="calc-bs-res">0.00</span> Bs</div>
+                </div>
+
+                <div style="background:var(--bg-body); padding:15px; border-radius:10px; border:1px solid var(--border); margin-bottom:15px">
+                    <div style="font-weight:bold; margin-bottom:10px; color:var(--primary)">📅 Prorrateo de Plan (30 días)</div>
+                    <div class="form-row">
+                        <div><label class="form-label">Precio Plan ($)</label><input type="number" id="calc-plan" class="big-input" placeholder="Ej: 25" oninput="calcProrrateo()"></div>
+                        <div><label class="form-label">Días a cobrar</label><input type="number" id="calc-dias" class="big-input" placeholder="Ej: 15" oninput="calcProrrateo()"></div>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center">
+                        <div style="font-size:0.85rem; color:var(--text-sec)">Basado en mes de 30 días</div>
+                        <div style="font-size:1.3rem; font-weight:bold; color:var(--primary)">Total: $<span id="calc-pro-usd">0.00</span></div>
+                    </div>
+                    <div style="text-align:right; font-size:0.9rem; color:var(--text-sec); margin-top:5px; font-weight:bold" id="calc-pro-bs">Equivale a: 0.00 Bs</div>
+                </div>
+
+                <div style="background:var(--bg-body); padding:15px; border-radius:10px; border:1px solid var(--border);">
+                    <div style="font-weight:bold; margin-bottom:10px; color:var(--primary)">🔢 Calculadora Básica</div>
+                    <input type="text" id="calc-screen" class="big-input" style="font-size:1.5rem; text-align:right; font-family:monospace; background:var(--bg-surface); letter-spacing: 2px;" readonly placeholder="0">
+                    <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:8px">
+                        <button class="btn-large" style="background:var(--bg-surface); color:var(--danger); border:1px solid var(--border)" onclick="calcInput('C')">C</button>
+                        <button class="btn-large" style="background:var(--bg-surface); color:var(--primary); border:1px solid var(--border)" onclick="calcInput('DEL')">⌫</button>
+                        <button class="btn-large" style="background:var(--bg-input); color:var(--text-main)" onclick="calcInput('/')">/</button>
+                        <button class="btn-large" style="background:var(--bg-input); color:var(--text-main)" onclick="calcInput('*')">x</button>
+                        
+                        <button class="btn-large" style="background:var(--bg-surface); color:var(--text-main); border:1px solid var(--border)" onclick="calcInput('7')">7</button>
+                        <button class="btn-large" style="background:var(--bg-surface); color:var(--text-main); border:1px solid var(--border)" onclick="calcInput('8')">8</button>
+                        <button class="btn-large" style="background:var(--bg-surface); color:var(--text-main); border:1px solid var(--border)" onclick="calcInput('9')">9</button>
+                        <button class="btn-large" style="background:var(--bg-input); color:var(--text-main)" onclick="calcInput('-')">-</button>
+                        
+                        <button class="btn-large" style="background:var(--bg-surface); color:var(--text-main); border:1px solid var(--border)" onclick="calcInput('4')">4</button>
+                        <button class="btn-large" style="background:var(--bg-surface); color:var(--text-main); border:1px solid var(--border)" onclick="calcInput('5')">5</button>
+                        <button class="btn-large" style="background:var(--bg-surface); color:var(--text-main); border:1px solid var(--border)" onclick="calcInput('6')">6</button>
+                        <button class="btn-large" style="background:var(--bg-input); color:var(--text-main)" onclick="calcInput('+')">+</button>
+                        
+                        <button class="btn-large" style="background:var(--bg-surface); color:var(--text-main); border:1px solid var(--border)" onclick="calcInput('1')">1</button>
+                        <button class="btn-large" style="background:var(--bg-surface); color:var(--text-main); border:1px solid var(--border)" onclick="calcInput('2')">2</button>
+                        <button class="btn-large" style="background:var(--bg-surface); color:var(--text-main); border:1px solid var(--border)" onclick="calcInput('3')">3</button>
+                        <button class="btn-large" style="grid-row:span 2; background:var(--primary); color:white" onclick="calcInput('=')">=</button>
+                        
+                        <button class="btn-large" style="grid-column:span 2; background:var(--bg-surface); color:var(--text-main); border:1px solid var(--border)" onclick="calcInput('0')">0</button>
+                        <button class="btn-large" style="background:var(--bg-surface); color:var(--text-main); border:1px solid var(--border)" onclick="calcInput('.')">.</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <footer style="text-align:center; color:var(--text-sec); margin-top:40px; font-size:0.9em; opacity:0.8;">
+            NetAdmin Soporte Pro v18.0<br>© 2026 Espiral - Leonardo Montiel<br>
+            <a href="https://wa.me/584121982608" target="_blank" style="text-decoration:none; display:inline-block; margin-top:12px;">
+                <button style="padding:8px 20px; border-radius:20px; border:1px solid var(--border); background:var(--bg-surface); color:var(--text-main); cursor:pointer; font-weight:bold;">Soporte Técnico / Developer</button>
+            </a>
+        </footer>
+    </div>
+
+    <div id="settings-modal" class="modal-overlay">
+        <div class="alert-box" style="text-align: left;">
+            <h3 style="margin-top:0; color:var(--primary); border-bottom:1px solid var(--border); padding-bottom:10px;">⚙️ Ajustes del Sistema</h3>
+            
+            <div id="admin-security-box" class="hidden" style="margin-bottom:20px">
+                <div style="color:var(--danger); font-weight:bold; margin-bottom:10px">Seguridad y Accesos (Admin)</div>
+                <div class="form-row" style="align-items:flex-end; margin-bottom:10px">
+                    <div style="flex:2"><label class="form-label">Clave Soporte</label><input type="text" id="cfg-sup-pass" class="big-input" style="margin-bottom:0"></div>
+                    <div style="flex:1"><button class="btn-large" style="background:var(--danger)" onclick="updateSystemPasswords('support')">Actualizar</button></div>
+                </div>
+                <div class="form-row" style="align-items:flex-end">
+                    <div style="flex:2"><label class="form-label">Clave Admin</label><input type="text" id="cfg-adm-pass" class="big-input" style="margin-bottom:0"></div>
+                    <div style="flex:1"><button class="btn-large" style="background:var(--danger)" onclick="updateSystemPasswords('admin')">Actualizar</button></div>
+                </div>
+                <hr style="border:0; border-top:1px solid var(--border); margin:20px 0;">
+            </div>
+
+            <button class="btn-large" style="background:var(--danger); margin-bottom:10px" onclick="logoutApp()">🚪 Cerrar Sesión</button>
+            <button class="btn-large" style="background:var(--bg-input); color:var(--text-main)" onclick="closeModal('settings-modal')">Cancelar</button>
+        </div>
+    </div>
+
+    <div id="preview-modal" class="modal-overlay">
+        <div class="alert-box" style="text-align: left;">
+            <h3 id="preview-title" style="margin-top:0; color:var(--primary); border-bottom:1px solid var(--border); padding-bottom:10px;">Título</h3>
+            <div id="preview-content" style="white-space:pre-wrap; margin:15px 0; font-size:0.95rem; line-height:1.5; color:var(--text-main); word-break: break-word;"></div>
+            <div style="display:flex; gap:10px; margin-top:10px">
+                <button class="btn-large" style="background:var(--bg-input); color:var(--text-main)" onclick="closeModal('preview-modal')">Cerrar</button>
+                <button class="btn-large" id="btn-copy-preview" onclick="copyFromPreview()">📋 Copiar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="form-modal" class="modal-overlay">
+        <div class="alert-box" style="text-align: left;">
+            <h3 id="form-title" style="margin-top:0; color:var(--primary)">Formulario</h3>
+            <div id="form-inputs" style="display:flex; flex-direction:column; gap:10px; margin: 15px 0;"></div>
+            <div style="display:flex; gap:10px;">
+                <button class="btn-large" style="background:var(--bg-input); color:var(--text-main)" onclick="closeModal('form-modal')">Cancelar</button>
+                <button class="btn-large" id="form-submit">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="confirm-modal" class="modal-overlay">
+        <div class="alert-box alert-danger">
+            <h3 id="confirm-title" style="margin-top:0">¿Estás seguro?</h3>
+            <p id="confirm-msg" style="color:var(--text-sec); margin-bottom:20px">Esta acción no se puede deshacer.</p>
+            <div id="confirm-pin-area" class="hidden">
+                <input type="password" id="sec-pin" class="big-input" placeholder="Tu Contraseña Admin" style="text-align:center" onkeydown="if(event.key==='Enter') document.getElementById('confirm-btn-ok').click()">
+            </div>
+            <div style="display:flex; gap:10px;">
+                <button class="btn-large" style="background:var(--bg-input); color:var(--text-main)" onclick="closeModal('confirm-modal')">Cancelar</button>
+                <button class="btn-large" id="confirm-btn-ok" style="background:var(--danger)">Sí, Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="alarm-modal" class="modal-overlay">
+        <div class="alert-box alert-danger">
+            <div style="font-size:3.5rem; margin-bottom:10px">🚨</div>
+            <h3 style="color:var(--danger); margin:0 0 10px 0;">FIN DE TURNO</h3>
+            <p style="margin-bottom:20px">Falta 1 hora para tu salida.<br>¡Recuerda llenar y enviar tu Reporte de Guardia!</p>
+            <button class="btn-large" onclick="stopAlarm()">ENTENDIDO</button>
+        </div>
+    </div>
+
+    <div id="toast">Copiado al portapapeles ✅</div>
+    <audio id="alarm-sound" loop src="data:audio/mp3;base64,//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq"></audio>
+</body>
+</html>
