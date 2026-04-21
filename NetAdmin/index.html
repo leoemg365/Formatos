@@ -6,6 +6,8 @@
     <title>NetAdmin</title>
     <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/4565/4565968.png" type="image/x-icon">
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1877f2">
     <link rel="stylesheet" href="styles.css">
     <script src="script.js" defer></script>
 </head>
@@ -55,8 +57,10 @@
                 </button>
             </div>
             
+            <button class="btn-icon hidden" id="btn-install-app" title="Instalar App">📲</button>
             <button class="btn-icon" onclick="toggleTheme()" title="Cambiar Tema">🌓</button>
             <button class="btn-icon" onclick="openSettings()" title="Ajustes del Sistema">⚙️</button>
+
         </div>
 
         <div class="search-container">
