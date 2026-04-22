@@ -3,7 +3,34 @@
          * Copyright (c) 2026 [Leonardo Montiel / Espiral].
          * Todos los derechos reservados.
          */
-        
+        /* memorizar sección */ 
+        // 1. Seleccionar todos los elementos del menú (ajusta el selector CSS)
+                const menuItems = document.querySelectorAll('.menu-item');
+                const seccionAlmacenada = localStorage.getItem('seccionActual');
+                
+                // 2. Función para aplicar el estado activo
+                function activarSeccion(id) {
+                    // Quitar clase activa a todos
+                    menuItems.forEach(item => item.classList.remove('active'));
+                    // Añadir clase activa al seleccionado
+                    document.getElementById(id).classList.add('active');
+                }
+                
+                // 3. Al cargar la página, recuperar la sección guardada
+                if (seccionAlmacenada) {
+                    activarSeccion(seccionAlmacenada);
+                }
+                
+                // 4. Escuchar clics en el menú para guardar la nueva sección
+                menuItems.forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        const id = e.target.id;
+                        localStorage.setItem('seccionActual', id);
+                        activarSeccion(id);
+                    });
+                });
+
+
         document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
         document.addEventListener('keydown', function(e) {
             if (e.key === 'F12' || e.keyCode === 123) { e.preventDefault(); return false; }
