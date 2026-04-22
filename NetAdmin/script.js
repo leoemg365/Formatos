@@ -4,32 +4,60 @@
          * Todos los derechos reservados.
          */
         /* memorizar sección */ 
-        // 1. Seleccionar todos los elementos del menú (ajusta el selector CSS)
-                const menuItems = document.querySelectorAll('.menu-item');
-                const seccionAlmacenada = localStorage.getItem('seccionActual');
-                
-                // 2. Función para aplicar el estado activo
-                function activarSeccion(id) {
-                    // Quitar clase activa a todos
-                    menuItems.forEach(item => item.classList.remove('active'));
-                    // Añadir clase activa al seleccionado
-                    document.getElementById(id).classList.add('active');
-                }
-                
-                // 3. Al cargar la página, recuperar la sección guardada
-                if (seccionAlmacenada) {
-                    activarSeccion(seccionAlmacenada);
-                }
-                
-                // 4. Escuchar clics en el menú para guardar la nueva sección
-                menuItems.forEach(item => {
-                    item.addEventListener('click', (e) => {
-                        const id = e.target.id;
-                        localStorage.setItem('seccionActual', id);
-                        activarSeccion(id);
-                    });
-                });
+        // --- Lógica de Persistencia ---
 
+                document.addEventListener("DOMContentLoaded", () => {
+                    // 1. Recuperar sesión y pestaña guardada
+                    const sessionActive = localStorage.getItem("isLoggedIn");
+                    const lastTab = localStorage.getItem("currentTab");
+                
+                    // 2. Si hay sesión activa, ocultar login y mostrar la app
+                    if (sessionActive === "true") {
+                        document.getElementById("login-screen").classList.add("hidden");
+                        document.getElementById("app-container").classList.add("visible"); // Asegúrate que no tenga display:none
+                        
+                        // 3. Restaurar la última pestaña visitada
+                        if (lastTab) {
+                            switchTab(lastTab);
+                        }
+                    }
+                });
+                
+                // 4. Modificar tu función de Login existente para guardar el éxito
+                // (Busca tu función authLogin y asegúrate de añadir esta línea al validar la contraseña)
+                function authLogin(mode) {
+                    // ... tu lógica de validación actual ...
+                    // Si el password es correcto:
+                    localStorage.setItem("isLoggedIn", "true");
+                    // ... resto de tu función para mostrar el app-container ...
+                }
+                
+                // 5. Envolver la función switchTab para que memorice cada cambio
+                const originalSwitchTab = window.switchTab; 
+                window.switchTab = function(tabName) {
+                    // Guardamos en el navegador el nombre de la pestaña
+                    localStorage.setItem("currentTab", tabName);
+                    
+                    // Llamamos a la lógica original que ya tienes escrita
+                    if (typeof originalSwitchTab === "function") {
+                        originalSwitchTab(tabName);
+                    } else {
+                        // Si no tienes la función definida aún, aquí está la lógica básica:
+                        document.querySelectorAll('.searchable-view, #view-tools').forEach(v => v.classList.add('hidden'));
+                        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                        
+                        const targetView = document.getElementById('view-' + tabName);
+                        if (targetView) targetView.classList.remove('hidden');
+                        // Aquí deberías añadir la clase active al elemento del menú correspondiente
+                    }
+                };
+                
+                // 6. Opcional: Botón de Cerrar Sesión
+                function logout() {
+                    localStorage.removeItem("isLoggedIn");
+                    localStorage.removeItem("currentTab");
+                    location.reload(); // Recarga para volver al login
+                }
 
         document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
         document.addEventListener('keydown', function(e) {
