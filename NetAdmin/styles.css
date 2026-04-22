@@ -47,6 +47,7 @@
         .tab { flex: 1; text-align: center; padding: 12px 15px; border-radius: 10px; cursor: pointer; color: var(--text-sec); font-weight: 600; font-size: 0.9rem; white-space: nowrap; transition: 0.2s; position: relative; }
         .tab.active { background: var(--primary); color: white; }
         .badge { position: absolute; top: 2px; right: 2px; background: var(--danger); color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 10px; font-weight: bold; display: none; animation: pop 0.3s; }
+        .tab:hover { background-color: #1e3a5f;}
 
         .sub-filters { display: flex; gap: 10px; margin-bottom: 10px; overflow-x: auto; padding-bottom: 5px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
         .sub-filters::-webkit-scrollbar { display: none; }
@@ -54,6 +55,7 @@
         .pill.active { background: var(--bg-surface); border-color: var(--primary); color: var(--primary); }
         .pill-sec { padding: 4px 10px; font-size: 0.8rem; background: transparent; border: 1px dashed var(--border); }
         .pill-sec.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .pill:hover { background-color: #1e3a5f; color: white; border-color: #1e3a5f;}
 
         .list-box { background: var(--bg-surface); border-radius: var(--radius); padding: 15px; margin-bottom: 20px; border: 1px solid var(--border); }
         .list-head { display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 1.1rem; margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 8px; gap:10px; }
@@ -81,6 +83,11 @@
 
         .pass-card { border-top: 5px solid var(--danger); border-left: 1px solid var(--border); }
         .news-card { border-left: 5px solid var(--primary); cursor: default; }
+        .card:hover {
+                    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+                    background-color: #374f68;
+                    }
+
         .news-cat { position: absolute; top: 8px; left: 15px; font-size: 0.65rem; background: var(--primary); color: white; padding: 2px 6px; border-radius: 10px; font-weight: bold; }
         .news-date { font-size: 0.75rem; color: var(--text-sec); margin-top: 15px; margin-bottom: 5px; }
         .news-title { font-weight: bold; font-size: 1.05rem; margin-bottom: 5px; color: var(--primary); padding-right: 80px; }
@@ -153,25 +160,33 @@
 
 
         .dialog dialog {
-    border: none;
-    border-radius: 15px;
-    padding: 2rem;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    max-width: 400px;
-    text-align: center;
-}
+            border: none;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            max-width: 400px;
+            text-align: center;
+        }
 
-dialog::backdrop {
-    background: rgba(0, 0, 0, 0.6); /* Fondo oscurecido */
-    backdrop-filter: blur(5px); /* Efecto borroso (glassmorphism) */
-}
+        dialog::backdrop {
+            background: rgba(0, 0, 0, 0.6); /* Fondo oscurecido */
+            backdrop-filter: blur(5px); /* Efecto borroso (glassmorphism) */
+        }
 
-button {
-    background: #374f68;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 1px;
-}
+        button {
+            background: #374f68;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 1px;
+        }
+
+        button:hover {
+            background: #76818d;
+        }
+
+        .btn:hover {
+            background: #76818d;
+        }

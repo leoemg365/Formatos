@@ -143,6 +143,43 @@
             }
         };
 
+        // --- 📱 INSTALACIÓN DE APP A PRUEBA DE FALLOS ---
+            try {
+                // 1. Service Worker
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.register('./sw.js').catch(e => console.log('SW:', e));
+                }
+
+                // 2. Android PWA
+                let deferredPrompt;
+                window.addEventListener('beforeinstallprompt', (e) => {
+                    e.preventDefault();
+                    deferredPrompt = e;
+                    const installBtn = document.getElementById('btn-install-app');
+                    
+                    // IMPORTANTE: Solo actúa si el botón realmente existe en el HTML
+                    if(installBtn) {
+                        installBtn.classList.remove('hidden');
+                        installBtn.addEventListener('click', async () => {
+                            installBtn.classList.add('hidden');
+                            deferredPrompt.prompt();
+                            await deferredPrompt.userChoice;
+                            deferredPrompt = null;
+                        });
+                    }
+                });
+
+                // 3. Detector iOS
+                const isIos = () => /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
+                const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+                if (isIos() && !isStandalone) {
+                    setTimeout(() => showToastMsg("Para instalar: Toca 'Compartir' y luego 'Agregar a Inicio' ➕"), 3000);
+                }
+            } catch (err) {
+                console.log("Error silencioso PWA:", err);
+            }
+            // --------------------------------------------------
+
         function switchLoginMode(mode) {
             document.getElementById('login-title').innerText = mode === 'admin' ? "Acceso Admin" : "Acceso Soporte";
             document.getElementById('login-mode-support').classList.toggle('hidden', mode === 'admin');
