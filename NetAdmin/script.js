@@ -3,61 +3,6 @@
          * Copyright (c) 2026 [Leonardo Montiel / Espiral].
          * Todos los derechos reservados.
          */
-        /* memorizar sección */ 
-        // --- Lógica de Persistencia ---
-
-                document.addEventListener("DOMContentLoaded", () => {
-                    // 1. Recuperar sesión y pestaña guardada
-                    const sessionActive = localStorage.getItem("isLoggedIn");
-                    const lastTab = localStorage.getItem("currentTab");
-                
-                    // 2. Si hay sesión activa, ocultar login y mostrar la app
-                    if (sessionActive === "true") {
-                        document.getElementById("login-screen").classList.add("hidden");
-                        document.getElementById("app-container").classList.add("visible"); // Asegúrate que no tenga display:none
-                        
-                        // 3. Restaurar la última pestaña visitada
-                        if (lastTab) {
-                            switchTab(lastTab);
-                        }
-                    }
-                });
-                
-                // 4. Modificar tu función de Login existente para guardar el éxito
-                // (Busca tu función authLogin y asegúrate de añadir esta línea al validar la contraseña)
-                function authLogin(mode) {
-                    // ... tu lógica de validación actual ...
-                    // Si el password es correcto:
-                    localStorage.setItem("isLoggedIn", "true");
-                    // ... resto de tu función para mostrar el app-container ...
-                }
-                
-                // 5. Envolver la función switchTab para que memorice cada cambio
-                const originalSwitchTab = window.switchTab; 
-                window.switchTab = function(tabName) {
-                    // Guardamos en el navegador el nombre de la pestaña
-                    localStorage.setItem("currentTab", tabName);
-                    
-                    // Llamamos a la lógica original que ya tienes escrita
-                    if (typeof originalSwitchTab === "function") {
-                        originalSwitchTab(tabName);
-                    } else {
-                        // Si no tienes la función definida aún, aquí está la lógica básica:
-                        document.querySelectorAll('.searchable-view, #view-tools').forEach(v => v.classList.add('hidden'));
-                        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                        
-                        const targetView = document.getElementById('view-' + tabName);
-                        if (targetView) targetView.classList.remove('hidden');
-                        // Aquí deberías añadir la clase active al elemento del menú correspondiente
-                    }
-                };
-                
-                // 6. Opcional: Botón de Cerrar Sesión
-                function logout() {
-                    localStorage.removeItem("isLoggedIn");
-                    localStorage.removeItem("currentTab");
-                    location.reload(); // Recarga para volver al login
-                }
 
         document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
         document.addEventListener('keydown', function(e) {
@@ -95,6 +40,7 @@
                 if(id.includes('hin') || id.includes('hout')) el.value = "7";
             });
             document.getElementById('r4-fecha').value = new Date().toLocaleDateString('es-VE');
+            document.getElementById('r6-fecha').value = new Date().toLocaleDateString('es-VE');
 
             const savedName = localStorage.getItem('report_operator');
             if(savedName) document.getElementById('rep-operador').value = savedName;
@@ -110,6 +56,15 @@
             if(session) {
                 isAdmin = session.isAdmin; adminPass = session.adminPass; ghToken = session.ghToken; dailyExitTime = session.exitTime;
                 enterApp(session.name, true);
+
+                // --- NUEVO: RESTAURAR ESTADO (PERSISTENCIA) ---
+                const lastTab = localStorage.getItem('activeTab');
+                const lastTool = localStorage.getItem('activeToolMode');
+                const lastRep = localStorage.getItem('activeRepMode');
+                
+                if(lastTab) switchTab(lastTab);
+                if(lastTool) switchToolMode(lastTool);
+                if(lastRep) switchRepMode(parseInt(lastRep));
             }
 
             document.body.addEventListener('click', function unlockAudio() {
@@ -317,9 +272,18 @@
         }
 
         function switchTab(t) {
-            document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active')); event.target.classList.add('active');
-            ['clip','pass','resp','news','tools'].forEach(v => document.getElementById(`view-${v}`).classList.add('hidden'));
-            document.getElementById(`view-${t}`).classList.remove('hidden'); document.getElementById('search-bar').value = ''; filterUniversal(); checkNotifications(); 
+            localStorage.setItem('activeTab', t);
+            document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+            Array.from(document.querySelectorAll('.tab')).forEach(el => {
+                if(el.getAttribute('onclick') && el.getAttribute('onclick').includes(t)) el.classList.add('active');
+            });
+            ['clip','pass','resp','news','tools'].forEach(v => {
+                const view = document.getElementById(`view-${v}`);
+                if(view) view.classList.add('hidden');
+            });
+            const targetView = document.getElementById(`view-${t}`);
+            if(targetView) targetView.classList.remove('hidden');
+            checkNotifications(); 
         }
 
         function filterUniversal() {
@@ -454,6 +418,7 @@
 
         // --- 5. HERRAMIENTAS / OCR / CALC / REPORTE 5 ---
         function switchToolMode(mode) {
+            localStorage.setItem('activeToolMode', mode);
             currentToolMode = mode;
             ['rep', 'fmt', 'ocr', 'calc'].forEach(m => {
                 document.getElementById(`pill-tool-${m}`).classList.toggle('active', mode === m);
@@ -544,8 +509,9 @@
         }
 
         function switchRepMode(mode) {
+            localStorage.setItem('activeRepMode', mode);
             currentRepMode = mode;
-            for(let i=1; i<=5; i++) {
+            for(let i=1; i<=6; i++) {
                 document.getElementById(`pill-r${i}`).classList.remove('active'); document.getElementById(`pill-r${i}`).style.background = ''; document.getElementById(`pill-r${i}`).style.color = '';
                 document.getElementById(`rep-mode-${i}`).classList.add('hidden');
             }
@@ -678,6 +644,20 @@
                     htmlText = `<strong>Servicio eléctrico restablecido</strong><br>${listH}`;
                     plainText = `*Servicio eléctrico restablecido*\n${listP}`;
                 }
+            }
+            else if(currentRepMode === 6) {
+            const rev = document.getElementById('r6-rev').value || "Kelvin Briceño";
+            const fecha = document.getElementById('r6-fecha').value;
+            const now = new Date();
+            let h = now.getHours(); let m = now.getMinutes(); let ampm = h >= 12 ? 'PM' : 'AM';
+            h = h % 12 || 12; m = m < 10 ? '0'+m : m;
+            const timeStr = `${h < 10 ? '0'+h : h}:${m}${ampm}`;
+            const invA = document.getElementById('r6-inv-a').value;
+            const invB = document.getElementById('r6-inv-b').value;
+            const can = document.getElementById('r6-can').value;
+
+            htmlText = `Revisado por: ${rev}<br>Fecha de Reporte: ${fecha}<br>Hora de Reporte: ${timeStr}<br>Inversores A: ${invA}<br>Inversores B: ${invB}<br>CANALES: ${can}`;
+            plainText = `Revisado por: ${rev}\nFecha de Reporte: ${fecha}\nHora de Reporte: ${timeStr}\nInversores A: ${invA}\nInversores B: ${invB}\nCANALES: ${can}`;
             }
 
             document.getElementById('live-preview-box').innerHTML = htmlText; finalReportAsterisks = plainText; 

@@ -129,6 +129,7 @@
                     <div class="pill pill-sec" id="pill-r3" onclick="switchRepMode(3)">Empresarial</div>
                     <div class="pill pill-sec" id="pill-r4" onclick="switchRepMode(4)" style="color:var(--danger); border-color:var(--danger)">Emergencias</div>
                     <div class="pill pill-sec" id="pill-r5" onclick="switchRepMode(5)">⚡ Eléctrico</div>
+                    <div class="pill pill-sec" id="pill-r6" onclick="switchRepMode(6)">📡 Revisión</div>
                 </div>
 
                 <div id="rep-mode-1" class="rep-container">
@@ -275,6 +276,19 @@
                     </div>
 
                     <div id="r5-nodes-list" style="margin-top:15px; display:flex; flex-direction:column; gap:8px;"></div>
+                </div>
+
+                <div id="rep-mode-6" class="rep-container hidden">
+                    <div class="form-row">
+                        <div style="flex:2"><label class="form-label">Revisado por</label><input type="text" id="r6-rev" class="big-input" placeholder="Coloca tu nombre" oninput="updateLivePreview()"></div>
+                        <div style="flex:1"><label class="form-label">Fecha</label><input type="text" id="r6-fecha" class="big-input" oninput="updateLivePreview()"></div>
+                    </div>
+                    <div class="form-row">
+                        <div><label class="form-label">Inversores A</label><input type="text" id="r6-inv-a" class="big-input" value="Sin Novedad" oninput="updateLivePreview()"></div>
+                        <div><label class="form-label">Inversores B</label><input type="text" id="r6-inv-b" class="big-input" value="Sin Novedad" oninput="updateLivePreview()"></div>
+                    </div>
+                    <label class="form-label">Canales y Estatus</label>
+                    <textarea id="r6-can" class="big-input" rows="2" oninput="updateLivePreview()">11, 45, 70 y congelado (notificado a I&D)</textarea>
                 </div>
 
                 <div class="wp-bubble">
@@ -460,8 +474,10 @@
     <dialog id="modalActualizaciones">
     <h2>🚀 ¡Nuevas funciones disponibles!</h2>
     <ul>
-        <li><b>Velocidad:</b> Hemos optimizado la carga un 50%.</li>
+        <li><b>Velocidad:</b> Hemos optimizado la carga un 100%.</li>
         <li><b>Monitoreo:</b> Monitoreo de nodos</li>
+        <li><b>Reportes:</b> Nuevos campos para reportes de Inversores</li>
+        <li><b>Usabilidad:</b> Ahora se guarda la pestaña activa</li>
     </ul>
     <button id="cerrarActualizacion">Entendido, ¡gracias!</button>
 </dialog>
