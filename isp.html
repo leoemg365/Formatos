@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ISP CRM - LocalStorage</title>
+    <style>
+        :root { --bg: #1e1e2f; --card: #2a2a40; --text: #f8f8f2; --primary: #6272a4; --success: #50fa7b; --danger: #ff5555; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        .card { background-color: var(--card); padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        .hidden { display: none !important; }
+        input, select, button { padding: 10px; margin: 5px 0; border-radius: 4px; border: none; width: 100%; box-sizing: border-box; }
+        input, select { background-color: #44475a; color: white; }
+        button { background-color: var(--primary); color: white; cursor: pointer; font-weight: bold; }
+        button:hover { opacity: 0.9; }
+        .btn-danger { background-color: var(--danger); }
+        .btn-success { background-color: var(--success); color: #282a36; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #44475a; }
+        .flex-row { display: flex; gap: 10px; }
+        .header { display: flex; justify-content: space-between; align-items: center; }
+        a { color: #8be9fd; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="loginView" class="card">
+        <h2>Iniciar Sesión</h2>
+        <p style="font-size: 0.8em; color: #aaa;">Admin por defecto -> Usuario: admin | Clave: 1234</p>
+        <input type="text" id="loginUser" placeholder="Usuario">
+        <input type="password" id="loginPass" placeholder="Contraseña">
+        <button onclick="app.login()">Entrar</button>
+    </div>
+
+    <div id="dashboardView" class="hidden">
+        <div class="header card">
+            <div>
+                <h2 style="margin:0;">Panel de Control - <span id="roleDisplay"></span></h2>
+                <small>Usuario: <span id="userDisplay"></span></small>
+            </div>
+            <button onclick="app.logout()" style="width: auto;">Cerrar Sesión</button>
+        </div>
+
+        <div id="adminPanel" class="card hidden">
+            <h3>Gestión de Usuarios (Admin)</h3>
+            <div class="flex-row">
+                <input type="text" id="newUsername" placeholder="Nuevo Usuario">
+                <input type="password" id="newPassword" placeholder="Clave">
+                <select id="newRole">
+                    <option value="subadmin">Subadmin</option>
+                    <option value="agente">Agente</option>
+                </select>
+                <button onclick="app.createUser()">Crear Usuario</button>
+            </div>
+            <hr style="border-color: #44475a; margin: 20px 0;">
+            <button class="btn-danger" onclick="app.clearSystem()">⚠️ BORRAR TODA LA BASE DE DATOS ⚠️</button>
+        </div>
+
+        <div id="agentPanel" class="card hidden">
+            <h3>Registrar Nuevo Cliente (Agente)</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <input type="text" id="cliNombre" placeholder="Nombre">
+                <input type="text" id="cliApellido" placeholder="Apellido">
+                <input type="number" id="cliEdad" placeholder="Edad">
+                <input type="text" id="cliDni" placeholder="Cédula / DNI">
+                <select id="cliTipo">
+                    <option value="Fibra">Fibra Óptica</option>
+                    <option value="Inalámbrico">Inalámbrico</option>
+                </select>
+                <div class="flex-row">
+                    <input type="text" id="cliCoords" placeholder="Latitud, Longitud">
+                    <button type="button" onclick="app.getCoords()" style="width: 50px;">📍</button>
+                </div>
+            </div>
+            <button onclick="app.registerClient()" class="btn-success" style="margin-top: 10px;">Guardar Cliente</button>
+        </div>
+
+        <div class="card">
+            <h3>Base de Clientes</h3>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nombre/DNI</th>
+                            <th>Servicio</th>
+                            <th>Ubicación</th>
+                            <th>Estado Pago</th>
+                            <th>Confirmación</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="clientsTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+// Lógica principal de la App
+const app = {
+    currentUser: null,
+
+    // Inicializar DB en LocalStorage
+    init: function() {
+        if (!localStorage.getItem('isp_users')) {
+            const defaultUsers = [{ username: 'admin', password: '1234', role: 'admin' }];
+            localStorage.setItem('isp_users', JSON.stringify(defaultUsers));
+        }
+        if (!localStorage.getItem('isp_clients')) {
+            localStorage.setItem('isp_clients', JSON.stringify([]));
+        }
+        this.checkSession();
+    },
+
+    // Autenticación
+    login: function() {
+        const u = document.getElementById('loginUser').value;
+        const p = document.getElementById('loginPass').value;
+        const users = JSON.parse(localStorage.getItem('isp_users'));
+        
+        const user = users.find(x => x.username === u && x.password === p);
+        if (user) {
+            sessionStorage.setItem('active_user', JSON.stringify(user));
+            this.checkSession();
+        } else {
+            alert("Credenciales incorrectas");
+        }
+    },
+
+    logout: function() {
+        sessionStorage.removeItem('active_user');
+        this.currentUser = null;
+        this.checkSession();
+    },
+
+    checkSession: function() {
+        const active = sessionStorage.getItem('active_user');
+        if (active) {
+            this.currentUser = JSON.parse(active);
+            document.getElementById('loginView').classList.add('hidden');
+            document.getElementById('dashboardView').classList.remove('hidden');
+            this.setupDashboard();
+        } else {
+            document.getElementById('loginView').classList.remove('hidden');
+            document.getElementById('dashboardView').classList.add('hidden');
+        }
+    },
+
+    // UI Routing basado en Roles
+    setupDashboard: function() {
+        document.getElementById('roleDisplay').innerText = this.currentUser.role.toUpperCase();
+        document.getElementById('userDisplay').innerText = this.currentUser.username;
+
+        document.getElementById('adminPanel').classList.add('hidden');
+        document.getElementById('agentPanel').classList.add('hidden');
+
+        if (this.currentUser.role === 'admin') {
+            document.getElementById('adminPanel').classList.remove('hidden');
+        } else if (this.currentUser.role === 'agente') {
+            document.getElementById('agentPanel').classList.remove('hidden');
+        }
+        
+        this.renderClients();
+    },
+
+    // Lógica ADMIN
+    createUser: function() {
+        const u = document.getElementById('newUsername').value;
+        const p = document.getElementById('newPassword').value;
+        const r = document.getElementById('newRole').value;
+        
+        if(!u || !p) return alert("Completa los datos del usuario");
+
+        const users = JSON.parse(localStorage.getItem('isp_users'));
+        users.push({ username: u, password: p, role: r });
+        localStorage.setItem('isp_users', JSON.stringify(users));
+        
+        alert(`Usuario ${u} creado como ${r}`);
+        document.getElementById('newUsername').value = '';
+        document.getElementById('newPassword').value = '';
+    },
+
+    clearSystem: function() {
+        if(confirm("¿Estás 100% seguro? Esto eliminará usuarios y clientes.")) {
+            localStorage.clear();
+            this.logout();
+            this.init();
+        }
+    },
+
+    // Lógica AGENTE (Geolocalización y Registro)
+    getCoords: function() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    document.getElementById('cliCoords').value = `${pos.coords.latitude}, ${pos.coords.longitude}`;
+                },
+                (err) => alert("Error obteniendo ubicación. Ingresa manual.")
+            );
+        } else {
+            alert("Tu navegador no soporta geolocalización.");
+        }
+    },
+
+    registerClient: function() {
+        const client = {
+            id: Date.now(),
+            nombre: document.getElementById('cliNombre').value,
+            apellido: document.getElementById('cliApellido').value,
+            edad: document.getElementById('cliEdad').value,
+            dni: document.getElementById('cliDni').value,
+            tipo: document.getElementById('cliTipo').value,
+            coords: document.getElementById('cliCoords').value,
+            pagoEstado: 'Pendiente', 
+            confirmado: false 
+        };
+
+        if(!client.nombre || !client.dni) return alert("Nombre y DNI son obligatorios");
+
+        const clients = JSON.parse(localStorage.getItem('isp_clients'));
+        clients.push(client);
+        localStorage.setItem('isp_clients', JSON.stringify(clients));
+        
+        alert("Cliente registrado");
+        // Limpiar form
+        ['cliNombre','cliApellido','cliEdad','cliDni','cliCoords'].forEach(id => document.getElementById(id).value = '');
+        this.renderClients();
+    },
+
+    // Lógica Compartida y SUBADMIN
+    renderClients: function() {
+        const clients = JSON.parse(localStorage.getItem('isp_clients'));
+        const tbody = document.getElementById('clientsTableBody');
+        tbody.innerHTML = '';
+
+        clients.forEach((c, index) => {
+            // Lógica de visibilidad por rol
+            let actionsHTML = '';
+            
+            if (this.currentUser.role === 'agente') {
+                if (c.pagoEstado === 'Pendiente') {
+                    actionsHTML += `<button class="btn-success" onclick="app.registerPayment(${index})">Registrar Pago</button>`;
+                }
+            } 
+            else if (this.currentUser.role === 'subadmin') {
+                actionsHTML += `<button onclick="app.editClient(${index})" style="background-color:#f1fa8c; color:#282a36;">Editar</button>`;
+                if (!c.confirmado && c.pagoEstado === 'Pagado') {
+                    actionsHTML += `<button class="btn-success" onclick="app.confirmClient(${index})" style="margin-top:5px;">Confirmar</button>`;
+                }
+            }
+
+            // Link a Google Maps
+            const mapLink = c.coords ? `<a href="https://www.google.com/maps/search/?api=1&query=${c.coords.replace(' ', '')}" target="_blank">🗺️ Ver Mapa</a>` : 'N/A';
+
+            tbody.innerHTML += `
+                <tr>
+                    <td><strong>${c.nombre} ${c.apellido}</strong><br><small>DNI: ${c.dni} | Edad: ${c.edad}</small></td>
+                    <td>${c.tipo}</td>
+                    <td>${mapLink}<br><small>${c.coords}</small></td>
+                    <td><span style="color: ${c.pagoEstado === 'Pagado' ? '#50fa7b' : '#ffb86c'}">${c.pagoEstado}</span></td>
+                    <td>${c.confirmado ? '✅ Confirmado' : '⏳ Pendiente'}</td>
+                    <td>${actionsHTML}</td>
+                </tr>
+            `;
+        });
+    },
+
+    registerPayment: function(index) {
+        if(confirm("¿Confirmas que el cliente realizó el pago?")) {
+            const clients = JSON.parse(localStorage.getItem('isp_clients'));
+            clients[index].pagoEstado = 'Pagado';
+            localStorage.setItem('isp_clients', JSON.stringify(clients));
+            this.renderClients();
+        }
+    },
+
+    confirmClient: function(index) {
+        const clients = JSON.parse(localStorage.getItem('isp_clients'));
+        clients[index].confirmado = true;
+        localStorage.setItem('isp_clients', JSON.stringify(clients));
+        this.renderClients();
+    },
+
+    editClient: function(index) {
+        const clients = JSON.parse(localStorage.getItem('isp_clients'));
+        const client = clients[index];
+        
+        // Simulación simple de edición vía prompt para mantenerlo todo en 1 archivo (puedes pasarlo a un modal luego)
+        const nuevoNombre = prompt("Editar Nombre:", client.nombre);
+        const nuevoDni = prompt("Editar DNI:", client.dni);
+        
+        if (nuevoNombre && nuevoDni) {
+            clients[index].nombre = nuevoNombre;
+            clients[index].dni = nuevoDni;
+            localStorage.setItem('isp_clients', JSON.stringify(clients));
+            this.renderClients();
+        }
+    }
+};
+
+// Arrancar la app al cargar
+window.onload = () => app.init();
+</script>
+
+</body>
+</html>
