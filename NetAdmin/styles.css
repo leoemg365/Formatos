@@ -76,7 +76,7 @@
         body.dark-mode .color-aviso { background: rgba(247, 185, 40, 0.15); }
         body.dark-mode .color-urgente { background: rgba(255, 77, 79, 0.15); }
 
-        .actions { position:  absolute; top: 5px; right:10px; display: flex; gap: 2px; border-radius: 6px; padding: 2px; z-index: 10;}
+        .actions { position:  left; top: 5px; right:10px; display: flex; gap: 2px; border-radius: 6px; padding: 2px; z-index: 10;}
         .mini-btn { font-size: 15px; width: 26px; height: 26px; background: var(--bg-surface); border: none; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s;}
         .mini-btn:hover { background: var(--bg-input); }
         .move-btn { color: var(--primary); font-size: 11px; }
