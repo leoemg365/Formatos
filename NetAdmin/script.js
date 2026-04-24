@@ -16,6 +16,7 @@
         let db = null;
         let isAdmin = false; let adminPass = ''; let ghToken = ''; let fileSha = null;
         let hasUnsavedChanges = false; 
+        let isSaveCooldown = false; // Esto es para bloquear el spam
         
         let currentRespFilterMain = 'General'; let currentRespFilterSub = 'Todas';
         let currentNewsFilter = 'Todas';
@@ -239,21 +240,80 @@
         }
 
         async function pushData() {
-            if(!isAdmin) return;
-            const btn = document.getElementById('btn-save-batch'); const loader = document.getElementById('save-loader'); const txt = document.getElementById('save-text');
-            loader.style.display = 'inline-block'; txt.innerText = 'Guardando...'; btn.disabled = true;
+            // Si no es Admin o si el temporizador está activo, no hace nada
+            if(!isAdmin || isSaveCooldown) return; 
+            
+            const btn = document.getElementById('btn-save-batch'); 
+            const loader = document.getElementById('save-loader'); 
+            const txt = document.getElementById('save-text');
+            
+            loader.style.display = 'inline-block'; 
+            txt.innerText = 'Subiendo...'; 
+            btn.disabled = true;
 
             const url = `https://api.github.com/repos/${GH.USER}/${GH.REPO}/contents/${GH.FILE}`;
             const body = { message: "Update via WebApp (Batch)", content: btoa(unescape(encodeURIComponent(JSON.stringify(db, null, 2)))), sha: fileSha };
+            
             try {
                 const res = await fetch(url, { method:'PUT', headers: {'Authorization': `token ${ghToken}`, 'Content-Type': 'application/json'}, body: JSON.stringify(body) });
                 if(res.ok) { 
-                    fileSha = (await res.json()).content.sha; hasUnsavedChanges = false; btn.classList.add('hidden');
-                    const status = document.getElementById('sync-status'); status.classList.remove('hidden'); status.innerHTML = "☁️ <span>Guardado con éxito</span>"; 
+                    fileSha = (await res.json()).content.sha; 
+                    hasUnsavedChanges = false; 
+                    
+                    const status = document.getElementById('sync-status'); 
+                    status.classList.remove('hidden'); 
+                    status.innerHTML = "☁️ <span>Guardado con éxito</span>"; 
                     setTimeout(()=>status.innerHTML="☁️ <span>Conectado</span>", 2500); 
+                    
+                    // Iniciar el escudo protector de 60 segundos
+                    iniciarCooldownGuardado();
                 } else throw new Error();
-            } catch(e) { alert("Error al subir a GitHub. Verifica tu Token."); }
-            finally { loader.style.display = 'none'; txt.innerText = '💾 Guardar en la Nube'; btn.disabled = false; }
+            } catch(e) { 
+                alert("Error al subir a GitHub. Verifica tu Token."); 
+                loader.style.display = 'none'; 
+                txt.innerText = '💾 Guardar en la Nube'; 
+                btn.disabled = false;
+            }
+        }
+
+        // --- NUEVO: MOTOR DE PROTECCIÓN ANTI-SPAM (60 SEG) ---
+        function iniciarCooldownGuardado() {
+            isSaveCooldown = true;
+            const btn = document.getElementById('btn-save-batch');
+            const loader = document.getElementById('save-loader');
+            const txt = document.getElementById('save-text');
+            
+            loader.style.display = 'none';
+            btn.classList.remove('hidden'); // Lo mantenemos visible para que vea el conteo
+            btn.style.background = 'var(--border)'; // Lo pintamos de gris inactivo
+            btn.style.color = 'var(--text-sec)';
+            btn.style.cursor = 'not-allowed';
+            
+            let timeLeft = 60; // Los 60 segundos
+            txt.innerText = `⏳ Espera ${timeLeft}s`;
+
+            const conteo = setInterval(() => {
+                timeLeft--;
+                if (timeLeft > 0) {
+                    txt.innerText = `⏳ Espera ${timeLeft}s`;
+                } else {
+                    // Terminó el tiempo
+                    clearInterval(conteo);
+                    isSaveCooldown = false;
+                    
+                    // Restauramos los colores originales del botón amarillo
+                    btn.style.background = ''; 
+                    btn.style.color = '';
+                    btn.style.cursor = 'pointer';
+                    txt.innerText = '💾 Guardar en la Nube';
+                    btn.disabled = false;
+
+                    // Si el usuario no hizo ningún cambio nuevo mientras esperaba, ocultamos el botón
+                    if (!hasUnsavedChanges) {
+                        btn.classList.add('hidden');
+                    }
+                }
+            }, 1000);
         }
 
         function checkNotifications() {
