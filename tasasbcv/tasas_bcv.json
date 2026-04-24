@@ -1,0 +1,14 @@
+{
+    "info": {
+        "fuente": "Banco Central de Venezuela",
+        "web": "https://www.bcv.org.ve",
+        "ultima_consulta": "24/04/2026 08:30 AM"
+    },
+    "tasas": {
+        "USD": 36.45,
+        "EUR": 39.12,
+        "CNY": 5.04,
+        "TRY": 1.12,
+        "RUB": 0.39
+    }
+}
