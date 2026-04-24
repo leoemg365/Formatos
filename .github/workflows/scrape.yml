@@ -1,0 +1,35 @@
+name: Actualizar Tasas BCV
+
+on:
+  schedule:
+    - cron: '0 12,22 * * *'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v3
+
+      - name: Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Instalar dependencias
+        run: |
+          pip install requests beautifulsoup4
+
+      - name: Ejecutar scraper
+        # Le decimos que busque el script dentro de la carpeta
+        run: python tasasbcv/scraper.py
+
+      - name: Guardar cambios en el repositorio
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+          # Le indicamos que solo agregue el archivo JSON de esa carpeta
+          git add tasasbcv/tasas_bcv.json
+          git commit -m "Actualización automática de tasas: $(date)" || exit 0
+          git push
