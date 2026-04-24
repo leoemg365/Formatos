@@ -10,7 +10,7 @@
       "cards": [
         {
           "id": 1771462631333,
-          "label": "OLT - Maracaibo",
+          "label": "OLT - Maracaibo (General)",
           "content": "https://tecnovenca.smartolt.com/"
         },
         {
@@ -24,11 +24,6 @@
           "content": "http://192.168.20.2/action/login.html"
         },
         {
-          "id": 1771462788884,
-          "label": "OLT - Nueva Jayana",
-          "content": "https://38.10.254.10:8084/"
-        },
-        {
           "id": 1771462824076,
           "label": "OLT - Mecocal",
           "content": "https://172.112.1.2/"
@@ -37,16 +32,6 @@
           "id": 1774284008211,
           "label": "OLT - Ciudad Ojeda 2 Victoria",
           "content": "https://38.51.204.32:8990/action/login.html"
-        },
-        {
-          "id": 1774304290549,
-          "label": "OLT - LOS PEDROS 1",
-          "content": "https://172.114.7.3"
-        },
-        {
-          "id": 1774304308044,
-          "label": "OLT - LOS PEDROS 2",
-          "content": "https://38.51.214.128:8082/"
         }
       ]
     },
