@@ -164,6 +164,24 @@
   ],
   "passwords": [
     {
+      "id": 1777011056227,
+      "title": "OLTs Credenciales",
+      "cards": [
+        {
+          "id": 1777011082938,
+          "label": "OLTs Punto Fijo",
+          "user": "soporteZulia",
+          "pass": "Tecn*4563..1"
+        },
+        {
+          "id": 1777011127465,
+          "label": "OLT - Ciudad Ojeda",
+          "user": "soporte@tecnovenca.net",
+          "pass": "Admin*12345678"
+        }
+      ]
+    },
+    {
       "id": 1771463483049,
       "title": "Credenciales",
       "cards": [
@@ -174,40 +192,16 @@
           "pass": "admin"
         },
         {
-          "id": 1771463553457,
-          "label": "Antena Ubiquiti",
-          "user": "tecnoven",
-          "pass": "Tecno45637954"
-        },
-        {
-          "id": 1771463590129,
-          "label": "Antenas AP",
-          "user": "soporte",
-          "pass": "Tecn*45637954"
-        },
-        {
           "id": 1771463632481,
           "label": "ONU ZTE",
           "user": "admin",
           "pass": "Tecn*45637954"
         },
         {
-          "id": 1771463727777,
-          "label": "OLTs Punto Fijo",
-          "user": "soporteZulia",
-          "pass": "Tecn*4563..1"
-        },
-        {
           "id": 1771463762472,
           "label": "ONU-Router VSOL",
           "user": "user",
           "pass": "admin12345678"
-        },
-        {
-          "id": 1774290107403,
-          "label": "Antenas Ramon",
-          "user": "admin",
-          "pass": "tecnoseg5140"
         },
         {
           "id": 1774883697706,
@@ -220,6 +214,30 @@
           "label": "ONU-Router VSOL Ciudad Ojeda",
           "user": "(Sin usuario)",
           "pass": "admin12345678"
+        }
+      ]
+    },
+    {
+      "id": 1777010837660,
+      "title": "Credenciales Antenas",
+      "cards": [
+        {
+          "id": 1777010903418,
+          "label": "Antenas Ubiquiti - Clientes",
+          "user": "tecnoven",
+          "pass": "Tecno45637954"
+        },
+        {
+          "id": 1777010922434,
+          "label": "Antenas AP",
+          "user": "soporte",
+          "pass": "Tecn*45637954"
+        },
+        {
+          "id": 1777010862539,
+          "label": "Antenas Ramon",
+          "user": "admin",
+          "pass": "tecnoseg5140"
         }
       ]
     }
