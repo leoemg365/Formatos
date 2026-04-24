@@ -646,7 +646,7 @@
                 }
             }
             else if(currentRepMode === 6) {
-            const rev = document.getElementById('r6-rev').value || "Kelvin Briceño";
+            const rev = document.getElementById('r6-rev').value || "";
             const fecha = document.getElementById('r6-fecha').value;
             const now = new Date();
             let h = now.getHours(); let m = now.getMinutes(); let ampm = h >= 12 ? 'PM' : 'AM';
