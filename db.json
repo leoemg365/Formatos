@@ -664,6 +664,13 @@
           "subcat": "Lentitud",
           "color": "neutro",
           "content": "Buenas noches, ¿nos indica por favor en qué páginas o aplicaciones presenta el inconveniente?"
+        },
+        {
+          "id": 1777002404826,
+          "label": "Falla lentitud",
+          "subcat": "Lentitud",
+          "color": "neutro",
+          "content": "Buenas noches, nos indica por favor en qué le falla el servicio y nos pasa por favor fotos o un vídeo para verificar el tipo de problema?"
         }
       ]
     }
