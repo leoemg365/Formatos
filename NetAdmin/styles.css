@@ -190,3 +190,8 @@
         .btn:hover {
             background: #76818d;
         }
+
+        /* Ocultar elementos en pantallas menores a 768px (móviles y tablets pequeñas) */
+        @media (max-width: 768px) {
+        .hide-mobile {
+        display: none !important;} }
