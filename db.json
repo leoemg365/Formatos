@@ -365,6 +365,13 @@
           "subcat": "ONU en LOS",
           "color": "neutro",
           "content": "Apreciamos que su equipo se encuentra en estado LOS, en este caso tendríamos que agendar un ticket de visita técnica para que vayan a solucionar el inconveniente"
+        },
+        {
+          "id": 1777089120715,
+          "label": "Incidencia nodo",
+          "subcat": "Falla Interna",
+          "color": "urgente",
+          "content": "Apreciado cliente, le informamos que en estos momentos estamos experimentando un inconveniente en el nodo principal donde conecta su servicio. Le ofrecemos nuestras más sinceras disculpas por las molestias que esto pueda ocasionar. Estamos trabajando arduamente para solucionar el inconveniente y restablecer el servicio lo antes posible. *Agradecemos su confianza en\nTECNOVEN #SomosMásQueInternet*"
         }
       ]
     },
