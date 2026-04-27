@@ -379,6 +379,13 @@
           "subcat": "Mantenimiento",
           "color": "info",
           "content": "Buenos días, es para informarle que el día de hoy se estará realizando un mantenimiento en la cajera donde conecta su servicio por lo que su servicio se verá interrumpido, es para que cuente con la información, que pase feliz día."
+        },
+        {
+          "id": 1777328338191,
+          "label": "NAP Caída Mañana",
+          "subcat": "Falla Interna",
+          "color": "urgente",
+          "content": "Apreciado cliente, le informamos que en estos momentos estamos experimentando un inconveniente en la cajera donde conecta su servicio. Le ofrecemos nuestras más sinceras disculpas por las molestias que esto pueda ocasionar. Debido a la serie de inconvenientes que se nos han presentado el día de hoy, estaremos solucionando el inconveniente el día de mañana en la mañana *Agradecemos su confianza en\nTECNOVEN #SomosMásQueInternet*"
         }
       ]
     },
