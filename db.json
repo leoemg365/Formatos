@@ -210,6 +210,12 @@
           "pass": "user"
         },
         {
+          "id": 1777411864567,
+          "label": "ONU Tecnoven F680 (Si no funciona la otra)",
+          "user": "netplus",
+          "pass": "netplus"
+        },
+        {
           "id": 1776480572331,
           "label": "ONU-Router VSOL Ciudad Ojeda",
           "user": "(Sin usuario)",
