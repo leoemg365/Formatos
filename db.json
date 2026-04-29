@@ -502,6 +502,13 @@
           "subcat": "Configuración de Router",
           "color": "info",
           "content": "Ingresa en el navegador Chrome, y colocas en la barra de búsqueda: 192.168.1.1 \nSi no sale la página del router, colocas 192.168.0.1.\n \nSeguidamente, te pedirá contraseña; escribes: admin12345678 \nSí no funciona la contraseña colocas: admin\n\nVerás la sección de Clientes o dispositivos y podrás ver la cantidad de dispositivos\n \nLas configuraciones de la red Wi-Fi se encuentran en la sección de Inalámbrico o Wireless (en inglés). De todos modos, al ingresar, pásanos una captura o foto para indicarte con detalle."
+        },
+        {
+          "id": 1777471366190,
+          "label": "Solicitud de datos",
+          "subcat": "Ventas",
+          "color": "aviso",
+          "content": "Buenos días, nos indica por favor los siguientes datos: \n\n• Nombre\n• Cédula\n• Ciudad y zona en la que reside"
         }
       ]
     },
