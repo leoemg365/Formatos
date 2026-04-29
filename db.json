@@ -604,6 +604,13 @@
           "subcat": "Servicio",
           "color": "info",
           "content": "Visualizamos a nivel de sistema que su servicio se encuentra activo y presentando consumo, si presenta algún inconveniente nuevamente nos indica. recuerde que estamos siempre a su disposición y nos complace mucho poder ayudarle esperamos que este muy bien y tenga un excelente día. Le agradecemos su confianza en Tecnoven."
+        },
+        {
+          "id": 1777491368075,
+          "label": "Solicitud de datos",
+          "subcat": "Ventas",
+          "color": "aviso",
+          "content": "Buenas tardes, nos indica por favor los siguientes datos: \n\n• Nombre\n• Cédula\n• Ciudad y zona en la que reside"
         }
       ]
     },
