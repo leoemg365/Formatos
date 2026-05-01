@@ -766,6 +766,13 @@
           "subcat": "Lentitud",
           "color": "neutro",
           "content": "Buenas noches, nos indica por favor en qué le falla el servicio y nos pasa por favor fotos o un vídeo para verificar el tipo de problema?"
+        },
+        {
+          "id": 1777595857212,
+          "label": "Solicitud de datos",
+          "subcat": "Ventas",
+          "color": "aviso",
+          "content": "Buenos días, nos indica por favor los siguientes datos: \n\n• Nombre\n• Cédula\n• Ciudad y zona en la que reside"
         }
       ]
     }
