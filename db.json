@@ -780,6 +780,13 @@
           "subcat": "Ventas",
           "color": "aviso",
           "content": "Sus datos fueron emitidos al departamento correspondiente de su ciudad, en breves momentos se estará comunicando con usted un asesor para brindarle toda la información que requiera y puedan proceder."
+        },
+        {
+          "id": 1777598142869,
+          "label": "Está en LOS",
+          "subcat": "ONU LOS",
+          "color": "aviso",
+          "content": "Vemos que el equipo se encuentra en estado LOS, esto indica que algo le ocurrió al cable de fibra, ya en este caso tendremos que agendar un ticket de visita técnica"
         }
       ]
     }
