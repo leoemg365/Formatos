@@ -772,7 +772,7 @@
           "label": "Solicitud de datos",
           "subcat": "Ventas",
           "color": "aviso",
-          "content": "Buenas noches, nos indica por favor los siguientes datos: \n\n• Nombre\n• Cédula\n• Ciudad y zona en la que reside"
+          "content": "Buenas noches, nos indica por favor los siguientes datos: \n\n• Nombre\n• Cédula\n• Número de teléfono/WhatsApp\n• Ciudad y zona en la que reside\n\nUna vez nos proporcione estos datos procederemos"
         },
         {
           "id": 1777597654630,
