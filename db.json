@@ -772,7 +772,14 @@
           "label": "Solicitud de datos",
           "subcat": "Ventas",
           "color": "aviso",
-          "content": "Buenos días, nos indica por favor los siguientes datos: \n\n• Nombre\n• Cédula\n• Ciudad y zona en la que reside"
+          "content": "Buenas noches, nos indica por favor los siguientes datos: \n\n• Nombre\n• Cédula\n• Ciudad y zona en la que reside"
+        },
+        {
+          "id": 1777597654630,
+          "label": "Datos enviados",
+          "subcat": "Ventas",
+          "color": "aviso",
+          "content": "Sus datos fueron emitidos al departamento correspondiente de su ciudad, en breves momentos se estará comunicando con usted un asesor para brindarle toda la información que requiera y puedan proceder."
         }
       ]
     }
