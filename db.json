@@ -415,6 +415,13 @@
           "subcat": "Falla Interna",
           "color": "aviso",
           "content": "Se trata de una incidencia en la zona donde conecta su servicio, los técnicos se encuentran trabajando en el inconveniente para darle solución"
+        },
+        {
+          "id": 1777916552098,
+          "label": "Después de realizarse la visita",
+          "subcat": "Ticket",
+          "color": "info",
+          "content": "Su visita técnica ya se realizó y su servicio quedó funcionando correctamente. Recuerde que estaremos atentos por esta vía ante cualquier solicitud o inconveniente que presente, feliz día"
         }
       ]
     },
