@@ -408,6 +408,13 @@
           "subcat": "Falla Interna",
           "color": "urgente",
           "content": "Apreciado cliente, le informamos que en estos momentos estamos experimentando un inconveniente en la cajera donde conecta su servicio. Le ofrecemos nuestras más sinceras disculpas por las molestias que esto pueda ocasionar. Debido a la serie de inconvenientes que se nos han presentado el día de hoy, estaremos solucionando el inconveniente el día de mañana en la mañana *Agradecemos su confianza en\nTECNOVEN #SomosMásQueInternet*"
+        },
+        {
+          "id": 1777910582975,
+          "label": "Informar corte/incidencia",
+          "subcat": "Falla Interna",
+          "color": "aviso",
+          "content": "Se trata de una incidencia en la zona donde conecta su servicio, los técnicos se encuentran trabajando en el inconveniente para darle solución"
         }
       ]
     },
