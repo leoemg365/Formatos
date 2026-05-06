@@ -608,6 +608,13 @@
           "content": "Buenos tardes, pago registrado correctamente y servicio activo ✅\n\n¡Estamos siempre a su disposición! Nos complace mucho poder ayudarle. Le agradecemos su confianza en Tecnoven."
         },
         {
+          "id": 1778084000790,
+          "label": "Pago registrado + Decir que lo registre",
+          "subcat": "Pagos",
+          "color": "exito",
+          "content": "Buenas tardes, recuerde que para acelerar el proceso puede registrar su pago en nuestro portal a través de este enlace:"
+        },
+        {
           "id": 1776711677930,
           "label": "Pago pendiente",
           "subcat": "Pagos",
@@ -653,13 +660,6 @@
           "subcat": "Ventas",
           "color": "aviso",
           "content": "Sus datos fueron emitidos al departamento correspondiente de su ciudad, en breves momentos se estará comunicando con usted un asesor para brindarle toda la información que requiera y puedan proceder."
-        },
-        {
-          "id": 1778084000790,
-          "label": "Pago registrado + Decir que lo registre",
-          "subcat": "Pagos",
-          "color": "exito",
-          "content": "Buenas tardes, recuerde que para acelerar el proceso puede registrar su pago en nuestro portal a través de este enlace:"
         }
       ]
     },
