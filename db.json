@@ -110,6 +110,11 @@
           "id": 1771463168803,
           "label": "Administrativo - Icarosoft",
           "content": "https://administrativo.icarosoft.com"
+        },
+        {
+          "id": 1778083431409,
+          "label": "Modulo Icarosoft - Occidente",
+          "content": "https://app.tecnovenoccidente.icarosoft.com/"
         }
       ]
     },
