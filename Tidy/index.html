@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tidy - Sistema de Comandas - Espiral C.A</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div id="login-modal" class="fixed inset-0 bg-gray-200 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-sm p-8">
+            <h2 class="text-2xl font-bold text-center text-gray-700 mb-6">Iniciar Sesión</h2>
+            <div id="login-error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 hidden" role="alert">
+                <span class="block sm:inline">Datos incorrectos.</span>
+            </div>
+            <form id="login-form">
+                <div class="mb-4">
+                    <label for="restaurantId" class="block text-gray-700 text-sm font-bold mb-2">ID de Restaurante</label>
+                    <input type="number" id="restaurantId" placeholder="Ej: 0250" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    <p class="text-xs text-gray-500 mt-1">Dejar en blanco si eres Super Admin.</p>
+                </div>
+                <div class="mb-4">
+                    <label for="username" class="block text-gray-700 text-sm font-bold mb-2">Usuario</label>
+                    <input type="text" id="username" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                </div>
+                <div class="mb-6">
+                    <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Contraseña</label>
+                    <input type="password" id="password" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" required>
+                </div>
+                <button type="submit" id="login-button" class="bg-primary hover:bg-primary-hover text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full">Entrar</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="app" class="container mx-auto p-4 md:p-6 hidden">
+        <header class="bg-content shadow-md rounded-lg p-4 mb-6">
+             <div class="flex justify-between items-center">
+                 <div>
+                    <h1 id="app-title" class="text-2xl md:text-3xl font-bold">Gestión de Comandas</h1>
+                    <p id="welcome-message" class="text-secondary">Bienvenido/a</p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button id="logout-btn" class="bg-red-500 text-white px-4 py-2 rounded-lg shadow hover:bg-red-600 transition-all">Salir</button>
+                </div>
+            </div>
+            <div class="mt-4 p-2 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 rounded-md">
+                <p class="font-bold">Modo Local</p>
+                <p class="text-sm">Los datos se guardan en este navegador. No se sincronizarán con otros dispositivos.</p>
+            </div>
+        </header>
+
+        <div id="waiter-view" class="view"></div>
+        <div id="kitchen-view" class="view"></div>
+        <div id="cashier-view" class="view"></div>
+        <div id="admin-view" class="view"></div>
+        <div id="superadmin-view" class="view"></div>
+    </div>
+
+    <!-- Modals -->
+    <div id="generic-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4 z-30"></div>
+    <div id="confirm-modal" class="fixed inset-0 bg-black bg-opacity-60 hidden flex items-center justify-center p-4 z-40"></div>
+    
+    <!-- Toast de Notificación -->
+    <div id="notification-toast" class="fixed top-5 right-5 bg-green-500 text-white py-3 px-6 rounded-lg shadow-lg transform translate-x-[120%]" style="z-index: 100;">
+        <p id="notification-message">Operación exitosa.</p>
+    </div>
+    
+    <script type="module" src="script.js"></script>
+</body>
+</html>
+
