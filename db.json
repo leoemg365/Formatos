@@ -491,10 +491,10 @@
         },
         {
           "id": 1775125808571,
-          "label": "Pago + decir que registre",
+          "label": "Pago + decir que registre en Portal Pagos",
           "subcat": "Pagos",
           "color": "exito",
-          "content": "Buenos días, recuerde que para acelerar el proceso puede registrar su pago en nuestro portal a través de este enlace:"
+          "content": "Buenos días, recuerde que para acelerar el proceso puede registrar su pago en nuestro portal a través de este enlace: \nhttps://pagos.tecnoveninternet.com/\n\nPasos a tomar en cuenta al momento de registrar el pago: \n\n• Colocar cédula del titular del servicio\n• Seleccionar el servicio o deuda que está cancelando y dar click en continuar\n• Seleccionar el banco al que realizará el pago\n• Realizar el pago y colocar la referencia, seguidamente dar click en Validar Referencia"
         },
         {
           "id": 1775112365753,
