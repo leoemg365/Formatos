@@ -491,10 +491,17 @@
         },
         {
           "id": 1775125808571,
-          "label": "Pago + decir que registre en Portal Pagos",
+          "label": "Decir que registre en Portal PAGOS",
           "subcat": "Pagos",
           "color": "exito",
           "content": "Buenos días, recuerde que para acelerar el proceso puede registrar su pago en nuestro portal a través de este enlace: \nhttps://pagos.tecnoveninternet.com/\n\nPasos a tomar en cuenta al momento de registrar el pago: \n\n• Colocar cédula del titular del servicio\n• Seleccionar el servicio o deuda que está cancelando y dar click en continuar\n• Seleccionar el banco al que realizará el pago\n• Realizar el pago y colocar la referencia, seguidamente dar click en Validar Referencia"
+        },
+        {
+          "id": 1779289995830,
+          "label": "Decir que registre en Portal ICARO",
+          "subcat": "Pagos",
+          "color": "exito",
+          "content": "Buenos días, recuerde que para acelerar el proceso puede registrar su pago en nuestro portal a través de este enlace: \n\n\n\nPasos a tomar en cuenta al momento de registrar el pago: \n\n• Al ingresar en el portal con tus datos, seguidamente das clic en Pagar\n• Selecciona tu método de pago, *en caso no estar en lista*, selecciona Registrar pagos y rellena el formulario, al finalizar sube tu comprobante y das clic en Agregar"
         },
         {
           "id": 1775112365753,
@@ -621,10 +628,17 @@
         },
         {
           "id": 1778084000790,
-          "label": "Pago registrado + Decir que lo registre",
+          "label": "Decir que lo registre en Portal PAGOS",
           "subcat": "Pagos",
           "color": "exito",
-          "content": "Buenas tardes, recuerde que para acelerar el proceso puede registrar su pago en nuestro portal a través de este enlace:"
+          "content": "Buenas tardes, recuerde que para acelerar el proceso puede registrar su pago en nuestro portal a través de este enlace: \nhttps://pagos.tecnoveninternet.com/\n\nPasos a tomar en cuenta al momento de registrar el pago: \n\n• Colocar cédula del titular del servicio\n• Seleccionar el servicio o deuda que está cancelando y dar click en continuar\n• Seleccionar el banco al que realizará el pago\n• Realizar el pago y colocar la referencia, seguidamente dar click en Validar Referencia"
+        },
+        {
+          "id": 1779290646810,
+          "label": "Decir que registre en Portal ICARO",
+          "subcat": "Pagos",
+          "color": "exito",
+          "content": "Buenas tardes, recuerde que para acelerar el proceso puede registrar su pago en nuestro portal a través de este enlace: \n(colocar link)\n\n\nPasos a tomar en cuenta al momento de registrar el pago: \n\n• Al ingresar en el portal con tus datos, seguidamente das clic en Pagar\n• Selecciona tu método de pago, *en caso no estar en lista*, selecciona Registrar pagos y rellena el formulario, al finalizar sube tu comprobante y das clic en Agregar"
         },
         {
           "id": 1776711677930,
@@ -737,10 +751,17 @@
         },
         {
           "id": 1774573380524,
-          "label": "Pago + decir que registre",
+          "label": "Decir que registre en Portal PAGOS",
           "subcat": "Pagos",
           "color": "exito",
-          "content": "Buenas noches, pago registrado y servicio activo. ✅\n\nRecuerde que para acelerar el proceso puede registrar su pago en nuestro portal a través de este enlace:"
+          "content": "Buenas tardes, recuerde que para acelerar el proceso puede registrar su pago en nuestro portal a través de este enlace: \nhttps://pagos.tecnoveninternet.com/\n\nPasos a tomar en cuenta al momento de registrar el pago: \n\n• Colocar cédula del titular del servicio\n• Seleccionar el servicio o deuda que está cancelando y dar click en continuar\n• Seleccionar el banco al que realizará el pago\n• Realizar el pago y colocar la referencia, seguidamente dar click en Validar Referencia"
+        },
+        {
+          "id": 1779290699891,
+          "label": "Decir que registre en Portal ICARO",
+          "subcat": "Pagos",
+          "color": "exito",
+          "content": "Buenas noches, recuerde que para acelerar el proceso puede registrar su pago en nuestro portal a través de este enlace: \n(colocar link)\n\n\nPasos a tomar en cuenta al momento de registrar el pago: \n\n• Al ingresar en el portal con tus datos, seguidamente das clic en Pagar\n• Selecciona tu método de pago, *en caso no estar en lista*, selecciona Registrar pagos y rellena el formulario, al finalizar sube tu comprobante y das clic en Agregar"
         },
         {
           "id": 1775091677932,
