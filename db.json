@@ -115,6 +115,11 @@
           "id": 1778083431409,
           "label": "Modulo Icarosoft - Occidente",
           "content": "https://app.tecnovenoccidente.icarosoft.com/"
+        },
+        {
+          "id": 1779287070747,
+          "label": "Portal de pagos cliente",
+          "content": "https://pagos.tecnoveninternet.com/"
         }
       ]
     },
