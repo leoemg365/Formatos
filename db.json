@@ -124,6 +124,27 @@
       ]
     },
     {
+      "id": 1779836633515,
+      "title": "Excel's",
+      "cards": [
+        {
+          "id": 1779836675323,
+          "label": "Requisición de Emergencias",
+          "content": "https://docs.google.com/spreadsheets/d/1KxEUcpk3PWs0IWx_1z9gz0raIKuL59TG0cB5l50PLfM/edit?gid=0#gid=0"
+        },
+        {
+          "id": 1779836716202,
+          "label": "Solicitud de tickets - Grupo Vendedores",
+          "content": "https://docs.google.com/spreadsheets/d/1cb530gpYl2FT--PIBGDWPRBCso7I7PjKCpnuHasAIZw/edit?gid=0#gid=0"
+        },
+        {
+          "id": 1779836745826,
+          "label": "Monitoreo ONU en LOS",
+          "content": "https://docs.google.com/spreadsheets/d/1PTsnqsqqabthpGVDCX3LUIPLFZsnvsIghtG999kpyjk/edit?gid=652814401#gid=652814401"
+        }
+      ]
+    },
+    {
       "id": 1771463207178,
       "title": "Otros",
       "cards": [
