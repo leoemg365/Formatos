@@ -3,309 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ISP CRM - LocalStorage</title>
+    <title>Generator Pro | Algorithmic Messages</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        :root { --bg: #1e1e2f; --card: #2a2a40; --text: #f8f8f2; --primary: #6272a4; --success: #50fa7b; --danger: #ff5555; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; }
-        .container { max-width: 900px; margin: 0 auto; }
-        .card { background-color: var(--card); padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-        .hidden { display: none !important; }
-        input, select, button { padding: 10px; margin: 5px 0; border-radius: 4px; border: none; width: 100%; box-sizing: border-box; }
-        input, select { background-color: #44475a; color: white; }
-        button { background-color: var(--primary); color: white; cursor: pointer; font-weight: bold; }
-        button:hover { opacity: 0.9; }
-        .btn-danger { background-color: var(--danger); }
-        .btn-success { background-color: var(--success); color: #282a36; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #44475a; }
-        .flex-row { display: flex; gap: 10px; }
-        .header { display: flex; justify-content: space-between; align-items: center; }
-        a { color: #8be9fd; text-decoration: none; }
-        a:hover { text-decoration: underline; }
+        body {
+            background-color: #0a0a0a;
+            color: #e5e5e5;
+        }
+        .neon-border {
+            border: 1px solid #00f3ff;
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+        }
+        .neon-text {
+            color: #00f3ff;
+            text-shadow: 0 0 5px rgba(0, 243, 255, 0.5);
+        }
+        .input-dark {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #fff;
+        }
+        .input-dark:focus {
+            border-color: #00f3ff;
+            outline: none;
+        }
     </style>
 </head>
-<body>
+<body class="p-4 md:p-8">
 
-<div class="container">
-    <div id="loginView" class="card">
-        <h2>Iniciar Sesión</h2>
-        <p style="font-size: 0.8em; color: #aaa;">Admin por defecto -> Usuario: admin | Clave: 1234</p>
-        <input type="text" id="loginUser" placeholder="Usuario">
-        <input type="password" id="loginPass" placeholder="Contraseña">
-        <button onclick="app.login()">Entrar</button>
-    </div>
+    <div class="max-w-4xl mx-auto">
+        <header class="mb-8 border-b border-gray-800 pb-4">
+            <h1 class="text-3xl font-bold neon-text">MSG_GEN <span class="text-gray-500 text-sm font-mono tracking-widest">v1.0</span></h1>
+            <p class="text-gray-400">Generador de plantillas dinámicas por variables.</p>
+        </header>
 
-    <div id="dashboardView" class="hidden">
-        <div class="header card">
-            <div>
-                <h2 style="margin:0;">Panel de Control - <span id="roleDisplay"></span></h2>
-                <small>Usuario: <span id="userDisplay"></span></small>
-            </div>
-            <button onclick="app.logout()" style="width: auto;">Cerrar Sesión</button>
-        </div>
-
-        <div id="adminPanel" class="card hidden">
-            <h3>Gestión de Usuarios (Admin)</h3>
-            <div class="flex-row">
-                <input type="text" id="newUsername" placeholder="Nuevo Usuario">
-                <input type="password" id="newPassword" placeholder="Clave">
-                <select id="newRole">
-                    <option value="subadmin">Subadmin</option>
-                    <option value="agente">Agente</option>
-                </select>
-                <button onclick="app.createUser()">Crear Usuario</button>
-            </div>
-            <hr style="border-color: #44475a; margin: 20px 0;">
-            <button class="btn-danger" onclick="app.clearSystem()">⚠️ BORRAR TODA LA BASE DE DATOS ⚠️</button>
-        </div>
-
-        <div id="agentPanel" class="card hidden">
-            <h3>Registrar Nuevo Cliente (Agente)</h3>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                <input type="text" id="cliNombre" placeholder="Nombre">
-                <input type="text" id="cliApellido" placeholder="Apellido">
-                <input type="number" id="cliEdad" placeholder="Edad">
-                <input type="text" id="cliDni" placeholder="Cédula / DNI">
-                <select id="cliTipo">
-                    <option value="Fibra">Fibra Óptica</option>
-                    <option value="Inalámbrico">Inalámbrico</option>
-                </select>
-                <div class="flex-row">
-                    <input type="text" id="cliCoords" placeholder="Latitud, Longitud">
-                    <button type="button" onclick="app.getCoords()" style="width: 50px;">📍</button>
-                </div>
-            </div>
-            <button onclick="app.registerClient()" class="btn-success" style="margin-top: 10px;">Guardar Cliente</button>
-        </div>
-
-        <div class="card">
-            <h3>Base de Clientes</h3>
-            <div style="overflow-x: auto;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Nombre/DNI</th>
-                            <th>Servicio</th>
-                            <th>Ubicación</th>
-                            <th>Estado Pago</th>
-                            <th>Confirmación</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="clientsTableBody"></tbody>
-                </table>
-            </div>
-        </div>
-
-    </div>
-</div>
-
-<script>
-// Lógica principal de la App
-const app = {
-    currentUser: null,
-
-    // Inicializar DB en LocalStorage
-    init: function() {
-        if (!localStorage.getItem('isp_users')) {
-            const defaultUsers = [{ username: 'admin', password: '1234', role: 'admin' }];
-            localStorage.setItem('isp_users', JSON.stringify(defaultUsers));
-        }
-        if (!localStorage.getItem('isp_clients')) {
-            localStorage.setItem('isp_clients', JSON.stringify([]));
-        }
-        this.checkSession();
-    },
-
-    // Autenticación
-    login: function() {
-        const u = document.getElementById('loginUser').value;
-        const p = document.getElementById('loginPass').value;
-        const users = JSON.parse(localStorage.getItem('isp_users'));
-        
-        const user = users.find(x => x.username === u && x.password === p);
-        if (user) {
-            sessionStorage.setItem('active_user', JSON.stringify(user));
-            this.checkSession();
-        } else {
-            alert("Credenciales incorrectas");
-        }
-    },
-
-    logout: function() {
-        sessionStorage.removeItem('active_user');
-        this.currentUser = null;
-        this.checkSession();
-    },
-
-    checkSession: function() {
-        const active = sessionStorage.getItem('active_user');
-        if (active) {
-            this.currentUser = JSON.parse(active);
-            document.getElementById('loginView').classList.add('hidden');
-            document.getElementById('dashboardView').classList.remove('hidden');
-            this.setupDashboard();
-        } else {
-            document.getElementById('loginView').classList.remove('hidden');
-            document.getElementById('dashboardView').classList.add('hidden');
-        }
-    },
-
-    // UI Routing basado en Roles
-    setupDashboard: function() {
-        document.getElementById('roleDisplay').innerText = this.currentUser.role.toUpperCase();
-        document.getElementById('userDisplay').innerText = this.currentUser.username;
-
-        document.getElementById('adminPanel').classList.add('hidden');
-        document.getElementById('agentPanel').classList.add('hidden');
-
-        if (this.currentUser.role === 'admin') {
-            document.getElementById('adminPanel').classList.remove('hidden');
-        } else if (this.currentUser.role === 'agente') {
-            document.getElementById('agentPanel').classList.remove('hidden');
-        }
-        
-        this.renderClients();
-    },
-
-    // Lógica ADMIN
-    createUser: function() {
-        const u = document.getElementById('newUsername').value;
-        const p = document.getElementById('newPassword').value;
-        const r = document.getElementById('newRole').value;
-        
-        if(!u || !p) return alert("Completa los datos del usuario");
-
-        const users = JSON.parse(localStorage.getItem('isp_users'));
-        users.push({ username: u, password: p, role: r });
-        localStorage.setItem('isp_users', JSON.stringify(users));
-        
-        alert(`Usuario ${u} creado como ${r}`);
-        document.getElementById('newUsername').value = '';
-        document.getElementById('newPassword').value = '';
-    },
-
-    clearSystem: function() {
-        if(confirm("¿Estás 100% seguro? Esto eliminará usuarios y clientes.")) {
-            localStorage.clear();
-            this.logout();
-            this.init();
-        }
-    },
-
-    // Lógica AGENTE (Geolocalización y Registro)
-    getCoords: function() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (pos) => {
-                    document.getElementById('cliCoords').value = `${pos.coords.latitude}, ${pos.coords.longitude}`;
-                },
-                (err) => alert("Error obteniendo ubicación. Ingresa manual.")
-            );
-        } else {
-            alert("Tu navegador no soporta geolocalización.");
-        }
-    },
-
-    registerClient: function() {
-        const client = {
-            id: Date.now(),
-            nombre: document.getElementById('cliNombre').value,
-            apellido: document.getElementById('cliApellido').value,
-            edad: document.getElementById('cliEdad').value,
-            dni: document.getElementById('cliDni').value,
-            tipo: document.getElementById('cliTipo').value,
-            coords: document.getElementById('cliCoords').value,
-            pagoEstado: 'Pendiente', 
-            confirmado: false 
-        };
-
-        if(!client.nombre || !client.dni) return alert("Nombre y DNI son obligatorios");
-
-        const clients = JSON.parse(localStorage.getItem('isp_clients'));
-        clients.push(client);
-        localStorage.setItem('isp_clients', JSON.stringify(clients));
-        
-        alert("Cliente registrado");
-        // Limpiar form
-        ['cliNombre','cliApellido','cliEdad','cliDni','cliCoords'].forEach(id => document.getElementById(id).value = '');
-        this.renderClients();
-    },
-
-    // Lógica Compartida y SUBADMIN
-    renderClients: function() {
-        const clients = JSON.parse(localStorage.getItem('isp_clients'));
-        const tbody = document.getElementById('clientsTableBody');
-        tbody.innerHTML = '';
-
-        clients.forEach((c, index) => {
-            // Lógica de visibilidad por rol
-            let actionsHTML = '';
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             
-            if (this.currentUser.role === 'agente') {
-                if (c.pagoEstado === 'Pendiente') {
-                    actionsHTML += `<button class="btn-success" onclick="app.registerPayment(${index})">Registrar Pago</button>`;
-                }
-            } 
-            else if (this.currentUser.role === 'subadmin') {
-                actionsHTML += `<button onclick="app.editClient(${index})" style="background-color:#f1fa8c; color:#282a36;">Editar</button>`;
-                if (!c.confirmado && c.pagoEstado === 'Pagado') {
-                    actionsHTML += `<button class="btn-success" onclick="app.confirmClient(${index})" style="margin-top:5px;">Confirmar</button>`;
-                }
+            <section class="space-y-4">
+                <h2 class="text-xl font-semibold flex items-center gap-2">
+                    <span class="w-2 h-2 bg-cyan-400 rounded-full"></span>
+                    Configuración
+                </h2>
+                
+                <div>
+                    <label class="block text-sm text-gray-500 mb-2 font-mono italic">Defina su estructura:</label>
+                    <textarea id="templateInput" class="w-full h-40 p-4 rounded-lg input-dark font-mono text-sm" placeholder="Hola {{nombre}}, te escribo de {{empresa}} para informarte que {{evento}}..."></textarea>
+                </div>
+
+                <div id="dynamicFields" class="space-y-3 pt-4 border-t border-gray-800">
+                    <p class="text-xs text-gray-600 italic">Escriba variables entre {{ }} para generar inputs.</p>
+                </div>
+            </section>
+
+            <section class="space-y-4">
+                <h2 class="text-xl font-semibold flex items-center gap-2">
+                    <span class="w-2 h-2 bg-purple-500 rounded-full"></span>
+                    Vista Previa
+                </h2>
+
+                <div id="outputContainer" class="w-full h-64 p-6 rounded-lg bg-zinc-900 border border-zinc-800 relative group overflow-auto">
+                    <pre id="finalMessage" class="whitespace-pre-wrap font-sans text-gray-300"></pre>
+                </div>
+
+                <div class="flex gap-3">
+                    <button onclick="copyToClipboard()" class="flex-1 bg-zinc-800 hover:bg-zinc-700 text-white font-bold py-3 px-4 rounded-lg transition-all border border-zinc-700">
+                        Copiar Mensaje
+                    </button>
+                    <button onclick="clearAll()" class="px-6 py-3 rounded-lg border border-red-900/50 text-red-500 hover:bg-red-950/20 transition-all">
+                        Limpiar
+                    </button>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <script>
+        const templateInput = document.getElementById('templateInput');
+        const dynamicFields = document.getElementById('dynamicFields');
+        const finalMessage = document.getElementById('finalMessage');
+
+        // Algoritmo de detección de variables y renderizado
+        function updateUI() {
+            const text = templateInput.value;
+            const regex = /{{(.*?)}}/g;
+            let match;
+            const variables = new Set();
+
+            while ((match = regex.exec(text)) !== null) {
+                if (match[1].trim()) variables.add(match[1].trim());
             }
 
-            // Link a Google Maps
-            const mapLink = c.coords ? `<a href="https://www.google.com/maps/search/?api=1&query=${c.coords.replace(' ', '')}" target="_blank">🗺️ Ver Mapa</a>` : 'N/A';
-
-            tbody.innerHTML += `
-                <tr>
-                    <td><strong>${c.nombre} ${c.apellido}</strong><br><small>DNI: ${c.dni} | Edad: ${c.edad}</small></td>
-                    <td>${c.tipo}</td>
-                    <td>${mapLink}<br><small>${c.coords}</small></td>
-                    <td><span style="color: ${c.pagoEstado === 'Pagado' ? '#50fa7b' : '#ffb86c'}">${c.pagoEstado}</span></td>
-                    <td>${c.confirmado ? '✅ Confirmado' : '⏳ Pendiente'}</td>
-                    <td>${actionsHTML}</td>
-                </tr>
-            `;
-        });
-    },
-
-    registerPayment: function(index) {
-        if(confirm("¿Confirmas que el cliente realizó el pago?")) {
-            const clients = JSON.parse(localStorage.getItem('isp_clients'));
-            clients[index].pagoEstado = 'Pagado';
-            localStorage.setItem('isp_clients', JSON.stringify(clients));
-            this.renderClients();
+            renderInputs(Array.from(variables));
+            generateFinalText();
         }
-    },
 
-    confirmClient: function(index) {
-        const clients = JSON.parse(localStorage.getItem('isp_clients'));
-        clients[index].confirmado = true;
-        localStorage.setItem('isp_clients', JSON.stringify(clients));
-        this.renderClients();
-    },
+        function renderInputs(vars) {
+            const currentValues = {};
+            // Preservar valores actuales antes de redibujar
+            document.querySelectorAll('.var-input').forEach(input => {
+                currentValues[input.dataset.var] = input.value;
+            });
 
-    editClient: function(index) {
-        const clients = JSON.parse(localStorage.getItem('isp_clients'));
-        const client = clients[index];
-        
-        // Simulación simple de edición vía prompt para mantenerlo todo en 1 archivo (puedes pasarlo a un modal luego)
-        const nuevoNombre = prompt("Editar Nombre:", client.nombre);
-        const nuevoDni = prompt("Editar DNI:", client.dni);
-        
-        if (nuevoNombre && nuevoDni) {
-            clients[index].nombre = nuevoNombre;
-            clients[index].dni = nuevoDni;
-            localStorage.setItem('isp_clients', JSON.stringify(clients));
-            this.renderClients();
+            dynamicFields.innerHTML = vars.length > 0 ? '' : '<p class="text-xs text-gray-600 italic">No se detectaron variables.</p>';
+            
+            vars.forEach(v => {
+                const div = document.createElement('div');
+                div.innerHTML = `
+                    <label class="block text-xs text-cyan-500 uppercase font-bold mb-1">${v}</label>
+                    <input type="text" 
+                           data-var="${v}" 
+                           value="${currentValues[v] || ''}"
+                           class="var-input w-full p-2 rounded bg-zinc-800 border border-zinc-700 focus:border-cyan-500 outline-none text-sm"
+                           oninput="generateFinalText()">
+                `;
+                dynamicFields.appendChild(div);
+            });
         }
-    }
-};
 
-// Arrancar la app al cargar
-window.onload = () => app.init();
-</script>
+        function generateFinalText() {
+            let text = templateInput.value;
+            const inputs = document.querySelectorAll('.var-input');
 
+            inputs.forEach(input => {
+                const placeholder = new RegExp(`{{${input.dataset.var}}}`, 'g');
+                const val = input.value || `<span class="text-zinc-600">[${input.dataset.var}]</span>`;
+                text = text.replace(placeholder, input.value || `[${input.dataset.var}]`);
+            });
+
+            finalMessage.textContent = text;
+        }
+
+        function copyToClipboard() {
+            navigator.clipboard.writeText(finalMessage.textContent);
+            alert("¡Mensaje copiado!");
+        }
+
+        function clearAll() {
+            templateInput.value = '';
+            updateUI();
+        }
+
+        templateInput.addEventListener('input', updateUI);
+    </script>
 </body>
 </html>
