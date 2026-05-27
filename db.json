@@ -453,6 +453,13 @@
           "subcat": "Ticket",
           "color": "info",
           "content": "Su visita técnica ya se realizó y su servicio quedó funcionando correctamente. Recuerde que estaremos atentos por esta vía ante cualquier solicitud o inconveniente que presente, feliz día"
+        },
+        {
+          "id": 1779898421725,
+          "label": "Falla Proveedor Solventada",
+          "subcat": "Falla proveedor",
+          "color": "info",
+          "content": "Buenos días, se trataba de una incidencia a nivel de proveedor, ya en estos momentos el servicio se encuentra restablecido"
         }
       ]
     },
