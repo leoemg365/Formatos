@@ -448,6 +448,13 @@
           "content": "Se trata de una incidencia en la zona donde conecta su servicio, los técnicos se encuentran trabajando en el inconveniente para darle solución"
         },
         {
+          "id": 1780020833453,
+          "label": "¿Cuando es la visita? - Mañana",
+          "subcat": "Ticket",
+          "color": "neutro",
+          "content": "Se ha agendado la visita técnica. Los técnicos se estarán comunicando con usted el día de mañana ya que cuentan con varios trabajos pendientes, todo depende de su disponibilidad, sí no lo llaman el día de mañana ya sería el día de siguiente."
+        },
+        {
           "id": 1777916552098,
           "label": "Después de realizarse la visita",
           "subcat": "Ticket",
@@ -460,13 +467,6 @@
           "subcat": "Falla proveedor",
           "color": "info",
           "content": "Buenos días, se trataba de una incidencia a nivel de proveedor, ya en estos momentos el servicio se encuentra restablecido"
-        },
-        {
-          "id": 1780020833453,
-          "label": "¿Cuando es la visita? - Mañana",
-          "subcat": "Ticket",
-          "color": "neutro",
-          "content": "Se ha agendado la visita técnica. Los técnicos se estarán comunicando con usted el día de mañana ya que cuentan con varios trabajos pendientes, todo depende de su disponibilidad, sí no lo llaman el día de mañana ya sería el día de siguiente."
         }
       ]
     },
