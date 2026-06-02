@@ -472,6 +472,13 @@
           "subcat": "Falla proveedor",
           "color": "info",
           "content": "Buenos días, se trataba de una incidencia a nivel de proveedor, ya en estos momentos el servicio se encuentra restablecido"
+        },
+        {
+          "id": 1780368817969,
+          "label": "Nodo DOWN - Mañana",
+          "subcat": "Falla Interna",
+          "color": "aviso",
+          "content": "Buenas noches, estamos experimentando una incidencia en el nodo principal donde conecta su servicio por este motivo no cuenta con servicio, el día de mañana se estará verificando en sitio a primera hora para darle solución."
         }
       ]
     },
