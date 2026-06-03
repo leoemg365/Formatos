@@ -422,7 +422,7 @@
           "label": "ONU en estado LOS",
           "subcat": "ONU en LOS",
           "color": "neutro",
-          "content": "Apreciamos que su equipo se encuentra en estado LOS, en este caso tendríamos que agendar un ticket de visita técnica para que vayan a solucionar el inconveniente"
+          "content": "Vemos que su equipo se encuentra en estado LOS, en este caso tendríamos que agendar un ticket de visita técnica para que vayan a solucionar el inconveniente"
         },
         {
           "id": 1777089120715,
