@@ -733,6 +733,13 @@
           "subcat": "Ventas",
           "color": "aviso",
           "content": "Sus datos fueron emitidos al departamento correspondiente de su ciudad, en breves momentos se estará comunicando con usted un asesor para brindarle toda la información que requiera y puedan proceder."
+        },
+        {
+          "id": 1780864318544,
+          "label": "Servio restablecido",
+          "subcat": "Servicio",
+          "color": "info",
+          "content": "Servicio restablecido en su totalidad, recuerde que estaremos atentos por esta vía ante cualquier solicitud o inconveniente que presente, feliz tarde"
         }
       ]
     },
