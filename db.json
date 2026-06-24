@@ -907,6 +907,13 @@
           "subcat": "Leo",
           "color": "neutro",
           "content": "Buenas noches, soy Leo, su asesor personal."
+        },
+        {
+          "id": 1782267132914,
+          "label": "Lentitud",
+          "subcat": "Lentitud",
+          "color": "neutro",
+          "content": "Buenas noches, en estos momentos el servicio de Meta, está teniendo fallas por lo que aplicaciones como WhatsApp, Instagram y Facebook pueden notarse lentas."
         }
       ]
     }
