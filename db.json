@@ -914,6 +914,13 @@
           "subcat": "Lentitud",
           "color": "neutro",
           "content": "Buenas noches, en estos momentos el servicio de Meta, está teniendo fallas por lo que aplicaciones como WhatsApp, Instagram y Facebook, etc pueden notarse lentas."
+        },
+        {
+          "id": 1783824968357,
+          "label": "Lentitud General",
+          "subcat": "Lentitud",
+          "color": "neutro",
+          "content": "Buenas noches, nos indica por favor en qué páginas o aplicaciones presenta el inconveniente? nos pasa fotos por favor esto nos ayudaría a solucionar el inconveniente."
         }
       ]
     }
