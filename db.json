@@ -617,6 +617,13 @@
           "subcat": "Pagos",
           "color": "aviso",
           "content": "Buenos días, disculpe, pero no podemos activar su servicio debido a que el sistema no no los permite debido a que no hay pago registrado. Para activar su servicio se debe cancelar el monto correspondiente, estaremos atentos por esta vía, feliz día"
+        },
+        {
+          "id": 1784242273996,
+          "label": "Configuración de router resteado",
+          "subcat": "Configuración de Router",
+          "color": "neutro",
+          "content": "Va a necesitar otro teléfono donde realice la configuración mientras por este se comunica con nosotros. \n\nSe conectará a la red WIFI y desactivará los datos móviles, la página del router abre aunque no tenga Internet. \n\nConecta el cable que sale del modem en el puerto Azul del router. \n\nLuego en el telefono ingresa en el navegador Chrome y coloca: 192.168.1.1 \nSí no funciona coloca: 192.168.0.1 \n\nNos pasa capture para indicarle lo que hará de todos modos."
         }
       ]
     },
