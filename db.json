@@ -923,6 +923,13 @@
           "content": "Buenas noches, en estos momentos el servicio de Meta, está teniendo fallas por lo que aplicaciones como WhatsApp, Instagram y Facebook, etc pueden notarse lentas."
         },
         {
+          "id": 1784509511842,
+          "label": "MagisTv - Xuper",
+          "subcat": "Lentitud",
+          "color": "aviso",
+          "content": "La falla que presenta es con la aplicación MagisTV (Xuper), esa aplicación presenta fallas en sus servidores porque se saturan de usuarios, por este motivo percibe ese problema. Ya el inconveniente es con la aplicación no de nuestra parte."
+        },
+        {
           "id": 1783824968357,
           "label": "Lentitud General",
           "subcat": "Lentitud",
