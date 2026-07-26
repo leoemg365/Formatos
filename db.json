@@ -425,6 +425,13 @@
           "content": "Vemos que su equipo se encuentra en estado LOS, en este caso tendríamos que agendar un ticket de visita técnica para que vayan a solucionar el inconveniente"
         },
         {
+          "id": 1785057697330,
+          "label": "Incidencia Desconexión de Nodo",
+          "subcat": "Falla Interna",
+          "color": "urgente",
+          "content": "Estimado cliente,\nLe informamos que actualmente experimentamos una incidencia en el nodo principal donde conecta su servicio, nuestro equipo se encuentra trabajando activamente para solucionarlo a la brevedad posible.\nLamentamos las molestias que esto pueda ocasionarle y agradecemos enormemente su comprensión y paciencia.\n\nAtentamente,\nEl Equipo de Soporte Técnico Tecnoven"
+        },
+        {
           "id": 1777089120715,
           "label": "Incidencia nodo",
           "subcat": "Falla Interna",
