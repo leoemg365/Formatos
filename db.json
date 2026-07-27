@@ -949,6 +949,13 @@
           "subcat": "HOY",
           "color": "aviso",
           "content": "Buenas noches, aún no tenemos el servicio restablecido por este motivo aún no cuenta con servicio."
+        },
+        {
+          "id": 1785195905377,
+          "label": "De nada",
+          "subcat": "HOY",
+          "color": "info",
+          "content": "¡Estamos siempre a su disposición! Le informaremos una vez el servicio esté restablecido, feliz noche."
         }
       ]
     }
