@@ -942,6 +942,13 @@
           "subcat": "Lentitud",
           "color": "neutro",
           "content": "Buenas noches, nos indica por favor en qué páginas o aplicaciones presenta el inconveniente? nos pasa fotos por favor esto nos ayudaría a solucionar el inconveniente."
+        },
+        {
+          "id": 1785195607192,
+          "label": "Sin TV Maranorte",
+          "subcat": "HOY",
+          "color": "aviso",
+          "content": "Buenas noches, aún no tenemos el servicio restablecido por este motivo aún no cuenta con servicio."
         }
       ]
     }
