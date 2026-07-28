@@ -965,11 +965,25 @@
           "content": "Estimado cliente,\nLe informamos que actualmente experimentamos una incidencia en el nodo principal donde conecta su servicio, nuestro equipo se encuentra trabajando activamente para solucionarlo a la brevedad posible.\nLamentamos las molestias que esto pueda ocasionarle y agradecemos enormemente su comprensión y paciencia.\n\nAtentamente,\nEl Equipo de Soporte Técnico Tecnoven"
         },
         {
+          "id": 1785203765304,
+          "label": "Restablecido",
+          "subcat": "HOY",
+          "color": "exito",
+          "content": "Le informamos que el servicio se encuentra restablecido, recuerde que estaremos atentos por esta vía ante cualquier solicitud o inconveniente que presente. \n#SomosMasQueInternet"
+        },
+        {
           "id": 1785200549465,
           "label": "Con servicio",
           "subcat": "HOY",
           "color": "neutro",
           "content": "Buenas noches, en estos momentos vemos consumo de su parte, nos confirma por favor?"
+        },
+        {
+          "id": 1785203736208,
+          "label": "LOS",
+          "subcat": "HOY",
+          "color": "urgente",
+          "content": "Buenas noches, vemos que su equipo en estos momentos está desconectado, nos pasa por favor fotos de los equipos en donde se reflejen las luces y los cables por favor?"
         }
       ]
     }
