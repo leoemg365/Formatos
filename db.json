@@ -984,6 +984,13 @@
           "subcat": "HOY",
           "color": "urgente",
           "content": "Buenas noches, vemos que su equipo en estos momentos está desconectado, nos pasa por favor fotos de los equipos en donde se reflejen las luces y los cables por favor?"
+        },
+        {
+          "id": 1785377780866,
+          "label": "Ataque por MagisTV",
+          "subcat": "HOY",
+          "color": "aviso",
+          "content": "Se están realizando ataques por medio de la aplicación MagisTV, esto satura la IP del servicio que está utilizando la aplicación, para solucionarlo debe desintalar la aplicación o en todo caso resetear el TV a los valores de fábrica debido a que algunas veces se siguen ejecutando archivos que se quedan instalados.\nDesconecte el TV de la electricidad o el dispositivo donde está usando la aplicación y verá que el servicio le funcionará mejor."
         }
       ]
     }
