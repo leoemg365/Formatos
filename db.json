@@ -760,7 +760,7 @@
           "label": "Facturación Masiva",
           "subcat": "Pagos",
           "color": "neutro",
-          "content": "Buenas tardes, el mensaje era un mensaje automático del sistema cuando se genera la factura, pero su servicio ya está pago y solvente, no se preocupe."
+          "content": "Buenas tardes, el mensaje era un mensaje automático del sistema cuando se genera la factura como un recordatorio, pero su servicio ya está pago y solvente, no se preocupe."
         }
       ]
     },
