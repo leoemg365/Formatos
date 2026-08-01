@@ -754,6 +754,13 @@
           "subcat": "Servicio",
           "color": "info",
           "content": "Servicio restablecido en su totalidad, recuerde que estaremos atentos por esta vía ante cualquier solicitud o inconveniente que presente, feliz tarde"
+        },
+        {
+          "id": 1785602270703,
+          "label": "Facturación Masiva",
+          "subcat": "Pagos",
+          "color": "neutro",
+          "content": "Buenas tardes, el mensaje era un mensaje automático del sistema cuando se genera la factura, pero su servicio ya está pago y solvente, no se preocupe."
         }
       ]
     },
