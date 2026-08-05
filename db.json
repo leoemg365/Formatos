@@ -338,7 +338,7 @@
           "label": "Falla Interna resuelta corta",
           "subcat": "Falla Interna",
           "color": "exito",
-          "content": "Estimado Cliente.\n\nSe trataba de una incidencia en el nodo principal la cuál ya ha sido solucionada. Le invitamos a verificar nuevamente su servicio.\n\nEn caso de no contar con servicio, desconecte y conecte los equipos de la electricidad.\nSí aún persiste algún inconveniente, por favor, comuníquese con nosotros. Estamos a su disposición para brindarle la mejor atención.\n\n#TecnovenSomosmásqueInternet"
+          "content": "Estimado Cliente.\n\nSe trataba de una incidencia en la zona donde conecta su servicio la cuál ya ha sido solucionada. Le invitamos a verificar nuevamente su servicio.\n\nEn caso de no contar con servicio, desconecte y conecte los equipos de la electricidad.\nSí aún persiste algún inconveniente, por favor, comuníquese con nosotros. Estamos a su disposición para brindarle la mejor atención.\n\n#TecnovenSomosmásqueInternet"
         },
         {
           "id": 1774510805656,
