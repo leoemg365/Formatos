@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Adrián Vega — Diseñador Creativo & Desarrollador Frontend</title>
+<meta name="description" content="Portafolio de Adrián Vega, diseñador creativo y desarrollador frontend en Barcelona. Marca, producto digital y código con oficio.">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource-variable/fraunces@5/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/fraunces@5/400-italic.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/fraunces@5/600-italic.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource-variable/manrope@5/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource-variable/jetbrains-mono@5/index.css">
+<style>
+:root{
+  --bg:#0b0b0e; --bg2:#121216; --paper:#f2ede2; --paper2:#faf7ee;
+  --ink:#ece7db; --muted:#948d7c; --gold:#d9a441; --gold-soft:#e8c07a;
+  --line:rgba(236,231,219,.13); --line-dark:rgba(23,21,15,.15);
+  --font-display:'Fraunces Variable','Fraunces',serif;
+  --font-body:'Manrope Variable',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono Variable',monospace;
+  --nav-h:78px; --ease:cubic-bezier(.19,1,.22,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--nav-h) + 14px)}
+html,body{overflow-x:clip}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased}
+::selection{background:var(--gold);color:#141210}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;background:none;border:none;color:inherit;cursor:pointer}
+::-webkit-scrollbar{width:10px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:#2a2a30;border-radius:8px}
+::-webkit-scrollbar-thumb:hover{background:var(--gold)}
+body.lock{overflow:hidden}
+
+/* ---------- utilidades ---------- */
+.mono{font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.wrap{width:min(1280px,92vw);margin-inline:auto}
+.gold{color:var(--gold)}
+em{font-family:var(--font-display);font-style:italic}
+
+/* ---------- cursor ---------- */
+.cursor-dot,.cursor-ring{position:fixed;left:0;top:0;pointer-events:none;z-index:9999;border-radius:50%;opacity:0}
+.cursor-dot{width:7px;height:7px;background:var(--gold)}
+.cursor-ring{width:36px;height:36px;border:1px solid rgba(217,164,65,.55);transition:width .3s,height .3s,border-color .3s}
+.cursor-ring.big{width:64px;height:64px;border-color:var(--gold)}
+@media (pointer:coarse){.cursor-dot,.cursor-ring{display:none}}
+
+/* ---------- ruido / progreso ---------- */
+.noise{position:fixed;inset:-60%;width:220%;height:220%;z-index:98;pointer-events:none;opacity:.055;
+ background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/></filter><rect width='240' height='240' filter='url(%23n)' opacity='0.7'/></svg>");
+ animation:grain 9s steps(10) infinite}
+@keyframes grain{0%,100%{transform:translate(0,0)}20%{transform:translate(-3%,2%)}40%{transform:translate(2%,-3%)}60%{transform:translate(-2%,-2%)}80%{transform:translate(3%,3%)}}
+.progress{position:fixed;top:0;left:0;height:2px;width:0;background:var(--gold);z-index:1001}
+
+/* ---------- nav ---------- */
+.nav{position:fixed;top:0;left:0;right:0;z-index:1000;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;padding:0 clamp(20px,4vw,52px);transition:background .4s,border-color .4s;border-bottom:1px solid transparent}
+.nav.scrolled{background:rgba(11,11,14,.85);backdrop-filter:blur(14px);border-bottom-color:var(--line)}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-mark{width:38px;height:38px;border:1px solid var(--gold);color:var(--gold);display:grid;place-items:center;font-family:var(--font-display);font-size:15px;font-weight:600;transition:background .3s,color .3s}
+.logo:hover .logo-mark{background:var(--gold);color:#141210}
+.logo-name{font-family:var(--font-display);font-size:17px;letter-spacing:.02em}
+.nav-links{display:flex;gap:clamp(16px,2.4vw,34px);list-style:none}
+.nav-link{font-family:var(--font-mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);position:relative;padding:6px 0;transition:color .3s}
+.nav-link::after{content:"";position:absolute;left:0;bottom:0;height:1px;width:100%;background:var(--gold);transform:scaleX(0);transform-origin:right;transition:transform .45s var(--ease)}
+.nav-link:hover,.nav-link.active{color:var(--ink)}
+.nav-link:hover::after,.nav-link.active::after{transform:scaleX(1);transform-origin:left}
+.nav-side{display:flex;align-items:center;gap:18px}
+.nav-clock{color:var(--muted)}
+.pill{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:100px;padding:7px 14px;font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--gold);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(217,164,65,.5)}60%{box-shadow:0 0 0 7px rgba(217,164,65,0)}}
+.burger{display:none;flex-direction:column;gap:6px;width:40px;height:40px;justify-content:center;align-items:center;z-index:1002}
+.burger span{display:block;width:24px;height:1.6px;background:var(--ink);transition:transform .4s var(--ease),opacity .3s}
+.burger.active span:nth-child(1){transform:translateY(7.6px) rotate(45deg)}
+.burger.active span:nth-child(2){opacity:0}
+.burger.active span:nth-child(3){transform:translateY(-7.6px) rotate(-45deg)}
+.mobile-menu{position:fixed;inset:0;background:var(--bg2);z-index:999;display:flex;flex-direction:column;justify-content:center;padding:0 8vw;gap:6px;clip-path:inset(0 0 100% 0);transition:clip-path .7s var(--ease);visibility:hidden}
+.mobile-menu.open{clip-path:inset(0 0 0 0);visibility:visible}
+.mobile-menu a{font-family:var(--font-display);font-size:clamp(2.2rem,9vw,3.6rem);color:var(--ink);border-bottom:1px solid var(--line);padding:14px 0;display:flex;justify-content:space-between;align-items:center}
+.mobile-menu a small{font-family:var(--font-mono);font-size:11px;color:var(--gold)}
+@media (max-width:960px){.nav-links,.nav-side .pill,.nav-clock{display:none}.burger{display:flex}}
+
+/* ---------- hero ---------- */
+.hero{min-height:100svh;display:grid;grid-template-columns:1.12fr .88fr;gap:clamp(24px,4vw,64px);align-items:center;padding:calc(var(--nav-h) + 3vh) clamp(20px,5vw,64px) 6vh;position:relative}
+.hero-kicker{display:flex;align-items:center;gap:12px;color:var(--gold);margin-bottom:26px}
+.hero-kicker::before{content:"";width:34px;height:1px;background:var(--gold)}
+.hero-name{font-family:var(--font-display);font-weight:600;font-size:clamp(3.4rem,11vw,10rem);line-height:.94;letter-spacing:-.02em;text-transform:uppercase}
+.hero-name .it{font-style:italic;font-weight:500;color:var(--gold);text-transform:none}
+.line{display:block;overflow:hidden;padding-bottom:.08em;margin-bottom:-.04em}
+.line>span{display:block;transform:translateY(118%);transition:transform 1.15s var(--ease)}
+body.loaded .line>span{transform:translateY(0)}
+.hero-name .line:nth-child(2)>span{transition-delay:.14s}
+.hero-role{margin:30px 0 8px;color:var(--muted);display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+.hero-role .role-label{color:var(--gold)}
+#roleText{color:var(--ink);letter-spacing:.1em}
+.caret{display:inline-block;width:8px;height:14px;background:var(--gold);margin-left:4px;animation:blink 1s steps(2) infinite;vertical-align:middle}
+@keyframes blink{50%{opacity:0}}
+.hero-desc{max-width:52ch;color:var(--muted);margin:14px 0 34px}
+.hero-cta{display:flex;gap:16px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:12px;padding:16px 30px;font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;border:1px solid var(--gold);transition:background .35s,color .35s,transform .35s var(--ease),box-shadow .35s;will-change:transform}
+.btn-solid{background:var(--gold);color:#141210}
+.btn-solid:hover{background:var(--gold-soft);box-shadow:0 14px 34px -14px rgba(217,164,65,.55)}
+.btn-ghost{color:var(--ink)}
+.btn-ghost:hover{background:rgba(217,164,65,.1);color:var(--gold)}
+.btn .arr{transition:transform .35s var(--ease)}
+.btn:hover .arr{transform:translateX(5px)}
+.hero-meta{display:flex;gap:clamp(20px,3vw,54px);margin-top:52px;flex-wrap:wrap}
+.hero-meta div{border-left:1px solid var(--line);padding-left:16px}
+.hero-meta .k{color:var(--muted);display:block;margin-bottom:4px}
+.hero-meta .v{font-size:14px}
+.portrait{position:relative;justify-self:end;width:min(430px,100%)}
+.portrait-frame{border:1px solid var(--line);padding:14px;position:relative}
+.kenburns{overflow:hidden}
+.kenburns img{width:100%;aspect-ratio:4/5;object-fit:cover;filter:saturate(.92) contrast(1.05);animation:breathe 16s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+.portrait-cap{display:flex;justify-content:space-between;margin-top:12px;color:var(--muted)}
+.badge{position:absolute;left:-58px;bottom:44px;width:120px;height:120px;z-index:3}
+.badge svg{width:100%;height:100%;animation:spin 16s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.badge text{fill:var(--gold);font-family:var(--font-mono);font-size:9.2px;letter-spacing:.22em}
+.badge-core{position:absolute;inset:0;display:grid;place-items:center;color:var(--gold);font-size:20px}
+.scroll-hint{position:absolute;left:clamp(20px,5vw,64px);bottom:22px;display:flex;align-items:center;gap:14px;color:var(--muted)}
+.scroll-hint i{display:block;width:1px;height:52px;background:var(--line);position:relative;overflow:hidden}
+.scroll-hint i::after{content:"";position:absolute;inset:0;background:var(--gold);transform:translateY(-100%);animation:drip 2.2s var(--ease) infinite}
+@keyframes drip{0%{transform:translateY(-100%)}55%{transform:translateY(0)}100%{transform:translateY(100%)}}
+@media (max-width:960px){
+ .hero{grid-template-columns:1fr;padding-top:calc(var(--nav-h) + 5vh)}
+ .portrait{justify-self:start;margin-top:10px}
+ .badge{left:auto;right:-14px;bottom:-30px}
+}
+
+/* ---------- marquee ---------- */
+.marquee{overflow:hidden;border-block:1px solid var(--line);padding:20px 0;background:var(--bg2)}
+.marquee-track{display:flex;width:max-content;animation:marq 30s linear infinite}
+.marquee:hover .marquee-track{animation-play-state:paused}
+.marquee-track span{font-family:var(--font-display);font-size:clamp(1.2rem,2.6vw,1.9rem);white-space:nowrap;padding:0 18px;color:var(--ink)}
+.marquee-track span i{font-style:italic;color:var(--gold)}
+.marquee-track .sep{color:var(--gold);font-style:normal}
+@keyframes marq{to{transform:translateX(-50%)}}
+
+/* ---------- encabezados de sección ---------- */
+section{padding:clamp(80px,11vh,130px) 0;position:relative}
+.sec-head{margin-bottom:clamp(44px,7vh,76px)}
+.sec-meta{display:flex;align-items:center;gap:16px;color:var(--gold);margin-bottom:18px}
+.sec-meta .rule{width:52px;height:1px;background:currentColor}
+.sec-title{font-family:var(--font-display);font-weight:600;font-size:clamp(2.1rem,5vw,4rem);line-height:1.06;letter-spacing:-.01em;max-width:20ch}
+.sec-title em{color:var(--gold)}
+
+/* ---------- reveal ---------- */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .9s ease,transform .9s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+
+/* ---------- sobre mí ---------- */
+.about-grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:clamp(36px,6vw,90px);align-items:start}
+.about-sticky{position:sticky;top:calc(var(--nav-h) + 24px)}
+.about-photo{border:1px solid var(--line);padding:12px}
+.facts{border:1px solid var(--line);margin:-46px 26px 0 26px;background:var(--bg2);padding:22px 24px;position:relative;z-index:2}
+.facts li{list-style:none;display:flex;justify-content:space-between;gap:14px;padding:9px 0;border-bottom:1px dashed var(--line);font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;color:var(--muted)}
+.facts li:last-child{border-bottom:none}
+.facts li b{color:var(--ink);font-weight:400}
+.about-lead{font-family:var(--font-display);font-size:clamp(1.25rem,2.2vw,1.7rem);line-height:1.45;margin-bottom:26px}
+.about-lead em{color:var(--gold)}
+.about-body p{color:var(--muted);margin-bottom:18px;max-width:60ch}
+.principles{margin:38px 0 0;border-top:1px solid var(--line)}
+.principles li{list-style:none;display:flex;gap:22px;align-items:baseline;padding:18px 4px;border-bottom:1px solid var(--line);transition:padding-left .4s var(--ease),background .4s}
+.principles li:hover{padding-left:16px;background:rgba(217,164,65,.05)}
+.principles .n{font-family:var(--font-mono);font-size:11px;color:var(--gold)}
+.principles .t{font-family:var(--font-display);font-size:clamp(1.05rem,1.8vw,1.35rem)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-top:clamp(70px,10vh,110px)}
+.stat{background:var(--bg);padding:34px 26px;transition:background .4s}
+.stat:hover{background:var(--bg2)}
+.stat b{font-family:var(--font-display);font-weight:600;font-size:clamp(2.2rem,4.6vw,3.6rem);color:var(--gold);display:block;line-height:1}
+.stat span{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+@media (max-width:960px){.about-grid{grid-template-columns:1fr}.about-sticky{position:static}.stats{grid-template-columns:repeat(2,1fr)}}
+
+/* ---------- trabajo (crema) ---------- */
+.work{background:var(--paper);color:#171510;--line:var(--line-dark);--muted:#6f6753}
+.work .sec-title{color:#171510}
+.work-note{color:var(--muted);max-width:44ch;margin-left:auto;text-align:right;font-size:14px}
+.work-head-row{display:flex;justify-content:space-between;align-items:end;gap:30px;flex-wrap:wrap}
+.projects{display:flex;flex-direction:column;gap:7vh}
+.proj-card{position:sticky;top:calc(var(--nav-h) + 18px + var(--stk)*26px);background:var(--paper2);border:1px solid var(--line-dark);box-shadow:0 -18px 50px -28px rgba(20,16,8,.4);display:grid;grid-template-columns:1.05fr .95fr;min-height:60vh;overflow:hidden}
+.proj-media{overflow:hidden;position:relative;clip-path:inset(0 0 100% 0);transition:clip-path 1.2s var(--ease)}
+.proj-card.in .proj-media{clip-path:inset(0 0 0% 0)}
+.proj-media img{width:100%;height:100%;object-fit:cover;transition:transform 1.4s var(--ease),filter .6s;filter:saturate(.94)}
+.proj-card:hover .proj-media img{transform:scale(1.06)}
+.proj-year-tag{position:absolute;top:16px;left:16px;background:rgba(11,11,14,.82);color:var(--gold);font-family:var(--font-mono);font-size:10px;letter-spacing:.16em;padding:7px 12px}
+.proj-info{padding:clamp(26px,3.6vw,52px);display:flex;flex-direction:column;gap:18px;opacity:0;transform:translateY(26px);transition:opacity .9s .25s ease,transform .9s .25s var(--ease)}
+.proj-card.in .proj-info{opacity:1;transform:none}
+.proj-top{display:flex;justify-content:space-between;align-items:center;color:var(--muted)}
+.proj-num{font-family:var(--font-display);font-size:2rem;color:transparent;-webkit-text-stroke:1px rgba(23,21,16,.4)}
+.proj-title{font-family:var(--font-display);font-weight:600;font-size:clamp(1.6rem,3vw,2.5rem);line-height:1.1}
+.proj-title em{color:#a4771f}
+.proj-desc{color:var(--muted);max-width:46ch}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line-dark);border-radius:100px;padding:6px 14px;font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.proj-foot{margin-top:auto;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line-dark);padding-top:18px}
+.proj-result{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;color:#a4771f}
+.proj-link{font-family:var(--font-mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;display:inline-flex;gap:10px;align-items:center;color:#171510}
+.proj-link .arr{transition:transform .35s var(--ease)}
+.proj-link:hover .arr{transform:translateX(6px)}
+.proj-link:hover{color:#a4771f}
+@media (max-width:900px){.proj-card{grid-template-columns:1fr;min-height:auto;position:static}.proj-media{aspect-ratio:16/10}}
+
+/* ---------- servicios ---------- */
+.srv-list{border-top:1px solid var(--line)}
+.srv{border-bottom:1px solid var(--line)}
+.srv-head{width:100%;display:grid;grid-template-columns:70px 1fr auto 40px;align-items:center;gap:18px;padding:30px 6px;text-align:left;transition:padding-left .4s var(--ease)}
+.srv-head:hover{padding-left:20px}
+.srv-num{font-family:var(--font-mono);font-size:12px;color:var(--gold)}
+.srv-name{font-family:var(--font-display);font-weight:600;font-size:clamp(1.3rem,3vw,2.1rem);transition:color .3s}
+.srv-head:hover .srv-name{color:var(--gold)}
+.srv-tag{font-family:var(--font-mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.srv-ico{width:34px;height:34px;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;color:var(--gold);transition:transform .5s var(--ease),background .3s,color .3s;justify-self:end}
+.srv.open .srv-ico{transform:rotate(45deg);background:var(--gold);color:#141210}
+.srv-body{max-height:0;overflow:hidden;transition:max-height .6s var(--ease)}
+.srv-inner{display:grid;grid-template-columns:1.2fr .8fr;gap:34px;padding:0 6px 36px 88px}
+.srv-inner p{color:var(--muted);max-width:56ch}
+.srv-inner .chips .chip{border-color:var(--line);color:var(--muted)}
+@media (max-width:820px){.srv-head{grid-template-columns:44px 1fr 40px}.srv-tag{display:none}.srv-inner{grid-template-columns:1fr;padding-left:6px}}
+
+/* ---------- trayectoria ---------- */
+.xp-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(40px,6vw,90px)}
+.xp-item{display:grid;grid-template-columns:130px 1fr;gap:22px;padding:26px 0;border-bottom:1px solid var(--line)}
+.xp-year{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;color:var(--gold);padding-top:6px}
+.xp-item h3{font-family:var(--font-display);font-size:1.35rem;font-weight:600}
+.xp-co{font-family:var(--font-mono);font-size:11px;color:var(--muted);letter-spacing:.1em;display:block;margin:6px 0 10px}
+.xp-item p{color:var(--muted);font-size:14.5px;max-width:52ch}
+.awards h3{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:20px}
+.award-row{display:flex;justify-content:space-between;gap:14px;padding:15px 4px;border-bottom:1px dashed var(--line);font-size:14px;transition:padding-left .35s var(--ease)}
+.award-row:hover{padding-left:12px}
+.award-row .y{font-family:var(--font-mono);font-size:11px;color:var(--muted)}
+.award-row .a{color:var(--ink)}
+.award-row .p{color:var(--muted);font-size:13px}
+@media (max-width:900px){.xp-grid{grid-template-columns:1fr}.xp-item{grid-template-columns:1fr;gap:6px}}
+
+/* ---------- herramientas marquee ---------- */
+.tools{padding:0;border-block:1px solid var(--line);background:var(--bg2)}
+.mq-row{overflow:hidden;padding:20px 0}
+.mq-row + .mq-row{border-top:1px solid var(--line)}
+.mq-track{display:flex;gap:14px;width:max-content;animation:marq 34s linear infinite;padding-right:14px}
+.mq-rev .mq-track{animation-direction:reverse}
+.tool{border:1px solid var(--line);border-radius:100px;padding:10px 22px;font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);white-space:nowrap;transition:border-color .3s,color .3s}
+.tool:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ---------- testimonios ---------- */
+.testimonials{background:var(--bg)}
+.t-shell{position:relative;border:1px solid var(--line);padding:clamp(34px,6vw,80px);overflow:hidden}
+.t-ghost{position:absolute;top:-40px;right:20px;font-family:var(--font-display);font-size:clamp(8rem,22vw,17rem);color:transparent;-webkit-text-stroke:1px rgba(217,164,65,.18);line-height:1;pointer-events:none;font-style:italic}
+.t-viewport{overflow:hidden}
+.t-track{display:flex;transition:transform .75s var(--ease)}
+.t-slide{flex:0 0 100%;padding-right:6px}
+.t-slide blockquote{font-family:var(--font-display);font-size:clamp(1.3rem,3vw,2.1rem);line-height:1.4;max-width:26ch;margin-bottom:34px}
+.t-slide blockquote em{color:var(--gold)}
+.t-author{display:flex;align-items:center;gap:16px}
+.t-ava{width:46px;height:46px;border-radius:50%;border:1px solid var(--gold);display:grid;place-items:center;font-family:var(--font-display);color:var(--gold);font-size:15px}
+.t-name{font-weight:700;font-size:14px}
+.t-role{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.t-ctrl{display:flex;align-items:center;gap:18px;margin-top:40px}
+.t-btn{width:48px;height:48px;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;color:var(--ink);transition:background .3s,color .3s,border-color .3s,transform .3s var(--ease)}
+.t-btn:hover{background:var(--gold);color:#141210;border-color:var(--gold)}
+.t-idx{font-family:var(--font-mono);font-size:11px;color:var(--muted);letter-spacing:.16em}
+
+/* ---------- contacto ---------- */
+.contact{background:var(--bg2);border-top:1px solid var(--line)}
+.contact-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(40px,6vw,90px)}
+.contact-title{font-family:var(--font-display);font-weight:600;font-size:clamp(2.4rem,5.4vw,4.4rem);line-height:1.05;margin-bottom:30px}
+.contact-title em{color:var(--gold)}
+.contact-mail{display:inline-flex;align-items:center;gap:14px;font-family:var(--font-mono);font-size:clamp(13px,1.6vw,16px);letter-spacing:.06em;color:var(--ink);border-bottom:1px solid var(--gold);padding-bottom:6px;margin-bottom:38px;transition:color .3s,gap .3s}
+.contact-mail:hover{color:var(--gold);gap:22px}
+.socials{list-style:none;border-top:1px solid var(--line)}
+.socials a{display:flex;justify-content:space-between;padding:15px 4px;border-bottom:1px solid var(--line);font-family:var(--font-mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);transition:color .3s,padding-left .35s var(--ease)}
+.socials a:hover{color:var(--gold);padding-left:14px}
+.field{margin-bottom:26px}
+.field label{display:block;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.field input,.field textarea,.field select{width:100%;background:transparent;border:none;border-bottom:1px solid var(--line);color:var(--ink);font-family:var(--font-body);font-size:15px;padding:10px 2px;outline:none;transition:border-color .3s;border-radius:0}
+.field textarea{resize:vertical;min-height:110px}
+.field select{appearance:none;cursor:pointer}
+.field select option{background:var(--bg2)}
+.field input:focus,.field textarea:focus,.field select:focus{border-bottom-color:var(--gold)}
+.form-note{font-family:var(--font-mono);font-size:10.5px;color:var(--muted);letter-spacing:.1em;margin-top:18px}
+.form-success{display:none;border:1px solid var(--gold);padding:40px;text-align:center}
+.form-success.show{display:block;animation:fadeUp .7s var(--ease)}
+.form-success h3{font-family:var(--font-display);font-size:1.6rem;margin:14px 0 8px}
+.form-success p{color:var(--muted);font-size:14px;margin-bottom:22px}
+.form-success .ok{font-size:26px;color:var(--gold)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+@media (max-width:900px){.contact-grid{grid-template-columns:1fr}}
+
+/* ---------- footer ---------- */
+footer{padding:70px 0 34px;border-top:1px solid var(--line)}
+.foot-mark{font-family:var(--font-display);font-weight:600;font-size:clamp(3rem,11vw,9.5rem);line-height:1;text-transform:uppercase;color:transparent;-webkit-text-stroke:1px rgba(236,231,219,.22);letter-spacing:.01em;white-space:nowrap;overflow:hidden;transition:-webkit-text-stroke-color .5s}
+.foot-mark:hover{-webkit-text-stroke-color:var(--gold)}
+.foot-grid{display:flex;justify-content:space-between;gap:26px;flex-wrap:wrap;margin:44px 0 30px;color:var(--muted);font-size:13.5px}
+.foot-grid a:hover{color:var(--gold)}
+.foot-bottom{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:24px;color:var(--muted)}
+.top-link{display:inline-flex;gap:10px;align-items:center;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink)}
+.top-link:hover{color:var(--gold)}
+
+/* ---------- reduced motion ---------- */
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+  .marquee-track,.mq-track{animation:none;transform:none}
+  .line>span{transform:none}
+  .reveal{opacity:1;transform:none}
+  .proj-media{clip-path:none}
+  .proj-info{opacity:1;transform:none}
+  .noise{animation:none}
+}
+</style>
+</head>
+<body id="top">
+
+<div class="cursor-dot" aria-hidden="true"></div>
+<div class="cursor-ring" aria-hidden="true"></div>
+<div class="noise" aria-hidden="true"></div>
+<div class="progress" id="progress" aria-hidden="true"></div>
+
+<header class="nav" id="nav">
+  <a class="logo" href="#top" aria-label="Inicio">
+    <span class="logo-mark">AV</span>
+    <span class="logo-name">Adrián Vega</span>
+  </a>
+  <nav aria-label="Principal">
+    <ul class="nav-links">
+      <li><a class="nav-link" href="#sobre-mi">Sobre mí</a></li>
+      <li><a class="nav-link" href="#trabajo">Trabajo</a></li>
+      <li><a class="nav-link" href="#servicios">Servicios</a></li>
+      <li><a class="nav-link" href="#trayectoria">Trayectoria</a></li>
+      <li><a class="nav-link" href="#contacto">Contacto</a></li>
+    </ul>
+  </nav>
+  <div class="nav-side">
+    <span class="nav-clock mono" data-clock>--:--</span>
+    <span class="pill"><span class="dot"></span>Disponible · Q4 2025</span>
+    <button class="burger" id="burger" aria-label="Abrir menú" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#sobre-mi"><span>Sobre mí</span><small>01</small></a>
+  <a href="#trabajo"><span>Trabajo</span><small>02</small></a>
+  <a href="#servicios"><span>Servicios</span><small>03</small></a>
+  <a href="#trayectoria"><span>Trayectoria</span><small>04</small></a>
+  <a href="#contacto"><span>Contacto</span><small>06</small></a>
+</div>
+
+<main>
+<!-- ============ HERO ============ -->
+<section class="hero" id="inicio" style="padding-top:calc(var(--nav-h) + 4vh)">
+  <div>
+    <p class="hero-kicker mono">Portafolio · Diseño &amp; Código · Barcelona</p>
+    <h1 class="hero-name">
+      <span class="line"><span>Adrián</span></span>
+      <span class="line"><span class="it">Vega</span></span>
+    </h1>
+    <p class="hero-role mono"><span class="role-label">/ rol actual</span><span id="roleText">Diseñador Creativo</span><span class="caret"></span></p>
+    <p class="hero-desc">Diseño experiencias digitales donde la estrategia, la estética y el código conviven sin fricciones. Marcas con carácter, productos claros y webs que se sienten vivas.</p>
+    <div class="hero-cta">
+      <a class="btn btn-solid magnetic" href="#trabajo">Ver proyectos <span class="arr">→</span></a>
+      <a class="btn btn-ghost magnetic" href="#contacto">Hablemos <span class="arr">↗</span></a>
+    </div>
+    <div class="hero-meta mono">
+      <div><span class="k">Ubicación</span><span class="v">Barcelona, ES · Remoto</span></div>
+      <div><span class="k">Experiencia</span><span class="v">+10 años · 87 proyectos</span></div>
+      <div><span class="k">Estado</span><span class="v gold">Aceptando proyectos</span></div>
+    </div>
+  </div>
+  <div class="portrait">
+    <div class="badge" aria-hidden="true">
+      <svg viewBox="0 0 100 100">
+        <defs><path id="circ" d="M50,50 m-40,0 a40,40 0 1,1 80,0 a40,40 0 1,1 -80,0"/></defs>
+        <text><textPath href="#circ">DISPONIBLE PARA PROYECTOS · DISEÑO &amp; CÓDIGO ·&#160;</textPath></text>
+      </svg>
+      <span class="badge-core">✳</span>
+    </div>
+    <div class="portrait-frame">
+      <div class="kenburns"><img src="https://image.qwenlm.ai/public_source/fa6b3b9b-2337-4314-b2d9-945dc8e23b2a/10299dc92-669b-4456-8925-f21603e4cbbb.png" alt="Retrato de Adrián Vega, diseñador creativo"></div>
+    </div>
+    <div class="portrait-cap mono"><span>Retrato — Estudio</span><span>BCN · 2025</span></div>
+  </div>
+  <div class="scroll-hint mono" aria-hidden="true"><i></i>desliza</div>
+</section>
+
+<!-- ============ MARQUEE ============ -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span>Diseño de Marca <i>✦</i></span><span class="sep">✦</span><span><i>Experiencias</i> Web <i>✦</i></span><span class="sep">✦</span><span>UI / UX <i>✦</i></span><span class="sep">✦</span><span>Desarrollo <i>Creativo</i> <i>✦</i></span><span class="sep">✦</span><span>Dirección de Arte <i>✦</i></span><span class="sep">✦</span><span>E-commerce <i>✦</i></span><span class="sep">✦</span>
+    <span>Diseño de Marca <i>✦</i></span><span class="sep">✦</span><span><i>Experiencias</i> Web <i>✦</i></span><span class="sep">✦</span><span>UI / UX <i>✦</i></span><span class="sep">✦</span><span>Desarrollo <i>Creativo</i> <i>✦</i></span><span class="sep">✦</span><span>Dirección de Arte <i>✦</i></span><span class="sep">✦</span><span>E-commerce <i>✦</i></span><span class="sep">✦</span>
+  </div>
+</div>
+
+<!-- ============ SOBRE MÍ ============ -->
+<section id="sobre-mi">
+  <div class="wrap">
+    <header class="sec-head reveal">
+      <div class="sec-meta mono"><span>01</span><span class="rule"></span><span>Sobre mí</span></div>
+      <h2 class="sec-title">Diseño con intención, <em>código</em> con oficio</h2>
+    </header>
+    <div class="about-grid">
+      <div class="about-sticky reveal">
+        <div class="about-photo"><div class="kenburns"><img src="https://image.qwenlm.ai/public_source/fa6b3b9b-2337-4314-b2d9-945dc8e23b2a/168274d6c-b324-4739-9c74-e33ac62070de.png" alt="Espacio de trabajo del estudio"></div></div>
+        <ul class="facts">
+          <li><span>Base</span><b>Barcelona, España</b></li>
+          <li><span>Desde</span><b>2013 en activo</b></li>
+          <li><span>Modalidad</span><b>Estudio / Remoto</b></li>
+          <li><span>Ahora</span><b class="gold">Aceptando Q4 2025</b></li>
+        </ul>
+      </div>
+      <div>
+        <p class="about-lead reveal">Soy Adrián Vega, diseñador creativo y desarrollador frontend. Llevo más de una década construyendo <em>marcas y productos digitales</em> que la gente recuerda — y que funcionan.</p>
+        <div class="about-body reveal">
+          <p>He colaborado con startups, estudios y marcas consolidadas de Europa y Latinoamérica, liderando proyectos que van desde una identidad completa hasta plataformas web de alto rendimiento. Mi trabajo vive en la intersección entre el diseño editorial y la ingeniería frontend.</p>
+          <p>Mi obsesión es que cada detalle tenga una intención: la tipografía, el ritmo de una animación, el tiempo de carga. Porque la diferencia entre lo bueno y lo memorable siempre está en los detalles.</p>
+        </div>
+        <ul class="principles reveal">
+          <li><span class="n">01</span><span class="t">Claridad antes que decoración.</span></li>
+          <li><span class="n">02</span><span class="t">El detalle es la diferencia.</span></li>
+          <li><span class="n">03</span><span class="t">Menos capas, más criterio.</span></li>
+          <li><span class="n">04</span><span class="t">El código también es diseño.</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="stats reveal">
+      <div class="stat"><b data-count="10" data-suffix="+">0</b><span>Años de experiencia</span></div>
+      <div class="stat"><b data-count="87">0</b><span>Proyectos entregados</span></div>
+      <div class="stat"><b data-count="42" data-suffix="+">0</b><span>Clientes felices</span></div>
+      <div class="stat"><b data-count="12">0</b><span>Premios &amp; menciones</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TRABAJO ============ -->
+<section class="work" id="trabajo">
+  <div class="wrap">
+    <header class="sec-head work-head-row reveal">
+      <div>
+        <div class="sec-meta mono"><span>02</span><span class="rule"></span><span>Trabajo seleccionado</span></div>
+        <h2 class="sec-title">Proyectos que <em>cuentan</em> historias</h2>
+      </div>
+      <p class="work-note mono">2022 — 2025 · Seis casos elegidos</p>
+    </header>
+
+    <div class="projects">
+      <article class="proj-card" style="--stk:0">
+        <div class="proj-media"><img src="https://image.qwenlm.ai/public_source/fa6b3b9b-2337-4314-b2d9-945dc8e23b2a/1c9ed3133-3848-4c32-a93c-1c3a2f33210b.png" alt="Identidad y packaging de Noir Café"><span class="proj-year-tag">2025</span></div>
+        <div class="proj-info">
+          <div class="proj-top mono"><span>Branding · E-commerce</span><span class="proj-num">01</span></div>
+          <h3 class="proj-title">Noir <em>Café</em></h3>
+          <p class="proj-desc">Identidad integral y tienda online para una tostaduría de especialidad. Un sistema cálido, tipográfico y con carácter artesanal que huele a café recién molido.</p>
+          <div class="chips"><span class="chip">Identidad</span><span class="chip">Packaging</span><span class="chip">Shopify</span><span class="chip">Dir. de arte</span></div>
+          <div class="proj-foot"><span class="proj-result">▲ +38% conversión online</span><a class="proj-link" href="#contacto">Ver caso <span class="arr">→</span></a></div>
+        </div>
+      </article>
+
+      <article class="proj-card" style="--stk:1">
+        <div class="proj-media"><img src="https://image.qwenlm.ai/public_source/fa6b3b9b-2337-4314-b2d9-945dc8e23b2a/10f088fa0-81b9-485a-9c61-55289c5b0803.png" alt="Aplicación de banca móvil Banco Lumen"><span class="proj-year-tag">2024</span></div>
+        <div class="proj-info">
+          <div class="proj-top mono"><span>Producto digital · App</span><span class="proj-num">02</span></div>
+          <h3 class="proj-title">Banco <em>Lumen</em></h3>
+          <p class="proj-desc">Diseño y prototipado de una app de banca personal centrada en la claridad de datos, la confianza y la calma visual. Sistema de diseño completo para iOS y Android.</p>
+          <div class="chips"><span class="chip">UX Research</span><span class="chip">UI</span><span class="chip">Design System</span><span class="chip">Prototipado</span></div>
+          <div class="proj-foot"><span class="proj-result">★ 4,8 en stores</span><a class="proj-link" href="#contacto">Ver caso <span class="arr">→</span></a></div>
+        </div>
+      </article>
+
+      <article class="proj-card" style="--stk:2">
+        <div class="proj-media"><img src="https://image.qwenlm.ai/public_source/fa6b3b9b-2337-4314-b2d9-945dc8e23b2a/19a0f5008-ebfd-4658-a152-0e664f2768a9.png" alt="Diseño editorial de Revista Áurea"><span class="proj-year-tag">2024</span></div>
+        <div class="proj-info">
+          <div class="proj-top mono"><span>Editorial · Web</span><span class="proj-num">03</span></div>
+          <h3 class="proj-title">Revista <em>Áurea</em></h3>
+          <p class="proj-desc">Rediseño editorial y experiencia de lectura para una revista cultural independiente. Tipografía protagonista, ritmo de página y un CMS que respeta el diseño.</p>
+          <div class="chips"><span class="chip">Diseño editorial</span><span class="chip">Web</span><span class="chip">CMS</span><span class="chip">Tipografía</span></div>
+          <div class="proj-foot"><span class="proj-result">▲ +62% tiempo de lectura</span><a class="proj-link" href="#contacto">Ver caso <span class="arr">→</span></a></div>
+        </div>
+      </article>
+
+      <article class="proj-card" style="--stk:3">
+        <div class="proj-media"><img src="https://image.qwenlm.ai/public_source/fa6b3b9b-2337-4314-b2d9-945dc8e23b2a/1b6cacf8c-423b-461a-8219-4f677cea27ae.png" alt="E-commerce de moda Atelier Miraval"><span class="proj-year-tag">2023</span></div>
+        <div class="proj-info">
+          <div class="proj-top mono"><span>Moda · E-commerce</span><span class="proj-num">04</span></div>
+          <h3 class="proj-title">Atelier <em>Miraval</em></h3>
+          <p class="proj-desc">Plataforma de venta y dirección de arte para una firma de moda slow fashion hecha en España. Fotografía protagonista y checkout sin fricción.</p>
+          <div class="chips"><span class="chip">E-commerce</span><span class="chip">Dir. de arte</span><span class="chip">Fotografía</span><span class="chip">UI</span></div>
+          <div class="proj-foot"><span class="proj-result">▲ ×2,4 ventas en lanzamiento</span><a class="proj-link" href="#contacto">Ver caso <span class="arr">→</span></a></div>
+        </div>
+      </article>
+
+      <article class="proj-card" style="--stk:4">
+        <div class="proj-media"><img src="https://image.qwenlm.ai/public_source/fa6b3b9b-2337-4314-b2d9-945dc8e23b2a/1668a1be6-482b-4f44-a618-9e379e071233.png" alt="Instalación interactiva Museo Delta"><span class="proj-year-tag">2023</span></div>
+        <div class="proj-info">
+          <div class="proj-top mono"><span>Experiencia interactiva</span><span class="proj-num">05</span></div>
+          <h3 class="proj-title">Museo <em>Delta</em></h3>
+          <p class="proj-desc">Instalación web interactiva para la exposición «Materia y Luz»: partículas, sonido y gesto en tiempo real. WebGL llevado al espacio físico.</p>
+          <div class="chips"><span class="chip">WebGL</span><span class="chip">Three.js</span><span class="chip">Instalación</span><span class="chip">Creative coding</span></div>
+          <div class="proj-foot"><span class="proj-result">◆ Site of the Day · Awwwards</span><a class="proj-link" href="#contacto">Ver caso <span class="arr">→</span></a></div>
+        </div>
+      </article>
+
+      <article class="proj-card" style="--stk:5">
+        <div class="proj-media"><img src="https://image.qwenlm.ai/public_source/fa6b3b9b-2337-4314-b2d9-945dc8e23b2a/133df63ec-3c9f-4e8c-a897-f12d0ac2d851.png" alt="Sitio web de Terra Habitats"><span class="proj-year-tag">2022</span></div>
+        <div class="proj-info">
+          <div class="proj-top mono"><span>Web corporativa</span><span class="proj-num">06</span></div>
+          <h3 class="proj-title">Terra <em>Habitats</em></h3>
+          <p class="proj-desc">Sitio premium para una promotora de arquitectura sostenible: narrativa visual pausada, buscador de promociones y rendimiento impecable.</p>
+          <div class="chips"><span class="chip">Web design</span><span class="chip">Desarrollo</span><span class="chip">SEO</span><span class="chip">CMS</span></div>
+          <div class="proj-foot"><span class="proj-result">▲ +71% leads cualificados</span><a class="proj-link" href="#contacto">Ver caso <span class="arr">→</span></a></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SERVICIOS ============ -->
+<section id="servicios">
+  <div class="wrap">
+    <header class="sec-head reveal">
+      <div class="sec-meta mono"><span>03</span><span class="rule"></span><span>Servicios</span></div>
+      <h2 class="sec-title">Lo que puedo <em>hacer</em> por ti</h2>
+    </header>
+    <div class="srv-list reveal">
+      <div class="srv">
+        <button class="srv-head" aria-expanded="false"><span class="srv-num">/01</span><span class="srv-name">Identidad de Marca</span><span class="srv-tag">Branding</span><span class="srv-ico">+</span></button>
+        <div class="srv-body"><div class="srv-inner">
+          <p>Construyo marcas con carácter: estrategia, concepto visual y sistemas flexibles que funcionan igual de bien en una tarjeta que en una campaña. Marcas pensadas para durar y para sentirse.</p>
+          <div class="chips"><span class="chip">Logotipo</span><span class="chip">Sistema visual</span><span class="chip">Dir. de arte</span><span class="chip">Brand book</span><span class="chip">Naming</span></div>
+        </div></div>
+      </div>
+      <div class="srv">
+        <button class="srv-head" aria-expanded="false"><span class="srv-num">/02</span><span class="srv-name">Diseño Web &amp; UI/UX</span><span class="srv-tag">Producto</span><span class="srv-ico">+</span></button>
+        <div class="srv-body"><div class="srv-inner">
+          <p>De la investigación al prototipo: interfaces claras, jerarquía tipográfica sólida y sistemas de diseño escalables para web y producto digital. El usuario siempre primero, el detalle siempre presente.</p>
+          <div class="chips"><span class="chip">Research</span><span class="chip">Wireframes</span><span class="chip">Prototipos</span><span class="chip">Design System</span><span class="chip">Testing</span></div>
+        </div></div>
+      </div>
+      <div class="srv">
+        <button class="srv-head" aria-expanded="false"><span class="srv-num">/03</span><span class="srv-name">Desarrollo Frontend</span><span class="srv-tag">Código</span><span class="srv-ico">+</span></button>
+        <div class="srv-body"><div class="srv-inner">
+          <p>Convierto diseños en experiencias rápidas y accesibles: React, animación cuidada, CMS a medida y rendimiento como requisito de diseño, no como parche final.</p>
+          <div class="chips"><span class="chip">React / Next.js</span><span class="chip">GSAP</span><span class="chip">Three.js</span><span class="chip">CMS headless</span><span class="chip">Performance</span></div>
+        </div></div>
+      </div>
+      <div class="srv">
+        <button class="srv-head" aria-expanded="false"><span class="srv-num">/04</span><span class="srv-name">Dirección Creativa</span><span class="srv-tag">Estrategia</span><span class="srv-ico">+</span></button>
+        <div class="srv-body"><div class="srv-inner">
+          <p>Acompaño a equipos y marcas como partner creativo: concepto, campañas, consultoría de diseño y liderazgo de proyectos multidisciplinares de principio a fin.</p>
+          <div class="chips"><span class="chip">Concepto</span><span class="chip">Campañas</span><span class="chip">Consultoría</span><span class="chip">Mentoría</span></div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TRAYECTORIA ============ -->
+<section id="trayectoria" style="background:var(--bg2)">
+  <div class="wrap">
+    <header class="sec-head reveal">
+      <div class="sec-meta mono"><span>04</span><span class="rule"></span><span>Trayectoria</span></div>
+      <h2 class="sec-title">Un camino de <em>oficio</em></h2>
+    </header>
+    <div class="xp-grid">
+      <div>
+        <div class="xp-item reveal"><span class="xp-year">2021 — Hoy</span><div><h3>Director Creativo &amp; Fundador</h3><span class="xp-co">Estudio Vega · Barcelona</span><p>Proyectos de marca y producto para clientes de Europa y LATAM. Lidero un equipo de cuatro creativos y cuido cada entrega como si llevara mi firma — porque la lleva.</p></div></div>
+        <div class="xp-item reveal"><span class="xp-year">2018 — 2021</span><div><h3>Senior Product Designer</h3><span class="xp-co">Norte&amp;Co · Barcelona</span><p>Lideré el rediseño del ecosistema digital de una fintech con más de dos millones de usuarios. Sistemas de diseño, accesibilidad y cultura de producto.</p></div></div>
+        <div class="xp-item reveal"><span class="xp-year">2015 — 2018</span><div><h3>Diseñador UI/UX</h3><span class="xp-co">Agencia Fuego · Madrid</span><p>Campañas digitales, webs y lanzamientos para marcas de gran consumo. Aquí aprendí a diseñar rápido sin diseñar mal.</p></div></div>
+        <div class="xp-item reveal"><span class="xp-year">2013 — 2015</span><div><h3>Diseñador Web Freelance</h3><span class="xp-co">Valencia</span><p>Primeros clientes, mucho aprendizaje y alguna noche sin dormir. El origen de todo.</p></div></div>
+      </div>
+      <aside class="awards reveal">
+        <h3>Reconocimientos</h3>
+        <div class="award-row"><span class="y">2025</span><span class="a">Awwwards — Site of the Day</span><span class="p">Museo Delta</span></div>
+        <div class="award-row"><span class="y">2024</span><span class="a">CSS Design Awards — Special Kudos</span><span class="p">Banco Lumen</span></div>
+        <div class="award-row"><span class="y">2023</span><span class="a">Premios Laus — Bronce</span><span class="p">Atelier Miraval</span></div>
+        <div class="award-row"><span class="y">2022</span><span class="a">FWA — of the Day</span><span class="p">Terra Habitats</span></div>
+        <div class="award-row"><span class="y">2021</span><span class="a">Adobe Design Achievement — Semifinalista</span><span class="p">Proyecto personal</span></div>
+        <h3 style="margin-top:44px">Formación</h3>
+        <div class="award-row"><span class="y">2016</span><span class="a">Máster en Diseño Digital</span><span class="p">ELISAVA</span></div>
+        <div class="award-row"><span class="y">2013</span><span class="a">Grado en Bellas Artes</span><span class="p">UPV Valencia</span></div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HERRAMIENTAS ============ -->
+<div class="tools" aria-label="Herramientas y tecnologías">
+  <div class="mq-row"><div class="mq-track">
+    <span class="tool">Figma</span><span class="tool">Adobe CC</span><span class="tool">Blender</span><span class="tool">After Effects</span><span class="tool">React</span><span class="tool">Next.js</span><span class="tool">TypeScript</span><span class="tool">GSAP</span><span class="tool">Three.js</span>
+    <span class="tool">Figma</span><span class="tool">Adobe CC</span><span class="tool">Blender</span><span class="tool">After Effects</span><span class="tool">React</span><span class="tool">Next.js</span><span class="tool">TypeScript</span><span class="tool">GSAP</span><span class="tool">Three.js</span>
+  </div></div>
+  <div class="mq-row mq-rev"><div class="mq-track">
+    <span class="tool">Tailwind</span><span class="tool">Node.js</span><span class="tool">Webflow</span><span class="tool">Framer</span><span class="tool">Shopify</span><span class="tool">Sanity CMS</span><span class="tool">Vercel</span><span class="tool">Git</span><span class="tool">Motion</span>
+    <span class="tool">Tailwind</span><span class="tool">Node.js</span><span class="tool">Webflow</span><span class="tool">Framer</span><span class="tool">Shopify</span><span class="tool">Sanity CMS</span><span class="tool">Vercel</span><span class="tool">Git</span><span class="tool">Motion</span>
+  </div></div>
+</div>
+
+<!-- ============ TESTIMONIOS ============ -->
+<section class="testimonials" id="testimonios">
+  <div class="wrap">
+    <header class="sec-head reveal">
+      <div class="sec-meta mono"><span>05</span><span class="rule"></span><span>Testimonios</span></div>
+      <h2 class="sec-title">Palabra de <em>cliente</em></h2>
+    </header>
+    <div class="t-shell reveal">
+      <span class="t-ghost" aria-hidden="true">”</span>
+      <div class="t-viewport">
+        <div class="t-track" id="tTrack">
+          <figure class="t-slide">
+            <blockquote>«Adrián convirtió un producto complejo en una experiencia que nuestros clientes <em>entienden y disfrutan</em>. Rigor y sensibilidad a partes iguales.»</blockquote>
+            <figcaption class="t-author"><span class="t-ava">LF</span><span><span class="t-name">Lucía Ferrer</span><br><span class="t-role">CMO · Banco Lumen</span></span></figcaption>
+          </figure>
+          <figure class="t-slide">
+            <blockquote>«No diseñó una marca: nos ayudó a descubrir quiénes éramos. La tienda <em>duplicó ventas</em> en tres meses.»</blockquote>
+            <figcaption class="t-author"><span class="t-ava">MS</span><span><span class="t-name">Marc Soler</span><br><span class="t-role">Fundador · Noir Café</span></span></figcaption>
+          </figure>
+          <figure class="t-slide">
+            <blockquote>«Pocas veces se ve a alguien dominar la idea y la ejecución con el mismo nivel. La instalación fue la pieza <em>más fotografiada</em> de la exposición.»</blockquote>
+            <figcaption class="t-author"><span class="t-ava">ER</span><span><span class="t-name">Elena Ruiz</span><br><span class="t-role">Directora · Museo Delta</span></span></figcaption>
+          </figure>
+        </div>
+      </div>
+      <div class="t-ctrl">
+        <button class="t-btn" id="tPrev" aria-label="Testimonio anterior">←</button>
+        <button class="t-btn" id="tNext" aria-label="Testimonio siguiente">→</button>
+        <span class="t-idx"><span id="tIdx">01</span> / 03</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTACTO ============ -->
+<section class="contact" id="contacto">
+  <div class="wrap">
+    <div class="contact-grid">
+      <div class="reveal">
+        <div class="sec-meta mono"><span>06</span><span class="rule"></span><span>Contacto</span></div>
+        <h2 class="contact-title">¿Hacemos algo <em>memorable</em> juntos?</h2>
+        <a class="contact-mail" href="mailto:hola@adrianvega.studio">hola@adrianvega.studio <span>↗</span></a>
+        <ul class="socials">
+          <li><a href="https://www.linkedin.com" target="_blank" rel="noopener">LinkedIn <span>↗</span></a></li>
+          <li><a href="https://www.instagram.com" target="_blank" rel="noopener">Instagram <span>↗</span></a></li>
+          <li><a href="https://dribbble.com" target="_blank" rel="noopener">Dribbble <span>↗</span></a></li>
+          <li><a href="https://www.behance.net" target="_blank" rel="noopener">Behance <span>↗</span></a></li>
+          <li><a href="https://github.com" target="_blank" rel="noopener">GitHub <span>↗</span></a></li>
+        </ul>
+      </div>
+      <div class="reveal">
+        <form id="contactForm" novalidate>
+          <div class="field"><label for="fName">Nombre *</label><input id="fName" name="nombre" type="text" required placeholder="Tu nombre"></div>
+          <div class="field"><label for="fMail">Email *</label><input id="fMail" name="email" type="email" required placeholder="tu@email.com"></div>
+          <div class="field"><label for="fType">Tipo de proyecto</label>
+            <select id="fType" name="tipo">
+              <option>Identidad de marca</option><option>Diseño web / UI</option><option>Desarrollo frontend</option><option>Dirección creativa</option><option>Otro</option>
+            </select>
+          </div>
+          <div class="field"><label for="fMsg">Cuéntame tu idea *</label><textarea id="fMsg" name="mensaje" required placeholder="Objetivos, plazos, presupuesto orientativo…"></textarea></div>
+          <button class="btn btn-solid magnetic" type="submit" style="width:100%;justify-content:center">Enviar mensaje <span class="arr">→</span></button>
+          <p class="form-note">// Respuesta en menos de 24 h · Sin compromiso</p>
+        </form>
+        <div class="form-success" id="formSuccess" role="status">
+          <span class="ok">✳</span>
+          <h3>¡Mensaje enviado!</h3>
+          <p>Gracias por escribirme. Te responderé en menos de 24 horas con los próximos pasos.</p>
+          <button class="btn btn-ghost" id="resetForm">Enviar otro mensaje</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="foot-mark" aria-hidden="true">Adrián Vega®</div>
+    <div class="foot-grid">
+      <span>© <span id="yearNow">2025</span> Adrián Vega — Diseñador Creativo &amp; Desarrollador Frontend</span>
+      <span>Barcelona · <span data-clock>--:--</span> CET</span>
+      <a class="top-link" href="#top">↑ Volver arriba</a>
+    </div>
+    <div class="foot-bottom mono">
+      <span>Hecho con café, criterio y código.</span>
+      <span>v.2025 — Diseño &amp; desarrollo: Adrián Vega</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var FINE = window.matchMedia("(pointer: fine)").matches;
+
+  /* ---- carga: revelado del hero ---- */
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){ document.body.classList.add("loaded"); }); });
+
+  /* ---- nav scroll + barra de progreso ---- */
+  var nav = document.getElementById("nav");
+  var prog = document.getElementById("progress");
+  function onScroll(){
+    var st = window.scrollY || document.documentElement.scrollTop;
+    nav.classList.toggle("scrolled", st > 40);
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    prog.style.width = (max > 0 ? (st / max) * 100 : 0) + "%";
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+
+  /* ---- menú móvil ---- */
+  var burger = document.getElementById("burger");
+  var mMenu = document.getElementById("mobileMenu");
+  burger.addEventListener("click", function(){
+    var open = mMenu.classList.toggle("open");
+    burger.classList.toggle("active", open);
+    document.body.classList.toggle("lock", open);
+    burger.setAttribute("aria-expanded", open);
+  });
+  mMenu.querySelectorAll("a").forEach(function(a){
+    a.addEventListener("click", function(){
+      mMenu.classList.remove("open"); burger.classList.remove("active");
+      document.body.classList.remove("lock"); burger.setAttribute("aria-expanded","false");
+    });
+  });
+
+  /* ---- scramble de roles ---- */
+  var GLYPHS = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZÁÉÍÓÚ#%*·/";
+  function scramble(el, text, dur){
+    if (REDUCED){ el.textContent = text; return; }
+    var start = performance.now();
+    function frame(now){
+      var p = Math.min((now - start) / dur, 1);
+      var shown = Math.floor(p * text.length);
+      var out = text.slice(0, shown);
+      for (var i = shown; i < text.length; i++){
+        out += text[i] === " " ? " " : GLYPHS[(Math.random() * GLYPHS.length) | 0];
+      }
+      el.textContent = out;
+      if (p < 1) requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+  var roles = ["Diseñador Creativo","Desarrollador Frontend","Director de Arte","Consultor Digital"];
+  var roleEl = document.getElementById("roleText");
+  var roleIdx = 0;
+  setTimeout(function(){ scramble(roleEl, roles[0], 900); }, 500);
+  if (!REDUCED){
+    setInterval(function(){ roleIdx = (roleIdx + 1) % roles.length; scramble(roleEl, roles[roleIdx], 700); }, 3400);
+  }
+
+  /* ---- reveals ---- */
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if (en.isIntersecting){ en.target.classList.add("in"); io.unobserve(en.target); }
+    });
+  }, { threshold: 0.12, rootMargin: "0px 0px -6% 0px" });
+  document.querySelectorAll(".reveal").forEach(function(el){ io.observe(el); });
+
+  var pio = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if (en.isIntersecting){ en.target.classList.add("in"); pio.unobserve(en.target); }
+    });
+  }, { threshold: 0.2 });
+  document.querySelectorAll(".proj-card").forEach(function(c){ pio.observe(c); });
+
+  /* ---- contadores ---- */
+  var cio = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if (!en.isIntersecting) return;
+      var el = en.target, target = parseInt(el.getAttribute("data-count"), 10);
+      var suf = el.getAttribute("data-suffix") || "";
+      cio.unobserve(el);
+      if (REDUCED){ el.textContent = target + suf; return; }
+      var t0 = performance.now(), dur = 1600;
+      function tick(now){
+        var p = Math.min((now - t0) / dur, 1);
+        var e = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.round(target * e) + suf;
+        if (p < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    });
+  }, { threshold: 0.6 });
+  document.querySelectorAll("[data-count]").forEach(function(el){ cio.observe(el); });
+
+  /* ---- acordeón de servicios ---- */
+  var srvs = Array.prototype.slice.call(document.querySelectorAll(".srv"));
+  function closeSrv(s){
+    s.classList.remove("open");
+    s.querySelector(".srv-body").style.maxHeight = null;
+    s.querySelector(".srv-head").setAttribute("aria-expanded","false");
+  }
+  function openSrv(s){
+    s.classList.add("open");
+    var b = s.querySelector(".srv-body");
+    b.style.maxHeight = b.scrollHeight + "px";
+    s.querySelector(".srv-head").setAttribute("aria-expanded","true");
+  }
+  srvs.forEach(function(s){
+    s.querySelector(".srv-head").addEventListener("click", function(){
+      var wasOpen = s.classList.contains("open");
+      srvs.forEach(closeSrv);
+      if (!wasOpen) openSrv(s);
+    });
+  });
+  if (srvs.length) openSrv(srvs[0]);
+  window.addEventListener("resize", function(){
+    srvs.forEach(function(s){
+      if (s.classList.contains("open")){
+        var b = s.querySelector(".srv-body");
+        b.style.maxHeight = b.scrollHeight + "px";
+      }
+    });
+  });
+
+  /* ---- slider de testimonios ---- */
+  var track = document.getElementById("tTrack");
+  var total = track.children.length;
+  var tIdx = 0, timer = null;
+  var idxEl = document.getElementById("tIdx");
+  function goT(i){
+    tIdx = (i + total) % total;
+    track.style.transform = "translateX(-" + (tIdx * 100) + "%)";
+    idxEl.textContent = String(tIdx + 1).padStart(2, "0");
+  }
+  document.getElementById("tPrev").addEventListener("click", function(){ goT(tIdx - 1); restartAuto(); });
+  document.getElementById("tNext").addEventListener("click", function(){ goT(tIdx + 1); restartAuto(); });
+  function restartAuto(){
+    if (REDUCED) return;
+    if (timer) clearInterval(timer);
+    timer = setInterval(function(){ goT(tIdx + 1); }, 6500);
+  }
+  restartAuto();
+  var shell = document.querySelector(".t-shell");
+  shell.addEventListener("mouseenter", function(){ if (timer) clearInterval(timer); });
+  shell.addEventListener("mouseleave", restartAuto);
+
+  /* ---- botones magnéticos ---- */
+  if (FINE && !REDUCED){
+    document.querySelectorAll(".magnetic").forEach(function(btn){
+      btn.addEventListener("mousemove", function(e){
+        var r = btn.getBoundingClientRect();
+        var x = (e.clientX - r.left - r.width / 2) * 0.22;
+        var y = (e.clientY - r.top - r.height / 2) * 0.22;
+        btn.style.transform = "translate(" + x + "px," + y + "px)";
+      });
+      btn.addEventListener("mouseleave", function(){ btn.style.transform = ""; });
+    });
+  }
+
+  /* ---- cursor personalizado ---- */
+  if (FINE && !REDUCED){
+    var dot = document.querySelector(".cursor-dot");
+    var ring = document.querySelector(".cursor-ring");
+    var mx = 0, my = 0, rx = 0, ry = 0, seen = false;
+    window.addEventListener("mousemove", function(e){
+      mx = e.clientX; my = e.clientY;
+      if (!seen){ seen = true; dot.style.opacity = 1; ring.style.opacity = 1; }
+      dot.style.transform = "translate(" + mx + "px," + my + "px) translate(-50%,-50%)";
+    });
+    (function loop(){
+      rx += (mx - rx) * 0.14; ry += (my - ry) * 0.14;
+      ring.style.transform = "translate(" + rx + "px," + ry + "px) translate(-50%,-50%)";
+      requestAnimationFrame(loop);
+    })();
+    document.querySelectorAll("a, button, .srv-head").forEach(function(el){
+      el.addEventListener("mouseenter", function(){ ring.classList.add("big"); });
+      el.addEventListener("mouseleave", function(){ ring.classList.remove("big"); });
+    });
+  }
+
+  /* ---- scrollspy ---- */
+  var links = document.querySelectorAll(".nav-link");
+  var spy = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if (en.isIntersecting){
+        links.forEach(function(l){
+          l.classList.toggle("active", l.getAttribute("href") === "#" + en.target.id);
+        });
+      }
+    });
+  }, { rootMargin: "-40% 0px -55% 0px" });
+  ["sobre-mi","trabajo","servicios","trayectoria","contacto"].forEach(function(id){
+    var s = document.getElementById(id);
+    if (s) spy.observe(s);
+  });
+
+  /* ---- reloj BCN ---- */
+  var clocks = document.querySelectorAll("[data-clock]");
+  function tickClock(){
+    try {
+      var s = new Intl.DateTimeFormat("es-ES", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Madrid" }).format(new Date());
+      clocks.forEach(function(c){ c.textContent = s; });
+    } catch(e){}
+  }
+  tickClock(); setInterval(tickClock, 10000);
+
+  /* ---- año ---- */
+  document.getElementById("yearNow").textContent = new Date().getFullYear();
+
+  /* ---- formulario ---- */
+  var form = document.getElementById("contactForm");
+  var success = document.getElementById("formSuccess");
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+    if (!form.checkValidity()){ form.reportValidity(); return; }
+    form.style.display = "none";
+    success.classList.add("show");
+  });
+  document.getElementById("resetForm").addEventListener("click", function(){
+    success.classList.remove("show");
+    form.reset();
+    form.style.display = "";
+  });
+})();
+</script>
+</body>
+</html>
