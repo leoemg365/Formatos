@@ -636,6 +636,13 @@
           "subcat": "Configuración de Router",
           "color": "neutro",
           "content": "Va a necesitar otro teléfono donde realice la configuración mientras por este se comunica con nosotros. \n\nSe conectará a la red WIFI y desactivará los datos móviles, la página del router abre aunque no tenga Internet. \n\nLuego en el telefono ingresa en el navegador Chrome y coloca: 192.168.1.1 \nSí no funciona coloca: 192.168.0.1 \n\nNos pasa capture o foto desde este teléfono para indicarle lo que hará de todos modos."
+        },
+        {
+          "id": 1786884562510,
+          "label": "Promesa",
+          "subcat": "Pagos",
+          "color": "info",
+          "content": "Buenos días, prorroga otorgada por un plazo de 2 días que son lo que nos permite el sistema."
         }
       ]
     },
