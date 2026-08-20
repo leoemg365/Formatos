@@ -395,6 +395,13 @@
           "content": "Agendaremos un ticket de visita técnica para que los técnicos vayan a su localidad a solucionar el inconveniente, tenga en cuenta que el costo de la visita es de $5"
         },
         {
+          "id": 1787185086575,
+          "label": "Visita $5",
+          "subcat": "Ticket",
+          "color": "neutro",
+          "content": "Agendaremos un ticket de visita técnica para que los técnicos vayan a su localidad a verificar y solucionar el inconveniente, tenga en cuenta que el costo de la visita es de $5."
+        },
+        {
           "id": 1774581493641,
           "label": "Visita Inalambrico",
           "subcat": "Ticket",
@@ -491,13 +498,6 @@
           "subcat": "Falla Interna",
           "color": "aviso",
           "content": "Buenas noches, estamos experimentando una incidencia en el nodo principal donde conecta su servicio por este motivo no cuenta con servicio, el día de mañana se estará verificando en sitio a primera hora para darle solución."
-        },
-        {
-          "id": 1787185086575,
-          "label": "Visita $5",
-          "subcat": "Ticket",
-          "color": "neutro",
-          "content": "Agendaremos un ticket de visita técnica para que los técnicos vayan a su localidad a verificar y solucionar el inconveniente, tenga en cuenta que el costo de la visita es de $5."
         }
       ]
     },
