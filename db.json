@@ -162,6 +162,11 @@
           "id": 1771463225755,
           "label": "Ozmap",
           "content": "https://tecnoven.ozmap.com.br:9994/"
+        },
+        {
+          "id": 1787622970394,
+          "label": "TICKET I&D",
+          "content": "http://noc-ticket.tecnovenca.net:6512/login"
         }
       ]
     },
