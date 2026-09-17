@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BCV Monitor - Tasas Oficiales Dólar y Euro</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            darkBg: '#080414',
+                            purpleDeep: '#11092b',
+                            purpleGlass: '#1b0d42',
+                            purpleAccent: '#8b5cf6',
+                            purpleGlow: '#a855f7',
+                            blueDeep: '#0b132b',
+                            blueGlass: '#111d42',
+                            blueAccent: '#3b82f6',
+                            blueGlow: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #080414;
+            color: #f1f5f9;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(139, 92, 246, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(59, 130, 246, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 50% 50%, rgba(17, 9, 43, 0.8) 0%, #080414 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        /* Glassmorphism utilities */
+        .glass-card {
+            background: linear-gradient(135deg, rgba(27, 13, 66, 0.6) 0%, rgba(17, 29, 66, 0.4) 100%);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .glass-card:hover {
+            border-color: rgba(168, 85, 247, 0.4);
+            box-shadow: 0 12px 40px 0 rgba(139, 92, 246, 0.15);
+        }
+
+        .glass-pill {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .glow-effect-purple {
+            box-shadow: 0 0 25px -5px rgba(168, 85, 247, 0.4);
+        }
+
+        .glow-effect-blue {
+            box-shadow: 0 0 25px -5px rgba(59, 130, 246, 0.4);
+        }
+
+        /* Animated pulse ring */
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
+        }
+
+        .animate-pulse-glow {
+            animation: pulseGlow 4s infinite ease-in-out;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #080414;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2b1754;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4c288e;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen text-slate-100 antialiased selection:bg-purple-600 selection:text-white pb-12">
+
+    <!-- Ambient Background Blobs -->
+    <div class="fixed top-0 left-1/4 w-96 h-96 bg-purple-900/20 rounded-full blur-3xl pointer-events-none animate-pulse-glow"></div>
+    <div class="fixed bottom-0 right-1/4 w-96 h-96 bg-blue-900/20 rounded-full blur-3xl pointer-events-none animate-pulse-glow" style="animation-delay: 2s;"></div>
+
+    <div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-6">
+        
+        <!-- Header -->
+        <header class="glass-card rounded-3xl p-5 sm:p-6 mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-4 text-center md:text-left">
+                <div class="relative">
+                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-purple-600 to-blue-500 flex items-center justify-center text-2xl font-bold text-white shadow-lg shadow-purple-900/50">
+                        <i class="fa-solid fa-building-columns"></i>
+                    </div>
+                    <span class="absolute -bottom-1 -right-1 flex h-4 w-4">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-4 w-4 bg-emerald-500 border-2 border-brand-darkBg"></span>
+                    </span>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2 justify-center md:justify-start">
+                        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-purple-300 via-indigo-200 to-blue-400">
+                            BCV Monitor
+                        </h1>
+                        <span class="text-xs px-2.5 py-0.5 rounded-full bg-purple-900/60 text-purple-300 border border-purple-500/30 font-medium">DolarApi</span>
+                    </div>
+                    <p class="text-xs sm:text-sm text-slate-400 mt-0.5">
+                        Tasas Oficiales del Banco Central de Venezuela
+                    </p>
+                </div>
+            </div>
+
+            <!-- Header Status Badges -->
+            <div class="flex flex-wrap items-center justify-center gap-3">
+                <div class="glass-pill px-3.5 py-2 rounded-2xl flex items-center gap-2 text-xs text-slate-300">
+                    <i class="fa-regular fa-clock text-indigo-400"></i>
+                    <div>
+                        <span class="block text-[10px] text-slate-400 uppercase tracking-wider">Próxima Auto-Sinc:</span>
+                        <span id="nextAutoSyncText" class="font-semibold text-slate-200">Calculando...</span>
+                    </div>
+                </div>
+
+                <div class="glass-pill px-3.5 py-2 rounded-2xl flex items-center gap-2 text-xs text-slate-300">
+                    <i class="fa-solid fa-server text-purple-400"></i>
+                    <div>
+                        <span class="block text-[10px] text-slate-400 uppercase tracking-wider">Estado API:</span>
+                        <span id="apiStatusBadge" class="font-semibold text-emerald-400 flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block"></span> En línea
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Action & Cooldown Bar -->
+        <section class="glass-card rounded-2xl p-4 mb-8 flex flex-col sm:flex-row items-center justify-between gap-4 border-purple-500/20">
+            <div class="flex items-center gap-3 w-full sm:w-auto">
+                <button id="refreshBtn" onclick="handleManualRefresh()" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 active:scale-95 text-white font-semibold shadow-lg shadow-purple-900/40 transition-all flex items-center justify-center gap-2.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
+                    <i id="refreshIcon" class="fa-solid fa-arrows-rotate text-sm"></i>
+                    <span id="refreshBtnText">Actualizar Tasas</span>
+                </button>
+                <div id="cooldownTimerBadge" class="hidden sm:flex items-center gap-2 px-3.5 py-2 rounded-xl bg-purple-950/40 border border-purple-500/30 text-xs text-purple-200">
+                    <i class="fa-solid fa-hourglass-half text-purple-400 animate-spin" style="animation-duration: 3s;"></i>
+                    <span id="cooldownText">Disponible en: 30m 00s</span>
+                </div>
+            </div>
+
+            <!-- Cooldown notification banner for small screens -->
+            <div id="cooldownTimerBadgeMobile" class="w-full sm:hidden flex items-center justify-between px-3.5 py-2 rounded-xl bg-purple-950/40 border border-purple-500/30 text-xs text-purple-200">
+                <span class="flex items-center gap-2">
+                    <i class="fa-solid fa-hourglass-half text-purple-400"></i>
+                    <span>Siguiente actualización manual:</span>
+                </span>
+                <span id="cooldownTextMobile" class="font-mono font-bold text-purple-300">30:00</span>
+            </div>
+
+            <div class="text-xs text-slate-400 text-center sm:text-right">
+                <div>Última consulta local: <span id="lastSyncTimeText" class="font-medium text-slate-200">Nunca</span></div>
+                <div class="text-[11px] text-slate-500 mt-0.5">Límite manual: 1 vez cada 30 min</div>
+            </div>
+        </section>
+
+        <!-- Main Rates Grid -->
+        <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+
+            <!-- Dollar Card -->
+            <div class="glass-card rounded-3xl p-6 relative overflow-hidden group border-purple-500/30 transition-all hover:-translate-y-1">
+                <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-purple-600/10 rounded-full blur-2xl group-hover:bg-purple-600/20 transition-all"></div>
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-xl font-bold text-white shadow-md shadow-emerald-900/30">
+                            <i class="fa-solid fa-dollar-sign"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-100">Dólar Oficial</h2>
+                            <p class="text-xs text-slate-400">BCV (USD / VES)</p>
+                        </div>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                        USD
+                    </span>
+                </div>
+
+                <div class="my-6">
+                    <div class="text-xs text-slate-400 mb-1">Tasa de Cambio</div>
+                    <div id="usdRateDisplay" class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white flex items-baseline gap-2">
+                        <span class="text-slate-400 text-xl font-normal">Bs.</span>
+                        <span id="usdValue" class="bg-clip-text text-transparent bg-gradient-to-r from-emerald-300 to-teal-100">---</span>
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-purple-900/40 flex items-center justify-between text-xs text-slate-400">
+                    <span>Fecha BCV:</span>
+                    <span id="usdDate" class="font-medium text-slate-300">--/--/----</span>
+                </div>
+            </div>
+
+            <!-- Euro Card -->
+            <div class="glass-card rounded-3xl p-6 relative overflow-hidden group border-blue-500/30 transition-all hover:-translate-y-1">
+                <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-blue-600/10 rounded-full blur-2xl group-hover:bg-blue-600/20 transition-all"></div>
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-xl font-bold text-white shadow-md shadow-blue-900/30">
+                            <i class="fa-solid fa-euro-sign"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-100">Euro Oficial</h2>
+                            <p class="text-xs text-slate-400">BCV (EUR / VES)</p>
+                        </div>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                        EUR
+                    </span>
+                </div>
+
+                <div class="my-6">
+                    <div class="text-xs text-slate-400 mb-1">Tasa de Cambio</div>
+                    <div id="eurRateDisplay" class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white flex items-baseline gap-2">
+                        <span class="text-slate-400 text-xl font-normal">Bs.</span>
+                        <span id="eurValue" class="bg-clip-text text-transparent bg-gradient-to-r from-blue-300 to-indigo-100">---</span>
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-blue-900/40 flex items-center justify-between text-xs text-slate-400">
+                    <span>Fecha BCV:</span>
+                    <span id="eurDate" class="font-medium text-slate-300">--/--/----</span>
+                </div>
+            </div>
+
+            <!-- Spread / Relation Card -->
+            <div class="glass-card rounded-3xl p-6 relative overflow-hidden group border-indigo-500/30 transition-all hover:-translate-y-1 md:col-span-2 lg:col-span-1">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-xl font-bold text-white shadow-md shadow-purple-900/30">
+                            <i class="fa-solid fa-scale-balanced"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-100">Relación EUR/USD</h2>
+                            <p class="text-xs text-slate-400">Diferencial BCV</p>
+                        </div>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-purple-500/10 text-purple-300 border border-purple-500/20">
+                        Ratio
+                    </span>
+                </div>
+
+                <div class="my-6">
+                    <div class="text-xs text-slate-400 mb-1">Diferencia Euro vs Dólar</div>
+                    <div class="text-2xl font-extrabold text-white flex items-baseline gap-2">
+                        <span class="text-slate-400 text-base font-normal">Bs.</span>
+                        <span id="spreadValue" class="text-indigo-200">---</span>
+                    </div>
+                    <p id="ratioText" class="text-xs text-indigo-300/80 mt-1">1 EUR = --- USD</p>
+                </div>
+
+                <div class="pt-4 border-t border-purple-900/40 flex items-center justify-between text-xs text-slate-400">
+                    <span>Moneda más alta:</span>
+                    <span class="font-semibold text-blue-400 flex items-center gap-1">
+                        <i class="fa-solid fa-euro-sign text-[10px]"></i> Euro (EUR)
+                    </span>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Grid layout for Calculator and Scheduled Times -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            
+            <!-- Currency Converter (2 columns on large screens) -->
+            <section class="glass-card rounded-3xl p-6 lg:col-span-2 relative">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-purple-600/30 border border-purple-500/30 flex items-center justify-center text-purple-300">
+                            <i class="fa-solid fa-calculator"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-white">Calculadora de Conversión</h3>
+                            <p class="text-xs text-slate-400">Convierte montos en tiempo real con la tasa oficial</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
+                    <!-- Amount Input -->
+                    <div class="sm:col-span-5">
+                        <label class="block text-xs text-slate-400 mb-1.5 font-medium">Monto a Convertir</label>
+                        <div class="relative">
+                            <input type="number" id="calcInputAmount" value="100" min="0" step="any"
+                                class="w-full bg-purple-950/40 border border-purple-500/30 rounded-2xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-500/20 font-bold text-lg">
+                        </div>
+                    </div>
+
+                    <!-- Currency Source Select -->
+                    <div class="sm:col-span-3">
+                        <label class="block text-xs text-slate-400 mb-1.5 font-medium">De</label>
+                        <select id="calcSourceCurrency" class="w-full bg-purple-950/60 border border-purple-500/30 rounded-2xl px-3 py-3.5 text-white focus:outline-none focus:border-purple-400 font-semibold text-sm cursor-pointer">
+                            <option value="USD">Dólar ($ USD)</option>
+                            <option value="EUR">Euro (€ EUR)</option>
+                            <option value="VES">Bolívares (Bs. VES)</option>
+                        </select>
+                    </div>
+
+                    <!-- Direction Arrow Indicator -->
+                    <div class="sm:col-span-1 flex justify-center py-2 sm:py-0">
+                        <div class="w-10 h-10 rounded-full bg-purple-900/40 border border-purple-500/30 flex items-center justify-center text-purple-300">
+                            <i class="fa-solid fa-arrow-right-long hidden sm:block"></i>
+                            <i class="fa-solid fa-arrow-down-long sm:hidden"></i>
+                        </div>
+                    </div>
+
+                    <!-- Fast Presets / Results -->
+                    <div class="sm:col-span-3">
+                        <label class="block text-xs text-slate-400 mb-1.5 font-medium">A la moneda</label>
+                        <select id="calcTargetCurrency" class="w-full bg-purple-950/60 border border-purple-500/30 rounded-2xl px-3 py-3.5 text-white focus:outline-none focus:border-purple-400 font-semibold text-sm cursor-pointer">
+                            <option value="VES">Bolívares (Bs. VES)</option>
+                            <option value="USD">Dólar ($ USD)</option>
+                            <option value="EUR">Euro (€ EUR)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Conversion Output Banner -->
+                <div class="mt-6 p-4 rounded-2xl bg-gradient-to-r from-purple-900/30 to-blue-900/30 border border-purple-500/20 flex flex-col sm:flex-row items-center justify-between gap-3">
+                    <div class="text-center sm:text-left">
+                        <span class="text-xs text-slate-400 block">Resultado estimado:</span>
+                        <span id="calcResultDisplay" class="text-2xl sm:text-3xl font-extrabold text-emerald-400">Bs. 0,00</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="setCalcPreset(1)" class="px-3 py-1.5 rounded-xl bg-purple-900/40 hover:bg-purple-800/50 text-xs text-purple-200 border border-purple-500/20">1</button>
+                        <button onclick="setCalcPreset(10)" class="px-3 py-1.5 rounded-xl bg-purple-900/40 hover:bg-purple-800/50 text-xs text-purple-200 border border-purple-500/20">10</button>
+                        <button onclick="setCalcPreset(50)" class="px-3 py-1.5 rounded-xl bg-purple-900/40 hover:bg-purple-800/50 text-xs text-purple-200 border border-purple-500/20">50</button>
+                        <button onclick="setCalcPreset(100)" class="px-3 py-1.5 rounded-xl bg-purple-900/40 hover:bg-purple-800/50 text-xs text-purple-200 border border-purple-500/20">100</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Automatic Sync Schedule Card -->
+            <section class="glass-card rounded-3xl p-6 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-xl bg-blue-600/30 border border-blue-500/30 flex items-center justify-center text-blue-300">
+                            <i class="fa-regular fa-calendar-check"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-bold text-white">Cronograma Automático</h3>
+                            <p class="text-xs text-slate-400">Horarios fijos de actualización</p>
+                        </div>
+                    </div>
+
+                    <p class="text-xs text-slate-300 mb-4 leading-relaxed">
+                        El sistema consulta automáticamente a las <span class="text-purple-300 font-semibold">11:00 AM</span>, <span class="text-purple-300 font-semibold">04:00 PM</span> y <span class="text-purple-300 font-semibold">08:00 PM</span> sin gastar tu intento manual.
+                    </p>
+
+                    <div class="space-y-3">
+                        <!-- Slot 11:00 AM -->
+                        <div id="slot-11" class="flex items-center justify-between p-3 rounded-2xl bg-purple-950/30 border border-purple-500/20 text-xs">
+                            <div class="flex items-center gap-2.5">
+                                <i class="fa-regular fa-clock text-purple-400"></i>
+                                <span class="font-medium text-slate-200">11:00 AM</span>
+                            </div>
+                            <span id="slotStatus-11" class="px-2.5 py-0.5 rounded-full text-[10px] bg-slate-800 text-slate-400">Pendiente</span>
+                        </div>
+
+                        <!-- Slot 04:00 PM -->
+                        <div id="slot-16" class="flex items-center justify-between p-3 rounded-2xl bg-purple-950/30 border border-purple-500/20 text-xs">
+                            <div class="flex items-center gap-2.5">
+                                <i class="fa-regular fa-clock text-purple-400"></i>
+                                <span class="font-medium text-slate-200">04:00 PM (16:00)</span>
+                            </div>
+                            <span id="slotStatus-16" class="px-2.5 py-0.5 rounded-full text-[10px] bg-slate-800 text-slate-400">Pendiente</span>
+                        </div>
+
+                        <!-- Slot 08:00 PM -->
+                        <div id="slot-20" class="flex items-center justify-between p-3 rounded-2xl bg-purple-950/30 border border-purple-500/20 text-xs">
+                            <div class="flex items-center gap-2.5">
+                                <i class="fa-regular fa-clock text-purple-400"></i>
+                                <span class="font-medium text-slate-200">08:00 PM (20:00)</span>
+                            </div>
+                            <span id="slotStatus-20" class="px-2.5 py-0.5 rounded-full text-[10px] bg-slate-800 text-slate-400">Pendiente</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-3 border-t border-purple-900/30 text-[11px] text-slate-400 flex items-center justify-between">
+                    <span>Zona horaria:</span>
+                    <span class="text-slate-300 font-medium">Hora Local (Venezuela)</span>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- Local Sync Log / History -->
+        <section class="glass-card rounded-3xl p-6 mb-8">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-600/30 border border-indigo-500/30 flex items-center justify-center text-indigo-300">
+                        <i class="fa-solid fa-list-check"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-white">Historial Reciente de Sincronización</h3>
+                        <p class="text-xs text-slate-400">Registro de las últimas consultas realizadas en este navegador</p>
+                    </div>
+                </div>
+                <button onclick="clearHistory()" class="text-xs text-slate-400 hover:text-rose-400 transition-colors">
+                    <i class="fa-solid fa-trash-can mr-1"></i> Limpiar
+                </button>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs text-slate-300">
+                    <thead class="bg-purple-950/50 text-slate-400 border-b border-purple-500/20">
+                        <tr>
+                            <th class="py-3 px-4 font-semibold rounded-l-xl">Hora / Fecha</th>
+                            <th class="py-3 px-4 font-semibold">Tipo</th>
+                            <th class="py-3 px-4 font-semibold">Dólar ($ USD)</th>
+                            <th class="py-3 px-4 font-semibold rounded-r-xl">Euro (€ EUR)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTableBody" class="divide-y divide-purple-950/40">
+                        <!-- History rows inserted dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="text-center text-xs text-slate-500 space-y-2">
+            <p>
+                Datos provenientes de <a href="https://dolarapi.com" target="_blank" class="text-purple-400 hover:underline">DolarApi.com</a> (Banco Central de Venezuela).
+            </p>
+            <p class="text-[11px] text-slate-600">
+                Esta aplicación funciona totalmente en el cliente (Vanilla JS). Los tiempos de espera de 30 minutos se conservan mediante LocalStorage.
+            </p>
+        </footer>
+
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none max-w-sm w-full px-4"></div>
+
+    <script>
+        // Key Constants
+        const MANUAL_COOLDOWN_MS = 30 * 60 * 1000; // 30 minutes in milliseconds
+        const STORAGE_KEY_RATES = 'bcv_rates_data';
+        const STORAGE_KEY_LAST_MANUAL = 'bcv_last_manual_timestamp';
+        const STORAGE_KEY_AUTO_SLOTS = 'bcv_auto_slots_logged';
+        const STORAGE_KEY_HISTORY = 'bcv_sync_history';
+
+        // Scheduled auto-sync hours (24h format)
+        const SCHEDULED_HOURS = [11, 16, 20]; 
+
+        // State
+        let currentRates = null;
+        let cooldownInterval = null;
+        let scheduleCheckInterval = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStoredData();
+            initCalculatorListeners();
+            startCooldownTimer();
+            startScheduleMonitor();
+            
+            // Initial fetch if no stored rates exist
+            if (!currentRates) {
+                fetchRates('Inicial');
+            } else {
+                updateUIWithRates(currentRates);
+            }
+        });
+
+        async function fetchRates(triggerType = 'Manual', slotKey = null) {
+            const refreshBtn = document.getElementById('refreshBtn');
+            const refreshIcon = document.getElementById('refreshIcon');
+            const refreshBtnText = document.getElementById('refreshBtnText');
+
+            // UI Loading state
+            refreshBtn.disabled = true;
+            refreshIcon.classList.add('fa-spin');
+            refreshBtnText.textContent = 'Consultando...';
+
+            try {
+                // Fetch USD and EUR in parallel from DolarApi VE
+                const [usdRes, eurRes] = await Promise.all([
+                    fetch('https://ve.dolarapi.com/v1/dolares/oficial'),
+                    fetch('https://ve.dolarapi.com/v1/euros/oficial')
+                ]);
+
+                if (!usdRes.ok || !eurRes.ok) {
+                    throw new Error('No se pudo obtener la respuesta de DolarApi');
+                }
+
+                const usdData = await usdRes.json();
+                const eurData = await eurRes.json();
+
+                const ratesObject = {
+                    usd: {
+                        promedio: usdData.promedio || usdData.precio || 0,
+                        fechaActualizacion: usdData.fechaActualizacion || new Date().toISOString()
+                    },
+                    eur: {
+                        promedio: eurData.promedio || eurData.precio || 0,
+                        fechaActualizacion: eurData.fechaActualizacion || new Date().toISOString()
+                    },
+                    fetchedAt: new Date().toISOString(),
+                    triggerType: triggerType
+                };
+
+                // Save to state & LocalStorage
+                currentRates = ratesObject;
+                localStorage.setItem(STORAGE_KEY_RATES, JSON.stringify(ratesObject));
+
+                // If manual click, record timestamp
+                if (triggerType === 'Manual') {
+                    const now = Date.now();
+                    localStorage.setItem(STORAGE_KEY_LAST_MANUAL, now.toString());
+                }
+
+                // If auto slot triggered, record slot key
+                if (slotKey) {
+                    recordAutoSlot(slotKey);
+                }
+
+                // Add to history log
+                addHistoryRecord(ratesObject, triggerType);
+
+                // Update interface
+                updateUIWithRates(ratesObject);
+                showToast(`Tasas actualizadas exitosamente (${triggerType})`, 'success');
+
+            } catch (error) {
+                console.error('Error al consultar BCV:', error);
+                showToast('Error de conexión con BCV DolarApi. Intente más tarde.', 'error');
+                
+                // Set fallback badge status if offline
+                document.getElementById('apiStatusBadge').className = 'font-semibold text-rose-400 flex items-center gap-1.5';
+                document.getElementById('apiStatusBadge').innerHTML = '<span class="w-2 h-2 rounded-full bg-rose-500 inline-block"></span> Error API';
+            } finally {
+                refreshIcon.classList.remove('fa-spin');
+                startCooldownTimer(); // recalculate timer & enable/disable state
+            }
+        }
+
+        function handleManualRefresh() {
+            const lastManual = parseInt(localStorage.getItem(STORAGE_KEY_LAST_MANUAL) || '0', 10);
+            const now = Date.now();
+            const elapsed = now - lastManual;
+
+            if (elapsed < MANUAL_COOLDOWN_MS) {
+                const remainingSecs = Math.ceil((MANUAL_COOLDOWN_MS - elapsed) / 1000);
+                const mins = Math.floor(remainingSecs / 60);
+                const secs = remainingSecs % 60;
+                showToast(`Debes esperar ${mins}m ${secs}s para actualizar manualmente de nuevo.`, 'warning');
+                return;
+            }
+
+            fetchRates('Manual');
+        }
+
+        function startCooldownTimer() {
+            if (cooldownInterval) clearInterval(cooldownInterval);
+
+            const updateTimer = () => {
+                const lastManual = parseInt(localStorage.getItem(STORAGE_KEY_LAST_MANUAL) || '0', 10);
+                const now = Date.now();
+                const elapsed = now - lastManual;
+
+                const refreshBtn = document.getElementById('refreshBtn');
+                const refreshBtnText = document.getElementById('refreshBtnText');
+                const cooldownBadge = document.getElementById('cooldownTimerBadge');
+                const cooldownText = document.getElementById('cooldownText');
+                const cooldownTextMobile = document.getElementById('cooldownTextMobile');
+
+                if (elapsed >= MANUAL_COOLDOWN_MS || lastManual === 0) {
+                    refreshBtn.disabled = false;
+                    refreshBtnText.textContent = 'Actualizar Tasas';
+                    cooldownBadge.classList.add('hidden');
+                    cooldownTextMobile.textContent = 'Disponible';
+                    cooldownTextMobile.className = 'font-mono font-bold text-emerald-400';
+                } else {
+                    refreshBtn.disabled = true;
+                    const remainingMs = MANUAL_COOLDOWN_MS - elapsed;
+                    const totalSecs = Math.floor(remainingMs / 1000);
+                    const mins = Math.floor(totalSecs / 60);
+                    const secs = totalSecs % 60;
+
+                    const formattedMins = String(mins).padStart(2, '0');
+                    const formattedSecs = String(secs).padStart(2, '0');
+
+                    refreshBtnText.textContent = `Bloqueado (${formattedMins}:${formattedSecs})`;
+                    cooldownBadge.classList.remove('hidden');
+                    cooldownText.textContent = `Disponible en: ${formattedMins}m ${formattedSecs}s`;
+                    cooldownTextMobile.textContent = `${formattedMins}:${formattedSecs}`;
+                    cooldownTextMobile.className = 'font-mono font-bold text-purple-300';
+                }
+            };
+
+            updateTimer();
+            cooldownInterval = setInterval(updateTimer, 1000);
+        }
+
+        function startScheduleMonitor() {
+            if (scheduleCheckInterval) clearInterval(scheduleCheckInterval);
+
+            const checkSchedule = () => {
+                const now = new Date();
+                const currentHour = now.getHours();
+                const currentMin = now.getMinutes();
+                const todayStr = now.toISOString().split('T')[0];
+
+                // Update schedule slot badges state
+                updateScheduleBadges(currentHour, todayStr);
+
+                // Check if current time matches scheduled hours (11:00, 16:00, 20:00)
+                if (SCHEDULED_HOURS.includes(currentHour) && currentMin === 0) {
+                    const slotKey = `${todayStr}_${currentHour}:00`;
+                    const loggedSlots = JSON.parse(localStorage.getItem(STORAGE_KEY_AUTO_SLOTS) || '[]');
+
+                    if (!loggedSlots.includes(slotKey)) {
+                        const timeLabel = currentHour === 11 ? 'Auto 11:00 AM' : (currentHour === 16 ? 'Auto 04:00 PM' : 'Auto 08:00 PM');
+                        fetchRates(timeLabel, slotKey);
+                    }
+                }
+
+                // Update "Next Auto Sync" chip text
+                updateNextAutoSyncText(now);
+            };
+
+            checkSchedule();
+            scheduleCheckInterval = setInterval(checkSchedule, 10000); // Check every 10 seconds
+        }
+
+        function updateNextAutoSyncText(now) {
+            const currentHour = now.getHours();
+            const currentMin = now.getMinutes();
+            let nextSlot = '11:00 AM';
+
+            if (currentHour < 11 || (currentHour === 11 && currentMin === 0)) {
+                nextSlot = 'Hoy 11:00 AM';
+            } else if (currentHour < 16 || (currentHour === 16 && currentMin === 0)) {
+                nextSlot = 'Hoy 04:00 PM';
+            } else if (currentHour < 20 || (currentHour === 20 && currentMin === 0)) {
+                nextSlot = 'Hoy 08:00 PM';
+            } else {
+                nextSlot = 'Mañana 11:00 AM';
+            }
+
+            document.getElementById('nextAutoSyncText').textContent = nextSlot;
+        }
+
+        function updateScheduleBadges(currentHour, todayStr) {
+            const loggedSlots = JSON.parse(localStorage.getItem(STORAGE_KEY_AUTO_SLOTS) || '[]');
+
+            SCHEDULED_HOURS.forEach(hour => {
+                const slotKey = `${todayStr}_${hour}:00`;
+                const badge = document.getElementById(`slotStatus-${hour}`);
+                if (!badge) return;
+
+                if (loggedSlots.includes(slotKey)) {
+                    badge.className = 'px-2.5 py-0.5 rounded-full text-[10px] bg-emerald-500/20 text-emerald-400 font-semibold border border-emerald-500/30';
+                    badge.innerHTML = '<i class="fa-solid fa-check mr-1"></i> Completado';
+                } else if (currentHour > hour) {
+                    badge.className = 'px-2.5 py-0.5 rounded-full text-[10px] bg-slate-800 text-slate-500';
+                    badge.textContent = 'Pasado';
+                } else if (currentHour === hour) {
+                    badge.className = 'px-2.5 py-0.5 rounded-full text-[10px] bg-purple-500/20 text-purple-300 font-semibold border border-purple-500/30 animate-pulse';
+                    badge.textContent = 'En ventana';
+                } else {
+                    badge.className = 'px-2.5 py-0.5 rounded-full text-[10px] bg-slate-800 text-slate-400';
+                    badge.textContent = 'Pendiente';
+                }
+            });
+        }
+
+        function recordAutoSlot(slotKey) {
+            const loggedSlots = JSON.parse(localStorage.getItem(STORAGE_KEY_AUTO_SLOTS) || '[]');
+            if (!loggedSlots.includes(slotKey)) {
+                loggedSlots.push(slotKey);
+                localStorage.setItem(STORAGE_KEY_AUTO_SLOTS, JSON.stringify(loggedSlots));
+            }
+        }
+
+        function updateUIWithRates(rates) {
+            if (!rates || !rates.usd || !rates.eur) return;
+
+            const usdVal = rates.usd.promedio;
+            const eurVal = rates.eur.promedio;
+
+            // Update main rates
+            document.getElementById('usdValue').textContent = formatCurrency(usdVal);
+            document.getElementById('eurValue').textContent = formatCurrency(eurVal);
+
+            // Update dates
+            document.getElementById('usdDate').textContent = formatDate(rates.usd.fechaActualizacion);
+            document.getElementById('eurDate').textContent = formatDate(rates.eur.fechaActualizacion);
+
+            // Calculate Spread
+            const diff = eurVal - usdVal;
+            const ratio = usdVal > 0 ? (eurVal / usdVal).toFixed(4) : '0';
+            document.getElementById('spreadValue').textContent = formatCurrency(diff);
+            document.getElementById('ratioText').textContent = `1 EUR = ${ratio} USD`;
+
+            // Update sync timestamp
+            if (rates.fetchedAt) {
+                document.getElementById('lastSyncTimeText').textContent = new Date(rates.fetchedAt).toLocaleTimeString('es-VE', {
+                    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true
+                });
+            }
+
+            // Update Calculator
+            calculateCurrency();
+            renderHistoryTable();
+        }
+
+        function initCalculatorListeners() {
+            document.getElementById('calcInputAmount').addEventListener('input', calculateCurrency);
+            document.getElementById('calcSourceCurrency').addEventListener('change', calculateCurrency);
+            document.getElementById('calcTargetCurrency').addEventListener('change', calculateCurrency);
+        }
+
+        function calculateCurrency() {
+            if (!currentRates) return;
+
+            const amountInput = parseFloat(document.getElementById('calcInputAmount').value) || 0;
+            const source = document.getElementById('calcSourceCurrency').value;
+            const target = document.getElementById('calcTargetCurrency').value;
+            const display = document.getElementById('calcResultDisplay');
+
+            const usdRate = currentRates.usd.promedio;
+            const eurRate = currentRates.eur.promedio;
+
+            if (source === target) {
+                display.textContent = `${getSymbol(target)} ${formatCurrency(amountInput)}`;
+                return;
+            }
+
+            // Convert source to VES first
+            let amountInVES = 0;
+            if (source === 'VES') amountInVES = amountInput;
+            else if (source === 'USD') amountInVES = amountInput * usdRate;
+            else if (source === 'EUR') amountInVES = amountInput * eurRate;
+
+            // Convert VES to target
+            let finalResult = 0;
+            if (target === 'VES') finalResult = amountInVES;
+            else if (target === 'USD') finalResult = usdRate > 0 ? amountInVES / usdRate : 0;
+            else if (target === 'EUR') finalResult = eurRate > 0 ? amountInVES / eurRate : 0;
+
+            display.textContent = `${getSymbol(target)} ${formatCurrency(finalResult)}`;
+        }
+
+        function setCalcPreset(val) {
+            document.getElementById('calcInputAmount').value = val;
+            calculateCurrency();
+        }
+
+        function getSymbol(curr) {
+            if (curr === 'VES') return 'Bs.';
+            if (curr === 'USD') return '$';
+            if (curr === 'EUR') return '€';
+            return '';
+        }
+
+        function addHistoryRecord(rates, triggerType) {
+            const history = JSON.parse(localStorage.getItem(STORAGE_KEY_HISTORY) || '[]');
+            const record = {
+                timestamp: new Date().toISOString(),
+                type: triggerType,
+                usd: rates.usd.promedio,
+                eur: rates.eur.promedio
+            };
+
+            // Keep max 15 records
+            history.unshift(record);
+            if (history.length > 15) history.pop();
+
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+            renderHistoryTable();
+        }
+
+        function renderHistoryTable() {
+            const tbody = document.getElementById('historyTableBody');
+            const history = JSON.parse(localStorage.getItem(STORAGE_KEY_HISTORY) || '[]');
+
+            if (history.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="py-6 text-center text-slate-500 italic">No hay registros de consulta aún.</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = history.map(item => {
+                const dateObj = new Date(item.timestamp);
+                const formattedTime = dateObj.toLocaleTimeString('es-VE', { hour: '2-digit', minute: '2-digit', hour12: true });
+                const formattedDate = dateObj.toLocaleDateString('es-VE', { day: '2-digit', month: '2-digit' });
+
+                return `
+                    <tr class="hover:bg-purple-900/20 transition-colors">
+                        <td class="py-2.5 px-4 font-mono text-slate-200">
+                            ${formattedDate} - ${formattedTime}
+                        </td>
+                        <td class="py-2.5 px-4">
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-medium bg-purple-900/40 text-purple-300 border border-purple-500/20">
+                                ${item.type}
+                            </span>
+                        </td>
+                        <td class="py-2.5 px-4 font-bold text-emerald-400">Bs. ${formatCurrency(item.usd)}</td>
+                        <td class="py-2.5 px-4 font-bold text-blue-400">Bs. ${formatCurrency(item.eur)}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function clearHistory() {
+            localStorage.removeItem(STORAGE_KEY_HISTORY);
+            renderHistoryTable();
+            showToast('Historial borrado', 'info');
+        }
+
+        function loadStoredData() {
+            const storedRates = localStorage.getItem(STORAGE_KEY_RATES);
+            if (storedRates) {
+                try {
+                    currentRates = JSON.parse(storedRates);
+                } catch (e) {
+                    currentRates = null;
+                }
+            }
+        }
+
+        function formatCurrency(val) {
+            if (typeof val !== 'number' || isNaN(val)) return '0,00';
+            return val.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 4 });
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '--/--/----';
+            try {
+                const d = new Date(dateString);
+                return d.toLocaleDateString('es-VE', { day: '2-digit', month: 'short', year: 'numeric' });
+            } catch {
+                return dateString;
+            }
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            
+            const toast = document.createElement('div');
+            toast.className = `pointer-events-auto flex items-center justify-between p-4 rounded-2xl shadow-xl text-xs font-medium border backdrop-blur-xl transition-all duration-300 transform translate-y-4 opacity-0`;
+
+            let icon = 'fa-circle-info';
+            let colors = 'bg-purple-950/90 text-purple-200 border-purple-500/40';
+
+            if (type === 'success') {
+                icon = 'fa-circle-check';
+                colors = 'bg-emerald-950/90 text-emerald-200 border-emerald-500/40';
+            } else if (type === 'error') {
+                icon = 'fa-circle-exclamation';
+                colors = 'bg-rose-950/90 text-rose-200 border-rose-500/40';
+            } else if (type === 'warning') {
+                icon = 'fa-triangle-exclamation';
+                colors = 'bg-amber-950/90 text-amber-200 border-amber-500/40';
+            }
+
+            toast.className += ` ${colors}`;
+            toast.innerHTML = `
+                <div class="flex items-center gap-2.5">
+                    <i class="fa-solid ${icon} text-sm"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+
+            container.appendChild(toast);
+
+            // Animate in
+            setTimeout(() => {
+                toast.classList.remove('translate-y-4', 'opacity-0');
+            }, 10);
+
+            // Auto dismiss
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+    </script>
+</body>
+</html>
