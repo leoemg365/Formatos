@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estructura & Directorio Inteligente</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome CDN for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Organigram Tree Styles */
+        .tf-tree * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        .tf-tree ul {
+            display: flex;
+            justify-content: center;
+            position: relative;
+            padding-top: 24px;
+            transition: all 0.3s ease;
+        }
+        .tf-tree li {
+            text-align: center;
+            list-style-type: none;
+            position: relative;
+            padding: 24px 12px 0 12px;
+            transition: all 0.3s ease;
+        }
+        /* Connectors */
+        .tf-tree li::before, .tf-tree li::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 50%;
+            border-top: 2px solid #cbd5e1;
+            width: 50%;
+            height: 24px;
+        }
+        .tf-tree li::after {
+            right: auto;
+            left: 50%;
+            border-left: 2px solid #cbd5e1;
+        }
+        .tf-tree li:only-child::after, .tf-tree li:only-child::before {
+            display: none;
+        }
+        .tf-tree li:only-child {
+            padding-top: 0;
+        }
+        .tf-tree li:first-child::before, .tf-tree li:last-child::after {
+            border: 0 none;
+        }
+        .tf-tree li:last-child::before {
+            border-right: 2px solid #cbd5e1;
+            border-radius: 0 8px 0 0;
+        }
+        .tf-tree li:first-child::after {
+            border-radius: 8px 0 0 0;
+        }
+        .tf-tree ul ul::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            border-left: 2px solid #cbd5e1;
+            width: 0;
+            height: 24px;
+        }
+        
+        .node-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .node-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Highlight animation for search matches */
+        @keyframes pulseHighlight {
+            0%, 100% { ring-color: rgba(59, 130, 246, 0.5); transform: scale(1); }
+            50% { ring-color: rgba(59, 130, 246, 1); transform: scale(1.03); }
+        }
+        .search-matched {
+            animation: pulseHighlight 1.5s infinite;
+            border-color: #3b82f6 !important;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.25) !important;
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col text-slate-800 font-sans antialiased selection:bg-brand-500 selection:text-white">
+
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 gap-4">
+                
+                <!-- Logo & Brand -->
+                <div class="flex items-center gap-3 shrink-0">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
+                        <i class="fa-solid font-bold text-lg fa-sitemap"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-lg text-slate-900 leading-tight">OrganiMap</h1>
+                        <p class="text-xs text-slate-500 font-medium">Directorio & Organigrama</p>
+                    </div>
+                </div>
+
+                <!-- Central Smart Search Bar -->
+                <div class="flex-1 max-w-2xl relative">
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </span>
+                        <input type="text" id="searchInput" 
+                            placeholder="¿Qué necesitas resolver o a quién buscas? (Ej: activaciones, almacén, vacaciones, laptops)..." 
+                            class="w-full pl-10 pr-10 py-2.5 text-sm bg-slate-100 hover:bg-slate-50 focus:bg-white border border-transparent focus:border-brand-500 rounded-xl transition duration-150 ease-in-out focus:outline-none focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400 font-normal">
+                        <button id="clearSearchBtn" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600">
+                            <i class="fa-solid fa-circle-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mode Actions & Controls -->
+                <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+                    
+                    <!-- View Mode Toggle -->
+                    <div class="bg-slate-100 p-1 rounded-xl flex items-center border border-slate-200">
+                        <button id="btnViewTree" onclick="switchMainView('tree')" title="Vista Organigrama"
+                            class="px-3 py-1.5 text-xs font-semibold rounded-lg transition duration-150 flex items-center gap-1.5 bg-white text-slate-800 shadow-sm">
+                            <i class="fa-solid fa-diagram-project"></i>
+                            <span class="hidden md:inline">Árbol</span>
+                        </button>
+                        <button id="btnViewCards" onclick="switchMainView('cards')" title="Vista Tarjetas"
+                            class="px-3 py-1.5 text-xs font-semibold rounded-lg transition duration-150 flex items-center gap-1.5 text-slate-600 hover:text-slate-900">
+                            <i class="fa-solid fa-id-card"></i>
+                            <span class="hidden md:inline">Tarjetas</span>
+                        </button>
+                    </div>
+
+                    <!-- Editor Lock / Unlock Button -->
+                    <button id="btnToggleEditor" onclick="handleEditorAuthToggle()"
+                        class="px-3.5 py-2 text-xs font-semibold rounded-xl border transition duration-200 flex items-center gap-2 bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200">
+                        <i id="editorLockIcon" class="fa-solid fa-lock text-slate-500"></i>
+                        <span id="editorStatusText" class="hidden sm:inline">Modo Lectura</span>
+                    </button>
+
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col md:flex-row gap-6">
+
+        <!-- Sidebar / Department Filters -->
+        <aside class="w-full md:w-64 shrink-0 flex flex-col gap-6">
+            
+            <!-- Quick Category Filters -->
+            <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm">
+                <div class="flex items-center justify-between mb-3">
+                    <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Departamentos</h2>
+                    <span id="totalDeptBadge" class="text-xs bg-slate-100 text-slate-600 font-semibold px-2 py-0.5 rounded-full">0</span>
+                </div>
+                <nav id="departmentList" class="space-y-1">
+                    <!-- Dynamic Department Items inserted via JS -->
+                </nav>
+            </div>
+
+            <!-- Frequent Task Suggestions -->
+            <div class="bg-gradient-to-br from-brand-50 to-indigo-50/50 rounded-2xl p-4 border border-brand-100/60">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-brand-800 mb-2.5 flex items-center gap-1.5">
+                    <i class="fa-solid fa-bolt text-amber-500"></i> Búsquedas Frecuentes
+                </h3>
+                <div class="flex flex-wrap gap-1.5" id="frequentTagsContainer">
+                    <!-- Tags rendered via JS -->
+                </div>
+            </div>
+
+            <!-- Editor Admin Controls Panel (Hidden in Read Mode) -->
+            <div id="adminPanel" class="hidden bg-emerald-50/60 rounded-2xl p-4 border border-emerald-200/80 space-y-3">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-emerald-800 uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-sliders text-emerald-600"></i> Panel Editor
+                    </span>
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-100 text-emerald-800">Activo</span>
+                </div>
+                <p class="text-xs text-emerald-700">Tienes acceso de edición para modificar la estructura y empleados.</p>
+                
+                <div class="pt-1 space-y-2">
+                    <button onclick="openAddEmployeeModal()" 
+                        class="w-full py-2 px-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold shadow-sm transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-user-plus"></i> Nuevo Empleado
+                    </button>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="exportDataJSON()" 
+                            class="py-1.5 px-2 bg-white hover:bg-emerald-100 border border-emerald-300 text-emerald-800 rounded-lg text-xs font-medium transition flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-download"></i> Exportar
+                        </button>
+                        <button onclick="triggerImportJSON()" 
+                            class="py-1.5 px-2 bg-white hover:bg-emerald-100 border border-emerald-300 text-emerald-800 rounded-lg text-xs font-medium transition flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-upload"></i> Importar
+                        </button>
+                    </div>
+                    <input type="file" id="jsonFileInput" accept=".json" class="hidden" onchange="importDataJSON(event)">
+                </div>
+            </div>
+
+        </aside>
+
+        <main class="flex-1 flex flex-col min-w-0">
+            
+            <!-- Active Filter / Search Banner -->
+            <div id="searchFilterBanner" class="hidden mb-4 p-3 bg-brand-50 border border-brand-200 rounded-xl flex items-center justify-between text-xs text-brand-900">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-filter text-brand-600"></i>
+                    <span>Filtrando por: <strong id="searchFilterText" class="font-semibold text-brand-900">"Soporte"</strong></span>
+                </div>
+                <button onclick="clearAllFilters()" class="text-brand-700 hover:text-brand-900 font-semibold underline underline-offset-2">
+                    Limpiar filtros
+                </button>
+            </div>
+
+            <!-- View 1: Tree / Hierarchy Canvas -->
+            <div id="viewTreeContainer" class="flex-1 bg-white rounded-2xl border border-slate-200/80 p-6 overflow-x-auto min-h-[500px] flex flex-col justify-between shadow-sm relative">
+                
+                <!-- Tree Controls -->
+                <div class="absolute top-4 right-4 z-10 flex items-center gap-2 bg-slate-100/90 backdrop-blur p-1 rounded-xl border border-slate-200 text-slate-600">
+                    <button onclick="resetTreeZoom()" class="px-2.5 py-1 text-xs font-medium hover:bg-white rounded-lg transition" title="Restablecer Vista">
+                        <i class="fa-solid fa-expand"></i> Centrar
+                    </button>
+                    <button onclick="expandAllNodes()" class="px-2.5 py-1 text-xs font-medium hover:bg-white rounded-lg transition" title="Expandir Todos">
+                        <i class="fa-solid fa-folder-open"></i> Expandir
+                    </button>
+                </div>
+
+                <!-- Tree Wrapper -->
+                <div class="tf-tree min-w-max py-8 mx-auto" id="orgTreeContent">
+                    <!-- Dynamic Tree Hierarchy rendered via JS -->
+                </div>
+
+                <div class="text-center text-xs text-slate-400 mt-4 border-t border-slate-100 pt-3">
+                    <i class="fa-solid fa-circle-info mr-1"></i> Haz clic en cualquier tarjeta para ver responsabilidades, contacto y equipo directo.
+                </div>
+            </div>
+
+            <!-- View 2: Cards / Directory Grid View -->
+            <div id="viewCardsContainer" class="hidden flex-1 space-y-4">
+                <div class="flex items-center justify-between bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
+                    <span id="resultsCountText" class="text-xs font-semibold text-slate-500">Mostrando todos los colaboradores</span>
+                    <select id="sortBySelect" onchange="renderCardsView()" class="text-xs bg-slate-100 border border-slate-200 rounded-lg px-2.5 py-1.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        <option value="nombre">Ordenar por Nombre</option>
+                        <option value="cargo">Ordenar por Cargo</option>
+                        <option value="departamento">Ordenar por Departamento</option>
+                    </select>
+                </div>
+
+                <div id="cardsGridContent" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Dynamic Cards rendered via JS -->
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- MODAL 1: Detail View Popup -->
+    <div id="detailModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden transition-opacity duration-200">
+        <div class="bg-white rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl border border-slate-100 transform transition-all scale-100">
+            
+            <!-- Modal Header / Banner -->
+            <div id="modalHeaderBg" class="bg-gradient-to-r from-brand-600 to-indigo-600 p-6 text-white relative">
+                <button onclick="closeModal('detailModal')" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-black/20 hover:bg-black/30 text-white flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                
+                <div class="flex items-start gap-4">
+                    <div id="modalAvatar" class="w-16 h-16 rounded-2xl bg-white text-brand-700 font-bold text-2xl flex items-center justify-center border-2 border-white/80 shadow-md shrink-0">
+                        --
+                    </div>
+                    <div>
+                        <span id="modalDeptBadge" class="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-white/20 text-white backdrop-blur mb-1">
+                            Departamento
+                        </span>
+                        <h2 id="modalName" class="text-xl font-bold leading-tight">Nombre Apellido</h2>
+                        <p id="modalRole" class="text-brand-100 text-sm font-medium">Cargo del empleado</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Content Body -->
+            <div class="p-6 space-y-5 max-h-[75vh] overflow-y-auto">
+                
+                <!-- KEY RESPONSIBILITY HIGHLIGHT BOX (User Request) -->
+                <div class="bg-amber-50 border-l-4 border-amber-400 p-3.5 rounded-r-xl">
+                    <h3 class="text-xs font-bold text-amber-800 uppercase tracking-wider flex items-center gap-1.5 mb-1">
+                        <i class="fa-solid fa-star text-amber-500"></i> Responsabilidad Principal
+                    </h3>
+                    <p id="modalResponsibilityComment" class="text-sm font-medium text-amber-950 leading-relaxed">
+                        <!-- Direct comment like: "Carla se encarga de las activaciones en el departamento de Soporte." -->
+                    </p>
+                </div>
+
+                <!-- Contact Shortcuts -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    <button id="btnCopyEmail" onclick="copyContact('email')" class="p-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-left transition group">
+                        <span class="block text-[10px] text-slate-400 uppercase font-bold">Correo</span>
+                        <span id="modalEmailText" class="block text-xs font-semibold text-slate-700 truncate group-hover:text-brand-600">email@empresa.com</span>
+                    </button>
+                    <button id="btnCopyExt" onclick="copyContact('ext')" class="p-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-left transition group">
+                        <span class="block text-[10px] text-slate-400 uppercase font-bold">Ext. Telefónica</span>
+                        <span id="modalExtText" class="block text-xs font-semibold text-slate-700 group-hover:text-brand-600">Ext. 101</span>
+                    </button>
+                    <button id="btnCopySlack" onclick="copyContact('slack')" class="p-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-left transition group col-span-2 sm:col-span-1">
+                        <span class="block text-[10px] text-slate-400 uppercase font-bold">Teams / Slack</span>
+                        <span id="modalSlackText" class="block text-xs font-semibold text-slate-700 group-hover:text-brand-600">@usuario</span>
+                    </button>
+                </div>
+
+                <!-- Functions & Tasks List -->
+                <div>
+                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Funciones y Atribuciones</h4>
+                    <ul id="modalFunctionsList" class="space-y-1.5 text-xs text-slate-600">
+                        <!-- Dynamically filled -->
+                    </ul>
+                </div>
+
+                <!-- Search Tags -->
+                <div>
+                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Etiquetas de Búsqueda</h4>
+                    <div id="modalTagsList" class="flex flex-wrap gap-1.5">
+                        <!-- Dynamically filled -->
+                    </div>
+                </div>
+
+                <!-- Hierarchy Info (Report Line) -->
+                <div class="border-t border-slate-100 pt-4 grid grid-cols-2 gap-4">
+                    <div>
+                        <span class="block text-[11px] text-slate-400 font-bold uppercase mb-1">Reporta a:</span>
+                        <div id="modalSupervisorCard" class="text-xs text-slate-700 font-semibold">
+                            --
+                        </div>
+                    </div>
+                    <div>
+                        <span class="block text-[11px] text-slate-400 font-bold uppercase mb-1">Equipo a cargo:</span>
+                        <div id="modalSubordinatesList" class="text-xs text-slate-700 font-medium space-y-1">
+                            --
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Modal Footer Controls -->
+            <div class="bg-slate-50 px-6 py-3 border-t border-slate-200/80 flex items-center justify-between">
+                <div id="modalAdminActions" class="hidden flex items-center gap-2">
+                    <button id="btnModalEdit" onclick="openEditEmployeeFromModal()" class="px-3 py-1.5 text-xs font-semibold bg-brand-600 hover:bg-brand-700 text-white rounded-lg transition">
+                        <i class="fa-solid fa-pen-to-square mr-1"></i> Editar
+                    </button>
+                    <button id="btnModalDelete" onclick="confirmDeleteFromModal()" class="px-3 py-1.5 text-xs font-semibold bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg transition">
+                        <i class="fa-solid fa-trash mr-1"></i> Eliminar
+                    </button>
+                </div>
+                <button onclick="closeModal('detailModal')" class="ml-auto px-4 py-1.5 text-xs font-semibold bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg transition">
+                    Cerrar
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- MODAL 2: Editor Authentication Password Modal -->
+    <div id="authModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 text-center space-y-4">
+            <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto text-xl">
+                <i class="fa-solid fa-key"></i>
+            </div>
+            <div>
+                <h3 class="text-lg font-bold text-slate-900">Acceso a Modo Editor</h3>
+                <p class="text-xs text-slate-500 mt-1">Ingresa la clave de administración para realizar cambios.</p>
+            </div>
+
+            <form onsubmit="verifyAuthPIN(event)" class="space-y-3">
+                <div>
+                    <input type="password" id="pinInput" placeholder="Clave de 4 dígitos (Ej: 0800)" maxlength="8"
+                        class="w-full text-center tracking-widest font-mono text-lg py-2.5 px-3 bg-slate-100 border border-slate-300 rounded-xl focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                    <p id="pinError" class="text-xs text-rose-600 font-medium hidden mt-1">Clave incorrecta. Intenta nuevamente.</p>
+                </div>
+                <div class="flex gap-2">
+                    <button type="button" onclick="closeModal('authModal')" class="flex-1 py-2 text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="flex-1 py-2 text-xs font-semibold bg-brand-600 hover:bg-brand-700 text-white rounded-xl shadow-sm">
+                        Ingresar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 3: Add / Edit Employee Form Modal -->
+    <div id="employeeFormModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-xl w-full overflow-hidden shadow-2xl border border-slate-100">
+            <div class="bg-slate-900 text-white px-6 py-4 flex items-center justify-between">
+                <h3 id="formModalTitle" class="font-bold text-base flex items-center gap-2">
+                    <i class="fa-solid fa-user-gear"></i> Registrar Empleado
+                </h3>
+                <button onclick="closeModal('employeeFormModal')" class="text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <form id="employeeForm" onsubmit="saveEmployee(event)" class="p-6 space-y-4 max-h-[75vh] overflow-y-auto text-xs">
+                <input type="hidden" id="formEmpId">
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">Nombre Completo *</label>
+                        <input type="text" id="formNombre" required placeholder="Ej: Carla Mendoza"
+                            class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:bg-white focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">Cargo / Puesto *</label>
+                        <input type="text" id="formCargo" required placeholder="Ej: Especialista de Soporte"
+                            class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:bg-white focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">Departamento *</label>
+                        <select id="formDepartamento" required class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:bg-white focus:outline-none">
+                            <!-- Options populated via JS -->
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">Jefe Directo (Reporta A)</label>
+                        <select id="formReportaA" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:bg-white focus:outline-none">
+                            <!-- Options populated via JS -->
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Special Comment / Responsibility -->
+                <div class="bg-amber-50 p-3 rounded-xl border border-amber-200">
+                    <label class="block font-bold text-amber-900 mb-1">
+                        Resumen de Responsabilidad Principal (Comentario Directo) *
+                    </label>
+                    <textarea id="formComentario" rows="2" required
+                        placeholder="Ej: Carla se encarga de las activaciones en el departamento de Soporte."
+                        class="w-full px-3 py-2 bg-white border border-amber-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none text-slate-800 font-medium"></textarea>
+                    <p class="text-[10px] text-amber-700 mt-1">Este mensaje aparecerá destacado cuando cualquier compañero consulte su ficha.</p>
+                </div>
+
+                <!-- Contact Details -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">Correo Electrónico</label>
+                        <input type="email" id="formEmail" placeholder="carla@empresa.com"
+                            class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">Extensión</label>
+                        <input type="text" id="formExtension" placeholder="204"
+                            class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">Teams / Slack</label>
+                        <input type="text" id="formSlack" placeholder="@carla"
+                            class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <!-- Functions (comma separated or multi-line) -->
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Funciones Específicas (Separadas por comas)</label>
+                    <input type="text" id="formFunciones" placeholder="Atención de tickets, Activaciones de cuenta, Validación de licencias"
+                        class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                </div>
+
+                <!-- Tags -->
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Palabras Clave de Búsqueda (Separadas por comas)</label>
+                    <input type="text" id="formTags" placeholder="activaciones, accesos, contraseñas, soporte"
+                        class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                </div>
+
+                <div class="pt-3 border-t border-slate-200 flex justify-end gap-2">
+                    <button type="button" onclick="closeModal('employeeFormModal')" class="px-4 py-2 font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="px-5 py-2 font-semibold bg-brand-600 hover:bg-brand-700 text-white rounded-xl shadow-sm">
+                        Guardar Cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 4: Custom Delete Prompt Modal (No native confirm alert) -->
+    <div id="confirmDeleteModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 text-center space-y-4">
+            <div class="w-12 h-12 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto text-xl">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div>
+                <h3 class="text-base font-bold text-slate-900">¿Eliminar Colaborador?</h3>
+                <p id="confirmDeleteText" class="text-xs text-slate-500 mt-1">Esta acción no se puede deshacer.</p>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="closeModal('confirmDeleteModal')" class="flex-1 py-2 text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl">
+                    Cancelar
+                </button>
+                <button id="btnConfirmDeleteExec" class="flex-1 py-2 text-xs font-semibold bg-rose-600 hover:bg-rose-700 text-white rounded-xl shadow-sm">
+                    Eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Banner -->
+    <div id="toastNotification" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-xs font-medium">
+        <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
+        <span id="toastMessage">Notificación</span>
+    </div>
+
+    <script>
+        /**
+         * INITIAL DATASET SEED
+         * Preloaded with initial corporate dataset including mandatory examples:
+         * - Carla (Activaciones en Soporte)
+         * - Alfred (Material de entrada y salida en almacén)
+         */
+        const DEFAULT_DEPARTMENTS = [
+            { id: "dep-dir", nombre: "Dirección General", color: "#4f46e5", icon: "fa-building-user" },
+            { id: "dep-rrhh", nombre: "Recursos Humanos", color: "#ec4899", icon: "fa-users" },
+            { id: "dep-soporte", nombre: "Soporte & TI", color: "#0284c7", icon: "fa-headset" },
+            { id: "dep-almacen", nombre: "Almacén & Logística", color: "#f59e0b", icon: "fa-boxes-stacked" },
+            { id: "dep-finanzas", nombre: "Finanzas & Contabilidad", color: "#10b981", icon: "fa-calculator" }
+        ];
+
+        const DEFAULT_EMPLOYEES = [
+            {
+                id: "emp-100",
+                nombre: "Roberto Silva",
+                cargo: "Director General (CEO)",
+                departamentoId: "dep-dir",
+                reportaA: null,
+                email: "roberto.silva@empresa.com",
+                extension: "100",
+                slack: "@rsilva",
+                comentario: "Roberto supervisa la estrategia general y aprobaciones ejecutivas de la empresa.",
+                funciones: ["Estrategia corporativa", "Aprobación de presupuesto anual", "Relaciones con socios"],
+                tagsBusqueda: ["ceo", "director", "aprobar", "presupuesto", "gerencia"]
+            },
+            {
+                id: "emp-101",
+                nombre: "Ana García",
+                cargo: "Gerente de Recursos Humanos",
+                departamentoId: "dep-rrhh",
+                reportaA: "emp-100",
+                email: "ana.garcia@empresa.com",
+                extension: "101",
+                slack: "@agarcia",
+                comentario: "Ana gestiona los permisos, aprobaciones de vacaciones y reclutamiento ejecutivo.",
+                funciones: ["Aprobación de vacaciones", "Gestión de nómina y beneficios", "Políticas internas y clima"],
+                tagsBusqueda: ["vacaciones", "permisos", "contrato", "sueldo", "rrhh", "seguro medico"]
+            },
+            {
+                id: "emp-102",
+                nombre: "Carla Mendoza",
+                cargo: "Especialista de Servicios de Soporte",
+                departamentoId: "dep-soporte",
+                reportaA: "emp-100",
+                email: "carla.mendoza@empresa.com",
+                extension: "201",
+                slack: "@carla.soporte",
+                comentario: "Carla se encarga de las activaciones en el departamento de Soporte.",
+                funciones: ["Activaciones de cuentas de usuario", "Habilitación de accesos e licencias", "Atención de tickets prioritarios"],
+                tagsBusqueda: ["activaciones", "activacion", "activar", "soporte", "accesos", "cuentas", "licencias", "alta usuario"]
+            },
+            {
+                id: "emp-103",
+                nombre: "Alfred Gómez",
+                cargo: "Coordinador de Inventario y Almacén",
+                departamentoId: "dep-almacen",
+                reportaA: "emp-100",
+                email: "alfred.gomez@empresa.com",
+                extension: "301",
+                slack: "@alfred.almacen",
+                comentario: "Alfred, se encarga de el material de entrada y salida en almacén.",
+                funciones: ["Recepción e ingreso de mercancía", "Despacho de insumos y materiales", "Control de stock e inventario mensual"],
+                tagsBusqueda: ["almacen", "material", "entrada", "salida", "despacho", "mercancia", "inventario", "insumos", "paquetes"]
+            },
+            {
+                id: "emp-104",
+                nombre: "Carlos Rivera",
+                cargo: "Analista de Infraestructura TI",
+                departamentoId: "dep-soporte",
+                reportaA: "emp-102",
+                email: "carlos.rivera@empresa.com",
+                extension: "202",
+                slack: "@carlos.ti",
+                comentario: "Carlos soluciona problemas de hardware, configuración de laptops y redes WiFi de la oficina.",
+                funciones: ["Mantenimiento y entrega de laptops", "Configuración de VPN y red WiFi", "Soporte presencial e impresoras"],
+                tagsBusqueda: ["laptop", "computadora", "wifi", "vpn", "redes", "impresora", "pantalla", "hardware"]
+            },
+            {
+                id: "emp-105",
+                nombre: "Elena Torres",
+                cargo: "Jefa de Contabilidad",
+                departamentoId: "dep-finanzas",
+                reportaA: "emp-100",
+                email: "elena.torres@empresa.com",
+                extension: "401",
+                slack: "@elena.finanzas",
+                comentario: "Elena está encargada del reembolso de viáticos, emisión de facturas y pagos a proveedores.",
+                funciones: ["Emisión de facturas fiscales", "Procesamiento de pagos a proveedores", "Reembolsos y caja chica"],
+                tagsBusqueda: ["factura", "facturacion", "pagos", "proveedores", "viaticos", "reembolso", "impuestos", "contabilidad"]
+            }
+        ];
+
+        const EDITOR_PIN = "0800"; // Requested Editor PIN
+        let appState = {
+            departamentos: [],
+            empleados: [],
+            currentView: 'tree', // 'tree' or 'cards'
+            selectedDept: 'ALL',
+            searchQuery: '',
+            isEditMode: false,
+            activeModalEmployeeId: null
+        };
+
+        // Initialize Application
+        window.onload = function() {
+            loadInitialData();
+            setupEventListeners();
+            renderAll();
+        };
+
+        function loadInitialData() {
+            const savedDept = localStorage.getItem('organi_dept');
+            const savedEmp = localStorage.getItem('organi_emp');
+
+            if (savedDept && savedEmp) {
+                try {
+                    appState.departamentos = JSON.parse(savedDept);
+                    appState.empleados = JSON.parse(savedEmp);
+                } catch(e) {
+                    appState.departamentos = DEFAULT_DEPARTMENTS;
+                    appState.empleados = DEFAULT_EMPLOYEES;
+                }
+            } else {
+                appState.departamentos = DEFAULT_DEPARTMENTS;
+                appState.empleados = DEFAULT_EMPLOYEES;
+                saveToLocalStorage();
+            }
+        }
+
+        function saveToLocalStorage() {
+            localStorage.setItem('organi_dept', JSON.stringify(appState.departamentos));
+            localStorage.setItem('organi_emp', JSON.stringify(appState.empleados));
+        }
+
+        function setupEventListeners() {
+            const searchInput = document.getElementById('searchInput');
+            const clearBtn = document.getElementById('clearSearchBtn');
+
+            searchInput.addEventListener('input', (e) => {
+                appState.searchQuery = e.target.value.trim().toLowerCase();
+                if (appState.searchQuery) {
+                    clearBtn.classList.remove('hidden');
+                } else {
+                    clearBtn.classList.add('hidden');
+                }
+                renderAll();
+            });
+
+            clearBtn.addEventListener('click', () => {
+                searchInput.value = '';
+                appState.searchQuery = '';
+                clearBtn.classList.add('hidden');
+                renderAll();
+            });
+        }
+
+        function renderAll() {
+            renderDepartmentSidebar();
+            renderFrequentTags();
+            updateBannerState();
+
+            if (appState.currentView === 'tree') {
+                document.getElementById('viewTreeContainer').classList.remove('hidden');
+                document.getElementById('viewCardsContainer').classList.add('hidden');
+                renderTreeView();
+            } else {
+                document.getElementById('viewTreeContainer').classList.add('hidden');
+                document.getElementById('viewCardsContainer').classList.remove('hidden');
+                renderCardsView();
+            }
+
+            updateEditorUINotices();
+        }
+
+        function switchMainView(view) {
+            appState.currentView = view;
+            const btnTree = document.getElementById('btnViewTree');
+            const btnCards = document.getElementById('btnViewCards');
+
+            if (view === 'tree') {
+                btnTree.className = "px-3 py-1.5 text-xs font-semibold rounded-lg transition duration-150 flex items-center gap-1.5 bg-white text-slate-800 shadow-sm";
+                btnCards.className = "px-3 py-1.5 text-xs font-semibold rounded-lg transition duration-150 flex items-center gap-1.5 text-slate-600 hover:text-slate-900";
+            } else {
+                btnCards.className = "px-3 py-1.5 text-xs font-semibold rounded-lg transition duration-150 flex items-center gap-1.5 bg-white text-slate-800 shadow-sm";
+                btnTree.className = "px-3 py-1.5 text-xs font-semibold rounded-lg transition duration-150 flex items-center gap-1.5 text-slate-600 hover:text-slate-900";
+            }
+            renderAll();
+        }
+
+        function renderDepartmentSidebar() {
+            const deptListContainer = document.getElementById('departmentList');
+            document.getElementById('totalDeptBadge').textContent = appState.departamentos.length;
+
+            let html = `
+                <button onclick="filterByDept('ALL')" 
+                    class="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold transition flex items-center justify-between ${appState.selectedDept === 'ALL' ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'}">
+                    <span class="flex items-center gap-2">
+                        <i class="fa-solid fa-layer-group text-xs"></i> Toda la Empresa
+                    </span>
+                    <span class="px-2 py-0.5 rounded-full text-[10px] ${appState.selectedDept === 'ALL' ? 'bg-slate-800 text-slate-200' : 'bg-slate-100 text-slate-500'}">
+                        ${appState.empleados.length}
+                    </span>
+                </button>
+            `;
+
+            appState.departamentos.forEach(dept => {
+                const count = appState.empleados.filter(e => e.departamentoId === dept.id).length;
+                const isSelected = appState.selectedDept === dept.id;
+
+                html += `
+                    <button onclick="filterByDept('${dept.id}')" 
+                        class="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold transition flex items-center justify-between ${isSelected ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'}">
+                        <span class="flex items-center gap-2 truncate">
+                            <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${dept.color}"></span>
+                            <span class="truncate">${dept.nombre}</span>
+                        </span>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] shrink-0 ${isSelected ? 'bg-slate-800 text-slate-200' : 'bg-slate-100 text-slate-500'}">
+                            ${count}
+                        </span>
+                    </button>
+                `;
+            });
+
+            deptListContainer.innerHTML = html;
+        }
+
+        function renderFrequentTags() {
+            const tagsContainer = document.getElementById('frequentTagsContainer');
+            // Extract unique tags across all employees
+            const allTags = new Set();
+            appState.empleados.forEach(e => {
+                if (e.tagsBusqueda && Array.isArray(e.tagsBusqueda)) {
+                    e.tagsBusqueda.forEach(t => allTags.add(t.toLowerCase()));
+                }
+            });
+
+            const topTags = Array.from(allTags).slice(0, 8);
+            
+            tagsContainer.innerHTML = topTags.map(tag => `
+                <button onclick="applySearchQuery('${tag}')" 
+                    class="px-2.5 py-1 bg-white hover:bg-brand-500 hover:text-white border border-brand-200/80 text-brand-900 rounded-lg text-[11px] font-medium transition shadow-2xs">
+                    #${tag}
+                </button>
+            `).join('');
+        }
+
+        function filterByDept(deptId) {
+            appState.selectedDept = deptId;
+            renderAll();
+        }
+
+        function applySearchQuery(query) {
+            document.getElementById('searchInput').value = query;
+            appState.searchQuery = query.toLowerCase();
+            document.getElementById('clearSearchBtn').classList.remove('hidden');
+            renderAll();
+        }
+
+        function clearAllFilters() {
+            appState.selectedDept = 'ALL';
+            appState.searchQuery = '';
+            document.getElementById('searchInput').value = '';
+            document.getElementById('clearSearchBtn').classList.add('hidden');
+            renderAll();
+        }
+
+        function updateBannerState() {
+            const banner = document.getElementById('searchFilterBanner');
+            const bannerText = document.getElementById('searchFilterText');
+
+            let activeFilters = [];
+            if (appState.selectedDept !== 'ALL') {
+                const d = appState.departamentos.find(dept => dept.id === appState.selectedDept);
+                if (d) activeFilters.push(`Depto: ${d.nombre}`);
+            }
+            if (appState.searchQuery) {
+                activeFilters.push(`Búsqueda: "${appState.searchQuery}"`);
+            }
+
+            if (activeFilters.length > 0) {
+                bannerText.textContent = activeFilters.join(' | ');
+                banner.classList.remove('hidden');
+            } else {
+                banner.classList.add('hidden');
+            }
+        }
+
+        function getFilteredEmployees() {
+            return appState.empleados.filter(emp => {
+                // Dept Filter
+                if (appState.selectedDept !== 'ALL' && emp.departamentoId !== appState.selectedDept) {
+                    return false;
+                }
+                // Search Query Filter
+                if (appState.searchQuery) {
+                    const q = appState.searchQuery;
+                    const matchesName = emp.nombre.toLowerCase().includes(q);
+                    const matchesCargo = emp.cargo.toLowerCase().includes(q);
+                    const matchesComentario = emp.comentario && emp.comentario.toLowerCase().includes(q);
+                    const matchesFunciones = emp.funciones && emp.funciones.some(f => f.toLowerCase().includes(q));
+                    const matchesTags = emp.tagsBusqueda && emp.tagsBusqueda.some(t => t.toLowerCase().includes(q));
+                    
+                    const dept = appState.departamentos.find(d => d.id === emp.departamentoId);
+                    const matchesDeptName = dept && dept.nombre.toLowerCase().includes(q);
+
+                    return matchesName || matchesCargo || matchesComentario || matchesFunciones || matchesTags || matchesDeptName;
+                }
+                return true;
+            });
+        }
+
+        function renderTreeView() {
+            const treeContainer = document.getElementById('orgTreeContent');
+            const filteredEmployees = getFilteredEmployees();
+
+            if (filteredEmployees.length === 0) {
+                treeContainer.innerHTML = `
+                    <div class="text-center py-12 text-slate-400 space-y-2">
+                        <i class="fa-solid fa-magnifying-glass text-3xl mb-2 text-slate-300"></i>
+                        <p class="font-medium text-sm">No se encontraron colaboradores que coincidan con tu búsqueda.</p>
+                        <button onclick="clearAllFilters()" class="text-xs text-brand-600 hover:underline font-semibold">Ver todos los miembros</button>
+                    </div>
+                `;
+                return;
+            }
+
+            // Find root nodes (employees with reportaA === null OR whose manager is not in the filtered list)
+            const employeeIds = new Set(filteredEmployees.map(e => e.id));
+            let rootEmployees = filteredEmployees.filter(e => !e.reportaA || !employeeIds.has(e.reportaA));
+
+            if (rootEmployees.length === 0 && filteredEmployees.length > 0) {
+                rootEmployees = [filteredEmployees[0]];
+            }
+
+            let html = '<ul>';
+            rootEmployees.forEach(root => {
+                html += renderTreeNode(root, filteredEmployees);
+            });
+            html += '</ul>';
+
+            treeContainer.innerHTML = html;
+        }
+
+        function renderTreeNode(employee, availableEmployees) {
+            const dept = appState.departamentos.find(d => d.id === employee.departamentoId) || { nombre: "General", color: "#64748b" };
+            const subordinates = availableEmployees.filter(e => e.reportaA === employee.id);
+            const isSearchMatched = appState.searchQuery && isEmployeeMatch(employee, appState.searchQuery);
+
+            const initials = getInitials(employee.nombre);
+
+            let html = `
+                <li>
+                    <div onclick="openEmployeeDetail('${employee.id}')" 
+                        class="node-card inline-block bg-white border border-slate-200/90 rounded-2xl p-3 shadow-sm hover:shadow-md cursor-pointer text-left w-56 relative z-10 ${isSearchMatched ? 'search-matched' : ''}">
+                        
+                        <div class="flex items-center gap-2.5 mb-2">
+                            <div class="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs text-white shadow-xs shrink-0" style="background-color: ${dept.color}">
+                                ${initials}
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <span class="inline-block text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded" style="background-color: ${dept.color}15; color: ${dept.color}">
+                                    ${dept.nombre}
+                                </span>
+                                <h4 class="font-bold text-xs text-slate-900 truncate leading-tight">${employee.nombre}</h4>
+                            </div>
+                        </div>
+
+                        <p class="text-[11px] font-medium text-slate-500 truncate mb-2">${employee.cargo}</p>
+                        
+                        <!-- Mini responsibility snippet -->
+                        <div class="bg-slate-50 p-1.5 rounded-lg border border-slate-100 text-[10px] text-slate-600 line-clamp-2 italic leading-tight">
+                            "${employee.comentario || 'Responsable de área.'}"
+                        </div>
+                    </div>
+            `;
+
+            if (subordinates.length > 0) {
+                html += '<ul>';
+                subordinates.forEach(sub => {
+                    html += renderTreeNode(sub, availableEmployees);
+                });
+                html += '</ul>';
+            }
+
+            html += '</li>';
+            return html;
+        }
+
+        function isEmployeeMatch(employee, q) {
+            if (!q) return false;
+            return employee.nombre.toLowerCase().includes(q) ||
+                   employee.cargo.toLowerCase().includes(q) ||
+                   (employee.comentario && employee.comentario.toLowerCase().includes(q)) ||
+                   (employee.funciones && employee.funciones.some(f => f.toLowerCase().includes(q))) ||
+                   (employee.tagsBusqueda && employee.tagsBusqueda.some(t => t.toLowerCase().includes(q)));
+        }
+
+        function renderCardsView() {
+            const container = document.getElementById('cardsGridContent');
+            const filtered = getFilteredEmployees();
+            const sortBy = document.getElementById('sortBySelect').value;
+
+            document.getElementById('resultsCountText').textContent = `Mostrando ${filtered.length} colaboradores`;
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-12 text-slate-400 bg-white rounded-2xl border border-slate-200">
+                        <i class="fa-solid fa-user-slash text-3xl mb-2 text-slate-300"></i>
+                        <p class="font-medium text-sm">No se encontraron resultados para la búsqueda actual.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Sort
+            filtered.sort((a, b) => {
+                if (sortBy === 'nombre') return a.nombre.localeCompare(b.nombre);
+                if (sortBy === 'cargo') return a.cargo.localeCompare(b.cargo);
+                if (sortBy === 'departamento') {
+                    const da = (appState.departamentos.find(d => d.id === a.departamentoId) || {}).nombre || '';
+                    const db = (appState.departamentos.find(d => d.id === b.departamentoId) || {}).nombre || '';
+                    return da.localeCompare(db);
+                }
+                return 0;
+            });
+
+            container.innerHTML = filtered.map(emp => {
+                const dept = appState.departamentos.find(d => d.id === emp.departamentoId) || { nombre: "General", color: "#64748b" };
+                const initials = getInitials(emp.nombre);
+                const isSearchMatched = appState.searchQuery && isEmployeeMatch(emp, appState.searchQuery);
+
+                return `
+                    <div onclick="openEmployeeDetail('${emp.id}')" 
+                        class="bg-white rounded-2xl border border-slate-200/80 p-4 hover:shadow-md transition cursor-pointer flex flex-col justify-between group relative ${isSearchMatched ? 'ring-2 ring-brand-500 bg-brand-50/20' : ''}">
+                        
+                        <div>
+                            <div class="flex items-start justify-between gap-3 mb-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-11 h-11 rounded-2xl flex items-center justify-center font-bold text-sm text-white shadow-sm shrink-0" style="background-color: ${dept.color}">
+                                        ${initials}
+                                    </div>
+                                    <div>
+                                        <h3 class="font-bold text-sm text-slate-900 group-hover:text-brand-600 transition leading-snug">${emp.nombre}</h3>
+                                        <p class="text-xs text-slate-500 font-medium">${emp.cargo}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <span class="inline-block px-2 py-0.5 rounded-md text-[10px] font-bold" style="background-color: ${dept.color}15; color: ${dept.color}">
+                                    ${dept.nombre}
+                                </span>
+                            </div>
+
+                            <!-- Comment Direct Highlight -->
+                            <div class="bg-amber-50/80 border-l-2 border-amber-400 p-2.5 rounded-r-xl text-xs text-amber-950 font-medium leading-relaxed mb-3">
+                                "${emp.comentario || 'Sin descripción asignada.'}"
+                            </div>
+                        </div>
+
+                        <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
+                            <span class="flex items-center gap-1"><i class="fa-solid fa-phone text-slate-300"></i> Ext: ${emp.extension || 'N/A'}</span>
+                            <span class="text-brand-600 font-semibold group-hover:underline">Ver ficha <i class="fa-solid fa-arrow-right text-[10px]"></i></span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openEmployeeDetail(employeeId) {
+            const emp = appState.empleados.find(e => e.id === employeeId);
+            if (!emp) return;
+
+            appState.activeModalEmployeeId = employeeId;
+            const dept = appState.departamentos.find(d => d.id === emp.departamentoId) || { nombre: "General", color: "#4f46e5" };
+
+            // Set Avatar & Header
+            document.getElementById('modalAvatar').textContent = getInitials(emp.nombre);
+            document.getElementById('modalAvatar').style.color = dept.color;
+            document.getElementById('modalDeptBadge').textContent = dept.nombre;
+            document.getElementById('modalName').textContent = emp.nombre;
+            document.getElementById('modalRole').textContent = emp.cargo;
+
+            // Direct Responsibility Comment
+            document.getElementById('modalResponsibilityComment').textContent = emp.comentario || `No se ha especificado un comentario de responsabilidad directa.`;
+
+            // Contact info
+            document.getElementById('modalEmailText').textContent = emp.email || 'No registrado';
+            document.getElementById('modalExtText').textContent = emp.extension ? `Ext. ${emp.extension}` : 'N/A';
+            document.getElementById('modalSlackText').textContent = emp.slack || 'N/A';
+
+            // Functions List
+            const funcList = document.getElementById('modalFunctionsList');
+            if (emp.funciones && emp.funciones.length > 0) {
+                funcList.innerHTML = emp.funciones.map(f => `
+                    <li class="flex items-start gap-2">
+                        <i class="fa-solid fa-check text-emerald-500 mt-0.5 shrink-0"></i>
+                        <span>${f}</span>
+                    </li>
+                `).join('');
+            } else {
+                funcList.innerHTML = `<li class="text-slate-400 italic">No hay funciones específicas detalladas.</li>`;
+            }
+
+            // Tags
+            const tagsList = document.getElementById('modalTagsList');
+            if (emp.tagsBusqueda && emp.tagsBusqueda.length > 0) {
+                tagsList.innerHTML = emp.tagsBusqueda.map(t => `
+                    <span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md text-[10px] font-medium">#${t}</span>
+                `).join('');
+            } else {
+                tagsList.innerHTML = `<span class="text-slate-400 text-[11px] italic">Sin etiquetas</span>`;
+            }
+
+            // Manager & Subordinates
+            const supervisor = appState.empleados.find(e => e.id === emp.reportaA);
+            document.getElementById('modalSupervisorCard').innerHTML = supervisor ? `
+                <button onclick="openEmployeeDetail('${supervisor.id}')" class="text-brand-600 hover:underline font-semibold flex items-center gap-1">
+                    <i class="fa-solid fa-user-tie text-slate-400"></i> ${supervisor.nombre} (${supervisor.cargo})
+                </button>
+            ` : `<span class="text-slate-400 font-normal">Sin supervisor directo (Dirección)</span>`;
+
+            const subs = appState.empleados.filter(e => e.reportaA === emp.id);
+            if (subs.length > 0) {
+                document.getElementById('modalSubordinatesList').innerHTML = subs.map(s => `
+                    <button onclick="openEmployeeDetail('${s.id}')" class="block text-brand-600 hover:underline text-left">
+                        • ${s.nombre} <span class="text-slate-400 font-normal">(${s.cargo})</span>
+                    </button>
+                `).join('');
+            } else {
+                document.getElementById('modalSubordinatesList').innerHTML = `<span class="text-slate-400 font-normal italic">Ninguno</span>`;
+            }
+
+            // Show admin controls if edit mode
+            if (appState.isEditMode) {
+                document.getElementById('modalAdminActions').classList.remove('hidden');
+            } else {
+                document.getElementById('modalAdminActions').classList.add('hidden');
+            }
+
+            openModal('detailModal');
+        }
+
+        // Copy contact helper using document.execCommand
+        function copyContact(type) {
+            const emp = appState.empleados.find(e => e.id === appState.activeModalEmployeeId);
+            if (!emp) return;
+
+            let textToCopy = '';
+            if (type === 'email') textToCopy = emp.email;
+            if (type === 'ext') textToCopy = emp.extension;
+            if (type === 'slack') textToCopy = emp.slack;
+
+            if (!textToCopy) return;
+
+            const tempInput = document.createElement('input');
+            tempInput.value = textToCopy;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+
+            showToast(`Copiado: ${textToCopy}`);
+        }
+
+        function handleEditorAuthToggle() {
+            if (appState.isEditMode) {
+                // Lock editor
+                appState.isEditMode = false;
+                updateEditorUINotices();
+                showToast("Modo Lectura Activado");
+            } else {
+                // Open PIN dialog
+                document.getElementById('pinInput').value = '';
+                document.getElementById('pinError').classList.add('hidden');
+                openModal('authModal');
+            }
+        }
+
+        function verifyAuthPIN(event) {
+            event.preventDefault();
+            const pin = document.getElementById('pinInput').value.trim();
+
+            if (pin === EDITOR_PIN) {
+                appState.isEditMode = true;
+                closeModal('authModal');
+                updateEditorUINotices();
+                showToast("¡Modo Editor Desbloqueado!");
+            } else {
+                document.getElementById('pinError').classList.remove('hidden');
+            }
+        }
+
+        function updateEditorUINotices() {
+            const statusText = document.getElementById('editorStatusText');
+            const lockIcon = document.getElementById('editorLockIcon');
+            const btn = document.getElementById('btnToggleEditor');
+            const adminPanel = document.getElementById('adminPanel');
+
+            if (appState.isEditMode) {
+                statusText.textContent = "Modo Editor";
+                lockIcon.className = "fa-solid fa-lock-open text-emerald-600";
+                btn.className = "px-3.5 py-2 text-xs font-semibold rounded-xl border transition duration-200 flex items-center gap-2 bg-emerald-50 border-emerald-300 text-emerald-800 shadow-sm";
+                adminPanel.classList.remove('hidden');
+            } else {
+                statusText.textContent = "Modo Lectura";
+                lockIcon.className = "fa-solid fa-lock text-slate-500";
+                btn.className = "px-3.5 py-2 text-xs font-semibold rounded-xl border transition duration-200 flex items-center gap-2 bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200";
+                adminPanel.classList.add('hidden');
+            }
+        }
+
+        function populateFormDropdowns() {
+            const deptSelect = document.getElementById('formDepartamento');
+            const reportSelect = document.getElementById('formReportaA');
+
+            deptSelect.innerHTML = appState.departamentos.map(d => `
+                <option value="${d.id}">${d.nombre}</option>
+            `).join('');
+
+            const currentEmpId = document.getElementById('formEmpId').value;
+
+            let reportOpts = `<option value="">-- Sin Supervisor (Primer Nivel) --</option>`;
+            appState.empleados.forEach(e => {
+                if (e.id !== currentEmpId) {
+                    reportOpts += `<option value="${e.id}">${e.nombre} (${e.cargo})</option>`;
+                }
+            });
+            reportSelect.innerHTML = reportOpts;
+        }
+
+        function openAddEmployeeModal() {
+            document.getElementById('formModalTitle').innerHTML = `<i class="fa-solid fa-user-plus"></i> Registrar Colaborador`;
+            document.getElementById('formEmpId').value = '';
+            document.getElementById('employeeForm').reset();
+            populateFormDropdowns();
+            openModal('employeeFormModal');
+        }
+
+        function openEditEmployeeFromModal() {
+            const empId = appState.activeModalEmployeeId;
+            closeModal('detailModal');
+            openEditEmployeeModal(empId);
+        }
+
+        function openEditEmployeeModal(employeeId) {
+            const emp = appState.empleados.find(e => e.id === employeeId);
+            if (!emp) return;
+
+            document.getElementById('formModalTitle').innerHTML = `<i class="fa-solid fa-user-pen"></i> Editar Colaborador`;
+            document.getElementById('formEmpId').value = emp.id;
+            populateFormDropdowns();
+
+            document.getElementById('formNombre').value = emp.nombre || '';
+            document.getElementById('formCargo').value = emp.cargo || '';
+            document.getElementById('formDepartamento').value = emp.departamentoId || '';
+            document.getElementById('formReportaA').value = emp.reportaA || '';
+            document.getElementById('formComentario').value = emp.comentario || '';
+            document.getElementById('formEmail').value = emp.email || '';
+            document.getElementById('formExtension').value = emp.extension || '';
+            document.getElementById('formSlack').value = emp.slack || '';
+            document.getElementById('formFunciones').value = emp.funciones ? emp.funciones.join(', ') : '';
+            document.getElementById('formTags').value = emp.tagsBusqueda ? emp.tagsBusqueda.join(', ') : '';
+
+            openModal('employeeFormModal');
+        }
+
+        function saveEmployee(event) {
+            event.preventDefault();
+
+            const empId = document.getElementById('formEmpId').value;
+            const nombre = document.getElementById('formNombre').value.trim();
+            const cargo = document.getElementById('formCargo').value.trim();
+            const departamentoId = document.getElementById('formDepartamento').value;
+            const reportaA = document.getElementById('formReportaA').value || null;
+            const comentario = document.getElementById('formComentario').value.trim();
+            const email = document.getElementById('formEmail').value.trim();
+            const extension = document.getElementById('formExtension').value.trim();
+            const slack = document.getElementById('formSlack').value.trim();
+
+            const funcionesStr = document.getElementById('formFunciones').value.trim();
+            const funciones = funcionesStr ? funcionesStr.split(',').map(s => s.trim()).filter(Boolean) : [];
+
+            const tagsStr = document.getElementById('formTags').value.trim();
+            const tagsBusqueda = tagsStr ? tagsStr.split(',').map(s => s.trim()).filter(Boolean) : [];
+
+            if (empId) {
+                // Update existing
+                const index = appState.empleados.findIndex(e => e.id === empId);
+                if (index !== -1) {
+                    appState.empleados[index] = {
+                        ...appState.empleados[index],
+                        nombre, cargo, departamentoId, reportaA, comentario, email, extension, slack, funciones, tagsBusqueda
+                    };
+                    showToast("Empleado actualizado correctamente");
+                }
+            } else {
+                // Create new
+                const newEmp = {
+                    id: "emp-" + Date.now(),
+                    nombre, cargo, departamentoId, reportaA, comentario, email, extension, slack, funciones, tagsBusqueda
+                };
+                appState.empleados.push(newEmp);
+                showToast("Nuevo empleado registrado");
+            }
+
+            saveToLocalStorage();
+            closeModal('employeeFormModal');
+            renderAll();
+        }
+
+        // Custom Delete flow (No native confirm)
+        function confirmDeleteFromModal() {
+            const empId = appState.activeModalEmployeeId;
+            const emp = appState.empleados.find(e => e.id === empId);
+            if (!emp) return;
+
+            closeModal('detailModal');
+            document.getElementById('confirmDeleteText').textContent = `¿Estás seguro de que deseas eliminar a ${emp.nombre}?`;
+            document.getElementById('btnConfirmDeleteExec').onclick = function() {
+                executeDeleteEmployee(empId);
+            };
+            openModal('confirmDeleteModal');
+        }
+
+        function executeDeleteEmployee(empId) {
+            // Reassign direct reports to the deleted person's manager
+            const deletedEmp = appState.empleados.find(e => e.id === empId);
+            const fallbackManager = deletedEmp ? deletedEmp.reportaA : null;
+
+            appState.empleados.forEach(e => {
+                if (e.reportaA === empId) {
+                    e.reportaA = fallbackManager;
+                }
+            });
+
+            appState.empleados = appState.empleados.filter(e => e.id !== empId);
+            saveToLocalStorage();
+            closeModal('confirmDeleteModal');
+            renderAll();
+            showToast("Empleado eliminado de la estructura");
+        }
+
+        function exportDataJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({
+                departamentos: appState.departamentos,
+                empleados: appState.empleados
+            }, null, 2));
+
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `estructura_empresa_${new Date().toISOString().slice(0,10)}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+
+            showToast("Estructura exportada en JSON");
+        }
+
+        function triggerImportJSON() {
+            document.getElementById('jsonFileInput').click();
+        }
+
+        function importDataJSON(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    if (parsed.departamentos && parsed.empleados) {
+                        appState.departamentos = parsed.departamentos;
+                        appState.empleados = parsed.empleados;
+                        saveToLocalStorage();
+                        renderAll();
+                        showToast("Estructura importada exitosamente");
+                    } else {
+                        showToast("Formato de JSON no válido");
+                    }
+                } catch(err) {
+                    showToast("Error al leer el archivo JSON");
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function openModal(id) {
+            document.getElementById(id).classList.remove('hidden');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        function getInitials(name) {
+            if (!name) return "??";
+            const parts = name.trim().split(' ');
+            if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+            return parts[0].substring(0, 2).toUpperCase();
+        }
+
+        function resetTreeZoom() {
+            const container = document.getElementById('viewTreeContainer');
+            container.scrollLeft = (container.scrollWidth - container.clientWidth) / 2;
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toastNotification');
+            document.getElementById('toastMessage').textContent = msg;
+            
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
