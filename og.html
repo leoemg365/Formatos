@@ -131,52 +131,73 @@
             border-color: #3b82f6 !important;
             box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.25) !important;
         }
+
+        /* Smooth touch scrolling for mobile devices */
+        .touch-scroll {
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Prevent unwanted auto-zoom in iOS Safari on input focus */
+        @media screen and (max-width: 768px) {
+            input, select, textarea {
+                font-size: 16px !important;
+            }
+        }
+
+        /* Hide horizontal scrollbar for clean UI in category pills */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
     </style>
 </head>
-<body class="h-full flex flex-col text-slate-800 font-sans antialiased selection:bg-brand-500 selection:text-white">
+<body class="h-full flex flex-col text-slate-800 font-sans antialiased selection:bg-brand-500 selection:text-white bg-slate-50">
 
     <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16 gap-4">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 gap-2 sm:gap-4">
                 
                 <!-- Logo & Brand -->
-                <div class="flex items-center gap-3 shrink-0">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
-                        <i class="fa-solid font-bold text-lg fa-sitemap"></i>
+                <div class="flex items-center gap-2.5 shrink-0">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
+                        <i class="fa-solid font-bold text-base sm:text-lg fa-sitemap"></i>
                     </div>
                     <div>
-                        <h1 class="font-bold text-lg text-slate-900 leading-tight">OrganiMap</h1>
-                        <p class="text-xs text-slate-500 font-medium">Directorio & Organigrama</p>
+                        <h1 class="font-bold text-base sm:text-lg text-slate-900 leading-tight">OrganiMap</h1>
+                        <p class="text-[10px] sm:text-xs text-slate-500 font-medium hidden sm:block">Directorio & Organigrama</p>
                     </div>
                 </div>
 
                 <!-- Central Smart Search Bar -->
                 <div class="flex-1 max-w-2xl relative">
                     <div class="relative">
-                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                            <i class="fa-solid fa-magnifying-glass"></i>
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                            <i class="fa-solid fa-magnifying-glass text-xs sm:text-sm"></i>
                         </span>
                         <input type="text" id="searchInput" 
-                            placeholder="¿Qué necesitas resolver o a quién buscas? (Ej: activaciones, almacén, vacaciones, laptops)..." 
-                            class="w-full pl-10 pr-10 py-2.5 text-sm bg-slate-100 hover:bg-slate-50 focus:bg-white border border-transparent focus:border-brand-500 rounded-xl transition duration-150 ease-in-out focus:outline-none focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400 font-normal">
-                        <button id="clearSearchBtn" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600">
-                            <i class="fa-solid fa-circle-xmark"></i>
+                            placeholder="¿Qué buscas? (Ej: activaciones, almacén, vacaciones)..." 
+                            class="w-full pl-8 sm:pl-10 pr-8 sm:pr-10 py-2 text-xs sm:text-sm bg-slate-100 hover:bg-slate-50 focus:bg-white border border-transparent focus:border-brand-500 rounded-xl transition duration-150 ease-in-out focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400 font-normal">
+                        <button id="clearSearchBtn" class="hidden absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-400 hover:text-slate-600">
+                            <i class="fa-solid fa-circle-xmark text-sm"></i>
                         </button>
                     </div>
                 </div>
 
                 <!-- Mode Actions & Controls -->
-                <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+                <div class="flex items-center gap-1.5 sm:gap-3 shrink-0">
                     
                     <!-- View Mode Toggle -->
                     <div class="bg-slate-100 p-1 rounded-xl flex items-center border border-slate-200">
                         <button id="btnViewTree" onclick="switchMainView('tree')" title="Vista Organigrama"
-                            class="px-3 py-1.5 text-xs font-semibold rounded-lg transition duration-150 flex items-center gap-1.5 bg-white text-slate-800 shadow-sm">
+                            class="px-2.5 py-1.5 text-xs font-semibold rounded-lg transition duration-150 flex items-center gap-1.5 bg-white text-slate-800 shadow-xs">
                             <i class="fa-solid fa-diagram-project"></i>
                             <span class="hidden md:inline">Árbol</span>
                         </button>
                         <button id="btnViewCards" onclick="switchMainView('cards')" title="Vista Tarjetas"
-                            class="px-3 py-1.5 text-xs font-semibold rounded-lg transition duration-150 flex items-center gap-1.5 text-slate-600 hover:text-slate-900">
+                            class="px-2.5 py-1.5 text-xs font-semibold rounded-lg transition duration-150 flex items-center gap-1.5 text-slate-600 hover:text-slate-900">
                             <i class="fa-solid fa-id-card"></i>
                             <span class="hidden md:inline">Tarjetas</span>
                         </button>
@@ -184,7 +205,7 @@
 
                     <!-- Editor Lock / Unlock Button -->
                     <button id="btnToggleEditor" onclick="handleEditorAuthToggle()"
-                        class="px-3.5 py-2 text-xs font-semibold rounded-xl border transition duration-200 flex items-center gap-2 bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200">
+                        class="px-2.5 sm:px-3.5 py-2 text-xs font-semibold rounded-xl border transition duration-200 flex items-center gap-1.5 sm:gap-2 bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200">
                         <i id="editorLockIcon" class="fa-solid fa-lock text-slate-500"></i>
                         <span id="editorStatusText" class="hidden sm:inline">Modo Lectura</span>
                     </button>
@@ -194,25 +215,25 @@
         </div>
     </header>
 
-    <div class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col md:flex-row gap-6">
+    <div class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 flex flex-col md:flex-row gap-4 sm:gap-6">
 
         <!-- Sidebar / Department Filters -->
-        <aside class="w-full md:w-64 shrink-0 flex flex-col gap-6">
+        <aside class="w-full md:w-64 shrink-0 flex flex-col gap-4 sm:gap-6">
             
-            <!-- Quick Category Filters -->
-            <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm">
-                <div class="flex items-center justify-between mb-3">
+            <!-- Quick Category Filters (Horizontally scrollable on mobile screens for better UX) -->
+            <div class="bg-white rounded-2xl p-3 sm:p-4 border border-slate-200/80 shadow-xs">
+                <div class="flex items-center justify-between mb-2 sm:mb-3">
                     <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Departamentos</h2>
                     <span id="totalDeptBadge" class="text-xs bg-slate-100 text-slate-600 font-semibold px-2 py-0.5 rounded-full">0</span>
                 </div>
-                <nav id="departmentList" class="space-y-1">
+                <nav id="departmentList" class="flex md:flex-col overflow-x-auto md:overflow-visible gap-1.5 pb-1 md:pb-0 no-scrollbar touch-scroll">
                     <!-- Dynamic Department Items inserted via JS -->
                 </nav>
             </div>
 
             <!-- Frequent Task Suggestions -->
-            <div class="bg-gradient-to-br from-brand-50 to-indigo-50/50 rounded-2xl p-4 border border-brand-100/60">
-                <h3 class="text-xs font-bold uppercase tracking-wider text-brand-800 mb-2.5 flex items-center gap-1.5">
+            <div class="bg-gradient-to-br from-brand-50 to-indigo-50/50 rounded-2xl p-3.5 sm:p-4 border border-brand-100/60">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-brand-800 mb-2 flex items-center gap-1.5">
                     <i class="fa-solid fa-bolt text-amber-500"></i> Búsquedas Frecuentes
                 </h3>
                 <div class="flex flex-wrap gap-1.5" id="frequentTagsContainer">
@@ -221,20 +242,27 @@
             </div>
 
             <!-- Editor Admin Controls Panel (Hidden in Read Mode) -->
-            <div id="adminPanel" class="hidden bg-emerald-50/60 rounded-2xl p-4 border border-emerald-200/80 space-y-3">
+            <div id="adminPanel" class="hidden bg-emerald-50/60 rounded-2xl p-3.5 sm:p-4 border border-emerald-200/80 space-y-3">
                 <div class="flex items-center justify-between">
                     <span class="text-xs font-bold text-emerald-800 uppercase tracking-wider flex items-center gap-1.5">
                         <i class="fa-solid fa-sliders text-emerald-600"></i> Panel Editor
                     </span>
                     <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-100 text-emerald-800">Activo</span>
                 </div>
-                <p class="text-xs text-emerald-700">Tienes acceso de edición para modificar la estructura y empleados.</p>
+                <p class="text-[11px] sm:text-xs text-emerald-700">Edita la estructura, empleados y departamentos.</p>
                 
                 <div class="pt-1 space-y-2">
-                    <button onclick="openAddEmployeeModal()" 
-                        class="w-full py-2 px-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold shadow-sm transition flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-user-plus"></i> Nuevo Empleado
-                    </button>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="openAddEmployeeModal()" 
+                            class="py-2 px-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold shadow-xs transition flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-user-plus"></i> Empleado
+                        </button>
+                        <button onclick="openAddDeptModal()" 
+                            class="py-2 px-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold shadow-xs transition flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-folder-plus"></i> Depto.
+                        </button>
+                    </div>
+
                     <div class="grid grid-cols-2 gap-2">
                         <button onclick="exportDataJSON()" 
                             class="py-1.5 px-2 bg-white hover:bg-emerald-100 border border-emerald-300 text-emerald-800 rounded-lg text-xs font-medium transition flex items-center justify-center gap-1">
@@ -265,25 +293,25 @@
             </div>
 
             <!-- View 1: Tree / Hierarchy Canvas -->
-            <div id="viewTreeContainer" class="flex-1 bg-white rounded-2xl border border-slate-200/80 p-6 overflow-x-auto min-h-[500px] flex flex-col justify-between shadow-sm relative">
+            <div id="viewTreeContainer" class="flex-1 bg-white rounded-2xl border border-slate-200/80 p-3 sm:p-6 overflow-x-auto min-h-[450px] sm:min-h-[500px] flex flex-col justify-between shadow-xs relative touch-scroll">
                 
                 <!-- Tree Controls -->
-                <div class="absolute top-4 right-4 z-10 flex items-center gap-2 bg-slate-100/90 backdrop-blur p-1 rounded-xl border border-slate-200 text-slate-600">
-                    <button onclick="resetTreeZoom()" class="px-2.5 py-1 text-xs font-medium hover:bg-white rounded-lg transition" title="Restablecer Vista">
+                <div class="absolute top-3 right-3 z-10 flex items-center gap-1.5 bg-slate-100/90 backdrop-blur p-1 rounded-xl border border-slate-200 text-slate-600">
+                    <button onclick="resetTreeZoom()" class="px-2 py-1 text-[11px] sm:text-xs font-medium hover:bg-white rounded-lg transition" title="Restablecer Vista">
                         <i class="fa-solid fa-expand"></i> Centrar
                     </button>
-                    <button onclick="expandAllNodes()" class="px-2.5 py-1 text-xs font-medium hover:bg-white rounded-lg transition" title="Expandir Todos">
+                    <button onclick="expandAllNodes()" class="px-2 py-1 text-[11px] sm:text-xs font-medium hover:bg-white rounded-lg transition" title="Expandir Todos">
                         <i class="fa-solid fa-folder-open"></i> Expandir
                     </button>
                 </div>
 
                 <!-- Tree Wrapper -->
-                <div class="tf-tree min-w-max py-8 mx-auto" id="orgTreeContent">
+                <div class="tf-tree min-w-max py-6 sm:py-8 mx-auto" id="orgTreeContent">
                     <!-- Dynamic Tree Hierarchy rendered via JS -->
                 </div>
 
-                <div class="text-center text-xs text-slate-400 mt-4 border-t border-slate-100 pt-3">
-                    <i class="fa-solid fa-circle-info mr-1"></i> Haz clic en cualquier tarjeta para ver responsabilidades, contacto y equipo directo.
+                <div class="text-center text-[11px] sm:text-xs text-slate-400 mt-4 border-t border-slate-100 pt-3">
+                    <i class="fa-solid fa-hand-pointer mr-1"></i> Toca o haz clic en cualquier tarjeta para ver su ficha completa.
                 </div>
             </div>
 
@@ -497,63 +525,63 @@
                 <!-- Contact Details -->
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Correo Electrónico</label>
-                        <input type="email" id="formEmail" placeholder="carla@empresa.com"
-                            class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none">
-                    </div>
-                    <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Extensión</label>
-                        <input type="text" id="formExtension" placeholder="204"
-                            class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none">
-                    </div>
-                    <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Teams / Slack</label>
-                        <input type="text" id="formSlack" placeholder="@carla"
-                            class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none">
-                    </div>
+    <!-- MODAL 5: Add / Edit Department Modal -->
+    <div id="departmentFormModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-md w-full overflow-hidden shadow-2xl border border-slate-100">
+            <div class="bg-indigo-900 text-white px-5 py-3.5 flex items-center justify-between">
+                <h3 id="deptFormTitle" class="font-bold text-sm sm:text-base flex items-center gap-2">
+                    <i class="fa-solid fa-folder-plus"></i> Registrar Departamento
+                </h3>
+                <button onclick="closeModal('departmentFormModal')" class="text-slate-300 hover:text-white">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <form id="departmentForm" onsubmit="saveDepartment(event)" class="p-5 space-y-4 text-xs">
+                <input type="hidden" id="formDeptId">
+
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Nombre del Departamento *</label>
+                    <input type="text" id="formDeptNombre" required placeholder="Ej: Operaciones & Calidad"
+                        class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-brand-500 focus:bg-white focus:outline-none">
                 </div>
 
-                <!-- Functions (comma separated or multi-line) -->
                 <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Funciones Específicas (Separadas por comas)</label>
-                    <input type="text" id="formFunciones" placeholder="Atención de tickets, Activaciones de cuenta, Validación de licencias"
-                        class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none">
-                </div>
-
-                <!-- Tags -->
-                <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Palabras Clave de Búsqueda (Separadas por comas)</label>
-                    <input type="text" id="formTags" placeholder="activaciones, accesos, contraseñas, soporte"
-                        class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                    <label class="block font-semibold text-slate-700 mb-1.5">Color Distintivo *</label>
+                    <div class="flex items-center gap-3">
+                        <input type="color" id="formDeptColor" value="#3b82f6" 
+                            class="w-10 h-10 rounded-xl cursor-pointer border border-slate-300 p-0.5 bg-white">
+                        <span class="text-slate-500 text-[11px]">Selecciona un color para identificar este departamento en la estructura.</span>
+                    </div>
                 </div>
 
                 <div class="pt-3 border-t border-slate-200 flex justify-end gap-2">
-                    <button type="button" onclick="closeModal('employeeFormModal')" class="px-4 py-2 font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl">
+                    <button type="button" onclick="closeModal('departmentFormModal')" class="px-4 py-2 font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl">
                         Cancelar
                     </button>
-                    <button type="submit" class="px-5 py-2 font-semibold bg-brand-600 hover:bg-brand-700 text-white rounded-xl shadow-sm">
-                        Guardar Cambios
+                    <button type="submit" class="px-5 py-2 font-semibold bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-xs">
+                        Guardar Departamento
                     </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- MODAL 4: Custom Delete Prompt Modal (No native confirm alert) -->
-    <div id="confirmDeleteModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <!-- MODAL 6: Custom Delete Department Confirmation -->
+    <div id="confirmDeleteDeptModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 text-center space-y-4">
             <div class="w-12 h-12 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto text-xl">
-                <i class="fa-solid fa-triangle-exclamation"></i>
+                <i class="fa-solid fa-folder-minus"></i>
             </div>
             <div>
-                <h3 class="text-base font-bold text-slate-900">¿Eliminar Colaborador?</h3>
-                <p id="confirmDeleteText" class="text-xs text-slate-500 mt-1">Esta acción no se puede deshacer.</p>
+                <h3 class="text-base font-bold text-slate-900">¿Eliminar Departamento?</h3>
+                <p id="confirmDeleteDeptText" class="text-xs text-slate-500 mt-1">Los empleados asignados pasarán a estado sin departamento.</p>
             </div>
             <div class="flex gap-2">
-                <button onclick="closeModal('confirmDeleteModal')" class="flex-1 py-2 text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl">
+                <button onclick="closeModal('confirmDeleteDeptModal')" class="flex-1 py-2 text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl">
                     Cancelar
                 </button>
-                <button id="btnConfirmDeleteExec" class="flex-1 py-2 text-xs font-semibold bg-rose-600 hover:bg-rose-700 text-white rounded-xl shadow-sm">
+                <button id="btnConfirmDeleteDeptExec" class="flex-1 py-2 text-xs font-semibold bg-rose-600 hover:bg-rose-700 text-white rounded-xl shadow-xs">
                     Eliminar
                 </button>
             </div>
@@ -765,11 +793,11 @@
 
             let html = `
                 <button onclick="filterByDept('ALL')" 
-                    class="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold transition flex items-center justify-between ${appState.selectedDept === 'ALL' ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'}">
-                    <span class="flex items-center gap-2">
-                        <i class="fa-solid fa-layer-group text-xs"></i> Toda la Empresa
+                    class="shrink-0 text-left px-3 py-1.5 sm:py-2 rounded-xl text-xs font-semibold transition flex items-center gap-2 ${appState.selectedDept === 'ALL' ? 'bg-slate-900 text-white shadow-xs' : 'bg-slate-50 md:bg-transparent text-slate-600 hover:bg-slate-100'}">
+                    <span class="flex items-center gap-2 whitespace-nowrap">
+                        <i class="fa-solid fa-layer-group text-xs"></i> Todos
                     </span>
-                    <span class="px-2 py-0.5 rounded-full text-[10px] ${appState.selectedDept === 'ALL' ? 'bg-slate-800 text-slate-200' : 'bg-slate-100 text-slate-500'}">
+                    <span class="px-2 py-0.5 rounded-full text-[10px] ${appState.selectedDept === 'ALL' ? 'bg-slate-800 text-slate-200' : 'bg-slate-200/80 text-slate-600'}">
                         ${appState.empleados.length}
                     </span>
                 </button>
@@ -780,20 +808,102 @@
                 const isSelected = appState.selectedDept === dept.id;
 
                 html += `
-                    <button onclick="filterByDept('${dept.id}')" 
-                        class="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold transition flex items-center justify-between ${isSelected ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'}">
-                        <span class="flex items-center gap-2 truncate">
+                    <div class="shrink-0 flex items-center group/item ${isSelected ? 'bg-slate-900 text-white shadow-xs' : 'bg-slate-50 md:bg-transparent text-slate-600 hover:bg-slate-100'} rounded-xl px-2.5 sm:px-3 py-1.5 sm:py-2 transition">
+                        <button onclick="filterByDept('${dept.id}')" 
+                            class="text-left text-xs font-semibold flex items-center gap-2 whitespace-nowrap min-w-0 flex-1">
                             <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${dept.color}"></span>
                             <span class="truncate">${dept.nombre}</span>
-                        </span>
-                        <span class="px-2 py-0.5 rounded-full text-[10px] shrink-0 ${isSelected ? 'bg-slate-800 text-slate-200' : 'bg-slate-100 text-slate-500'}">
-                            ${count}
-                        </span>
-                    </button>
+                            <span class="ml-1 px-2 py-0.5 rounded-full text-[10px] shrink-0 ${isSelected ? 'bg-slate-800 text-slate-200' : 'bg-slate-200/80 text-slate-600'}">
+                                ${count}
+                            </span>
+                        </button>
+                        
+                        ${appState.isEditMode ? `
+                            <button onclick="openEditDeptModal('${dept.id}')" title="Editar Departamento" class="ml-1.5 p-1 text-slate-400 hover:text-amber-400 transition">
+                                <i class="fa-solid fa-pen text-[10px]"></i>
+                            </button>
+                            <button onclick="confirmDeleteDept('${dept.id}')" title="Eliminar Departamento" class="p-1 text-slate-400 hover:text-rose-400 transition">
+                                <i class="fa-solid fa-trash text-[10px]"></i>
+                            </button>
+                        ` : ''}
+                    </div>
                 `;
             });
 
             deptListContainer.innerHTML = html;
+        }
+
+        // --- DEPARTMENT MANAGEMENT FUNCTIONS ---
+        function openAddDeptModal() {
+            document.getElementById('deptFormTitle').innerHTML = `<i class="fa-solid fa-folder-plus"></i> Registrar Departamento`;
+            document.getElementById('formDeptId').value = '';
+            document.getElementById('departmentForm').reset();
+            document.getElementById('formDeptColor').value = '#3b82f6';
+            openModal('departmentFormModal');
+        }
+
+        function openEditDeptModal(deptId) {
+            const dept = appState.departamentos.find(d => d.id === deptId);
+            if (!dept) return;
+
+            document.getElementById('deptFormTitle').innerHTML = `<i class="fa-solid fa-folder-pen"></i> Editar Departamento`;
+            document.getElementById('formDeptId').value = dept.id;
+            document.getElementById('formDeptNombre').value = dept.nombre;
+            document.getElementById('formDeptColor').value = dept.color || '#3b82f6';
+            openModal('departmentFormModal');
+        }
+
+        function saveDepartment(event) {
+            event.preventDefault();
+            const id = document.getElementById('formDeptId').value;
+            const nombre = document.getElementById('formDeptNombre').value.trim();
+            const color = document.getElementById('formDeptColor').value;
+
+            if (id) {
+                // Edit existing
+                const idx = appState.departamentos.findIndex(d => d.id === id);
+                if (idx !== -1) {
+                    appState.departamentos[idx].nombre = nombre;
+                    appState.departamentos[idx].color = color;
+                    showToast("Departamento actualizado");
+                }
+            } else {
+                // Create new
+                const newDept = {
+                    id: "dep-" + Date.now(),
+                    nombre: nombre,
+                    color: color,
+                    icon: "fa-building"
+                };
+                appState.departamentos.push(newDept);
+                showToast("Nuevo departamento creado");
+            }
+
+            saveToLocalStorage();
+            closeModal('departmentFormModal');
+            renderAll();
+        }
+
+        function confirmDeleteDept(deptId) {
+            const dept = appState.departamentos.find(d => d.id === deptId);
+            if (!dept) return;
+
+            document.getElementById('confirmDeleteDeptText').textContent = `¿Seguro de eliminar "${dept.nombre}"? Los empleados pasarán a sin departamento.`;
+            document.getElementById('btnConfirmDeleteDeptExec').onclick = function() {
+                executeDeleteDept(deptId);
+            };
+            openModal('confirmDeleteDeptModal');
+        }
+
+        function executeDeleteDept(deptId) {
+            appState.departamentos = appState.departamentos.filter(d => d.id !== deptId);
+            if (appState.selectedDept === deptId) {
+                appState.selectedDept = 'ALL';
+            }
+            saveToLocalStorage();
+            closeModal('confirmDeleteDeptModal');
+            renderAll();
+            showToast("Departamento eliminado");
         }
 
         function renderFrequentTags() {
