@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Tienda en línea — plantilla editable. Pedidos por WhatsApp.">
+<!-- El título real lo asigna JavaScript desde CONFIG (Zona de configuración) -->
+<title>Mi Tienda</title>
+
+<!-- ══════════════ TIPOGRAFÍAS ══════════════
+     Bricolage Grotesque → títulos con carácter
+     Instrument Sans     → texto de lectura        -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ══════════════════════════════════════════════════════════
+   1) VARIABLES BASE
+   Los colores de --primario / --acento / --tinta / --papel
+   se sobreescriben desde CONFIG.colores (ver final del archivo)
+   ══════════════════════════════════════════════════════════ */
+:root{
+  --primario:#1c5b3f;          /* color principal            */
+  --acento:#ff6b35;            /* color de acción / botones  */
+  --amarillo:#ffd23f;          /* detalles, etiquetas        */
+  --tinta:#182720;             /* texto y bordes             */
+  --papel:#f2f4ec;             /* fondo general              */
+  --blanco:#fffdf8;            /* fondo de tarjetas          */
+  --wa:#25d366;                /* verde oficial de WhatsApp  */
+
+  /* tonos derivados (se calculan solos a partir de los base) */
+  --primario-claro:color-mix(in srgb, var(--primario) 12%, var(--blanco));
+  --acento-claro:  color-mix(in srgb, var(--acento) 16%,  var(--blanco));
+  --amarillo-claro:color-mix(in srgb, var(--amarillo) 26%, var(--blanco));
+  --tinta-suave:   color-mix(in srgb, var(--tinta) 62%, var(--papel));
+
+  --borde:2px solid var(--tinta);
+  --sombra:6px 6px 0 var(--tinta);
+  --radio:16px;
+  --alto-cabecera:72px;
+  --fuente-titulo:'Bricolage Grotesque',sans-serif;
+  --fuente-texto:'Instrument Sans',sans-serif;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--fuente-texto);
+  background:var(--papel);
+  color:var(--tinta);
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+body.bloqueado{overflow:hidden}
+img{max-width:100%;display:block}
+button{font-family:inherit;cursor:pointer}
+input,select,textarea{font-family:inherit;font-size:1rem;color:var(--tinta)}
+::selection{background:var(--acento);color:#fff}
+:focus-visible{outline:3px solid var(--acento);outline-offset:3px;border-radius:6px}
+section{scroll-margin-top:calc(var(--alto-cabecera) + 78px)}
+
+/* ══════════════════════════════════════════════════════════
+   2) UTILIDADES / COMPONENTES REUTILIZADOS
+   ══════════════════════════════════════════════════════════ */
+.contenedor{width:min(1180px,92%);margin-inline:auto}
+
+/* Botones con estilo "sello": borde grueso + sombra dura */
+.btn{
+  display:inline-flex;align-items:center;gap:.5rem;justify-content:center;
+  font-family:var(--fuente-titulo);font-weight:700;font-size:.98rem;
+  border:var(--borde);border-radius:999px;
+  padding:.8rem 1.5rem;background:var(--blanco);color:var(--tinta);
+  box-shadow:4px 4px 0 var(--tinta);
+  transition:transform .18s ease, box-shadow .18s ease, background .18s ease;
+  text-decoration:none;
+}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--tinta)}
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--tinta)}
+.btn-oscuro{background:var(--tinta);color:var(--papel)}
+.btn-oscuro:hover{background:var(--primario)}
+.btn-acento{background:var(--acento);color:#fff}
+.btn-wa{background:var(--wa);color:#fff}
+.btn[disabled]{opacity:.45;cursor:not-allowed;transform:none!important;box-shadow:4px 4px 0 var(--tinta)}
+
+/* Etiquetas / mini insignias */
+.kicker{
+  display:inline-block;font-family:var(--fuente-titulo);font-weight:800;
+  font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;
+  background:var(--amarillo);border:var(--borde);border-radius:999px;
+  padding:.35rem .9rem;transform:rotate(-1.5deg);
+}
+
+/* Animación de aparición al hacer scroll (la activa JS) */
+.revelar{opacity:0;transform:translateY(26px);transition:opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1)}
+.revelar.visible{opacity:1;transform:none}
+
+@keyframes aparecer{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@keyframes flotar{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes girar{to{transform:rotate(360deg)}}
+@keyframes deslizar{to{transform:translateX(-50%)}}
+@keyframes latido{0%{box-shadow:0 0 0 0 rgba(37,211,102,.55)}100%{box-shadow:0 0 0 22px rgba(37,211,102,0)}}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.45)}100%{transform:scale(1)}}
+@keyframes sacudir{10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(3px)}30%,70%{transform:translateX(-5px)}50%{transform:translateX(4px)}}
+
+/* ══════════════════════════════════════════════════════════
+   3) BARRA DE ANUNCIOS (cinta superior en movimiento)
+   ══════════════════════════════════════════════════════════ */
+.anuncios{
+  background:var(--tinta);color:var(--papel);overflow:hidden;
+  border-bottom:var(--borde);
+}
+.anuncios__pista{
+  display:flex;gap:3rem;width:max-content;padding:.5rem 0;
+  font-family:var(--fuente-titulo);font-weight:700;font-size:.8rem;
+  letter-spacing:.14em;text-transform:uppercase;
+  animation:deslizar 26s linear infinite;
+}
+.anuncios__pista span{display:flex;align-items:center;gap:3rem;white-space:nowrap}
+.anuncios:hover .anuncios__pista{animation-play-state:paused}
+
+/* ══════════════════════════════════════════════════════════
+   4) CABECERA
+   ══════════════════════════════════════════════════════════ */
+.cabecera{
+  position:sticky;top:0;z-index:60;
+  background:var(--papel);border-bottom:var(--borde);
+  transition:box-shadow .3s ease;
+}
+.cabecera.flotando{box-shadow:0 10px 30px rgba(0,0,0,.16)}
+.cabecera__fila{
+  height:var(--alto-cabecera);
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;
+}
+.marca{display:flex;align-items:center;gap:.7rem;text-decoration:none;color:var(--tinta)}
+.marca__sello{
+  width:46px;height:46px;display:grid;place-items:center;
+  background:var(--primario);color:#fff;border:var(--borde);
+  border-radius:14px;font-size:1.5rem;transform:rotate(-4deg);
+  transition:transform .25s ease;
+}
+.marca:hover .marca__sello{transform:rotate(6deg) scale(1.06)}
+.marca__texto{display:flex;flex-direction:column;line-height:1.05}
+.marca__nombre{font-family:var(--fuente-titulo);font-weight:800;font-size:1.3rem;letter-spacing:.02em}
+.marca__eslogan{font-size:.68rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--primario)}
+
+.nav{display:flex;gap:1.6rem}
+.nav a{
+  position:relative;color:var(--tinta);text-decoration:none;
+  font-weight:600;font-size:.95rem;padding:.3rem 0;
+}
+.nav a::after{
+  content:"";position:absolute;left:0;bottom:0;height:3px;width:100%;
+  background:var(--acento);transform:scaleX(0);transform-origin:left;
+  transition:transform .25s ease;border-radius:2px;
+}
+.nav a:hover::after{transform:scaleX(1)}
+
+/* Botón del carrito con contador */
+.boton-carrito{
+  position:relative;display:inline-flex;align-items:center;gap:.55rem;
+  background:var(--tinta);color:var(--papel);border:var(--borde);
+  border-radius:999px;padding:.62rem 1.15rem;font-weight:700;
+  box-shadow:3px 3px 0 var(--acento);
+  transition:transform .18s ease, box-shadow .18s ease;
+}
+.boton-carrito:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--acento)}
+.boton-carrito__contador{
+  min-width:24px;height:24px;padding:0 6px;display:grid;place-items:center;
+  background:var(--acento);color:#fff;border-radius:999px;
+  font-size:.8rem;font-weight:800;
+}
+.boton-carrito__contador.pop{animation:pop .4s ease}
+
+/* ══════════════════════════════════════════════════════════
+   5) PORTADA (escaparate de apertura)
+   ══════════════════════════════════════════════════════════ */
+.portada{
+  position:relative;overflow:hidden;
+  padding:clamp(2.5rem,6vw,5rem) 0 clamp(3rem,7vw,5.5rem);
+  /* fondo de puntitos tipo papel Kraft */
+  background-image:radial-gradient(color-mix(in srgb,var(--tinta) 14%, transparent) 1.4px, transparent 1.4px);
+  background-size:22px 22px;
+}
+.portada__circulo{ /* círculo decorativo de fondo */
+  position:absolute;width:520px;height:520px;border-radius:50%;
+  border:var(--borde);background:var(--acento-claro);
+  right:-140px;top:-140px;z-index:0;
+}
+.portada__circulo--dos{
+  width:220px;height:220px;background:var(--amarillo);
+  left:-70px;bottom:-60px;right:auto;top:auto;
+}
+.portada__rejilla{
+  position:relative;z-index:1;
+  display:grid;grid-template-columns:1.05fr .95fr;gap:3rem;align-items:center;
+}
+.portada__titulo{
+  font-family:var(--fuente-titulo);font-weight:800;
+  font-size:clamp(2.5rem,5.4vw,4.4rem);line-height:1.02;letter-spacing:-.01em;
+  margin:1.1rem 0 1rem;
+}
+.resaltado{position:relative;z-index:0;white-space:nowrap}
+.resaltado::before{ /* marcador tipo plumón detrás de la palabra */
+  content:"";position:absolute;inset:62% -6px -6px;
+  background:var(--acento);z-index:-1;transform:rotate(-1.2deg);
+}
+.portada__sub{max-width:52ch;font-size:1.1rem;color:var(--tinta-suave);margin-bottom:1.7rem}
+.portada__acciones{display:flex;flex-wrap:wrap;gap:.9rem;margin-bottom:2.2rem}
+.portada__cifras{display:flex;flex-wrap:wrap}
+.cifra{padding:.2rem 1.4rem;border-left:var(--borde)}
+.cifra:first-child{border-left:0;padding-left:0}
+.cifra b{display:block;font-family:var(--fuente-titulo);font-weight:800;font-size:1.55rem;color:var(--primario)}
+.cifra small{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--tinta-suave)}
+
+/* Escena derecha: producto destacado en "postal" */
+.escena{position:relative;justify-self:center;animation:aparecer .7s ease .15s backwards}
+.postal{
+  position:relative;width:min(360px,88vw);
+  background:var(--blanco);border:var(--borde);border-radius:20px;
+  box-shadow:10px 10px 0 var(--tinta);
+  padding:1.4rem;transform:rotate(-3deg);
+  transition:transform .35s ease, box-shadow .35s ease;
+}
+.postal:hover{transform:rotate(0) translateY(-8px);box-shadow:14px 14px 0 var(--tinta)}
+.postal__etiqueta{
+  position:absolute;top:-16px;left:22px;z-index:2;
+  background:var(--amarillo);border:var(--borde);border-radius:999px;
+  padding:.3rem .9rem;font-family:var(--fuente-titulo);font-weight:800;font-size:.78rem;
+  transform:rotate(-3deg);
+}
+.postal__visual{
+  height:200px;display:grid;place-items:center;
+  background:var(--acento-claro);border:var(--borde);border-radius:14px;
+  overflow:hidden;margin-bottom:1rem;
+}
+.postal__visual img{width:100%;height:100%;object-fit:cover}
+.postal__emoji{font-size:92px;filter:drop-shadow(4px 6px 0 rgba(0,0,0,.14));animation:flotar 3.4s ease-in-out infinite}
+.postal__nombre{font-family:var(--fuente-titulo);font-weight:800;font-size:1.25rem}
+.postal__desc{font-size:.92rem;color:var(--tinta-suave);margin:.3rem 0 .9rem}
+.postal__fila{display:flex;align-items:center;justify-content:space-between;gap:.8rem;margin-bottom:1rem}
+.postal__precio{font-family:var(--fuente-titulo);font-weight:800;font-size:1.5rem}
+.postal__precio s{font-size:.95rem;color:var(--tinta-suave);font-weight:500;margin-left:.4rem}
+.postal .btn{width:100%}
+
+/* sello giratorio "envío gratis…" */
+.sello-giratorio{position:absolute;left:-46px;bottom:-40px;width:120px;height:120px;z-index:3}
+.sello-giratorio svg{width:100%;height:100%;animation:girar 14s linear infinite}
+.sello-giratorio text{font-family:var(--fuente-titulo);font-weight:800;font-size:8.4px;letter-spacing:1.6px;fill:var(--tinta)}
+.sello-giratorio__centro{
+  position:absolute;inset:30px;display:grid;place-items:center;
+  background:var(--amarillo);border:var(--borde);border-radius:50%;font-size:1.6rem;
+}
+
+/* etiqueta flotante de precio */
+.sticker{
+  position:absolute;top:-26px;right:-24px;z-index:3;
+  background:var(--acento);color:#fff;border:var(--borde);border-radius:50%;
+  width:92px;height:92px;display:grid;place-items:center;text-align:center;
+  font-family:var(--fuente-titulo);font-weight:800;font-size:.85rem;line-height:1.1;
+  transform:rotate(8deg);animation:flotar 3s ease-in-out infinite reverse;
+  box-shadow:4px 4px 0 var(--tinta);
+}
+
+/* ══════════════════════════════════════════════════════════
+   6) CATÁLOGO: filtros + rejilla de productos
+   ══════════════════════════════════════════════════════════ */
+.barra-filtros{
+  position:sticky;top:var(--alto-cabecera);z-index:40;
+  background:var(--papel);border-block:var(--borde);
+}
+.barra-filtros__fila{
+  display:flex;align-items:center;gap:1rem;flex-wrap:wrap;padding:.85rem 0;
+}
+.chips{display:flex;gap:.55rem;overflow-x:auto;scrollbar-width:none;flex:1;min-width:240px}
+.chips::-webkit-scrollbar{display:none}
+.chip{
+  flex-shrink:0;border:var(--borde);border-radius:999px;background:var(--blanco);
+  padding:.42rem 1rem;font-weight:700;font-size:.88rem;
+  transition:background .2s,color .2s,transform .2s;
+}
+.chip:hover{transform:translateY(-2px)}
+.chip.activo{background:var(--primario);color:#fff}
+.buscador{
+  display:flex;align-items:center;gap:.45rem;
+  background:var(--blanco);border:var(--borde);border-radius:999px;padding:.4rem .95rem;
+}
+.buscador input{border:0;background:transparent;outline:0;width:160px;font-size:.92rem}
+.orden{
+  border:var(--borde);border-radius:999px;background:var(--blanco);
+  padding:.5rem .9rem;font-weight:600;font-size:.88rem;
+}
+
+.catalogo{padding:clamp(2.5rem,6vw,4.5rem) 0}
+.catalogo__encabezado{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;margin-bottom:2rem;flex-wrap:wrap}
+.catalogo__titulo{font-family:var(--fuente-titulo);font-weight:800;font-size:clamp(1.9rem,3.6vw,2.8rem);line-height:1.05;margin-top:.7rem}
+.catalogo__conteo{font-weight:700;color:var(--primario);background:var(--primario-claro);border:var(--borde);border-radius:999px;padding:.4rem 1rem;font-size:.9rem}
+
+.rejilla{display:grid;grid-template-columns:repeat(auto-fill,minmax(245px,1fr));gap:1.6rem}
+
+/* Tarjeta de producto */
+.tarjeta{
+  position:relative;display:flex;flex-direction:column;
+  background:var(--blanco);border:var(--borde);border-radius:var(--radio);
+  overflow:hidden;box-shadow:4px 4px 0 var(--tinta);
+  transition:transform .25s ease, box-shadow .25s ease;
+}
+.tarjeta:hover{transform:translateY(-7px);box-shadow:9px 9px 0 var(--tinta)}
+/* fondos del área visual alternados para dar ritmo al mosaico */
+.tarjeta:nth-child(4n+1) .tarjeta__visual{background:var(--primario-claro)}
+.tarjeta:nth-child(4n+2) .tarjeta__visual{background:var(--acento-claro)}
+.tarjeta:nth-child(4n+3) .tarjeta__visual{background:var(--amarillo-claro)}
+.tarjeta:nth-child(4n+4) .tarjeta__visual{background:color-mix(in srgb,var(--primario) 8%, var(--amarillo-claro))}
+.tarjeta__visual{
+  position:relative;height:172px;display:grid;place-items:center;
+  border-bottom:var(--borde);cursor:pointer;
+}
+.tarjeta__visual img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .4s ease}
+.tarjeta__emoji{font-size:72px;transition:transform .35s cubic-bezier(.34,1.56,.64,1);filter:drop-shadow(3px 4px 0 rgba(0,0,0,.12))}
+.tarjeta:hover .tarjeta__emoji{transform:scale(1.16) rotate(-7deg)}
+.tarjeta:hover .tarjeta__visual img{transform:scale(1.06)}
+
+/* insignias de la tarjeta */
+.insignia{
+  position:absolute;top:12px;left:12px;z-index:2;
+  border:var(--borde);border-radius:999px;padding:.22rem .7rem;
+  font-family:var(--fuente-titulo);font-weight:800;font-size:.7rem;letter-spacing:.06em;
+  transform:rotate(-3deg);background:var(--amarillo);
+}
+.insignia--oferta{background:var(--acento);color:#fff}
+.insignia--nuevo{background:var(--primario);color:#fff}
+.descuento{
+  position:absolute;top:12px;right:12px;z-index:2;
+  width:48px;height:48px;border-radius:50%;display:grid;place-items:center;
+  background:var(--tinta);color:var(--amarillo);border:2px solid var(--amarillo);
+  font-family:var(--fuente-titulo);font-weight:800;font-size:.8rem;transform:rotate(6deg);
+}
+.tarjeta__cuerpo{display:flex;flex-direction:column;flex:1;padding:1rem 1.1rem 1.15rem}
+.tarjeta__cat{font-size:.68rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--primario)}
+.tarjeta__nombre{font-family:var(--fuente-titulo);font-weight:800;font-size:1.12rem;margin:.25rem 0 .3rem;line-height:1.2}
+.tarjeta__desc{
+  font-size:.88rem;color:var(--tinta-suave);margin-bottom:.8rem;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+.tarjeta__precios{display:flex;align-items:baseline;gap:.5rem;margin-bottom:.35rem;margin-top:auto}
+.precio{font-family:var(--fuente-titulo);font-weight:800;font-size:1.3rem}
+.precio-antes{color:var(--tinta-suave);text-decoration:line-through;font-size:.9rem}
+.stock-bajo{font-size:.78rem;font-weight:700;color:var(--acento);margin-bottom:.6rem}
+.tarjeta .btn{width:100%;padding:.68rem 1rem;font-size:.92rem}
+
+/* mensaje cuando no hay resultados */
+.sin-resultados{
+  grid-column:1/-1;text-align:center;padding:3.5rem 1rem;
+  border:2px dashed var(--tinta);border-radius:var(--radio);
+}
+.sin-resultados span{font-size:3rem;display:block;margin-bottom:.6rem}
+
+/* ══════════════════════════════════════════════════════════
+   7) CÓMO FUNCIONA (pasos del pedido)
+   ══════════════════════════════════════════════════════════ */
+.pasos{background:var(--tinta);color:var(--papel);padding:clamp(3rem,7vw,5rem) 0;position:relative;overflow:hidden}
+.pasos::before{ /* sello decorativo gigante de fondo */
+  content:"☕";position:absolute;font-size:20rem;opacity:.06;right:-4rem;top:-5rem;transform:rotate(12deg);
+}
+.pasos__kicker{background:var(--acento);color:#fff}
+.pasos__titulo{font-family:var(--fuente-titulo);font-weight:800;font-size:clamp(1.8rem,3.4vw,2.6rem);margin:.8rem 0 3rem}
+.pasos__rejilla{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:2rem}
+.pasos__rejilla::before{ /* línea punteada que une los pasos */
+  content:"";position:absolute;top:34px;left:8%;right:8%;height:0;
+  border-top:2px dashed color-mix(in srgb,var(--papel) 40%, transparent);
+}
+.paso{position:relative;text-align:left}
+.paso__numero{
+  display:inline-grid;place-items:center;width:68px;height:68px;margin-bottom:1rem;
+  border:2px dashed var(--acento);border-radius:50%;background:var(--tinta);
+  font-family:var(--fuente-titulo);font-weight:800;font-size:1.5rem;color:var(--amarillo);
+  transition:transform .3s ease;position:relative;z-index:1;
+}
+.paso:hover .paso__numero{transform:rotate(-8deg) scale(1.1)}
+.paso__emoji{font-size:1.9rem;margin-bottom:.4rem;display:block}
+.paso h3{font-family:var(--fuente-titulo);font-weight:800;font-size:1.15rem;margin-bottom:.35rem}
+.paso p{font-size:.92rem;color:color-mix(in srgb,var(--papel) 78%, transparent)}
+
+/* ══════════════════════════════════════════════════════════
+   8) TESTIMONIOS (cinta en movimiento)
+   ══════════════════════════════════════════════════════════ */
+.opiniones{padding:clamp(3rem,7vw,4.5rem) 0 clamp(3rem,7vw,4.5rem);overflow:hidden}
+.opiniones__cinta{display:flex;gap:1.4rem;width:max-content;animation:deslizar 45s linear infinite;padding:1rem 0}
+.opiniones__cinta:hover{animation-play-state:paused}
+.opinion{
+  width:330px;flex-shrink:0;background:var(--blanco);border:var(--borde);
+  border-radius:var(--radio);padding:1.3rem 1.4rem;box-shadow:4px 4px 0 var(--tinta);
+  transition:transform .25s ease;
+}
+.opinion:hover{transform:translateY(-5px) rotate(.6deg)}
+.opinion__estrellas{color:var(--acento);letter-spacing:.15em;font-size:.9rem;margin-bottom:.5rem}
+.opinion__texto{font-size:.95rem;margin-bottom:.9rem}
+.opinion__autor{display:flex;align-items:center;gap:.6rem}
+.opinion__avatar{
+  width:38px;height:38px;display:grid;place-items:center;border-radius:50%;
+  background:var(--primario);color:#fff;border:var(--borde);font-weight:800;font-size:.85rem;
+}
+.opinion__autor b{font-size:.9rem;display:block;line-height:1.1}
+.opinion__autor small{font-size:.75rem;color:var(--tinta-suave)}
+
+/* ══════════════════════════════════════════════════════════
+   9) PIE DE PÁGINA / CONTACTO
+   ══════════════════════════════════════════════════════════ */
+.pie{background:var(--tinta);color:var(--papel);border-top:4px solid var(--acento);padding:clamp(3rem,6vw,4.5rem) 0 0}
+.pie__rejilla{display:grid;grid-template-columns:1.6fr 1fr 1.2fr 1fr;gap:2.5rem;padding-bottom:3rem}
+.pie h4{font-family:var(--fuente-titulo);font-weight:800;font-size:.85rem;letter-spacing:.2em;text-transform:uppercase;color:var(--amarillo);margin-bottom:1.1rem}
+.pie p, .pie li, .pie a{font-size:.92rem;color:color-mix(in srgb,var(--papel) 82%, transparent)}
+.pie ul{list-style:none;display:grid;gap:.55rem}
+.pie a{text-decoration:none;transition:color .2s}
+.pie a:hover{color:var(--acento)}
+.pie__marca{display:flex;align-items:center;gap:.7rem;margin-bottom:1rem}
+.pie__sello{width:44px;height:44px;display:grid;place-items:center;background:var(--acento);border-radius:12px;font-size:1.4rem;transform:rotate(-4deg)}
+.pie__nombre{font-family:var(--fuente-titulo);font-weight:800;font-size:1.4rem;color:var(--papel)}
+.redes{display:flex;gap:.7rem;margin-top:1.2rem}
+.redes a{
+  width:40px;height:40px;display:grid;place-items:center;
+  border:2px solid color-mix(in srgb,var(--papel) 45%, transparent);border-radius:50%;
+  color:var(--papel);transition:background .2s,transform .2s,border-color .2s;
+}
+.redes a:hover{background:var(--acento);border-color:var(--acento);transform:translateY(-4px)}
+.redes svg{width:18px;height:18px;fill:currentColor}
+.pie__base{
+  border-top:1px solid color-mix(in srgb,var(--papel) 20%, transparent);
+  padding:1.2rem 0;display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;
+  font-size:.8rem;color:color-mix(in srgb,var(--papel) 60%, transparent);
+}
+
+/* ══════════════════════════════════════════════════════════
+   10) BOTÓN FLOTANTE DE WHATSAPP
+   ══════════════════════════════════════════════════════════ */
+.fab-wa{
+  position:fixed;right:22px;bottom:22px;z-index:90;
+  width:60px;height:60px;border-radius:50%;display:grid;place-items:center;
+  background:var(--wa);border:var(--borde);text-decoration:none;
+  animation:latido 2.2s ease-out infinite;
+  transition:transform .2s ease;
+}
+.fab-wa:hover{transform:scale(1.1) rotate(6deg)}
+.fab-wa svg{width:32px;height:32px;fill:#fff}
+
+/* ══════════════════════════════════════════════════════════
+   11) CARRITO LATERAL (drawer)
+   ══════════════════════════════════════════════════════════ */
+.fondo-oscuro{
+  position:fixed;inset:0;background:rgba(12,20,16,.55);z-index:95;
+  opacity:0;pointer-events:none;transition:opacity .3s ease;
+}
+.fondo-oscuro.abierto{opacity:1;pointer-events:auto}
+
+.carrito{
+  position:fixed;top:0;right:0;height:100dvh;width:min(430px,100%);z-index:100;
+  background:var(--papel);border-left:var(--borde);
+  display:flex;flex-direction:column;
+  transform:translateX(105%);transition:transform .38s cubic-bezier(.2,.8,.25,1);
+}
+.carrito.abierto{transform:none}
+.carrito__cabecera{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.1rem 1.3rem;border-bottom:var(--borde);background:var(--amarillo-claro);
+}
+.carrito__cabecera h3{font-family:var(--fuente-titulo);font-weight:800;font-size:1.25rem}
+.cerrar{
+  width:38px;height:38px;border:var(--borde);border-radius:50%;background:var(--blanco);
+  font-size:1.15rem;font-weight:700;display:grid;place-items:center;
+  transition:transform .2s,background .2s;
+}
+.cerrar:hover{transform:rotate(90deg);background:var(--acento);color:#fff}
+
+.carrito__progreso{padding:.9rem 1.3rem;border-bottom:2px dashed var(--tinta);font-size:.85rem;font-weight:600}
+.barra-progreso{height:12px;border:var(--borde);border-radius:999px;background:var(--blanco);overflow:hidden;margin-top:.45rem}
+.barra-progreso i{
+  display:block;height:100%;width:0;background:repeating-linear-gradient(-45deg,var(--primario) 0 8px,color-mix(in srgb,var(--primario) 70%,#fff) 8px 16px);
+  transition:width .5s cubic-bezier(.2,.8,.3,1);
+}
+
+.carrito__cuerpo{flex:1;overflow-y:auto;padding:1.1rem 1.3rem;display:flex;flex-direction:column;gap:.9rem}
+.carrito__vacio{text-align:center;padding:3rem 1rem;color:var(--tinta-suave)}
+.carrito__vacio span{font-size:3.6rem;display:block;margin-bottom:.8rem;animation:flotar 3s ease-in-out infinite}
+
+.articulo{
+  display:grid;grid-template-columns:56px 1fr auto;gap:.85rem;align-items:center;
+  background:var(--blanco);border:var(--borde);border-radius:14px;padding:.7rem;
+  animation:aparecer .3s ease;
+}
+.articulo__mini{
+  width:56px;height:56px;display:grid;place-items:center;font-size:1.8rem;
+  background:var(--primario-claro);border:var(--borde);border-radius:10px;overflow:hidden;
+}
+.articulo__mini img{width:100%;height:100%;object-fit:cover}
+.articulo__nombre{font-weight:700;font-size:.92rem;line-height:1.2}
+.articulo__unitario{font-size:.78rem;color:var(--tinta-suave)}
+.pasos-cantidad{display:inline-flex;align-items:center;border:var(--borde);border-radius:999px;background:var(--papel);margin-top:.35rem}
+.pasos-cantidad button{
+  width:27px;height:27px;border:0;background:transparent;font-weight:800;font-size:1rem;
+  border-radius:999px;transition:background .15s;
+}
+.pasos-cantidad button:hover{background:var(--amarillo)}
+.pasos-cantidad b{min-width:26px;text-align:center;font-size:.9rem}
+.articulo__lado{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:.4rem}
+.articulo__total{font-family:var(--fuente-titulo);font-weight:800}
+.quitar{border:0;background:transparent;font-size:.75rem;color:var(--acento);font-weight:700;text-decoration:underline}
+
+.carrito__pie{border-top:var(--borde);padding:1.1rem 1.3rem;background:var(--blanco)}
+.linea-total{display:flex;justify-content:space-between;font-size:.95rem;margin-bottom:.35rem}
+.linea-total.grande{font-family:var(--fuente-titulo);font-weight:800;font-size:1.3rem;margin:.5rem 0 .9rem}
+.carrito__pie .btn{width:100%}
+.carrito__nota{text-align:center;font-size:.76rem;color:var(--tinta-suave);margin-top:.6rem}
+
+/* ══════════════════════════════════════════════════════════
+   12) VENTANA DE CHECKOUT (datos para WhatsApp)
+   ══════════════════════════════════════════════════════════ */
+.modal{
+  position:fixed;inset:0;z-index:110;display:grid;place-items:center;padding:1rem;
+  opacity:0;pointer-events:none;transition:opacity .25s ease;
+}
+.modal.abierto{opacity:1;pointer-events:auto}
+.modal__caja{
+  width:min(500px,100%);max-height:92dvh;overflow-y:auto;
+  background:var(--papel);border:var(--borde);border-radius:20px;box-shadow:10px 10px 0 var(--tinta);
+  padding:1.6rem;transform:translateY(24px);transition:transform .3s ease;
+}
+.modal.abierto .modal__caja{transform:none}
+.modal__caja h3{font-family:var(--fuente-titulo);font-weight:800;font-size:1.45rem;margin-bottom:.2rem}
+.modal__sub{font-size:.9rem;color:var(--tinta-suave);margin-bottom:1.2rem}
+.campo{margin-bottom:1rem}
+.campo label{display:block;font-weight:700;font-size:.85rem;margin-bottom:.35rem}
+.campo input,.campo select,.campo textarea{
+  width:100%;border:var(--borde);border-radius:12px;background:var(--blanco);
+  padding:.65rem .85rem;outline:0;transition:box-shadow .2s;
+}
+.campo input:focus,.campo select:focus,.campo textarea:focus{box-shadow:3px 3px 0 var(--acento)}
+.campo textarea{resize:vertical;min-height:64px}
+.opciones{display:flex;gap:.6rem;flex-wrap:wrap}
+.opcion{position:relative}
+.opcion input{position:absolute;opacity:0}
+.opcion span{
+  display:inline-block;border:var(--borde);border-radius:999px;padding:.5rem 1rem;
+  font-weight:700;font-size:.86rem;background:var(--blanco);cursor:pointer;transition:.2s;
+}
+.opcion input:checked + span{background:var(--primario);color:#fff;box-shadow:3px 3px 0 var(--tinta)}
+.modal__total{
+  display:flex;justify-content:space-between;align-items:center;
+  background:var(--amarillo-claro);border:2px dashed var(--tinta);border-radius:12px;
+  padding:.7rem 1rem;margin-bottom:1.2rem;font-weight:700;
+}
+.modal__total b{font-family:var(--fuente-titulo);font-size:1.35rem}
+.error-form{display:none;background:color-mix(in srgb,var(--acento) 18%,#fff);border:2px solid var(--acento);border-radius:10px;padding:.6rem .9rem;font-size:.85rem;font-weight:600;margin-bottom:1rem}
+.error-form.visible{display:block;animation:sacudir .4s ease}
+
+/* vista de éxito dentro del modal */
+.exito{text-align:center;padding:1rem 0}
+.exito__icono{font-size:3.6rem;display:block;margin-bottom:.7rem;animation:pop .5s ease}
+.exito h4{font-family:var(--fuente-titulo);font-weight:800;font-size:1.4rem;margin-bottom:.4rem}
+.exito p{font-size:.92rem;color:var(--tinta-suave);margin-bottom:1.2rem}
+
+/* ══════════════════════════════════════════════════════════
+   13) AVISOS (toasts) + punto volador hacia el carrito
+   ══════════════════════════════════════════════════════════ */
+.avisos{position:fixed;left:18px;bottom:18px;z-index:120;display:flex;flex-direction:column;gap:.6rem}
+.aviso{
+  background:var(--tinta);color:var(--papel);border:2px solid var(--acento);
+  border-radius:12px;padding:.7rem 1.1rem;font-weight:600;font-size:.9rem;
+  box-shadow:4px 4px 0 rgba(0,0,0,.25);animation:aparecer .3s ease;max-width:300px;
+}
+.volador{
+  position:fixed;z-index:130;width:16px;height:16px;border-radius:50%;
+  background:var(--acento);border:2px solid var(--tinta);pointer-events:none;
+  transition:transform .65s cubic-bezier(.3,.7,.4,1), opacity .65s;
+}
+
+/* ══════════════════════════════════════════════════════════
+   14) RESPONSIVE
+   ══════════════════════════════════════════════════════════ */
+@media (max-width:980px){
+  .portada__rejilla{grid-template-columns:1fr;gap:4.5rem}
+  .escena{margin-top:1rem}
+  .pie__rejilla{grid-template-columns:1fr 1fr}
+  .pasos__rejilla{grid-template-columns:1fr;gap:2.4rem}
+  .pasos__rejilla::before{display:none}
+}
+@media (max-width:820px){.nav{display:none}}
+@media (max-width:560px){
+  .pie__rejilla{grid-template-columns:1fr}
+  .portada__acciones .btn{width:100%}
+  .sticker{width:76px;height:76px;font-size:.72rem;right:-10px}
+  .sello-giratorio{left:-14px;width:100px;height:100px}
+  .buscador input{width:110px}
+}
+/* Respeta la preferencia del usuario de menos animaciones */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════ BARRA DE ANUNCIOS (cinta animada superior) ════════════════ -->
+<div class="anuncios" aria-hidden="true"><div class="anuncios__pista" id="pistaAnuncios"></div></div>
+
+<!-- ════════════════ CABECERA ════════════════ -->
+<header class="cabecera" id="cabecera">
+  <div class="contenedor cabecera__fila">
+    <a class="marca" href="#inicio">
+      <span class="marca__sello" id="logoEmoji">🛍️</span>
+      <span class="marca__texto">
+        <span class="marca__nombre" id="nombreTienda">Mi Tienda</span>
+        <span class="marca__eslogan" id="esloganTienda"></span>
+      </span>
+    </a>
+    <nav class="nav" aria-label="Navegación principal">
+      <a href="#catalogo">Catálogo</a>
+      <a href="#pasos">Cómo comprar</a>
+      <a href="#opiniones">Opiniones</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
+    <button class="boton-carrito" id="botonCarrito" data-accion="abrir-carrito" aria-label="Abrir carrito">
+      🛒 Carrito <span class="boton-carrito__contador" id="contadorCarrito">0</span>
+    </button>
+  </div>
+</header>
+
+<main>
+  <!-- ════════════════ PORTADA ════════════════ -->
+  <section class="portada" id="inicio">
+    <div class="portada__circulo"></div>
+    <div class="portada__circulo portada__circulo--dos"></div>
+    <div class="contenedor portada__rejilla">
+
+      <!-- Columna izquierda: mensaje principal -->
+      <div style="animation:aparecer .7s ease backwards">
+        <span class="kicker" id="heroEtiqueta">Tienda en línea</span>
+        <h1 class="portada__titulo" id="heroTitulo"></h1>
+        <p class="portada__sub" id="heroSub"></p>
+        <div class="portada__acciones">
+          <a class="btn btn-oscuro" href="#catalogo">🛍️ Ver catálogo</a>
+          <a class="btn" id="heroWhats" href="#" target="_blank" rel="noopener">💬 Pedir por WhatsApp</a>
+        </div>
+        <div class="portada__cifras" id="heroCifras"></div>
+      </div>
+
+      <!-- Columna derecha: producto destacado en formato postal -->
+      <div class="escena">
+        <div class="postal" id="postalDestacado"><!-- se rellena con JS --></div>
+        <div class="sello-giratorio" aria-hidden="true">
+          <svg viewBox="0 0 100 100">
+            <defs><path id="rutaCirculo" d="M50,50 m-38,0 a38,38 0 1,1 76,0 a38,38 0 1,1 -76,0"/></defs>
+            <text><textPath href="#rutaCirculo" id="textoSello"></textPath></text>
+          </svg>
+          <span class="sello-giratorio__centro">🚚</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ════════════════ FILTROS DEL CATÁLOGO (barra fija) ════════════════ -->
+  <div class="barra-filtros">
+    <div class="contenedor barra-filtros__fila">
+      <div class="chips" id="chipsCategorias"><!-- chips de categorías --></div>
+      <label class="buscador">🔍<input type="search" id="campoBusqueda" placeholder="Buscar producto…" aria-label="Buscar"></label>
+      <select class="orden" id="selectorOrden" aria-label="Ordenar productos">
+        <option value="relevancia">Orden: destacados</option>
+        <option value="precio-asc">Precio: menor a mayor</option>
+        <option value="precio-desc">Precio: mayor a menor</option>
+        <option value="nombre">Nombre A-Z</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- ════════════════ CATÁLOGO ════════════════ -->
+  <section class="catalogo contenedor" id="catalogo">
+    <div class="catalogo__encabezado revelar">
+      <div>
+        <span class="kicker">Catálogo</span>
+        <h2 class="catalogo__titulo">Elige, agrega<br>y nosotros hacemos el resto</h2>
+      </div>
+      <span class="catalogo__conteo" id="conteoProductos"></span>
+    </div>
+    <div class="rejilla" id="rejillaProductos"><!-- tarjetas de producto --></div>
+  </section>
+
+  <!-- ════════════════ CÓMO FUNCIONA ════════════════ -->
+  <section class="pasos" id="pasos">
+    <div class="contenedor">
+      <span class="kicker pasos__kicker">Así de fácil</span>
+      <h2 class="pasos__titulo">Tu pedido en 3 pasos</h2>
+      <div class="pasos__rejilla" id="rejillaPasos"><!-- pasos --></div>
+    </div>
+  </section>
+
+  <!-- ════════════════ TESTIMONIOS ════════════════ -->
+  <section class="opiniones" id="opiniones">
+    <div class="contenedor revelar" style="margin-bottom:1rem">
+      <span class="kicker">Clientes felices</span>
+      <h2 class="catalogo__titulo" style="margin-top:.7rem">Lo que dicen de nosotros</h2>
+    </div>
+    <div class="opiniones__cinta" id="cintaOpiniones"><!-- opiniones --></div>
+  </section>
+</main>
+
+<!-- ════════════════ PIE DE PÁGINA ════════════════ -->
+<footer class="pie" id="contacto">
+  <div class="contenedor pie__rejilla">
+    <div>
+      <div class="pie__marca"><span class="pie__sello" id="logoEmojiPie">🛍️</span><span class="pie__nombre" id="nombreTiendaPie"></span></div>
+      <p id="descripcionPie"></p>
+      <div class="redes" id="redesPie"></div>
+    </div>
+    <div>
+      <h4>Tienda</h4>
+      <ul>
+        <li><a href="#catalogo">Catálogo completo</a></li>
+        <li><a href="#pasos">Cómo comprar</a></li>
+        <li><a href="#opiniones">Opiniones</a></li>
+        <li><a href="#inicio">Volver arriba ↑</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Contacto</h4>
+      <ul id="listaContacto"></ul>
+    </div>
+    <div>
+      <h4>Horario</h4>
+      <p id="horarioPie"></p>
+      <p style="margin-top:.8rem">📲 Pedidos por WhatsApp<br>los 7 días de la semana.</p>
+    </div>
+  </div>
+  <div class="contenedor pie__base">
+    <span id="anioPie">©</span>
+    <span>Plantilla lista para configurar · edita <code>CONFIG</code> en el código ✏️</span>
+  </div>
+</footer>
+
+<!-- Botón flotante de WhatsApp -->
+<a class="fab-wa" id="fabWhatsapp" href="#" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp">
+  <svg viewBox="0 0 32 32"><path d="M16 3C9.4 3 4 8.4 4 15c0 2.6.8 5 2.2 7L4 29l7.2-2.1c1.9 1 4 1.6 6.3 1.6h.5c6.6 0 12-5.4 12-12S22.6 3 16 3zm5.9 16.9c-.3.8-1.7 1.6-2.4 1.7-.6.1-1.4.2-2.3-.1-.5-.2-1.2-.4-2.1-.8-3.7-1.6-6.1-5.3-6.3-5.6-.2-.2-1.5-2-1.5-3.9s1-2.8 1.3-3.1c.3-.4.7-.5 1-.5h.7c.2 0 .5-.1.8.6.3.8 1.1 2.6 1.2 2.8.1.2.2.4 0 .7-.1.2-.2.4-.4.6l-.6.7c-.2.2-.4.4-.2.8.2.4 1 1.7 2.2 2.7 1.5 1.4 2.8 1.8 3.2 2 .4.2.6.1.9-.1.2-.2 1-1.2 1.3-1.6.3-.4.5-.3.9-.2.4.1 2.4 1.1 2.8 1.3.4.2.7.3.8.5.1.1.1.9-.2 1.7z"/></svg>
+</a>
+
+<!-- ════════════════ CARRITO LATERAL ════════════════ -->
+<div class="fondo-oscuro" id="fondoOscuro"></div>
+<aside class="carrito" id="panelCarrito" role="dialog" aria-label="Carrito de compras">
+  <div class="carrito__cabecera">
+    <h3>🛒 Tu carrito (<span id="carritoCantidad">0</span>)</h3>
+    <button class="cerrar" data-accion="cerrar-carrito" aria-label="Cerrar carrito">✕</button>
+  </div>
+  <div class="carrito__progreso" id="progresoEnvio">
+    <span id="textoProgreso"></span>
+    <div class="barra-progreso"><i id="barraProgreso"></i></div>
+  </div>
+  <div class="carrito__cuerpo" id="listaCarrito"></div>
+  <div class="carrito__pie">
+    <div class="linea-total"><span>Subtotal</span><span id="subtotalCarrito">$0</span></div>
+    <div class="linea-total"><span>Envío estimado</span><span id="envioCarrito">—</span></div>
+    <div class="linea-total grande"><span>Total</span><span id="totalCarrito">$0</span></div>
+    <button class="btn btn-wa" id="botonCheckout">
+      <svg width="20" height="20" viewBox="0 0 32 32" fill="#fff"><path d="M16 3C9.4 3 4 8.4 4 15c0 2.6.8 5 2.2 7L4 29l7.2-2.1c1.9 1 4 1.6 6.3 1.6h.5c6.6 0 12-5.4 12-12S22.6 3 16 3zm5.9 16.9c-.3.8-1.7 1.6-2.4 1.7-.6.1-1.4.2-2.3-.1-.5-.2-1.2-.4-2.1-.8-3.7-1.6-6.1-5.3-6.3-5.6-.2-.2-1.5-2-1.5-3.9s1-2.8 1.3-3.1c.3-.4.7-.5 1-.5h.7c.2 0 .5-.1.8.6.3.8 1.1 2.6 1.2 2.8.1.2.2.4 0 .7-.1.2-.2.4-.4.6l-.6.7c-.2.2-.4.4-.2.8.2.4 1 1.7 2.2 2.7 1.5 1.4 2.8 1.8 3.2 2 .4.2.6.1.9-.1.2-.2 1-1.2 1.3-1.6.3-.4.5-.3.9-.2.4.1 2.4 1.1 2.8 1.3.4.2.7.3.8.5.1.1.1.9-.2 1.7z"/></svg>
+      Concretar compra por WhatsApp
+    </button>
+    <p class="carrito__nota">Se abrirá WhatsApp con el resumen de tu pedido listo para enviar 📲</p>
+  </div>
+</aside>
+
+<!-- ════════════════ MODAL DE CHECKOUT ════════════════ -->
+<div class="modal" id="modalCheckout" role="dialog" aria-label="Completar pedido">
+  <div class="modal__caja">
+    <div id="formularioZona">
+      <h3>📦 Casi listo…</h3>
+      <p class="modal__sub">Cuéntanos tus datos de entrega y enviamos tu pedido por WhatsApp.</p>
+      <div class="modal__total"><span>Total del pedido</span><b id="totalModal">$0</b></div>
+      <div class="error-form" id="errorForm">⚠️ Revisa los campos marcados: faltan datos.</div>
+      <form id="formularioCheckout" novalidate>
+        <div class="campo">
+          <label for="campoNombre">Tu nombre *</label>
+          <input type="text" id="campoNombre" placeholder="¿Quién recibe el pedido?">
+        </div>
+        <div class="campo">
+          <label>¿Cómo lo recibes? *</label>
+          <div class="opciones">
+            <label class="opcion"><input type="radio" name="entrega" value="retiro" checked><span>🏬 Retiro en tienda</span></label>
+            <label class="opcion"><input type="radio" name="entrega" value="domicilio"><span>🛵 Envío a domicilio</span></label>
+          </div>
+        </div>
+        <div class="campo" id="campoDireccionZona" style="display:none">
+          <label for="campoDireccion">Dirección de entrega *</label>
+          <textarea id="campoDireccion" placeholder="Calle, número, colonia y referencias"></textarea>
+        </div>
+        <div class="campo">
+          <label for="campoPago">Forma de pago *</label>
+          <select id="campoPago"></select>
+        </div>
+        <div class="campo">
+          <label for="campoNotas">Notas (opcional)</label>
+          <textarea id="campoNotas" placeholder="Horario preferido, alergias, dedicatoria…"></textarea>
+        </div>
+        <button type="submit" class="btn btn-wa" style="width:100%">💬 Enviar pedido por WhatsApp</button>
+        <button type="button" class="btn" data-accion="cerrar-modal" style="width:100%;margin-top:.6rem">← Seguir comprando</button>
+      </form>
+    </div>
+    <!-- Vista de éxito (se muestra tras enviar) -->
+    <div id="exitoZona" class="exito" style="display:none">
+      <span class="exito__icono">✅</span>
+      <h4>¡Pedido preparado!</h4>
+      <p>Abrimos WhatsApp con el resumen de tu compra. Solo presiona <b>enviar</b> para confirmarlo. Si no se abrió, usa el botón de abajo.</p>
+      <a class="btn btn-wa" id="enlaceReintento" href="#" target="_blank" rel="noopener">💬 Abrir WhatsApp de nuevo</a>
+      <button class="btn" data-accion="cerrar-modal" style="width:100%;margin-top:.6rem">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Contenedor de avisos (toasts) -->
+<div class="avisos" id="avisos"></div>
+
+<script>
+/* ╔════════════════════════════════════════════════════════════════╗
+   ║                 🛠️  ZONA DE CONFIGURACIÓN  🛠️                    ║
+   ║                                                                  ║
+   ║  Esta es la ÚNICA parte que necesitas editar para convertir     ║
+   ║  esta página en la tienda de CUALQUIER negocio:                 ║
+   ║                                                                  ║
+   ║   1️⃣ Cambia nombre, eslogan, colores y datos de contacto.      ║
+   ║   2️⃣ Pon TU número de WhatsApp (código de país + número,       ║
+   ║      solo dígitos. Ej. México: "5215512345678").               ║
+   ║   3️⃣ Edita la lista de productos (copia y pega objetos).       ║
+   ║   4️⃣ Ajusta textos de la portada, pasos y testimonios.         ║
+   ║                                                                  ║
+   ║  Todo lo demás (interfaz, carrito, checkout) funciona solo. ✨  ║
+   ╚════════════════════════════════════════════════════════════════╝ */
+const CONFIG = {
+
+  /* ── DATOS GENERALES DE LA TIENDA ─────────────────────────── */
+  tienda: {
+    nombre:     "TUESTA",                                  // Nombre del negocio
+    eslogan:    "Tostaduría de café",                      // Frase corta bajo el logo
+    logo:       "☕",                                       // Emoji que hace de logo (o deja "" si usas imagen)
+    descripcion:"Café de origen mexicano, tostado cada semana en pequeños lotes y enviado directo a tu taza.", // texto del pie de página
+    whatsapp:   "5215512345678",                           // 👉 TU NÚMERO: código de país + número, SIN "+" ni espacios
+    moneda:     "MXN",                                     // Código ISO de la moneda (MXN, COP, ARS, USD…)
+    decimales:  0,                                         // Cantidad de decimales en los precios
+    direccion:  "Av. del Café 123, Col. Centro, CDMX",     // Dirección física ("" para ocultar)
+    telefono:   "+52 55 1234 5678",                        // Teléfono visible
+    correo:     "hola@tuesta.mx",                          // Correo de contacto
+    horario:    "Lun a Sáb · 9:00 – 19:00 h<br>Dom · 10:00 – 14:00 h", // admite HTML básico
+    mensajeSaludo: "¡Hola! 👋 Vengo de la tienda en línea de TUESTA y quiero hacer este pedido:", // primera línea del mensaje de WhatsApp
+    redes: {                                               // Enlaces de redes ("" para ocultar el ícono)
+      instagram: "https://instagram.com/tuesta.cafe",
+      facebook:  "https://facebook.com/tuesta.cafe",
+      tiktok:    ""
+    }
+  },
+
+  /* ── COLORES DE LA MARCA ─────────────────────────────────────────
+     Cambia estos valores y toda la página se repinta automáticamente.
+     Prueba p. ej. primario "#2b3a8f" y acento "#ff4d6d" para otro rubro. */
+  colores: {
+    primario: "#1c5b3f",   // color institucional (chips activos, detalles)
+    acento:   "#ff6b35",   // color de acción (botones, ofertas)
+    tinta:    "#182720",   // texto y bordes
+    papel:    "#f2f4ec",   // fondo general
+    blanco:   "#fffdf8"    // fondo de tarjetas
+    // modoOscuro: true    // 👉 descomenta esta línea para un tema oscuro automático
+  },
+
+  /* ── REGLAS DE ENVÍO Y COMPRA ─────────────────────────────── */
+  envio: {
+    gratisDesde: 600,   // subtotal a partir del cual el envío es gratis
+    costo:       60,    // costo de envío si no llega al mínimo
+    etiqueta:    "Envío a domicilio"
+  },
+  carrito: {
+    maximoPorProducto: 9,   // unidades máximas por artículo
+    vaciarAlComprar:   true // true = vacía el carrito tras enviar el pedido
+  },
+  formasDePago: ["Transferencia", "Efectivo contra entrega", "Tarjeta al recibir"], // opciones del checkout
+
+  /* ── CATEGORÍAS DEL CATÁLOGO ────────────────────────────────
+     El "id" se usa para filtrar; el "nombre" es lo que ve el cliente. */
+  categorias: [
+    { id: "grano",  nombre: "Café en grano" },
+    { id: "equipo", nombre: "Equipo y brewing" },
+    { id: "tazas",  nombre: "Tazas y termos" },
+    { id: "extras", nombre: "Extras dulces" }
+  ],
+
+  /* ── PRODUCTOS ───────────────────────────────────────────────────
+     Para añadir uno nuevo, copia un bloque { … } y edítalo.
+     · imagen: deja "" para mostrar el emoji; o pega la URL de una foto.
+     · precioAntes: precio tachado (para ofertas). null = sin oferta.
+     · etiqueta: "Nuevo" | "Oferta" | "" (sin etiqueta)
+     · destacado: true lo muestra en la postal gigante de la portada. */
+  productos: [
+    { id:"geisha",  nombre:"Café Geisha · Lavado 250 g",   descripcion:"Notas florales y cítricas. Tueste claro, ideal para métodos filtrados.", precio:340, precioAntes:null, categoria:"grano",  emoji:"🫘", imagen:"", etiqueta:"Nuevo",  stock:14, destacado:true  },
+    { id:"blend",   nombre:"Blend de la Casa · 1 kg",      descripcion:"Equilibrado, con notas a chocolate y nuez. El favorito de la barra.",     precio:520, precioAntes:620, categoria:"grano",  emoji:"☕", imagen:"", etiqueta:"Oferta", stock:22, destacado:false },
+    { id:"drip",    nombre:"Drip Coffee · Caja x10",       descripcion:"Tu taza perfecta en cualquier lugar: solo necesitas agua caliente.",     precio:260, precioAntes:null, categoria:"grano",  emoji:"🥡", imagen:"", etiqueta:"",       stock:30, destacado:false },
+    { id:"v60",     nombre:"Kit V60 + Filtros",            descripcion:"Cono de cerámica, jarra y 40 filtros. Para empezar a filtrar en serio.",  precio:390, precioAntes:null, categoria:"equipo", emoji:"⏳", imagen:"", etiqueta:"",       stock:12, destacado:false },
+    { id:"prensa",  nombre:"Prensa Francesa 600 ml",       descripcion:"Vidrio borosilicato y émbolo de acero. Cuerpo completo en 4 minutos.",   precio:430, precioAntes:null, categoria:"equipo", emoji:"🫖", imagen:"", etiqueta:"",       stock:9,  destacado:false },
+    { id:"molino",  nombre:"Molino Manual de Acero",       descripcion:"Muelas cónicas de acero, 40 clicks de ajuste. Molido uniforme siempre.", precio:780, precioAntes:900, categoria:"equipo", emoji:"⚙️", imagen:"", etiqueta:"Oferta", stock:6,  destacado:true  },
+    { id:"taza",    nombre:"Taza Cerámica 300 ml",         descripcion:"Hecha a mano, esmate reactivo. Cada pieza es única.",                    precio:180, precioAntes:null, categoria:"tazas",  emoji:"🍵", imagen:"", etiqueta:"",       stock:25, destacado:false },
+    { id:"termo",   nombre:"Termo 480 ml",                 descripcion:"Doble pared de acero: 12 h caliente, 24 h frío. A prueba de derrames.",  precio:320, precioAntes:null, categoria:"tazas",  emoji:"🥤", imagen:"", etiqueta:"",       stock:4,  destacado:false },
+    { id:"choco",   nombre:"Chocolate 72% Cacao",          descripcion:"Barra artesanal de cacao criollo. El compañero perfecto del espresso.",  precio:95,  precioAntes:null, categoria:"extras", emoji:"🍫", imagen:"", etiqueta:"Nuevo",  stock:40, destacado:false },
+    { id:"miel",    nombre:"Miel de Abeja 250 g",          descripcion:"Miel multifloral de apiarios locales. Endulza natural tu taza.",         precio:120, precioAntes:null, categoria:"extras", emoji:"🍯", imagen:"", etiqueta:"",       stock:3,  destacado:false }
+  ],
+
+  /* ── TEXTOS DE LA PORTADA ───────────────────────────────────
+     Rodea una palabra con [corchetes] para resaltarla con el marcador. */
+  hero: {
+    etiqueta:  "☕ Tostamos cada lunes",
+    titulo:    "Café de origen, tostado [esta semana]",
+    subtitulo: "Granos seleccionados de fincas mexicanas, tostados en pequeños lotes y enviados a tu puerta con todo su aroma intacto.",
+    cifras: [ // pequeñas estadísticas de confianza
+      { valor: "+1,200", texto: "pedidos entregados" },
+      { valor: "24 h",   texto: "de tostado a tu puerta" },
+      { valor: "4.9 ★",  texto: "calificación promedio" }
+    ]
+  },
+
+  /* ── CINTA DE ANUNCIOS SUPERIOR (se repite en bucle) ─────── */
+  anuncios: ["🔥 Tostado fresco cada semana", "🚚 Envío gratis desde $600", "💳 Pago contra entrega disponible", "📦 Empaque 100% compostable"],
+
+  /* ── PASOS DE "CÓMO COMPRAR" ─────────────────────────────── */
+  pasos: [
+    { emoji:"🛍️", titulo:"1 · Elige tus favoritos", texto:"Explora el catálogo, filtra por categoría y agrega todo a tu carrito." },
+    { emoji:"📲", titulo:"2 · Confirma por WhatsApp", texto:"Al finalizar, te llevamos a WhatsApp con el resumen del pedido ya escrito." },
+    { emoji:"📦", titulo:"3 · Recíbelo o retíralo", texto:"Coordinamos la entrega o el retiro en tienda. ¡Así de simple!" }
+  ],
+
+  /* ── TESTIMONIOS ─────────────────────────────────────────── */
+  testimonios: [
+    { texto:"“El Geisha llegó en 24 horas y huele increíble. Ya es mi ritual de cada mañana.”", nombre:"Ana Torres",   detalle:"Cliente desde 2023" },
+    { texto:"“Pedí por WhatsApp y me ayudaron a elegir el molido correcto. Atención de 10.”",    nombre:"Luis Ramírez", detalle:"Pedido #1042" },
+    { texto:"“La prensa francesa y el blend de la casa: combo perfecto para la oficina.”",      nombre:"Karla Méndez", detalle:"Compra verificada" },
+    { texto:"“El empaque es precioso, llegó todo protegido y con una notita escrita a mano.”",  nombre:"Sofía Vega",   detalle:"Cliente frecuente" }
+  ]
+};
+
+/* ╔════════════════════════════════════════════════════════════════╗
+   ║   ⚙️  MOTOR DE LA TIENDA — a partir de aquí no necesitas       ║
+   ║   tocar nada para adaptar la plantilla (¡pero puedes curiosear!)║
+   ╚════════════════════════════════════════════════════════════════╝ */
+
+/* ── Referencias rápidas y utilidades ─────────────────────────── */
+const $  = sel => document.querySelector(sel);      // atajo para buscar elementos
+const cfg = CONFIG;
+
+// Formateador de dinero según la moneda elegida en CONFIG
+const formatoMoneda = new Intl.NumberFormat("es-MX", {
+  style:"currency", currency: cfg.tienda.moneda, maximumFractionDigits: cfg.tienda.decimales
+});
+const dinero = n => formatoMoneda.format(n);
+
+// Clave única del carrito en localStorage (así varias tiendas no chocan)
+const CLAVE_CARRITO = "carrito_" + cfg.tienda.nombre.toLowerCase().replace(/\s+/g,"_");
+
+// Estado global de la tienda
+const estado = {
+  carrito: [],                       // [{ id, cantidad }]
+  categoria: "todos",                // filtro activo
+  texto: "",                         // búsqueda activa
+  orden: "relevancia"                // criterio de orden
+};
+
+/* ── Aplica los colores y el modo oscuro desde CONFIG ────────── */
+function aplicarTema(){
+  const raiz = document.documentElement.style;
+  raiz.setProperty("--primario", cfg.colores.primario);
+  raiz.setProperty("--acento",   cfg.colores.acento);
+  raiz.setProperty("--tinta",    cfg.colores.tinta);
+  raiz.setProperty("--papel",    cfg.colores.papel);
+  raiz.setProperty("--blanco",   cfg.colores.blanco);
+  // Tema oscuro: invierte fondo/tinta si está activado en CONFIG
+  if (cfg.colores.modoOscuro){
+    raiz.setProperty("--papel",  "#152019");
+    raiz.setProperty("--blanco", "#1e2b23");
+    raiz.setProperty("--tinta",  "#eef3ea");
+  }
+}
+
+/* ── Dibuja la identidad: nombre, logo, título del documento ─── */
+function pintarIdentidad(){
+  document.title = `${cfg.tienda.nombre} — ${cfg.tienda.eslogan}`;
+  $("#nombreTienda").textContent    = cfg.tienda.nombre;
+  $("#nombreTiendaPie").textContent = cfg.tienda.nombre;
+  $("#esloganTienda").textContent   = cfg.tienda.eslogan;
+  $("#logoEmoji").textContent       = cfg.tienda.logo || "🛍️";
+  $("#logoEmojiPie").textContent    = cfg.tienda.logo || "🛍️";
+  $("#descripcionPie").textContent  = cfg.tienda.descripcion;
+  $("#horarioPie").innerHTML        = cfg.tienda.horario;
+  $("#anioPie").textContent         = `© ${new Date().getFullYear()} ${cfg.tienda.nombre} · Hecho con ❤️ para nuestros clientes`;
+
+  // Lista de contacto del pie (solo muestra los campos con datos)
+  const items = [];
+  if (cfg.tienda.direccion) items.push(`📍 ${cfg.tienda.direccion}`);
+  if (cfg.tienda.telefono)  items.push(`📞 ${cfg.tienda.telefono}`);
+  if (cfg.tienda.correo)    items.push(`✉️ ${cfg.tienda.correo}`);
+  $("#listaContacto").innerHTML = items.map(i=>`<li>${i}</li>`).join("");
+
+  // Enlaces directos de WhatsApp (botón flotante y portada)
+  const saludo = encodeURIComponent(cfg.tienda.mensajeSaludo);
+  $("#fabWhatsapp").href = `https://wa.me/${cfg.tienda.whatsapp}?text=${saludo}`;
+  $("#heroWhats").href   = `https://wa.me/${cfg.tienda.whatsapp}?text=${saludo}`;
+
+  // Redes sociales (omite las vacías)
+  const iconos = {
+    instagram: '<svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.2 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.2-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 2.9a6.9 6.9 0 1 0 0 13.8 6.9 6.9 0 0 0 0-13.8zm0 11.4a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9zm7.2-11.7a1.6 1.6 0 1 1-3.2 0 1.6 1.6 0 0 1 3.2 0z"/></svg>',
+    facebook:  '<svg viewBox="0 0 24 24"><path d="M13.5 21.9v-9h3l.5-3.5h-3.5V7.2c0-1 .3-1.7 1.8-1.7h1.9V2.3c-.3 0-1.4-.1-2.7-.1-2.7 0-4.5 1.6-4.5 4.6v2.6H7v3.5h3v9h3.5z"/></svg>',
+    tiktok:    '<svg viewBox="0 0 24 24"><path d="M19.6 7.3a5 5 0 0 1-3.5-1.4v7.6a5.6 5.6 0 1 1-5.6-5.6c.3 0 .6 0 .9.1v2.9a2.7 2.7 0 1 0 1.9 2.6V2h2.7a5 5 0 0 0 3.6 3.6v1.7z"/></svg>'
+  };
+  $("#redesPie").innerHTML = Object.entries(cfg.tienda.redes)
+    .filter(([,url]) => url)
+    .map(([red,url]) => `<a href="${url}" target="_blank" rel="noopener" aria-label="${red}">${iconos[red]}</a>`)
+    .join("");
+}
+
+/* ── Cinta de anuncios en movimiento ──────────────────────────── */
+function pintarAnuncios(){
+  const grupo = cfg.anuncios.map(a=>`<span>${a} ✦</span>`).join("");
+  $("#pistaAnuncios").innerHTML = grupo + grupo; // duplicado para bucle continuo
+}
+
+/* ── Portada: título con palabra resaltada, cifras y postal ───── */
+function pintarPortada(){
+  $("#heroEtiqueta").textContent = cfg.hero.etiqueta;
+  // Los [corchetes] del CONFIG se convierten en el marcador de color
+  $("#heroTitulo").innerHTML = cfg.hero.titulo.replace(/\[(.+?)\]/g,'<span class="resaltado">$1</span>');
+  $("#heroSub").textContent    = cfg.hero.subtitulo;
+  $("#heroCifras").innerHTML   = cfg.hero.cifras.map(c=>`<div class="cifra"><b>${c.valor}</b><small>${c.texto}</small></div>`).join("");
+  // Texto del sello giratorio con el monto de envío gratis
+  $("#textoSello").textContent = `ENVÍO GRATIS DESDE ${dinero(cfg.envio.gratisDesde)} • PEDIDOS POR WHATSAPP • `.toUpperCase();
+
+  // Postal del producto destacado (el primero con destacado:true)
+  const p = cfg.productos.find(x=>x.destacado) || cfg.productos[0];
+  const visual = p.imagen ? `<img src="${p.imagen}" alt="${p.nombre}">` : `<span class="postal__emoji">${p.emoji}</span>`;
+  const oferta = p.precioAntes ? `<s>${dinero(p.precioAntes)}</s>` : "";
+  $("#postalDestacado").innerHTML = `
+    <span class="postal__etiqueta">⭐ Lo más pedido</span>
+    <span class="sticker">desde<br>${dinero(Math.min(...cfg.productos.map(x=>x.precio)))}</span>
+    <div class="postal__visual">${visual}</div>
+    <h3 class="postal__nombre">${p.nombre}</h3>
+    <p class="postal__desc">${p.descripcion}</p>
+    <div class="postal__fila"><span class="postal__precio">${dinero(p.precio)}${oferta}</span></div>
+    <button class="btn btn-acento" data-accion="agregar" data-id="${p.id}">＋ Agregar al carrito</button>`;
+}
+
+/* ── Chips de categorías ──────────────────────────────────────── */
+function pintarCategorias(){
+  const todas = [{id:"todos",nombre:"✨ Todo"}, ...cfg.categorias];
+  $("#chipsCategorias").innerHTML = todas.map(c =>
+    `<button class="chip ${estado.categoria===c.id?"activo":""}" data-cat="${c.id}">${c.nombre}</button>`).join("");
+}
+
+/* ── Rejilla de productos (con filtros, búsqueda y orden) ────── */
+function obtenerProductosVisibles(){
+  let lista = [...cfg.productos];
+  if (estado.categoria !== "todos") lista = lista.filter(p=>p.categoria===estado.categoria);
+  if (estado.texto){
+    const t = estado.texto.toLowerCase();
+    lista = lista.filter(p => (p.nombre+" "+p.descripcion).toLowerCase().includes(t));
+  }
+  switch(estado.orden){
+    case "precio-asc":  lista.sort((a,b)=>a.precio-b.precio); break;
+    case "precio-desc": lista.sort((a,b)=>b.precio-a.precio); break;
+    case "nombre":      lista.sort((a,b)=>a.nombre.localeCompare(b.nombre,"es")); break;
+    default:            lista.sort((a,b)=>(b.destacado?1:0)-(a.destacado?1:0));
+  }
+  return lista;
+}
+
+function pintarCatalogo(){
+  const lista = obtenerProductosVisibles();
+  $("#conteoProductos").textContent = `${lista.length} producto${lista.length!==1?"s":""}`;
+
+  if (!lista.length){
+    $("#rejillaProductos").innerHTML = `
+      <div class="sin-resultados revelar visible">
+        <span>🔍</span>
+        <b>No encontramos productos con esos criterios.</b><br>
+        Prueba con otra búsqueda o categoría.
+      </div>`;
+    return;
+  }
+
+  $("#rejillaProductos").innerHTML = lista.map((p,i)=>{
+    const catNombre = (cfg.categorias.find(c=>c.id===p.categoria)||{}).nombre || p.categoria;
+    const agotado   = p.stock === 0;
+    const visual    = p.imagen ? `<img src="${p.imagen}" alt="${p.nombre}">` : `<span class="tarjeta__emoji">${p.emoji}</span>`;
+    // Insignias: etiqueta personalizada + globo de descuento
+    let insignias = "";
+    if (p.etiqueta) insignias += `<span class="insignia ${p.etiqueta==="Oferta"?"insignia--oferta":p.etiqueta==="Nuevo"?"insignia--nuevo":""}">${p.etiqueta}</span>`;
+    if (p.precioAntes) insignias += `<span class="descuento">-${Math.round((1-p.precio/p.precioAntes)*100)}%</span>`;
+    const stockTxt  = agotado ? "" : (p.stock<=5 ? `<span class="stock-bajo">🔥 ¡Quedan ${p.stock}!</span>` : "");
+    const boton     = agotado
+      ? `<button class="btn" disabled>Agotado 😞</button>`
+      : `<button class="btn btn-oscuro" data-accion="agregar" data-id="${p.id}">＋ Agregar</button>`;
+
+    return `
+    <article class="tarjeta revelar" style="transition-delay:${Math.min(i*55,400)}ms">
+      <div class="tarjeta__visual" data-accion="agregar" data-id="${p.id}" title="Agregar al carrito">
+        ${insignias}${visual}
+      </div>
+      <div class="tarjeta__cuerpo">
+        <span class="tarjeta__cat">${catNombre}</span>
+        <h3 class="tarjeta__nombre">${p.nombre}</h3>
+        <p class="tarjeta__desc">${p.descripcion}</p>
+        <div class="tarjeta__precios">
+          <span class="precio">${dinero(p.precio)}</span>
+          ${p.precioAntes?`<span class="precio-antes">${dinero(p.precioAntes)}</span>`:""}
+        </div>
+        ${stockTxt}
+        ${boton}
+      </div>
+    </article>`;
+  }).join("");
+
+  observarRevelados(); // activa la animación de entrada de las tarjetas
+}
+
+/* ── Pasos y testimonios ──────────────────────────────────────── */
+function pintarPasos(){
+  $("#rejillaPasos").innerHTML = cfg.pasos.map((p,i)=>`
+    <div class="paso revelar" style="transition-delay:${i*120}ms">
+      <span class="paso__numero">0${i+1}</span>
+      <span class="paso__emoji">${p.emoji}</span>
+      <h3>${p.titulo}</h3><p>${p.texto}</p>
+    </div>`).join("");
+}
+function pintarTestimonios(){
+  const tarjetas = cfg.testimonios.map(t=>`
+    <div class="opinion">
+      <div class="opinion__estrellas">★★★★★</div>
+      <p class="opinion__texto">${t.texto}</p>
+      <div class="opinion__autor">
+        <span class="opinion__avatar">${t.nombre.split(" ").map(x=>x[0]).join("").slice(0,2)}</span>
+        <div><b>${t.nombre}</b><small>${t.detalle}</small></div>
+      </div>
+    </div>`).join("");
+  $("#cintaOpiniones").innerHTML = tarjetas + tarjetas; // duplicado para el bucle
+}
+
+/* ══════════════════════════════════════════════════════════════
+   CARRITO: agregar, quitar, cantidades y persistencia
+   ══════════════════════════════════════════════════════════════ */
+function guardarCarrito(){ localStorage.setItem(CLAVE_CARRITO, JSON.stringify(estado.carrito)); }
+function cargarCarrito(){
+  try{
+    estado.carrito = JSON.parse(localStorage.getItem(CLAVE_CARRITO) || "[]")
+      .filter(item => cfg.productos.some(p=>p.id===item.id)); // descarta productos que ya no existan
+  }catch(e){ estado.carrito = []; }
+}
+
+function agregarAlCarrito(id, origen){
+  const producto = cfg.productos.find(p=>p.id===id);
+  if (!producto || producto.stock===0) return;
+  const item = estado.carrito.find(i=>i.id===id);
+  const limite = Math.min(cfg.carrito.maximoPorProducto, producto.stock);
+  if (item){
+    if (item.cantidad >= limite){ avisar(`⚠️ Máximo ${limite} unidades de este producto`); return; }
+    item.cantidad++;
+  } else {
+    estado.carrito.push({ id, cantidad:1 });
+  }
+  guardarCarrito();
+  actualizarUI();
+  avisar(`✅ ${producto.nombre} agregado`);
+  if (origen){ volarAlCarrito(origen); }          // puntito que vuela hacia el ícono
+  const contador = $("#contadorCarrito");          // rebote del contador
+  contador.classList.remove("pop"); void contador.offsetWidth; contador.classList.add("pop");
+}
+
+function cambiarCantidad(id, delta){
+  const item = estado.carrito.find(i=>i.id===id);
+  const producto = cfg.productos.find(p=>p.id===id);
+  if (!item) return;
+  const limite = Math.min(cfg.carrito.maximoPorProducto, producto.stock);
+  item.cantidad = Math.min(limite, Math.max(1, item.cantidad + delta));
+  guardarCarrito(); actualizarUI();
+}
+function quitarDelCarrito(id){
+  estado.carrito = estado.carrito.filter(i=>i.id!==id);
+  guardarCarrito(); actualizarUI();
+}
+function vaciarCarrito(){ estado.carrito = []; guardarCarrito(); actualizarUI(); }
+
+// Cálculo de totales: subtotal, envío (gratis si supera el mínimo) y total
+function calcularTotales(){
+  const subtotal = estado.carrito.reduce((s,i)=>{
+    const p = cfg.productos.find(x=>x.id===i.id);
+    return s + (p ? p.precio*i.cantidad : 0);
+  },0);
+  const envio = (subtotal===0 || subtotal>=cfg.envio.gratisDesde) ? 0 : cfg.envio.costo;
+  return { subtotal, envio, total: subtotal+envio };
+}
+
+/* ── Refleja el estado del carrito en toda la interfaz ───────── */
+function actualizarUI(){
+  const unidades = estado.carrito.reduce((s,i)=>s+i.cantidad,0);
+  const { subtotal, envio, total } = calcularTotales();
+  $("#contadorCarrito").textContent = unidades;
+  $("#contadorCarrito").style.display = unidades ? "grid" : "none";
+  $("#carritoCantidad").textContent = unidades;
+
+  // Lista de artículos
+  if (!estado.carrito.length){
+    $("#listaCarrito").innerHTML = `
+      <div class="carrito__vacio">
+        <span>🧺</span>
+        <b>Tu carrito está vacío</b>
+        <p style="margin:.4rem 0 1.2rem">¡El catálogo te está esperando!</p>
+        <button class="btn btn-acento" data-accion="cerrar-carrito" onclick="document.getElementById('catalogo').scrollIntoView()">Ir al catálogo</button>
+      </div>`;
+  } else {
+    $("#listaCarrito").innerHTML = estado.carrito.map(item=>{
+      const p = cfg.productos.find(x=>x.id===item.id);
+      const mini = p.imagen ? `<img src="${p.imagen}" alt="">` : p.emoji;
+      return `
+      <div class="articulo">
+        <div class="articulo__mini">${mini}</div>
+        <div>
+          <div class="articulo__nombre">${p.nombre}</div>
+          <div class="articulo__unitario">${dinero(p.precio)} c/u</div>
+          <div class="pasos-cantidad">
+            <button data-accion="menos" data-id="${p.id}" aria-label="Quitar uno">−</button>
+            <b>${item.cantidad}</b>
+            <button data-accion="mas" data-id="${p.id}" aria-label="Agregar uno">＋</button>
+          </div>
+        </div>
+        <div class="articulo__lado">
+          <span class="articulo__total">${dinero(p.precio*item.cantidad)}</span>
+          <button class="quitar" data-accion="quitar" data-id="${p.id}">Quitar</button>
+        </div>
+      </div>`;
+    }).join("");
+  }
+
+  // Barra de progreso hacia el envío gratis
+  if (cfg.envio.gratisDesde > 0 && subtotal > 0 && subtotal < cfg.envio.gratisDesde){
+    $("#textoProgreso").innerHTML = `🚚 Te faltan <b>${dinero(cfg.envio.gratisDesde-subtotal)}</b> para envío <b>GRATIS</b>`;
+    $("#progresoEnvio").style.display = "";
+  } else if (subtotal >= cfg.envio.gratisDesde){
+    $("#textoProgreso").innerHTML = `🎉 ¡Genial! Tu pedido tiene <b>envío GRATIS</b>`;
+    $("#progresoEnvio").style.display = "";
+  } else {
+    $("#progresoEnvio").style.display = "none";
+  }
+  $("#barraProgreso").style.width = Math.min(100, subtotal/cfg.envio.gratisDesde*100) + "%";
+
+  // Totales del pie del carrito
+  $("#subtotalCarrito").textContent = dinero(subtotal);
+  $("#envioCarrito").textContent = subtotal===0 ? "—" : (envio===0 ? "GRATIS 🎉" : dinero(envio));
+  $("#totalCarrito").textContent = dinero(total);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   CHECKOUT POR WHATSAPP
+   ══════════════════════════════════════════════════════════════ */
+function pintarFormularioPago(){
+  $("#campoPago").innerHTML = cfg.formasDePago.map(f=>`<option>${f}</option>`).join("");
+}
+
+// Construye el mensaje con el resumen completo del pedido
+function construirMensaje(datos){
+  const { subtotal, envio, total } = calcularTotales();
+  const lineas = [];
+  lineas.push(`🛒 *NUEVO PEDIDO — ${cfg.tienda.nombre}*`);
+  lineas.push(cfg.tienda.mensajeSaludo);
+  lineas.push("");
+  lineas.push("━━━━━━━━━━━━━━━");
+  estado.carrito.forEach(item=>{
+    const p = cfg.productos.find(x=>x.id===item.id);
+    lineas.push(`▪️ ${item.cantidad} × ${p.nombre}  →  ${dinero(p.precio*item.cantidad)}`);
+  });
+  lineas.push("━━━━━━━━━━━━━━━");
+  lineas.push(`Subtotal: ${dinero(subtotal)}`);
+  lineas.push(`${cfg.envio.etiqueta}: ${envio===0 ? "GRATIS 🎉" : dinero(envio)}`);
+  lineas.push(`*TOTAL: ${dinero(total)}*`);
+  lineas.push("");
+  lineas.push(`👤 *Nombre:* ${datos.nombre}`);
+  lineas.push(datos.entrega==="domicilio"
+    ? `🛵 *Entrega:* ${cfg.envio.etiqueta}\n📍 *Dirección:* ${datos.direccion}`
+    : "🏬 *Entrega:* Retiro en tienda");
+  lineas.push(`💳 *Pago:* ${datos.pago}`);
+  if (datos.notas) lineas.push(`📝 *Notas:* ${datos.notas}`);
+  lineas.push("");
+  lineas.push("_Pedido generado desde la tienda en línea_ 🌐");
+  return lineas.join("\n");
+}
+
+function enviarPorWhatsApp(){
+  const nombre    = $("#campoNombre").value.trim();
+  const entrega   = document.querySelector('input[name="entrega"]:checked').value;
+  const direccion = $("#campoDireccion").value.trim();
+  const pago      = $("#campoPago").value;
+  const notas     = $("#campoNotas").value.trim();
+
+  // Validación sencilla con mensaje de error animado
+  const error = $("#errorForm");
+  if (!nombre || (entrega==="domicilio" && !direccion)){
+    error.classList.remove("visible"); void error.offsetWidth; error.classList.add("visible");
+    error.textContent = entrega==="domicilio" && !direccion
+      ? "⚠️ Escribe tu nombre y la dirección de entrega."
+      : "⚠️ Escribe tu nombre para continuar.";
+    return;
+  }
+  error.classList.remove("visible");
+
+  // Genera el enlace de wa.me con el mensaje codificado y lo abre
+  const mensaje = construirMensaje({ nombre, entrega, direccion, pago, notas });
+  const url = `https://wa.me/${cfg.tienda.whatsapp}?text=${encodeURIComponent(mensaje)}`;
+  window.open(url, "_blank");
+
+  // Cambia el modal a la vista de éxito con enlace de respaldo
+  $("#enlaceReintento").href = url;
+  $("#formularioZona").style.display = "none";
+  $("#exitoZona").style.display = "block";
+  avisar("✅ ¡Resumen enviado! Confirma en WhatsApp");
+
+  if (cfg.carrito.vaciarAlComprar) vaciarCarrito();
+}
+
+/* ══════════════════════════════════════════════════════════════
+   INTERFAZ: drawer, modal, toasts y micro-animaciones
+   ══════════════════════════════════════════════════════════════ */
+function abrirCarrito(){ $("#panelCarrito").classList.add("abierto"); $("#fondoOscuro").classList.add("abierto"); document.body.classList.add("bloqueado"); }
+function cerrarCarrito(){ $("#panelCarrito").classList.remove("abierto"); $("#fondoOscuro").classList.remove("abierto"); document.body.classList.remove("bloqueado"); }
+
+function abrirCheckout(){
+  if (!estado.carrito.length){ avisar("🧺 Tu carrito está vacío"); return; }
+  // Muestra el total actualizado dentro del modal
+  $("#totalModal").textContent = dinero(calcularTotales().total);
+  $("#formularioZona").style.display = "block";
+  $("#exitoZona").style.display = "none";
+  $("#modalCheckout").classList.add("abierto");
+  document.body.classList.add("bloqueado");
+}
+function cerrarModal(){ $("#modalCheckout").classList.remove("abierto"); if(!$("#panelCarrito").classList.contains("abierto")) document.body.classList.remove("bloqueado"); }
+
+// Pequeño aviso flotante que desaparece solo
+function avisar(texto){
+  const el = document.createElement("div");
+  el.className = "aviso"; el.textContent = texto;
+  $("#avisos").appendChild(el);
+  setTimeout(()=>{ el.style.opacity="0"; el.style.transition="opacity .4s"; setTimeout(()=>el.remove(),400); }, 2400);
+}
+
+// Puntito de color que "vuela" desde el botón hasta el carrito
+function volarAlCarrito(origen){
+  const destino = $("#botonCarrito");
+  const a = origen.getBoundingClientRect(), b = destino.getBoundingClientRect();
+  const punto = document.createElement("div");
+  punto.className = "volador";
+  punto.style.left = (a.left + a.width/2) + "px";
+  punto.style.top  = (a.top  + a.height/2) + "px";
+  document.body.appendChild(punto);
+  requestAnimationFrame(()=>{
+    punto.style.transform = `translate(${b.left+b.width/2-(a.left+a.width/2)}px, ${b.top+b.height/2-(a.top+a.height/2)}px) scale(.25)`;
+    punto.style.opacity = "0";
+  });
+  setTimeout(()=>punto.remove(), 700);
+}
+
+/* ── Animaciones al hacer scroll (IntersectionObserver) ───────── */
+let observador;
+function observarRevelados(){
+  if (observador) observador.disconnect();
+  observador = new IntersectionObserver(entradas=>{
+    entradas.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add("visible"); observador.unobserve(e.target); } });
+  },{ threshold:.12 });
+  document.querySelectorAll(".revelar:not(.visible)").forEach(el=>observador.observe(el));
+}
+
+/* ══════════════════════════════════════════════════════════════
+   EVENTOS GLOBALES
+   ══════════════════════════════════════════════════════════════ */
+// Un solo oyente para todos los botones con data-accion (delegación)
+document.addEventListener("click", e=>{
+  const boton = e.target.closest("[data-accion]");
+  const chip  = e.target.closest("[data-cat]");
+  if (chip){ // filtro de categoría
+    estado.categoria = chip.dataset.cat;
+    pintarCategorias(); pintarCatalogo();
+    return;
+  }
+  if (!boton) return;
+  const { accion, id } = boton.dataset;
+  switch(accion){
+    case "agregar":       agregarAlCarrito(id, boton); break;
+    case "abrir-carrito": abrirCarrito(); break;
+    case "cerrar-carrito":cerrarCarrito(); break;
+    case "cerrar-modal":  cerrarModal(); break;
+    case "mas":           cambiarCantidad(id, +1); break;
+    case "menos":         cambiarCantidad(id, -1); break;
+    case "quitar":        quitarDelCarrito(id); break;
+  }
+});
+
+// Búsqueda y orden en vivo
+$("#campoBusqueda").addEventListener("input", e=>{ estado.texto = e.target.value; pintarCatalogo(); });
+$("#selectorOrden").addEventListener("change", e=>{ estado.orden = e.target.value; pintarCatalogo(); });
+
+// Checkout
+$("#botonCheckout").addEventListener("click", abrirCheckout);
+$("#formularioCheckout").addEventListener("submit", e=>{ e.preventDefault(); enviarPorWhatsApp(); });
+
+// Mostrar/ocultar dirección según el tipo de entrega + actualizar total del modal
+document.querySelectorAll('input[name="entrega"]').forEach(r=>{
+  r.addEventListener("change", ()=>{
+    const domicilio = r.value==="domicilio" && r.checked;
+    $("#campoDireccionZona").style.display = domicilio ? "" : "none";
+    const { subtotal, total } = calcularTotales();
+    // si va a retiro en tienda, el envío del modal es 0
+    $("#totalModal").textContent = dinero(
+      document.querySelector('input[name="entrega"]:checked').value==="retiro" ? subtotal : subtotal + (subtotal>=cfg.envio.gratisDesde?0:cfg.envio.costo)
+    );
+  });
+});
+
+// Cierres cómodos: fondo oscuro, tecla Escape
+$("#fondoOscuro").addEventListener("click", cerrarCarrito);
+document.addEventListener("keydown", e=>{
+  if (e.key==="Escape"){ cerrarModal(); cerrarCarrito(); }
+});
+
+// Sombra de la cabecera al hacer scroll
+window.addEventListener("scroll", ()=>{
+  $("#cabecera").classList.toggle("flotando", window.scrollY > 8);
+});
+
+/* ══════════════════════════════════════════════════════════════
+   ARRANQUE 🚀
+   ══════════════════════════════════════════════════════════════ */
+(function iniciar(){
+  aplicarTema();         // colores de CONFIG
+  pintarIdentidad();     // nombre, logo, contactos, redes
+  pintarAnuncios();      // cinta superior
+  pintarPortada();       // hero + producto destacado
+  pintarCategorias();    // filtros
+  pintarCatalogo();      // productos
+  pintarPasos();         // cómo comprar
+  pintarTestimonios();   // opiniones
+  pintarFormularioPago();// opciones de pago del checkout
+  cargarCarrito();       // recupera el carrito guardado
+  actualizarUI();        // pinta carrito y contadores
+  observarRevelados();   // animaciones de scroll
+})();
+</script>
+</body>
+</html>
