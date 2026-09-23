@@ -1,3 +1,237 @@
 {
-  
+  "departamentos": [
+    {
+      "id": "dep-dir",
+      "nombre": "Dirección General",
+      "color": "#4f46e5",
+      "icon": "fa-building-user"
+    },
+    {
+      "id": "dep-rrhh",
+      "nombre": "Recursos Humanos",
+      "color": "#ec4899",
+      "icon": "fa-users"
+    },
+    {
+      "id": "dep-soporte",
+      "nombre": "Soporte & TI",
+      "color": "#0284c7",
+      "icon": "fa-headset"
+    },
+    {
+      "id": "dep-almacen",
+      "nombre": "Almacén & Logística",
+      "color": "#f59e0b",
+      "icon": "fa-boxes-stacked"
+    },
+    {
+      "id": "dep-finanzas",
+      "nombre": "Ventas",
+      "color": "#10b981",
+      "icon": "fa-calculator"
+    },
+    {
+      "id": "dep-1790143708131",
+      "nombre": "Soporte Técnico",
+      "color": "#3b82f6",
+      "icon": "fa-building"
+    }
+  ],
+  "empleados": [
+    {
+      "id": "emp-1790143870267",
+      "nombre": "Michel Montero",
+      "cargo": "Supervisora",
+      "departamentoId": "dep-1790143708131",
+      "reportaA": null,
+      "comentario": "Supervisa el departamento",
+      "email": "",
+      "extension": "",
+      "slack": "@michelmontero",
+      "funciones": [
+        "ATC",
+        "Soporte técnico"
+      ],
+      "tagsBusqueda": [
+        "soporte",
+        "soporte técnico",
+        "activaciones",
+        "activacion",
+        "activar",
+        "soporte",
+        "accesos",
+        "cuentas",
+        "licencias",
+        "alta usuario"
+      ]
+    },
+    {
+      "id": "emp-1790143948808",
+      "nombre": "Leonardo Montiel",
+      "cargo": "Soporte Técnico",
+      "departamentoId": "dep-1790143708131",
+      "reportaA": "emp-1790143870267",
+      "comentario": "ATC, Activaciones y Monitoreo",
+      "email": "leonardomontiel365@gmail.com",
+      "extension": "9022",
+      "slack": "@lmontiel",
+      "funciones": [
+        "ATC",
+        "Atención al cliente",
+        "Soporte Técnico."
+      ],
+      "tagsBusqueda": [
+        "soporte",
+        "soporte técnico",
+        "activaciones",
+        "activacion",
+        "activar",
+        "soporte",
+        "accesos",
+        "cuentas",
+        "licencias",
+        "alta usuario"
+      ]
+    },
+    {
+      "id": "emp-1790143987647",
+      "nombre": "Anahis Bastidas",
+      "cargo": "Soporte Técnico",
+      "departamentoId": "dep-1790143708131",
+      "reportaA": "emp-1790143870267",
+      "comentario": "Activaciones, ATC, Monitoreo",
+      "email": "",
+      "extension": "",
+      "slack": "",
+      "funciones": [
+        "ATC",
+        "Atención al cliente",
+        "Soporte Técnico."
+      ],
+      "tagsBusqueda": [
+        "soporte",
+        "soporte técnico",
+        "activaciones",
+        "activacion",
+        "activar",
+        "soporte",
+        "accesos",
+        "cuentas",
+        "licencias",
+        "alta usuario"
+      ]
+    },
+    {
+      "id": "emp-1790144069599",
+      "nombre": "Pedro Perez",
+      "cargo": "Soporte Técnico",
+      "departamentoId": "dep-1790143708131",
+      "reportaA": "emp-1790143870267",
+      "comentario": "ATC, Soporte técnico y Monitoreo",
+      "email": "",
+      "extension": "",
+      "slack": "",
+      "funciones": [
+        "ATC",
+        "Atención al cliente",
+        "Soporte Técnico."
+      ],
+      "tagsBusqueda": [
+        "soporte",
+        "soporte técnico",
+        "activaciones",
+        "activacion",
+        "activar",
+        "soporte",
+        "accesos",
+        "cuentas",
+        "licencias",
+        "alta usuario"
+      ]
+    },
+    {
+      "id": "emp-1790144146799",
+      "nombre": "Kelvin Briceño",
+      "cargo": "Soporte Técnico",
+      "departamentoId": "dep-1790143708131",
+      "reportaA": "emp-1790143870267",
+      "comentario": "ATC, Soporte técnico y Monitoreo",
+      "email": "",
+      "extension": "",
+      "slack": "",
+      "funciones": [
+        "ATC",
+        "Atención al cliente",
+        "Soporte Técnico."
+      ],
+      "tagsBusqueda": [
+        "soporte",
+        "soporte técnico",
+        "activaciones",
+        "activacion",
+        "activar",
+        "soporte",
+        "accesos",
+        "cuentas",
+        "licencias",
+        "alta usuario"
+      ]
+    },
+    {
+      "id": "emp-1790144322136",
+      "nombre": "Maryorie Salas",
+      "cargo": "Encargada de Ventas",
+      "departamentoId": "dep-finanzas",
+      "reportaA": null,
+      "comentario": "Supervisa el departamento de Ventas",
+      "email": "",
+      "extension": "",
+      "slack": "",
+      "funciones": [
+        "Ventas",
+        "Supervisora"
+      ],
+      "tagsBusqueda": [
+        "Ventas",
+        "clientes"
+      ]
+    },
+    {
+      "id": "emp-1790144397303",
+      "nombre": "Mileidy",
+      "cargo": "Ventas",
+      "departamentoId": "dep-finanzas",
+      "reportaA": "emp-1790144322136",
+      "comentario": "Asesora de Ventas",
+      "email": "",
+      "extension": "",
+      "slack": "",
+      "funciones": [
+        "Asesora de Ventas",
+        "Ventas"
+      ],
+      "tagsBusqueda": [
+        "Asesora",
+        "Ventas"
+      ]
+    },
+    {
+      "id": "emp-1790154852732",
+      "nombre": "Luis Castro",
+      "cargo": "Asesor de Ventas",
+      "departamentoId": "dep-finanzas",
+      "reportaA": "emp-1790144322136",
+      "comentario": "Asesor de Ventas",
+      "email": "",
+      "extension": "",
+      "slack": "",
+      "funciones": [
+        "Asesor de Ventas"
+      ],
+      "tagsBusqueda": [
+        "Asesor",
+        "Ventas"
+      ]
+    }
+  ]
 }
