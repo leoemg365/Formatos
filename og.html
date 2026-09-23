@@ -279,6 +279,14 @@
                         </button>
                     </div>
 
+                    <!-- GitHub Persistence Button -->
+                    <button onclick="openGithubModal()" 
+                        class="w-full py-2 px-2.5 bg-slate-900 dark:bg-slate-100 hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 rounded-xl text-xs font-bold shadow-xs transition flex items-center justify-center gap-2">
+                        <i class="fa-brands fa-github text-sm"></i>
+                        <span>Sincronizar con GitHub</span>
+                        <span id="githubStatusBadge" class="w-2.5 h-2.5 rounded-full bg-amber-400 ml-auto" title="Pendiente de configuración"></span>
+                    </button>
+
                     <div class="grid grid-cols-2 gap-2">
                         <button onclick="exportDataJSON()" 
                             class="py-1.5 px-2 bg-white dark:bg-slate-800 hover:bg-emerald-100 dark:hover:bg-slate-700 border border-emerald-300 dark:border-slate-700 text-emerald-800 dark:text-emerald-300 rounded-lg text-xs font-medium transition flex items-center justify-center gap-1">
@@ -664,6 +672,88 @@
         </div>
     </div>
 
+    <!-- MODAL 7: GitHub Sync & API Settings Modal -->
+    <div id="githubModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-md w-full overflow-hidden shadow-2xl border border-slate-100 dark:border-slate-800 text-slate-800 dark:text-slate-100">
+            <div class="bg-slate-900 dark:bg-slate-950 text-white px-5 py-4 flex items-center justify-between border-b border-slate-800">
+                <h3 class="font-bold text-sm sm:text-base flex items-center gap-2">
+                    <i class="fa-brands fa-github text-lg"></i> Conexión GitHub (`Formatos`)
+                </h3>
+                <button onclick="closeModal('githubModal')" class="text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div class="p-5 space-y-4 text-xs max-h-[80vh] overflow-y-auto">
+                <div class="bg-blue-50 dark:bg-blue-950/40 p-3 rounded-xl border border-blue-200 dark:border-blue-800/60 text-blue-900 dark:text-blue-200">
+                    <p class="font-semibold flex items-center gap-1.5 mb-1">
+                        <i class="fa-solid fa-circle-info text-blue-500"></i> Persistencia Remota
+                    </p>
+                    <p class="text-[11px] text-blue-800 dark:text-blue-300">
+                        Los datos se sincronizarán con el repositorio <strong>Formatos</strong> en la ruta <code>Databases/ogdb.json</code>.
+                    </p>
+                </div>
+
+                <form id="githubConfigForm" onsubmit="saveGithubSettings(event)" class="space-y-3">
+                    <div>
+                        <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                            GitHub Personal Access Token (PAT) *
+                        </label>
+                        <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" required
+                            class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-brand-500 focus:outline-none font-mono">
+                        <p class="text-[10px] text-slate-400 dark:text-slate-500 mt-1">Ingresa tu Token de GitHub con permisos <code>repo</code> o <code>contents: write</code>.</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Usuario / Organización *</label>
+                            <input type="text" id="ghOwner" placeholder="ej: tu-usuario" required
+                                class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Repositorio *</label>
+                            <input type="text" id="ghRepo" value="Formatos" required
+                                class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Ruta del Archivo *</label>
+                            <input type="text" id="ghPath" value="Databases/ogdb.json" required
+                                class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-brand-500 focus:outline-none font-mono">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Rama (Branch) *</label>
+                            <input type="text" id="ghBranch" value="main" required
+                                class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                        </div>
+                    </div>
+
+                    <div class="pt-2 flex justify-end gap-2">
+                        <button type="submit" class="w-full py-2 font-semibold bg-slate-800 dark:bg-slate-700 hover:bg-slate-700 text-white rounded-xl transition">
+                            Guardar Credenciales
+                        </button>
+                    </div>
+                </form>
+
+                <div class="pt-3 border-t border-slate-200 dark:border-slate-800 space-y-2">
+                    <span class="block font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider text-[10px]">Sincronización manual</span>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="fetchFromGithub()" 
+                            class="py-2 px-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold transition flex items-center justify-center gap-1.5 shadow-xs">
+                            <i class="fa-solid fa-cloud-arrow-down"></i> Cargar de GitHub
+                        </button>
+                        <button onclick="saveToGithub()" 
+                            class="py-2 px-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-semibold transition flex items-center justify-center gap-1.5 shadow-xs">
+                            <i class="fa-solid fa-cloud-arrow-up"></i> Publicar en GitHub
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Notification Banner -->
     <div id="toastNotification" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-xs font-medium">
         <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400 dark:text-emerald-600 text-base"></i>
@@ -772,7 +862,21 @@
             searchQuery: '',
             isEditMode: false,
             isDarkMode: false,
-            activeModalEmployeeId: null
+            activeModalEmployeeId: null,
+            githubSha: null
+        };
+
+        window.onload = function() {
+            initTheme();
+            loadInitialData();
+            setupEventListeners();
+            loadGithubConfig();
+            renderAll();
+
+            // Automatic load attempt from GitHub if credentials exist
+            if (getGithubCredentials().token && getGithubCredentials().owner) {
+                fetchFromGithub(false);
+            }
         };
 
         window.onload = function() {
@@ -1564,6 +1668,201 @@
                 }
             };
             reader.readAsText(file);
+        }
+
+        /* UTF-8 Safe Base64 Helpers */
+        function utf8ToBase64(str) {
+            return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, p1) => String.fromCharCode('0x' + p1)));
+        }
+
+        function base64ToUtf8(str) {
+            return decodeURIComponent(Array.prototype.map.call(atob(str.replace(/\s/g, '')), c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+        }
+
+        /* GitHub Persistence Integration */
+        function getGithubCredentials() {
+            return {
+                token: localStorage.getItem('organi_gh_token') || '',
+                owner: localStorage.getItem('organi_gh_owner') || '',
+                repo: localStorage.getItem('organi_gh_repo') || 'Formatos',
+                path: localStorage.getItem('organi_gh_path') || 'Databases/ogdb.json',
+                branch: localStorage.getItem('organi_gh_branch') || 'main'
+            };
+        }
+
+        function loadGithubConfig() {
+            const config = getGithubCredentials();
+            document.getElementById('ghToken').value = config.token;
+            document.getElementById('ghOwner').value = config.owner;
+            document.getElementById('ghRepo').value = config.repo;
+            document.getElementById('ghPath').value = config.path;
+            document.getElementById('ghBranch').value = config.branch;
+            updateGithubBadge();
+        }
+
+        function openGithubModal() {
+            loadGithubConfig();
+            openModal('githubModal');
+        }
+
+        function saveGithubSettings(event) {
+            if (event) event.preventDefault();
+            const token = document.getElementById('ghToken').value.trim();
+            const owner = document.getElementById('ghOwner').value.trim();
+            const repo = document.getElementById('ghRepo').value.trim() || 'Formatos';
+            const path = document.getElementById('ghPath').value.trim() || 'Databases/ogdb.json';
+            const branch = document.getElementById('ghBranch').value.trim() || 'main';
+
+            localStorage.setItem('organi_gh_token', token);
+            localStorage.setItem('organi_gh_owner', owner);
+            localStorage.setItem('organi_gh_repo', repo);
+            localStorage.setItem('organi_gh_path', path);
+            localStorage.setItem('organi_gh_branch', branch);
+
+            updateGithubBadge();
+            showToast("Configuración de GitHub guardada");
+        }
+
+        function updateGithubBadge() {
+            const creds = getGithubCredentials();
+            const badge = document.getElementById('githubStatusBadge');
+            if (badge) {
+                if (creds.token && creds.owner) {
+                    badge.className = "w-2.5 h-2.5 rounded-full bg-emerald-400 ml-auto";
+                    badge.title = "GitHub Conectado";
+                } else {
+                    badge.className = "w-2.5 h-2.5 rounded-full bg-amber-400 ml-auto";
+                    badge.title = "Pendiente Token / Usuario";
+                }
+            }
+        }
+
+        async function fetchFromGithub(showToastNotice = true) {
+            const creds = getGithubCredentials();
+            if (!creds.token || !creds.owner) {
+                openGithubModal();
+                showToast("Ingresa tu Token y Usuario de GitHub");
+                return;
+            }
+
+            const url = `https://api.github.com/repos/${creds.owner}/${creds.repo}/contents/${creds.path}?ref=${creds.branch}`;
+
+            try {
+                if (showToastNotice) showToast("Cargando desde GitHub...");
+                
+                const res = await fetch(url, {
+                    headers: {
+                        'Authorization': `Bearer ${creds.token}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+
+                if (res.status === 404) {
+                    showToast("Archivo no encontrado en GitHub. Se creará al guardar.");
+                    appState.githubSha = null;
+                    return;
+                }
+
+                if (!res.ok) {
+                    const errData = await res.json().catch(() => ({}));
+                    throw new Error(errData.message || `Error status ${res.status}`);
+                }
+
+                const data = await res.json();
+                appState.githubSha = data.sha;
+
+                const decodedJson = base64ToUtf8(data.content);
+                const parsed = JSON.parse(decodedJson);
+
+                if (parsed.departamentos && parsed.empleados) {
+                    appState.departamentos = parsed.departamentos;
+                    appState.empleados = parsed.empleados;
+                    saveToLocalStorage();
+                    renderAll();
+                    if (showToastNotice) showToast("Datos cargados desde GitHub (`ogdb.json`)");
+                } else {
+                    showToast("Estructura JSON no reconocida en ogdb.json");
+                }
+            } catch (err) {
+                console.error("GitHub Fetch error:", err);
+                showToast("Error al cargar de GitHub: " + err.message);
+            }
+        }
+
+        async function saveToGithub() {
+            const creds = getGithubCredentials();
+            if (!creds.token || !creds.owner) {
+                openGithubModal();
+                showToast("Ingresa tu Token y Usuario de GitHub para publicar");
+                return;
+            }
+
+            // Obtain current SHA if missing
+            if (!appState.githubSha) {
+                try {
+                    const checkUrl = `https://api.github.com/repos/${creds.owner}/${creds.repo}/contents/${creds.path}?ref=${creds.branch}`;
+                    const checkRes = await fetch(checkUrl, {
+                        headers: {
+                            'Authorization': `Bearer ${creds.token}`,
+                            'Accept': 'application/vnd.github.v3+json'
+                        }
+                    });
+                    if (checkRes.ok) {
+                        const checkData = await checkRes.json();
+                        appState.githubSha = checkData.sha;
+                    }
+                } catch (e) {
+                    console.warn("Could not retrieve file SHA before saving", e);
+                }
+            }
+
+            const jsonString = JSON.stringify({
+                departamentos: appState.departamentos,
+                empleados: appState.empleados
+            }, null, 2);
+
+            const base64Content = utf8ToBase64(jsonString);
+            const url = `https://api.github.com/repos/${creds.owner}/${creds.repo}/contents/${creds.path}`;
+
+            const bodyPayload = {
+                message: "Actualización de ogdb.json desde OrganiMap",
+                content: base64Content,
+                branch: creds.branch
+            };
+
+            if (appState.githubSha) {
+                bodyPayload.sha = appState.githubSha;
+            }
+
+            try {
+                showToast("Guardando en GitHub...");
+
+                const res = await fetch(url, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${creds.token}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/vnd.github.v3+json'
+                    },
+                    body: JSON.stringify(bodyPayload)
+                });
+
+                if (!res.ok) {
+                    const errData = await res.json().catch(() => ({}));
+                    throw new Error(errData.message || `HTTP ${res.status}`);
+                }
+
+                const responseData = await res.json();
+                if (responseData.content && responseData.content.sha) {
+                    appState.githubSha = responseData.content.sha;
+                }
+
+                showToast("¡Guardado con éxito en GitHub! (`Databases/ogdb.json`)");
+                closeModal('githubModal');
+            } catch (err) {
+                console.error("GitHub Save error:", err);
+                showToast("Error al guardar en GitHub: " + err.message);
+            }
         }
 
         function openModal(id) {
