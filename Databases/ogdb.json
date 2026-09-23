@@ -7,22 +7,10 @@
       "icon": "fa-building-user"
     },
     {
-      "id": "dep-rrhh",
-      "nombre": "Recursos Humanos",
-      "color": "#ec4899",
-      "icon": "fa-users"
-    },
-    {
       "id": "dep-soporte",
       "nombre": "Soporte & TI",
       "color": "#0284c7",
       "icon": "fa-headset"
-    },
-    {
-      "id": "dep-almacen",
-      "nombre": "Almacén & Logística",
-      "color": "#f59e0b",
-      "icon": "fa-boxes-stacked"
     },
     {
       "id": "dep-finanzas",
@@ -231,6 +219,43 @@
       "tagsBusqueda": [
         "Asesor",
         "Ventas"
+      ]
+    },
+    {
+      "id": "emp-1790155404258",
+      "nombre": "Gilmer Mena",
+      "cargo": "Soporte ID",
+      "departamentoId": "dep-soporte",
+      "reportaA": null,
+      "comentario": "Soporte ID",
+      "email": "",
+      "extension": "",
+      "slack": "",
+      "funciones": [
+        "Investigación y Desarrollo"
+      ],
+      "tagsBusqueda": [
+        "Investigación",
+        "Desarrollo"
+      ]
+    },
+    {
+      "id": "emp-1790155487870",
+      "nombre": "Luis Urdaneta",
+      "cargo": "Soporte ID",
+      "departamentoId": "dep-soporte",
+      "reportaA": "emp-1790155404258",
+      "comentario": "Soporte ID",
+      "email": "",
+      "extension": "",
+      "slack": "",
+      "funciones": [
+        "Soporte ID",
+        "Investigación y Desarrollo"
+      ],
+      "tagsBusqueda": [
+        "Investigación",
+        "Desarrollo"
       ]
     }
   ]
