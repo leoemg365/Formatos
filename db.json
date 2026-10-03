@@ -349,7 +349,7 @@
         {
           "id": 1774290226113,
           "label": "Incidencia - Pospuesta",
-          "content": "Estimado cliente:\n\nLe informamos que actualmente presentamos una falla en el cableado de fibra óptica principal que provee su servicio.\n\nLa incidencia se debe a la caída de un poste y a la presencia de descargas eléctricas en las estructuras cercanas. Por razones de seguridad, los trabajos de reparación se realizarán el día de mañana, una vez que el personal de Corpoelec haya solucionado la situación eléctrica.\n\nAgradecemos su comprensión y confianza en TECNOVEN.\n#SomosMásQueInternet",
+          "content": "Estimado cliente:\n\nLe informamos que actualmente presentamos una falla en el cableado de fibra óptica principal que provee su servicio.\n\nDebido a la lluvia y motivos de la hora, por razones de seguridad, los trabajos de reparación se realizarán el día de mañana en la mañana, tenga en cuenta que el día Lunes también se estará trabajando en la zona para cambiar el cableado y evitar futuras desconexiones.\n\nAgradecemos su comprensión y confianza en TECNOVEN.\n#SomosMásQueInternet",
           "subcat": "Falla Interna",
           "color": "urgente"
         },
