@@ -513,6 +513,13 @@
           "subcat": "Falla Interna",
           "color": "aviso",
           "content": "Buenas noches, estamos experimentando una incidencia en el nodo principal donde conecta su servicio por este motivo no cuenta con servicio, el día de mañana se estará verificando en sitio a primera hora para darle solución."
+        },
+        {
+          "id": 1791142395900,
+          "label": "Emergencias por Ventarrón",
+          "subcat": "Falla Interna",
+          "color": "aviso",
+          "content": "Buenas tardes. Los técnicos están trabajando en la resolución de incidencias pendientes según su orden de recepción. Le agradecemos mucho su paciencia y le avisaremos en cuanto se haya restablecido su servicio."
         }
       ]
     },
