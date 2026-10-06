@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Tickets de Campo - FieldOps Telecom</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome Icons CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Leaflet.js CSS & JS CDN -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            500: '#16a34a',
+                            600: '#15803d',
+                            700: '#166534',
+                            800: '#14532d',
+                            dark: '#0f172a'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom map markers and popup styling */
+        .leaflet-popup-content-wrapper {
+            border-radius: 12px;
+            padding: 4px;
+        }
+        .custom-emoji-pin {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border-radius: 50%;
+            border: 3px solid #16a34a;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            font-size: 18px;
+            width: 36px !important;
+            height: 36px !important;
+        }
+        /* Custom scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 font-sans text-slate-800 antialiased pb-20 md:pb-6">
+
+    <!-- Top App Header -->
+    <header class="bg-slate-900 text-white sticky top-0 z-30 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-emerald-600 text-white p-2 rounded-xl flex items-center justify-center">
+                    <i class="fa-solid fa-satellite-dish text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight flex items-center gap-2">
+                        FieldOps Telecom
+                        <span class="text-xs bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full font-normal">ISP Manager</span>
+                    </h1>
+                    <p class="text-xs text-slate-400">Gestión de Cuadrillas & Soporte Técnico</p>
+                </div>
+            </div>
+
+            <!-- Stats Header -->
+            <div class="hidden sm:flex items-center space-x-2 text-xs">
+                <span class="bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700">
+                    Total: <strong id="stat-total" class="text-white">0</strong>
+                </span>
+                <span class="bg-amber-950/60 text-amber-300 px-3 py-1.5 rounded-lg border border-amber-800/50">
+                    🅿️ Pendientes: <strong id="stat-pending">0</strong>
+                </span>
+                <span class="bg-rose-950/60 text-rose-300 px-3 py-1.5 rounded-lg border border-rose-800/50">
+                    ❌ Fallidos: <strong id="stat-failed">0</strong>
+                </span>
+                <span class="bg-emerald-950/60 text-emerald-300 px-3 py-1.5 rounded-lg border border-emerald-800/50">
+                    ✅ Resueltos: <strong id="stat-resolved">0</strong>
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Quick Stats Bar -->
+    <div class="sm:hidden bg-slate-800 text-white px-4 py-2 border-t border-slate-700/50 flex justify-between text-xs font-medium">
+        <span>Total: <strong id="m-stat-total">0</strong></span>
+        <span class="text-amber-400">🅿️ <strong id="m-stat-pending">0</strong></span>
+        <span class="text-rose-400">❌ <strong id="m-stat-failed">0</strong></span>
+        <span class="text-emerald-400">✅ <strong id="m-stat-resolved">0</strong></span>
+    </div>
+
+    <!-- Navigation Tabs Container -->
+    <div class="max-w-7xl mx-auto px-2 sm:px-4 mt-3">
+        <!-- Navigation bar (Desktop & Mobile sticky) -->
+        <nav class="flex justify-around md:justify-start space-x-1 sm:space-x-2 bg-white p-1.5 rounded-2xl shadow-sm border border-slate-200">
+            <button onclick="switchTab('tickets')" id="tab-btn-tickets" class="tab-btn flex-1 md:flex-initial flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all bg-emerald-600 text-white shadow-sm">
+                <i class="fa-solid fa-list-check"></i>
+                <span>Tickets</span>
+            </button>
+            <button onclick="switchTab('map')" id="tab-btn-map" class="tab-btn flex-1 md:flex-initial flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all">
+                <i class="fa-solid fa-map-location-dot"></i>
+                <span>Mapa</span>
+            </button>
+            <button onclick="switchTab('new-ticket')" id="tab-btn-new-ticket" class="tab-btn flex-1 md:flex-initial flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all">
+                <i class="fa-solid fa-plus-circle text-emerald-600"></i>
+                <span>Nuevo Ticket</span>
+            </button>
+            <button onclick="switchTab('crews')" id="tab-btn-crews" class="tab-btn flex-1 md:flex-initial flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all">
+                <i class="fa-solid fa-users-gear"></i>
+                <span>Cuadrillas</span>
+            </button>
+            <button onclick="switchTab('settings')" id="tab-btn-settings" class="tab-btn flex-1 md:flex-initial flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all">
+                <i class="fa-solid fa-sliders"></i>
+                <span>Respaldos</span>
+            </button>
+        </nav>
+    </div>
+
+    <main class="max-w-7xl mx-auto px-2 sm:px-4 py-4">
+
+        <!-- VIEW 1: TICKETS FEED & LISTING -->
+        <section id="view-tickets" class="space-y-4">
+            <!-- Filter Bar -->
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                    <!-- Text Search -->
+                    <div class="relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-sm"></i>
+                        <input type="text" id="filter-search" oninput="applyFilters()" placeholder="Buscar cliente, falla, dirección..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                    <!-- Node Filter -->
+                    <div>
+                        <select id="filter-node" onchange="applyFilters()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            <option value="">Todos los Nodos</option>
+                        </select>
+                    </div>
+                    <!-- Status Filter -->
+                    <div>
+                        <select id="filter-status" onchange="applyFilters()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            <option value="">Todos los Estados</option>
+                            <option value="PENDIENTE">🅿️ Pendientes / En Proceso</option>
+                            <option value="FALLIDO">❌ Fallido / Cancelado</option>
+                            <option value="RESUELTO">✅ Resuelto / Completado</option>
+                        </select>
+                    </div>
+                    <!-- Crew Filter -->
+                    <div>
+                        <select id="filter-crew" onchange="applyFilters()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            <option value="">Todas las Cuadrillas</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tickets Feed Grid -->
+            <div id="tickets-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Ticket Cards dynamically inserted here -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="tickets-empty-state" class="hidden text-center py-12 bg-white rounded-2xl border border-slate-200 shadow-sm">
+                <i class="fa-solid fa-clipboard-check text-4xl text-slate-300 mb-2"></i>
+                <h3 class="text-lg font-semibold text-slate-600">No hay tickets encontrados</h3>
+                <p class="text-sm text-slate-400">Intenta cambiar los filtros o crear un nuevo ticket.</p>
+            </div>
+        </section>
+
+        <!-- VIEW 2: INTERACTIVE MAP -->
+        <section id="view-map" class="hidden space-y-4">
+            <div class="bg-white p-3 rounded-2xl shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center space-x-2">
+                    <span class="text-sm font-semibold text-slate-700">Filtrar Mapa:</span>
+                    <select id="map-filter-crew" onchange="updateMapMarkers()" class="py-1.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-sm">
+                        <option value="">Todas las cuadrillas</option>
+                    </select>
+                </div>
+                <div class="flex items-center gap-4 text-xs">
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-amber-500 inline-block"></span> 🅿️ Pendientes</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-rose-500 inline-block"></span> ❌ Fallidos</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span> ✅ Resueltos</span>
+                </div>
+            </div>
+
+            <!-- Map Container -->
+            <div class="bg-white p-2 rounded-2xl shadow-sm border border-slate-200">
+                <div id="map" class="w-full h-[65vh] rounded-xl z-10"></div>
+            </div>
+        </section>
+
+        <!-- VIEW 3: NEW TICKET & WHATSAPP PARSER -->
+        <section id="view-new-ticket" class="hidden max-w-3xl mx-auto space-y-4">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <!-- Sub-tabs for Form Mode -->
+                <div class="flex border-b border-slate-200 bg-slate-50">
+                    <button onclick="toggleFormTab('parser')" id="form-tab-parser" class="flex-1 py-3 px-4 text-center font-semibold text-sm border-b-2 border-emerald-600 text-emerald-700 bg-white flex items-center justify-center gap-2">
+                        <i class="fa-brands fa-whatsapp text-emerald-500 text-base"></i>
+                        <span>Parser Rápido WhatsApp</span>
+                    </button>
+                    <button onclick="toggleFormTab('manual')" id="form-tab-manual" class="flex-1 py-3 px-4 text-center font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-pen-to-square text-base"></i>
+                        <span>Ingreso Manual Completo</span>
+                    </button>
+                </div>
+
+                <div class="p-4 sm:p-6 space-y-5">
+                    <!-- WhatsApp Parser Section -->
+                    <div id="parser-section" class="space-y-4">
+                        <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-xs text-emerald-800">
+                            <p class="font-bold flex items-center gap-1">
+                                <i class="fa-solid fa-circle-info"></i> Pegar texto directo del grupo de WhatsApp:
+                            </p>
+                            <p class="mt-1 text-emerald-700">Pega el mensaje con formato de reporte y el sistema extraerá automáticamente los datos requeridos.</p>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Texto Copiado de WhatsApp</label>
+                            <textarea id="whatsapp-raw-input" rows="4" placeholder="Ejemplo:&#10;Adrian Angel Gonzalez Mas Y Rubi&#10;Onu en los&#10;Nodo Matancera&#10;Hora: 2:39 PM" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-mono focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
+                        </div>
+                        <button type="button" onclick="parseAndFillWhatsApp()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-2.5 px-4 rounded-xl text-sm transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i>
+                            <span>Procesar y Llenar Formulario</span>
+                        </button>
+                    </div>
+
+                    <!-- Main Ticket Creation Form -->
+                    <form id="ticket-form" onsubmit="handleCreateTicket(event)" class="space-y-4 pt-2">
+                        <hr class="border-slate-100 my-2">
+                        <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-clipboard-list text-emerald-600"></i> Datos del Ticket
+                        </h3>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-600 mb-1">Nombre y Apellidos del Cliente *</label>
+                                <input type="text" id="form-cliente" required placeholder="Ej. Adrian Angel Gonzalez" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-medium text-slate-600 mb-1">Nodo / Sector *</label>
+                                <input type="text" id="form-nodo" required placeholder="Ej. Nodo Matancera, Nodo La Popular" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-medium text-slate-600 mb-1">Tipo de Falla / Asunto *</label>
+                                <input type="text" id="form-falla" required placeholder="Ej. ONU en LOS, Falla Externa" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-medium text-slate-600 mb-1">Hora del Reporte *</label>
+                                <input type="text" id="form-hora" required placeholder="Ej. 2:39 PM" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-medium text-slate-600 mb-1">Teléfono Contacto</label>
+                                <input type="text" id="form-telefono" placeholder="Ej. 0412-1234567" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-medium text-slate-600 mb-1">Cuadrilla Asignada</label>
+                                <select id="form-cuadrilla" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                                    <!-- Populated dynamically -->
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">Dirección / Referencia de Ubicación</label>
+                            <input type="text" id="form-direccion" placeholder="Ej. Sector La Chamarreta, Av. 15 casa #23" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                        </div>
+
+                        <!-- Coordenadas GPS -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-600 mb-1">Latitud GPS</label>
+                                <input type="number" step="any" id="form-lat" placeholder="Ej. 10.6012" class="w-full p-2 bg-white border border-slate-200 rounded-lg text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-600 mb-1">Longitud GPS</label>
+                                <input type="number" step="any" id="form-lng" placeholder="Ej. -71.6521" class="w-full p-2 bg-white border border-slate-200 rounded-lg text-sm">
+                            </div>
+                            <div class="sm:col-span-2 flex justify-end">
+                                <button type="button" onclick="getCurrentLocation()" class="text-xs text-emerald-600 font-semibold hover:text-emerald-700 flex items-center gap-1">
+                                    <i class="fa-solid fa-location-crosshairs"></i> Usar mi ubicación actual
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Image File Attachment -->
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">Adjuntar Imagen / Ficha Técnica (Opcional)</label>
+                            <input type="file" id="form-imagen" accept="image/*" onchange="previewImageInput(this)" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100">
+                            <div id="image-preview-container" class="mt-2 hidden">
+                                <img id="image-preview-element" src="" class="h-32 rounded-xl object-cover border border-slate-200">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">Observaciones / Checklists del Ticket</label>
+                            <textarea id="form-observaciones" rows="2" placeholder="Verificaciones requeridas, IP, potencia optica dBm..." class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
+                        </div>
+
+                        <!-- Action Submit Button -->
+                        <div class="pt-2">
+                            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-4 rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-floppy-disk"></i>
+                                <span>Guardar y Registrar Ticket</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 4: CREWS MANAGEMENT -->
+        <section id="view-crews" class="hidden space-y-4">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <!-- Add Crew Form -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 h-fit space-y-4">
+                    <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                        <i class="fa-solid fa-user-plus text-emerald-600"></i> Registrar Nueva Cuadrilla
+                    </h3>
+                    <form id="crew-form" onsubmit="handleCreateCrew(event)" class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">Nombre / Identificador de Cuadrilla *</label>
+                            <input type="text" id="crew-nombre" required placeholder="Ej. Cuadrilla Alfa" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">Técnico Líder / Integrantes</label>
+                            <input type="text" id="crew-lider" required placeholder="Ej. Marcone Soto" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">Vehículo / Unidad</label>
+                            <input type="text" id="crew-vehiculo" placeholder="Ej. Camioneta Hilux (A82-BC1)" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">Color de Identificación en Mapa</label>
+                            <input type="color" id="crew-color" value="#16a34a" class="w-full h-10 p-1 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer">
+                        </div>
+                        <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-2.5 rounded-xl text-sm transition-all">
+                            Registrar Cuadrilla
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Crew Cards List -->
+                <div class="lg:col-span-2 space-y-3">
+                    <h3 class="font-bold text-slate-800 text-base">Cuadrillas Activas</h3>
+                    <div id="crews-container" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <!-- Crew items dynamic -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 5: SETTINGS & JSON BACKUP -->
+        <section id="view-settings" class="hidden max-w-3xl mx-auto space-y-4">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+                <div>
+                    <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">
+                        <i class="fa-solid fa-database text-emerald-600"></i> Gestión de Datos y Respaldos (JSON)
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-1">Los datos se almacenan de forma local e instantánea en el navegador (<code class="bg-slate-100 px-1 rounded text-emerald-700">localStorage</code>).</p>
+                </div>
+
+                <!-- Backup Action Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Export -->
+                    <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
+                        <h4 class="font-semibold text-slate-700 text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-download text-emerald-600"></i> Exportar Respaldo
+                        </h4>
+                        <p class="text-xs text-slate-500">Descarga un archivo .json con todos los tickets, historial y cuadrillas para resguardar o transferir.</p>
+                        <button onclick="exportJSONBackup()" class="w-full mt-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 rounded-xl text-xs transition-all">
+                            Descargar Backup JSON
+                        </button>
+                    </div>
+
+                    <!-- Import -->
+                    <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
+                        <h4 class="font-semibold text-slate-700 text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-upload text-blue-600"></i> Importar Respaldo
+                        </h4>
+                        <p class="text-xs text-slate-500">Carga un archivo .json de respaldo guardado previamente para restaurar la información.</p>
+                        <input type="file" id="import-file-input" accept=".json" class="hidden" onchange="importJSONBackup(event)">
+                        <button onclick="document.getElementById('import-file-input').click()" class="w-full mt-2 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-xl text-xs transition-all">
+                            Seleccionar Archivo JSON
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Factory Reset -->
+                <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+                    <div>
+                        <h4 class="font-semibold text-rose-700 text-sm">Restablecer Datos de Prueba</h4>
+                        <p class="text-xs text-slate-500">Reinicia los tickets y cuadrillas al estado inicial por defecto.</p>
+                    </div>
+                    <button onclick="resetDataToDefault()" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-medium px-4 py-2 rounded-xl text-xs transition-all">
+                        Restablecer Todo
+                    </button>
+                </div>
+
+                <!-- Raw JSON Inspector -->
+                <div class="space-y-2">
+                    <label class="block text-xs font-semibold text-slate-700 uppercase">Visor de Estado JSON Actual</label>
+                    <pre id="json-preview" class="p-4 bg-slate-900 text-emerald-400 rounded-xl text-xs overflow-x-auto max-h-60 font-mono"></pre>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL: Reassignment & History Log -->
+    <div id="modal-history" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-2xl shadow-xl overflow-hidden space-y-4 p-5">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 class="font-bold text-slate-800 text-base" id="modal-history-title">Historial del Ticket</h3>
+                <button onclick="closeModal('modal-history')" class="text-slate-400 hover:text-slate-600 p-1">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            
+            <div id="modal-history-body" class="space-y-3 max-h-80 overflow-y-auto pr-1 text-xs text-slate-600">
+                <!-- Timeline items -->
+            </div>
+
+            <div class="pt-2 border-t border-slate-100 flex justify-end">
+                <button onclick="closeModal('modal-history')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium px-4 py-2 rounded-xl text-xs">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Image Preview -->
+    <div id="modal-image" class="hidden fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white max-w-2xl w-full rounded-2xl overflow-hidden p-3 space-y-3">
+            <div class="flex justify-between items-center px-2">
+                <span class="text-sm font-bold text-slate-700">Soporte Técnico / Ficha Adjunta</span>
+                <button onclick="closeModal('modal-image')" class="text-slate-400 hover:text-slate-600">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <img id="modal-image-src" src="" class="w-full max-h-[75vh] object-contain rounded-xl bg-slate-100">
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50 space-y-2 pointer-events-none"></div>
+
+    <script>
+        const DEFAULT_CUADRILLAS = [
+            {
+                id: "CUA-01",
+                nombre: "Cuadrilla Alpha (Maracaibo Sur)",
+                lider: "Marcone Soto",
+                vehiculo: "Hilux A82-BC1",
+                color: "#16a34a"
+            },
+            {
+                id: "CUA-02",
+                nombre: "Cuadrilla Beta (La Popular)",
+                lider: "Julio Delgado",
+                vehiculo: "LUV X99-ZZ1",
+                color: "#2563eb"
+            }
+        ];
+
+        // Seed initial tickets based on provided context
+        const DEFAULT_TICKETS = [
+            {
+                id: "TCK-1001",
+                cliente: "Adrian Angel Gonzalez Mas Y Rubi",
+                nodo: "Nodo Matancera",
+                falla_tipo: "ONU en LOS",
+                hora_reporte: "2:39 PM",
+                timestamp: Date.now() - (45 * 60 * 1000), // 45 minutes ago (SLA Green)
+                estado: "PENDIENTE",
+                emoji: "🅿️",
+                telefono: "0414-6352910",
+                direccion: "Calle 23, Casa #15, Sector La Matancera",
+                coordenadas: { lat: 10.5982, lng: -71.6514 },
+                cuadrilla_id: "CUA-01",
+                observaciones: "Ausencia de Potencia Óptica - Falla Externa. Verificar conectividad eléctrica del equipo y router.",
+                imagen_url: "",
+                historial: [
+                    { fecha: new Date(Date.now() - (45 * 60 * 1000)).toLocaleString(), nota: "Ticket ingresado vía grupo de WhatsApp" },
+                    { fecha: new Date(Date.now() - (40 * 60 * 1000)).toLocaleString(), nota: "Asignado a Cuadrilla Alpha (Marcone Soto)" }
+                ]
+            },
+            {
+                id: "TCK-1002",
+                cliente: "Gremis Del Valle Rivas Chourio",
+                nodo: "Nodo La Popular",
+                falla_tipo: "ONU en LOS",
+                hora_reporte: "2:38 PM",
+                timestamp: Date.now() - (130 * 60 * 1000), // 130 minutes ago (SLA Red)
+                estado: "PENDIENTE",
+                emoji: "🅿️",
+                telefono: "0424-7123984",
+                direccion: "Av. 15, Delicias Sur Sector San Francisco",
+                coordenadas: { lat: 10.5821, lng: -71.6389 },
+                cuadrilla_id: "CUA-02",
+                observaciones: "Falla de señal reportada por central. Antena requiere revisión en torre.",
+                imagen_url: "",
+                historial: [
+                    { fecha: new Date(Date.now() - (130 * 60 * 1000)).toLocaleString(), nota: "Ticket ingresado vía grupo de WhatsApp" },
+                    { fecha: new Date(Date.now() - (120 * 60 * 1000)).toLocaleString(), nota: "Estado asignado a Pendiente (🅿️)" }
+                ]
+            }
+        ];
+
+        // Global State
+        let state = {
+            tickets: [],
+            cuadrillas: [],
+            activeTab: 'tickets',
+            map: null,
+            mapMarkers: []
+        };
+
+        function initStorage() {
+            const storedTickets = localStorage.getItem('fieldops_tickets');
+            const storedCrews = localStorage.getItem('fieldops_cuadrillas');
+
+            if (storedTickets && storedCrews) {
+                state.tickets = JSON.parse(storedTickets);
+                state.cuadrillas = JSON.parse(storedCrews);
+            } else {
+                state.tickets = [...DEFAULT_TICKETS];
+                state.cuadrillas = [...DEFAULT_CUADRILLAS];
+                saveToLocalStorage();
+            }
+        }
+
+        function saveToLocalStorage() {
+            localStorage.setItem('fieldops_tickets', JSON.stringify(state.tickets));
+            localStorage.setItem('fieldops_cuadrillas', JSON.stringify(state.cuadrillas));
+            updateJSONPreview();
+            updateStats();
+        }
+
+        function getSLAStatus(timestamp) {
+            const minutes = (Date.now() - timestamp) / (1000 * 60);
+            if (minutes < 60) {
+                return { label: `< 1h`, class: `bg-emerald-100 text-emerald-800 border-emerald-300`, icon: `fa-clock` };
+            } else if (minutes <= 120) {
+                return { label: `1-2h`, class: `bg-amber-100 text-amber-800 border-amber-300`, icon: `fa-triangle-exclamation` };
+            } else {
+                return { label: `> 2h Crítico`, class: `bg-rose-100 text-rose-800 border-rose-300`, icon: `fa-fire` };
+            }
+        }
+
+        function getEmojiBadgeClass(emoji) {
+            switch(emoji) {
+                case '🅿️': return 'bg-amber-50 text-amber-700 border-amber-200';
+                case '❌': return 'bg-rose-50 text-rose-700 border-rose-200';
+                case '✅': return 'bg-emerald-50 text-emerald-700 border-emerald-200';
+                default: return 'bg-slate-50 text-slate-700 border-slate-200';
+            }
+        }
+
+        function renderTickets() {
+            const container = document.getElementById('tickets-container');
+            const emptyState = document.getElementById('tickets-empty-state');
+            container.innerHTML = '';
+
+            // Apply filters
+            const searchVal = document.getElementById('filter-search').value.toLowerCase();
+            const nodeVal = document.getElementById('filter-node').value;
+            const statusVal = document.getElementById('filter-status').value;
+            const crewVal = document.getElementById('filter-crew').value;
+
+            const filtered = state.tickets.filter(t => {
+                const matchesSearch = t.cliente.toLowerCase().includes(searchVal) || 
+                                      t.nodo.toLowerCase().includes(searchVal) ||
+                                      t.falla_tipo.toLowerCase().includes(searchVal) ||
+                                      (t.direccion && t.direccion.toLowerCase().includes(searchVal));
+                const matchesNode = !nodeVal || t.nodo === nodeVal;
+                const matchesStatus = !statusVal || t.estado === statusVal;
+                const matchesCrew = !crewVal || t.cuadrilla_id === crewVal;
+                return matchesSearch && matchesNode && matchesStatus && matchesCrew;
+            });
+
+            if (filtered.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            filtered.forEach(ticket => {
+                const sla = getSLAStatus(ticket.timestamp);
+                const crew = state.cuadrillas.find(c => c.id === ticket.cuadrilla_id);
+                const crewName = crew ? crew.nombre : 'Sin Asignar';
+
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-2xl p-4 shadow-sm border border-slate-200 flex flex-col justify-between space-y-3 hover:shadow-md transition-shadow";
+                card.innerHTML = `
+                    <!-- Top Info Header -->
+                    <div class="flex items-start justify-between gap-2 border-b border-slate-100 pb-2">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-slate-900 text-base">${ticket.cliente}</span>
+                            </div>
+                            <span class="text-xs text-slate-500 font-medium">
+                                <i class="fa-solid fa-network-wired text-emerald-600"></i> ${ticket.nodo}
+                            </span>
+                        </div>
+                        <!-- SLA Badge -->
+                        <span class="px-2.5 py-1 rounded-lg border text-xs font-semibold flex items-center gap-1 ${sla.class}">
+                            <i class="fa-solid ${sla.icon}"></i> ${sla.label}
+                        </span>
+                    </div>
+
+                    <!-- Details Body -->
+                    <div class="space-y-1.5 text-xs text-slate-600">
+                        <div class="flex items-center justify-between">
+                            <span class="font-semibold text-slate-800">Falla:</span>
+                            <span class="bg-slate-100 text-slate-800 font-medium px-2 py-0.5 rounded-md">${ticket.falla_tipo}</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="font-semibold text-slate-800">Hora Reporte:</span>
+                            <span>${ticket.hora_reporte}</span>
+                        </div>
+                        ${ticket.direccion ? `
+                        <div>
+                            <span class="font-semibold text-slate-800">Dirección:</span>
+                            <p class="text-slate-500 truncate">${ticket.direccion}</p>
+                        </div>` : ''}
+                        ${ticket.observaciones ? `
+                        <div class="bg-slate-50 p-2 rounded-xl border border-slate-100 text-slate-500 italic mt-1">
+                            "${ticket.observaciones}"
+                        </div>` : ''}
+                    </div>
+
+                    <!-- Emoji Action Buttons -->
+                    <div class="pt-2 border-t border-slate-100 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-semibold text-slate-600">Estado Emoji:</span>
+                            <div class="flex items-center space-x-1">
+                                <button onclick="changeTicketStatus('${ticket.id}', 'PENDIENTE', '🅿️')" title="Pendiente" class="px-2.5 py-1 rounded-xl border text-sm transition-all ${ticket.emoji === '🅿️' ? 'bg-amber-100 border-amber-400 font-bold scale-105 shadow-sm' : 'bg-slate-50 border-slate-200 opacity-60 hover:opacity-100'}">
+                                    🅿️
+                                </button>
+                                <button onclick="changeTicketStatus('${ticket.id}', 'FALLIDO', '❌')" title="Fallido / Cancelado" class="px-2.5 py-1 rounded-xl border text-sm transition-all ${ticket.emoji === '❌' ? 'bg-rose-100 border-rose-400 font-bold scale-105 shadow-sm' : 'bg-slate-50 border-slate-200 opacity-60 hover:opacity-100'}">
+                                    ❌
+                                </button>
+                                <button onclick="changeTicketStatus('${ticket.id}', 'RESUELTO', '✅')" title="Resuelto" class="px-2.5 py-1 rounded-xl border text-sm transition-all ${ticket.emoji === '✅' ? 'bg-emerald-100 border-emerald-400 font-bold scale-105 shadow-sm' : 'bg-slate-50 border-slate-200 opacity-60 hover:opacity-100'}">
+                                    ✅
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Crew Reassignment Dropdown -->
+                        <div class="flex items-center justify-between text-xs gap-2 pt-1">
+                            <span class="font-semibold text-slate-600">Cuadrilla:</span>
+                            <select onchange="reassignCrew('${ticket.id}', this.value)" class="py-1 px-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 focus:ring-2 focus:ring-emerald-500">
+                                ${state.cuadrillas.map(c => `<option value="${c.id}" ${c.id === ticket.cuadrilla_id ? 'selected' : ''}>${c.nombre}</option>`).join('')}
+                            </select>
+                        </div>
+
+                        <!-- Card Footer Links & Actions -->
+                        <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
+                            <button onclick="openHistoryModal('${ticket.id}')" class="text-slate-500 hover:text-slate-800 font-medium flex items-center gap-1">
+                                <i class="fa-solid fa-clock-rotate-left text-slate-400"></i> Historial
+                            </button>
+
+                            <div class="flex items-center space-x-2">
+                                ${ticket.imagen_url ? `
+                                <button onclick="openImageModal('${ticket.imagen_url}')" class="text-emerald-600 hover:text-emerald-800 font-semibold flex items-center gap-1 bg-emerald-50 px-2 py-1 rounded-lg">
+                                    <i class="fa-solid fa-image"></i> Ficha
+                                </button>` : ''}
+
+                                ${ticket.coordenadas && ticket.coordenadas.lat ? `
+                                <a href="https://www.google.com/maps?q=${ticket.coordenadas.lat},${ticket.coordenadas.lng}" target="_blank" class="text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1 bg-blue-50 px-2 py-1 rounded-lg">
+                                    <i class="fa-solid fa-location-arrow"></i> GPS
+                                </a>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function initMap() {
+            if (state.map) return; // Map already initialized
+
+            // Default center around Maracaibo/San Francisco area
+            state.map = L.map('map').setView([10.6000, -71.6400], 12);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(state.map);
+
+            updateMapMarkers();
+        }
+
+        function updateMapMarkers() {
+            if (!state.map) return;
+
+            // Clear existing markers
+            state.mapMarkers.forEach(m => state.map.removeLayer(m));
+            state.mapMarkers = [];
+
+            const selectedCrew = document.getElementById('map-filter-crew').value;
+
+            state.tickets.forEach(ticket => {
+                if (!ticket.coordenadas || !ticket.coordenadas.lat) return;
+                if (selectedCrew && ticket.cuadrilla_id !== selectedCrew) return;
+
+                const crew = state.cuadrillas.find(c => c.id === ticket.cuadrilla_id);
+                const borderColor = crew ? crew.color : '#16a34a';
+
+                // Create custom div icon
+                const customIcon = L.divIcon({
+                    className: 'custom-emoji-pin',
+                    html: `<div style="border-color: ${borderColor}">${ticket.emoji || '🅿️'}</div>`,
+                    iconSize: [36, 36],
+                    iconAnchor: [18, 18]
+                });
+
+                const marker = L.marker([ticket.coordenadas.lat, ticket.coordenadas.lng], { icon: customIcon })
+                    .addTo(state.map);
+
+                // Popup content
+                const popupContent = `
+                    <div class="p-1 space-y-1 text-slate-800">
+                        <strong class="text-sm block">${ticket.cliente}</strong>
+                        <span class="text-xs text-slate-500 block">${ticket.nodo} - ${ticket.falla_tipo}</span>
+                        <div class="text-xs font-semibold mt-1">Cuadrilla: ${crew ? crew.nombre : 'N/A'}</div>
+                        <div class="pt-2 flex items-center justify-between gap-2">
+                            <a href="https://www.google.com/maps?q=${ticket.coordenadas.lat},${ticket.coordenadas.lng}" target="_blank" class="text-xs bg-blue-600 text-white px-2 py-1 rounded-lg inline-block">
+                                Abrir Waze / GPS
+                            </a>
+                        </div>
+                    </div>
+                `;
+
+                marker.bindPopup(popupContent);
+                state.mapMarkers.push(marker);
+            });
+        }
+
+        function parseAndFillWhatsApp() {
+            const rawText = document.getElementById('whatsapp-raw-input').value.trim();
+            if (!rawText) {
+                showToast("Por favor pega un texto antes de procesar", "error");
+                return;
+            }
+
+            const lines = rawText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+
+            let parsed = {
+                cliente: '',
+                nodo: '',
+                falla_tipo: '',
+                hora_reporte: ''
+            };
+
+            lines.forEach(line => {
+                const lower = line.toLowerCase();
+                
+                if (lower.startsWith('hora:') || lower.includes('pm') || lower.includes('am')) {
+                    parsed.hora_reporte = line.replace(/hora:/i, '').trim();
+                } else if (lower.includes('nodo')) {
+                    parsed.nodo = line;
+                } else if (lower.includes('onu') || lower.includes('los') || lower.includes('falla') || lower.includes('potencia')) {
+                    parsed.falla_tipo = line;
+                } else if (!parsed.cliente && !lower.includes('reenviado')) {
+                    parsed.cliente = line;
+                }
+            });
+
+            // Auto fill fields
+            if (parsed.cliente) document.getElementById('form-cliente').value = parsed.cliente;
+            if (parsed.nodo) document.getElementById('form-nodo').value = parsed.nodo;
+            if (parsed.falla_tipo) document.getElementById('form-falla').value = parsed.falla_tipo;
+            if (parsed.hora_reporte) document.getElementById('form-hora').value = parsed.hora_reporte;
+
+            showToast("Campos procesados desde el texto exitosamente", "success");
+        }
+
+        function handleCreateTicket(e) {
+            e.preventDefault();
+
+            const cliente = document.getElementById('form-cliente').value.trim();
+            const nodo = document.getElementById('form-nodo').value.trim();
+            const falla = document.getElementById('form-falla').value.trim();
+            const hora = document.getElementById('form-hora').value.trim();
+            const telefono = document.getElementById('form-telefono').value.trim();
+            const cuadrillaId = document.getElementById('form-cuadrilla').value;
+            const direccion = document.getElementById('form-direccion').value.trim();
+            const lat = parseFloat(document.getElementById('form-lat').value) || 10.6000;
+            const lng = parseFloat(document.getElementById('form-lng').value) || -71.6400;
+            const obs = document.getElementById('form-observaciones').value.trim();
+            const imagePreview = document.getElementById('image-preview-element').src;
+
+            const newTicket = {
+                id: `TCK-${Math.floor(1000 + Math.random() * 9000)}`,
+                cliente: cliente,
+                nodo: nodo,
+                falla_tipo: falla,
+                hora_reporte: hora,
+                timestamp: Date.now(),
+                estado: "PENDIENTE",
+                emoji: "🅿️",
+                telefono: telefono,
+                direccion: direccion,
+                coordenadas: { lat: lat, lng: lng },
+                cuadrilla_id: cuadrillaId,
+                observaciones: obs,
+                imagen_url: imagePreview && imagePreview.startsWith('data:image') ? imagePreview : '',
+                historial: [
+                    { fecha: new Date().toLocaleString(), nota: "Ticket registrado en la plataforma" }
+                ]
+            };
+
+            state.tickets.unshift(newTicket);
+            saveToLocalStorage();
+            populateFilterDropdowns();
+            renderTickets();
+            
+            // Reset form
+            document.getElementById('ticket-form').reset();
+            document.getElementById('image-preview-container').classList.add('hidden');
+            document.getElementById('whatsapp-raw-input').value = '';
+
+            showToast("¡Ticket creado con éxito!", "success");
+            switchTab('tickets');
+        }
+
+        function changeTicketStatus(ticketId, newStatus, emoji) {
+            const ticket = state.tickets.find(t => t.id === ticketId);
+            if (!ticket) return;
+
+            ticket.estado = newStatus;
+            ticket.emoji = emoji;
+            ticket.historial.push({
+                fecha: new Date().toLocaleString(),
+                nota: `Estado cambiado a ${newStatus} (${emoji})`
+            });
+
+            saveToLocalStorage();
+            renderTickets();
+            updateMapMarkers();
+            showToast(`Ticket actualizado a ${emoji}`, "info");
+        }
+
+        function reassignCrew(ticketId, newCrewId) {
+            const ticket = state.tickets.find(t => t.id === ticketId);
+            const crew = state.cuadrillas.find(c => c.id === newCrewId);
+            if (!ticket || !crew) return;
+
+            ticket.cuadrilla_id = newCrewId;
+            ticket.historial.push({
+                fecha: new Date().toLocaleString(),
+                nota: `Reasignado a la cuadrilla: ${crew.nombre}`
+            });
+
+            saveToLocalStorage();
+            renderTickets();
+            updateMapMarkers();
+            showToast(`Ticket reasignado a ${crew.nombre}`, "info");
+        }
+
+        function handleCreateCrew(e) {
+            e.preventDefault();
+            const nombre = document.getElementById('crew-nombre').value.trim();
+            const lider = document.getElementById('crew-lider').value.trim();
+            const vehiculo = document.getElementById('crew-vehiculo').value.trim();
+            const color = document.getElementById('crew-color').value;
+
+            const newCrew = {
+                id: `CUA-0${state.cuadrillas.length + 1}`,
+                nombre,
+                lider,
+                vehiculo,
+                color
+            };
+
+            state.cuadrillas.push(newCrew);
+            saveToLocalStorage();
+            renderCrews();
+            populateFilterDropdowns();
+
+            document.getElementById('crew-form').reset();
+            showToast("Cuadrilla registrada con éxito", "success");
+        }
+
+        function renderCrews() {
+            const container = document.getElementById('crews-container');
+            container.innerHTML = '';
+
+            state.cuadrillas.forEach(c => {
+                const ticketCount = state.tickets.filter(t => t.cuadrilla_id === c.id && t.estado === 'PENDIENTE').length;
+
+                const card = document.createElement('div');
+                card.className = "bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-2";
+                card.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-4 h-4 rounded-full inline-block" style="background-color: ${c.color}"></span>
+                            <strong class="text-sm text-slate-800">${c.nombre}</strong>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-700 font-bold px-2 py-1 rounded-lg">
+                            ${ticketCount} pendientes
+                        </span>
+                    </div>
+                    <p class="text-xs text-slate-500">Líder: <strong>${c.lider}</strong></p>
+                    <p class="text-xs text-slate-400">Unidad: ${c.vehiculo || 'N/A'}</p>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function populateFilterDropdowns() {
+            // Unique nodes
+            const nodes = [...new Set(state.tickets.map(t => t.nodo))];
+            const nodeSelect = document.getElementById('filter-node');
+            nodeSelect.innerHTML = '<option value="">Todos los Nodos</option>' + 
+                nodes.map(n => `<option value="${n}">${n}</option>`).join('');
+
+            // Crews dropdowns
+            const crewSelects = [
+                document.getElementById('filter-crew'),
+                document.getElementById('form-cuadrilla'),
+                document.getElementById('map-filter-crew')
+            ];
+
+            const crewOptions = state.cuadrillas.map(c => `<option value="${c.id}">${c.nombre}</option>`).join('');
+
+            crewSelects[0].innerHTML = '<option value="">Todas las Cuadrillas</option>' + crewOptions;
+            crewSelects[1].innerHTML = crewOptions;
+            crewSelects[2].innerHTML = '<option value="">Todas las cuadrillas</option>' + crewOptions;
+        }
+
+        function applyFilters() {
+            renderTickets();
+        }
+
+        function updateStats() {
+            const total = state.tickets.length;
+            const pending = state.tickets.filter(t => t.estado === 'PENDIENTE').length;
+            const failed = state.tickets.filter(t => t.estado === 'FALLIDO').length;
+            const resolved = state.tickets.filter(t => t.estado === 'RESUELTO').length;
+
+            document.getElementById('stat-total').innerText = total;
+            document.getElementById('stat-pending').innerText = pending;
+            document.getElementById('stat-failed').innerText = failed;
+            document.getElementById('stat-resolved').innerText = resolved;
+
+            document.getElementById('m-stat-total').innerText = total;
+            document.getElementById('m-stat-pending').innerText = pending;
+            document.getElementById('m-stat-failed').innerText = failed;
+            document.getElementById('m-stat-resolved').innerText = resolved;
+        }
+
+        function switchTab(tabId) {
+            state.activeTab = tabId;
+
+            // Update Tab buttons CSS
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.className = "tab-btn flex-1 md:flex-initial flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all";
+            });
+
+            const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+            if (activeBtn) {
+                activeBtn.className = "tab-btn flex-1 md:flex-initial flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all bg-emerald-600 text-white shadow-sm";
+            }
+
+            // Hide all views
+            ['tickets', 'map', 'new-ticket', 'crews', 'settings'].forEach(id => {
+                document.getElementById(`view-${id}`).classList.add('hidden');
+            });
+
+            // Show active view
+            document.getElementById(`view-${tabId}`).classList.remove('hidden');
+
+            // Tab specific triggers
+            if (tabId === 'map') {
+                setTimeout(() => {
+                    initMap();
+                    state.map.invalidateSize();
+                }, 200);
+            }
+        }
+
+        function toggleFormTab(mode) {
+            const parserSec = document.getElementById('parser-section');
+            const btnParser = document.getElementById('form-tab-parser');
+            const btnManual = document.getElementById('form-tab-manual');
+
+            if (mode === 'parser') {
+                parserSec.classList.remove('hidden');
+                btnParser.className = "flex-1 py-3 px-4 text-center font-semibold text-sm border-b-2 border-emerald-600 text-emerald-700 bg-white flex items-center justify-center gap-2";
+                btnManual.className = "flex-1 py-3 px-4 text-center font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center justify-center gap-2";
+            } else {
+                parserSec.classList.add('hidden');
+                btnManual.className = "flex-1 py-3 px-4 text-center font-semibold text-sm border-b-2 border-emerald-600 text-emerald-700 bg-white flex items-center justify-center gap-2";
+                btnParser.className = "flex-1 py-3 px-4 text-center font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center justify-center gap-2";
+            }
+        }
+
+        function openHistoryModal(ticketId) {
+            const ticket = state.tickets.find(t => t.id === ticketId);
+            if (!ticket) return;
+
+            document.getElementById('modal-history-title').innerText = `Historial: ${ticket.cliente}`;
+            const body = document.getElementById('modal-history-body');
+            body.innerHTML = '';
+
+            ticket.historial.forEach((item, idx) => {
+                const div = document.createElement('div');
+                div.className = "p-2.5 bg-slate-50 border border-slate-200 rounded-xl space-y-0.5";
+                div.innerHTML = `
+                    <div class="text-[10px] text-slate-400 font-bold">${item.fecha}</div>
+                    <div class="text-xs text-slate-700">${item.nota}</div>
+                `;
+                body.appendChild(div);
+            });
+
+            document.getElementById('modal-history').classList.remove('hidden');
+        }
+
+        function openImageModal(imgSrc) {
+            document.getElementById('modal-image-src').src = imgSrc;
+            document.getElementById('modal-image').classList.remove('hidden');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        function getCurrentLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                        document.getElementById('form-lat').value = pos.coords.latitude.toFixed(6);
+                        document.getElementById('form-lng').value = pos.coords.longitude.toFixed(6);
+                        showToast("Ubicación GPS capturada con éxito", "success");
+                    },
+                    () => showToast("No se pudo obtener la ubicación automáticamente", "error")
+                );
+            }
+        }
+
+        function previewImageInput(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const previewElem = document.getElementById('image-preview-element');
+                    previewElem.src = e.target.result;
+                    document.getElementById('image-preview-container').classList.remove('hidden');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function exportJSONBackup() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({
+                tickets: state.tickets,
+                cuadrillas: state.cuadrillas
+            }, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `FieldOps_Backup_${new Date().toISOString().slice(0,10)}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            showToast("Backup exportado correctamente", "success");
+        }
+
+        function importJSONBackup(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    if (parsed.tickets && parsed.cuadrillas) {
+                        state.tickets = parsed.tickets;
+                        state.cuadrillas = parsed.cuadrillas;
+                        saveToLocalStorage();
+                        populateFilterDropdowns();
+                        renderTickets();
+                        renderCrews();
+                        showToast("Backup importado exitosamente", "success");
+                    } else {
+                        showToast("Estructura JSON inválida", "error");
+                    }
+                } catch (err) {
+                    showToast("Error al leer el archivo JSON", "error");
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function resetDataToDefault() {
+            state.tickets = [...DEFAULT_TICKETS];
+            state.cuadrillas = [...DEFAULT_CUADRILLAS];
+            saveToLocalStorage();
+            populateFilterDropdowns();
+            renderTickets();
+            renderCrews();
+            showToast("Datos restaurados a valores por defecto", "info");
+        }
+
+        function updateJSONPreview() {
+            const jsonElem = document.getElementById('json-preview');
+            if (jsonElem) {
+                jsonElem.innerText = JSON.stringify({
+                    ticketsCount: state.tickets.length,
+                    cuadrillasCount: state.cuadrillas.length,
+                    ticketsSample: state.tickets.slice(0, 2)
+                }, null, 2);
+            }
+        }
+
+        function showToast(message, type = "info") {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            let bgClass = "bg-slate-900 text-white";
+            if (type === "success") bgClass = "bg-emerald-600 text-white";
+            if (type === "error") bgClass = "bg-rose-600 text-white";
+
+            toast.className = `pointer-events-auto px-4 py-2.5 rounded-xl shadow-lg text-xs font-semibold flex items-center gap-2 transition-all transform translate-y-2 opacity-0 ${bgClass}`;
+            toast.innerHTML = `<i class="fa-solid fa-circle-info"></i> ${message}`;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        window.onload = function() {
+            initStorage();
+            populateFilterDropdowns();
+            renderTickets();
+            renderCrews();
+            updateStats();
+            updateJSONPreview();
+        };
+    </script>
+</body>
+</html>
