@@ -672,6 +672,13 @@
           "subcat": "Pagos",
           "color": "info",
           "content": "Buenos días, prorroga otorgada por un plazo de 2 días que son lo que nos permite el sistema."
+        },
+        {
+          "id": 1791340596843,
+          "label": "Configuración PPPOE",
+          "subcat": "Configuración de Router",
+          "color": "neutro",
+          "content": "Una vez ingrese a la configuración del router va a la sección que dice Red o Netwok, seguidamente el tipo de conexión debe ir en PPPOE. \n\nLe pedirá un usuario y contraseña, escribirá estos:"
         }
       ]
     },
