@@ -2,15 +2,17 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generador de Rifas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Generador de Rifas Interactivo</title>
+    <!-- Incluyendo html2canvas para exportar la imagen -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
             --primary: #ff6b81;
             --primary-light: #ffebf0;
-            --bg-color: #f8f9fa;
+            --bg-color: #f1f2f6;
             --text-main: #2d3436;
-            --card-bg: rgba(255, 255, 255, 0.85);
+            --card-bg: #fffcfd;
             --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
             --radius: 16px;
         }
@@ -28,46 +30,45 @@
             display: flex;
             height: 100vh;
             overflow: hidden;
+            flex-direction: row; /* Por defecto en PC */
         }
 
-        /* Sidebar de Controles */
         .controls {
             width: 350px;
             background: white;
-            padding: 2rem;
+            padding: 1.5rem;
             box-shadow: 4px 0 15px rgba(0,0,0,0.05);
             overflow-y: auto;
             z-index: 10;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
         }
 
         .controls h2 {
-            margin-bottom: 1.5rem;
             font-size: 1.5rem;
             color: var(--primary);
-        }
-
-        .input-group {
-            margin-bottom: 1.2rem;
+            margin-bottom: 0.5rem;
         }
 
         .input-group label {
             display: block;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
+            margin-bottom: 0.4rem;
+            font-size: 0.85rem;
             font-weight: 600;
             color: #636e72;
         }
 
         .input-group input, .input-group textarea {
             width: 100%;
-            padding: 0.8rem;
+            padding: 0.75rem;
             border: 1px solid #dfe6e9;
             border-radius: 8px;
-            font-size: 1rem;
-            transition: border 0.3s ease;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
         }
 
-        .input-group input:focus {
+        .input-group input:focus, .input-group textarea:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 3px var(--primary-light);
@@ -82,59 +83,62 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            margin-top: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
         }
 
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: #ff4757; }
+        
+        .btn-success { background: #2ed573; color: white; margin-top: 1rem; }
+        .btn-success:hover { background: #26de81; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(46, 213, 115, 0.3); }
 
-        .btn-primary:hover {
-            background: #ff4757;
-        }
+        .btn-danger { background: transparent; color: #ff4757; border: 1px solid #ff4757; margin-top: 1rem; }
+        .btn-danger:hover { background: #ffebf0; }
 
-        .btn-danger {
-            background: #ff7675;
-            color: white;
-            margin-top: 2rem;
-        }
-
-        /* Área de Previsualización */
         .preview-area {
             flex: 1;
             display: flex;
             justify-content: center;
             align-items: center;
-            background: #f1f2f6;
             padding: 2rem;
             overflow-y: auto;
+            background-color: #e2e8f0;
+        }
+
+        /* Contenedor que será exportado a imagen */
+        #export-container {
+            padding: 10px; /* Margen para la foto exportada */
+            background: transparent;
         }
 
         .raffle-card {
             background: var(--card-bg);
-            backdrop-filter: blur(10px);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
             width: 100%;
-            max-width: 500px;
-            padding: 2rem;
+            max-width: 450px;
+            padding: 2rem 1.5rem;
             text-align: center;
             position: relative;
-            background-size: cover;
-            background-position: center;
+            /* Patrón de fondo suave tipo floral/puntos */
+            background-image: radial-gradient(#ffebf0 2px, transparent 2px);
+            background-size: 30px 30px;
         }
 
         .r-title {
             background: var(--primary-light);
             color: var(--text-main);
-            padding: 1rem;
-            border-radius: 50px;
-            font-size: 1.5rem;
+            padding: 0.8rem 1rem;
+            border-radius: 30px;
+            font-size: 1.3rem;
             font-weight: 800;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             border: 3px solid white;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            word-wrap: break-word;
         }
 
         .r-price {
@@ -151,40 +155,42 @@
         .r-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 10px;
+            gap: 8px;
             margin-bottom: 1.5rem;
         }
 
         .r-number {
-            background: var(--primary-light);
+            background: #ffe0e6;
             color: var(--text-main);
             aspect-ratio: 1;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: bold;
             border-radius: 8px;
             cursor: pointer;
             transition: transform 0.2s, background 0.2s;
             user-select: none;
             position: relative;
-            overflow: hidden;
+            border: 1px solid white;
         }
 
-        .r-number:hover {
-            transform: scale(1.05);
-            background: #ffe0e6;
+        @media (hover: hover) {
+            .r-number:hover {
+                transform: scale(1.05);
+                background: #ffc4d0;
+            }
         }
 
         .r-number.taken {
-            background: transparent;
+            background: rgba(255, 255, 255, 0.5);
             color: transparent;
         }
 
-        /* El marcador del número tomado (emulando el quesillo de la imagen) */
+        /* Emoji de quesillo para marcar los vendidos */
         .r-number.taken::after {
-            content: "🍮"; /* Puedes cambiarlo por una imagen de fondo en CSS */
+            content: "🍮";
             position: absolute;
             font-size: 2rem;
             display: flex;
@@ -192,8 +198,13 @@
             align-items: center;
             width: 100%;
             height: 100%;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 8px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+            animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes pop {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
         }
 
         .r-footer {
@@ -203,18 +214,18 @@
             font-weight: 600;
             white-space: pre-line;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            font-size: 0.95rem;
         }
 
-        /* Asistente (Modal) */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(5px);
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 100;
+            z-index: 1000;
             visibility: hidden;
             opacity: 0;
             transition: opacity 0.3s ease;
@@ -227,10 +238,10 @@
 
         .modal-content {
             background: white;
-            padding: 2.5rem;
+            padding: 2rem;
             border-radius: var(--radius);
             width: 90%;
-            max-width: 400px;
+            max-width: 380px;
             box-shadow: 0 25px 50px rgba(0,0,0,0.15);
             text-align: center;
             transform: translateY(20px);
@@ -241,36 +252,67 @@
             transform: translateY(0);
         }
 
-        .modal-content h3 {
-            margin-bottom: 1rem;
-            font-size: 1.5rem;
-        }
+        .modal-content h3 { margin-bottom: 0.8rem; color: var(--text-main); }
+        .modal-content p { color: #636e72; margin-bottom: 1.5rem; font-size: 0.95rem; }
 
         .modal-btn-group {
             display: flex;
             gap: 10px;
-            margin-top: 1.5rem;
         }
         
-        .btn-outline {
-            background: transparent;
-            border: 2px solid #dfe6e9;
-            color: #636e72;
+        .btn-outline { background: transparent; border: 2px solid #dfe6e9; color: #636e72; }
+        .btn-outline:hover { background: #f1f2f6; }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+                height: 100dvh; /* Usa dynamic viewport height si es posible */
+                overflow-y: auto; /* Permite hacer scroll vertical en todo el body */
+            }
+
+            .controls {
+                width: 100%;
+                flex-shrink: 0; /* Evita que los controles se encojan */
+                border-bottom: 2px solid var(--primary-light);
+                padding: 1rem;
+            }
+
+            .preview-area {
+                padding: 1rem;
+                align-items: flex-start; /* Para que la tarjeta quede arriba al hacer scroll */
+                min-height: calc(100vh - 300px); /* Asegura que haya espacio */
+            }
+
+            .raffle-card {
+                padding: 1.5rem 1rem;
+            }
+
+            .r-grid {
+                gap: 5px; /* Reduce el espacio entre números en pantallas muy pequeñas */
+            }
+
+            .r-number {
+                font-size: 1.2rem;
+            }
+            
+            .r-number.taken::after {
+                font-size: 1.5rem; /* Emoji ligeramente más pequeño */
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- Asistente de Inicio (Wizard) -->
+    <!-- Modal del Asistente -->
     <div id="wizard" class="modal-overlay">
         <div class="modal-content">
-            <h3>¡Bienvenido al Creador de Rifas! 🎉</h3>
-            <p style="margin-bottom: 1.5rem; color: #636e72;">Configuremos lo básico rápidamente.</p>
+            <h3>¡Bienvenido! 🎉</h3>
+            <p>Configuremos los datos principales de tu rifa para empezar.</p>
             
-            <div class="input-group">
-                <input type="text" id="wiz-title" placeholder="Ej: Rifa de un Quesillo de 1,5kg">
+            <div class="input-group" style="text-align: left;">
+                <input type="text" id="wiz-title" placeholder="Ej: Rifa de un Quesillo">
             </div>
-            <div class="input-group">
+            <div class="input-group" style="text-align: left;">
                 <input type="text" id="wiz-price" placeholder="Valor (Ej: 1200bs)">
             </div>
 
@@ -281,60 +323,80 @@
         </div>
     </div>
 
-    <!-- Panel Lateral de Edición -->
+    <!-- Modal de Confirmación para borrar datos -->
+    <div id="confirm-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>⚠️ ¿Limpiar todo?</h3>
+            <p>Se borrarán todos los números marcados y la configuración volverá a su estado inicial. Esto no se puede deshacer.</p>
+            <div class="modal-btn-group">
+                <button class="btn btn-outline" onclick="closeConfirmModal()">Cancelar</button>
+                <button class="btn" style="background:#ff4757; color:white;" onclick="executeClearAll()">Sí, borrar todo</button>
+            </div>
+        </div>
+    </div>
+
     <aside class="controls">
-        <h2>Editor de Rifa</h2>
+        <h2>✏️ Editar Rifa</h2>
         
         <div class="input-group">
             <label>Título de la Rifa</label>
             <input type="text" id="ctrl-title" oninput="updatePreview()">
         </div>
 
-        <div class="input-group">
-            <label>Valor / Precio</label>
-            <input type="text" id="ctrl-price" oninput="updatePreview()">
+        <div class="input-group" style="display: flex; gap: 10px;">
+            <div style="flex: 1;">
+                <label>Valor / Precio</label>
+                <input type="text" id="ctrl-price" oninput="updatePreview()">
+            </div>
+            <div style="flex: 1;">
+                <label>Números</label>
+                <input type="number" id="ctrl-count" min="5" max="100" value="20" onchange="generateGrid()">
+            </div>
         </div>
 
         <div class="input-group">
-            <label>Cantidad de Números</label>
-            <input type="number" id="ctrl-count" min="1" max="100" value="20" onchange="generateGrid()">
-        </div>
-
-        <div class="input-group">
-            <label>Color de Fondo (Hex)</label>
-            <input type="color" id="ctrl-bg-color" value="#ffffff" oninput="updatePreview()">
+            <label>Color Base (Tarjeta)</label>
+            <input type="color" id="ctrl-bg-color" value="#ffffff" oninput="updatePreview()" style="height: 40px; padding: 2px;">
         </div>
 
         <div class="input-group">
             <label>Info de Contacto / Pagos</label>
-            <textarea id="ctrl-footer" rows="4" oninput="updatePreview()"></textarea>
+            <textarea id="ctrl-footer" rows="3" oninput="updatePreview()"></textarea>
         </div>
 
-        <button class="btn btn-danger" onclick="clearAllData()">🗑 Limpiar Toda la Información</button>
+        <button class="btn btn-success" onclick="exportToImage()">
+            📸 Descargar Imagen
+        </button>
+
+        <button class="btn btn-danger" onclick="requestClearAll()">
+            🗑 Reiniciar Rifa
+        </button>
     </aside>
 
-    <!-- Vista de la Rifa -->
     <main class="preview-area">
-        <div class="raffle-card" id="raffle-card">
-            <div class="r-title" id="preview-title">Título de la Rifa</div>
-            <div class="r-price">Valor: <span id="preview-price">0bs</span></div>
-            <div class="r-grid" id="preview-grid">
-                <!-- Números generados por JS -->
+        <div id="export-container">
+            <div class="raffle-card" id="raffle-card">
+                <div class="r-title" id="preview-title">Título de la Rifa</div>
+                <div class="r-price">Valor: <span id="preview-price">0bs</span></div>
+                
+                <div class="r-grid" id="preview-grid">
+                    <!-- Los números se inyectan aquí via JS -->
+                </div>
+                
+                <div class="r-footer" id="preview-footer">Datos de contacto...</div>
             </div>
-            <div class="r-footer" id="preview-footer">Datos de contacto...</div>
         </div>
     </main>
 
     <script>
-        // Configuración Inicial y Estado
-        const STATE_KEY = 'raffleAppData';
+        const STATE_KEY = 'raffleAppV2Data';
         let defaultState = {
             title: 'Rifa de un Quesillo de 1,5kg',
             price: '1200bs',
             numbersCount: 20,
             bgColor: '#ffffff',
-            footer: '0412-1234567\nEnviar capture con el nombre',
-            takenNumbers: [] // Array para guardar los números marcados
+            footer: 'Pago móvil: 0412-1234567\nCI: 12.345.678\nEnviar capture con el nombre',
+            takenNumbers: [] 
         };
 
         let appState = JSON.parse(localStorage.getItem(STATE_KEY));
@@ -342,7 +404,6 @@
 
         if (!appState) appState = { ...defaultState };
 
-        // Inicializar la App
         function initApp() {
             if (isFirstVisit) {
                 document.getElementById('wizard').classList.add('active');
@@ -352,15 +413,14 @@
             generateGrid();
         }
 
-        // Lógica del Asistente
         function closeWizard() {
             document.getElementById('wizard').classList.remove('active');
             isFirstVisit = false;
         }
 
         function saveWizard() {
-            const title = document.getElementById('wiz-title').value;
-            const price = document.getElementById('wiz-price').value;
+            const title = document.getElementById('wiz-title').value.trim();
+            const price = document.getElementById('wiz-price').value.trim();
             
             if(title) appState.title = title;
             if(price) appState.price = price;
@@ -371,7 +431,27 @@
             closeWizard();
         }
 
-        // Sincronizar Controles con el Estado
+        function requestClearAll() {
+            document.getElementById('confirm-modal').classList.add('active');
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('confirm-modal').classList.remove('active');
+        }
+
+        function executeClearAll() {
+            localStorage.removeItem(STATE_KEY);
+            appState = { ...defaultState, takenNumbers: [] };
+            isFirstVisit = true;
+            closeConfirmModal();
+            
+            // Limpiamos visualmente
+            document.getElementById('wiz-title').value = '';
+            document.getElementById('wiz-price').value = '';
+            
+            initApp();
+        }
+
         function populateControls() {
             document.getElementById('ctrl-title').value = appState.title;
             document.getElementById('ctrl-price').value = appState.price;
@@ -380,12 +460,11 @@
             document.getElementById('ctrl-footer').value = appState.footer;
         }
 
-        // Actualizar la previsualización visual
         function updatePreview() {
-            appState.title = document.getElementById('ctrl-title').value;
-            appState.price = document.getElementById('ctrl-price').value;
+            appState.title = document.getElementById('ctrl-title').value || 'Sin Título';
+            appState.price = document.getElementById('ctrl-price').value || '-';
             appState.bgColor = document.getElementById('ctrl-bg-color').value;
-            appState.footer = document.getElementById('ctrl-footer').value;
+            appState.footer = document.getElementById('ctrl-footer').value || '';
 
             document.getElementById('preview-title').innerText = appState.title;
             document.getElementById('preview-price').innerText = appState.price;
@@ -395,13 +474,19 @@
             saveState();
         }
 
-        // Generar la cuadrícula de números
         function generateGrid() {
-            const count = parseInt(document.getElementById('ctrl-count').value);
+            let count = parseInt(document.getElementById('ctrl-count').value);
+            // Evitar cuelgues por números absurdos
+            if(isNaN(count) || count < 1) count = 20;
+            if(count > 100) count = 100; 
+            
             appState.numbersCount = count;
             
             const grid = document.getElementById('preview-grid');
             grid.innerHTML = '';
+
+            // Limpiar números guardados que excedan el límite actual
+            appState.takenNumbers = appState.takenNumbers.filter(n => n <= count);
 
             for (let i = 1; i <= count; i++) {
                 const numDiv = document.createElement('div');
@@ -412,15 +497,12 @@
                     numDiv.classList.add('taken');
                 }
 
-                // Al hacer clic, marca/desmarca el número
                 numDiv.onclick = () => toggleNumber(i, numDiv);
-                
                 grid.appendChild(numDiv);
             }
             saveState();
         }
 
-        // Lógica para marcar un número como "vendido"
         function toggleNumber(number, element) {
             const index = appState.takenNumbers.indexOf(number);
             if (index === -1) {
@@ -433,22 +515,39 @@
             saveState();
         }
 
-        // Persistencia de datos
         function saveState() {
             localStorage.setItem(STATE_KEY, JSON.stringify(appState));
         }
 
-        // Limpiar toda la información
-        function clearAllData() {
-            if(confirm('¿Estás seguro de que deseas borrar toda la información? Esto no se puede deshacer.')) {
-                localStorage.removeItem(STATE_KEY);
-                appState = { ...defaultState, takenNumbers: [] };
-                isFirstVisit = true;
-                initApp();
-            }
+        function exportToImage() {
+            const container = document.getElementById('export-container');
+            const originalTransform = container.style.transform;
+            
+            // Temporalmente forzamos estilos para asegurar una captura de alta calidad
+            container.style.transform = 'none';
+
+            // html2canvas toma una "foto" del DOM
+            html2canvas(container, {
+                scale: 2, // Aumenta la resolución
+                backgroundColor: null, // Mantiene transparencias si las hay
+                useCORS: true
+            }).then(canvas => {
+                // Restauramos estilos originales
+                container.style.transform = originalTransform;
+
+                // Creamos un enlace de descarga
+                const link = document.createElement('a');
+                link.download = `Rifa-${appState.title.replace(/\s+/g, '-').substring(0,15)}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }).catch(err => {
+                console.error('Error al exportar imagen:', err);
+                // Usar modal custom sería mejor, pero esto es un fallback técnico
+                document.getElementById('preview-footer').innerText = 'Error al exportar la imagen. Verifica consola.';
+            });
         }
 
-        // Arrancar
+        // Iniciar la app al cargar
         window.onload = initApp;
     </script>
 </body>
