@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Rifas</title>
+    <style>
+        :root {
+            --primary: #ff6b81;
+            --primary-light: #ffebf0;
+            --bg-color: #f8f9fa;
+            --text-main: #2d3436;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar de Controles */
+        .controls {
+            width: 350px;
+            background: white;
+            padding: 2rem;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.05);
+            overflow-y: auto;
+            z-index: 10;
+        }
+
+        .controls h2 {
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .input-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #636e72;
+        }
+
+        .input-group input, .input-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #dfe6e9;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border 0.3s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #ff4757;
+        }
+
+        .btn-danger {
+            background: #ff7675;
+            color: white;
+            margin-top: 2rem;
+        }
+
+        /* Área de Previsualización */
+        .preview-area {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f1f2f6;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .raffle-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 500px;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .r-title {
+            background: var(--primary-light);
+            color: var(--text-main);
+            padding: 1rem;
+            border-radius: 50px;
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            border: 3px solid white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .r-price {
+            background: white;
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .r-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-bottom: 1.5rem;
+        }
+
+        .r-number {
+            background: var(--primary-light);
+            color: var(--text-main);
+            aspect-ratio: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+            user-select: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .r-number:hover {
+            transform: scale(1.05);
+            background: #ffe0e6;
+        }
+
+        .r-number.taken {
+            background: transparent;
+            color: transparent;
+        }
+
+        /* El marcador del número tomado (emulando el quesillo de la imagen) */
+        .r-number.taken::after {
+            content: "🍮"; /* Puedes cambiarlo por una imagen de fondo en CSS */
+            position: absolute;
+            font-size: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+        }
+
+        .r-footer {
+            background: white;
+            padding: 1rem;
+            border-radius: 12px;
+            font-weight: 600;
+            white-space: pre-line;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        /* Asistente (Modal) */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2.5rem;
+            border-radius: var(--radius);
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            text-align: center;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-content h3 {
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .modal-btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 1.5rem;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #dfe6e9;
+            color: #636e72;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Asistente de Inicio (Wizard) -->
+    <div id="wizard" class="modal-overlay">
+        <div class="modal-content">
+            <h3>¡Bienvenido al Creador de Rifas! 🎉</h3>
+            <p style="margin-bottom: 1.5rem; color: #636e72;">Configuremos lo básico rápidamente.</p>
+            
+            <div class="input-group">
+                <input type="text" id="wiz-title" placeholder="Ej: Rifa de un Quesillo de 1,5kg">
+            </div>
+            <div class="input-group">
+                <input type="text" id="wiz-price" placeholder="Valor (Ej: 1200bs)">
+            </div>
+
+            <div class="modal-btn-group">
+                <button class="btn btn-outline" onclick="closeWizard()">Saltar</button>
+                <button class="btn btn-primary" onclick="saveWizard()">Comenzar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Panel Lateral de Edición -->
+    <aside class="controls">
+        <h2>Editor de Rifa</h2>
+        
+        <div class="input-group">
+            <label>Título de la Rifa</label>
+            <input type="text" id="ctrl-title" oninput="updatePreview()">
+        </div>
+
+        <div class="input-group">
+            <label>Valor / Precio</label>
+            <input type="text" id="ctrl-price" oninput="updatePreview()">
+        </div>
+
+        <div class="input-group">
+            <label>Cantidad de Números</label>
+            <input type="number" id="ctrl-count" min="1" max="100" value="20" onchange="generateGrid()">
+        </div>
+
+        <div class="input-group">
+            <label>Color de Fondo (Hex)</label>
+            <input type="color" id="ctrl-bg-color" value="#ffffff" oninput="updatePreview()">
+        </div>
+
+        <div class="input-group">
+            <label>Info de Contacto / Pagos</label>
+            <textarea id="ctrl-footer" rows="4" oninput="updatePreview()"></textarea>
+        </div>
+
+        <button class="btn btn-danger" onclick="clearAllData()">🗑 Limpiar Toda la Información</button>
+    </aside>
+
+    <!-- Vista de la Rifa -->
+    <main class="preview-area">
+        <div class="raffle-card" id="raffle-card">
+            <div class="r-title" id="preview-title">Título de la Rifa</div>
+            <div class="r-price">Valor: <span id="preview-price">0bs</span></div>
+            <div class="r-grid" id="preview-grid">
+                <!-- Números generados por JS -->
+            </div>
+            <div class="r-footer" id="preview-footer">Datos de contacto...</div>
+        </div>
+    </main>
+
+    <script>
+        // Configuración Inicial y Estado
+        const STATE_KEY = 'raffleAppData';
+        let defaultState = {
+            title: 'Rifa de un Quesillo de 1,5kg',
+            price: '1200bs',
+            numbersCount: 20,
+            bgColor: '#ffffff',
+            footer: '0412-1234567\nEnviar capture con el nombre',
+            takenNumbers: [] // Array para guardar los números marcados
+        };
+
+        let appState = JSON.parse(localStorage.getItem(STATE_KEY));
+        let isFirstVisit = !appState;
+
+        if (!appState) appState = { ...defaultState };
+
+        // Inicializar la App
+        function initApp() {
+            if (isFirstVisit) {
+                document.getElementById('wizard').classList.add('active');
+            }
+            populateControls();
+            updatePreview();
+            generateGrid();
+        }
+
+        // Lógica del Asistente
+        function closeWizard() {
+            document.getElementById('wizard').classList.remove('active');
+            isFirstVisit = false;
+        }
+
+        function saveWizard() {
+            const title = document.getElementById('wiz-title').value;
+            const price = document.getElementById('wiz-price').value;
+            
+            if(title) appState.title = title;
+            if(price) appState.price = price;
+            
+            saveState();
+            populateControls();
+            updatePreview();
+            closeWizard();
+        }
+
+        // Sincronizar Controles con el Estado
+        function populateControls() {
+            document.getElementById('ctrl-title').value = appState.title;
+            document.getElementById('ctrl-price').value = appState.price;
+            document.getElementById('ctrl-count').value = appState.numbersCount;
+            document.getElementById('ctrl-bg-color').value = appState.bgColor;
+            document.getElementById('ctrl-footer').value = appState.footer;
+        }
+
+        // Actualizar la previsualización visual
+        function updatePreview() {
+            appState.title = document.getElementById('ctrl-title').value;
+            appState.price = document.getElementById('ctrl-price').value;
+            appState.bgColor = document.getElementById('ctrl-bg-color').value;
+            appState.footer = document.getElementById('ctrl-footer').value;
+
+            document.getElementById('preview-title').innerText = appState.title;
+            document.getElementById('preview-price').innerText = appState.price;
+            document.getElementById('raffle-card').style.backgroundColor = appState.bgColor;
+            document.getElementById('preview-footer').innerText = appState.footer;
+
+            saveState();
+        }
+
+        // Generar la cuadrícula de números
+        function generateGrid() {
+            const count = parseInt(document.getElementById('ctrl-count').value);
+            appState.numbersCount = count;
+            
+            const grid = document.getElementById('preview-grid');
+            grid.innerHTML = '';
+
+            for (let i = 1; i <= count; i++) {
+                const numDiv = document.createElement('div');
+                numDiv.className = 'r-number';
+                numDiv.innerText = i;
+                
+                if (appState.takenNumbers.includes(i)) {
+                    numDiv.classList.add('taken');
+                }
+
+                // Al hacer clic, marca/desmarca el número
+                numDiv.onclick = () => toggleNumber(i, numDiv);
+                
+                grid.appendChild(numDiv);
+            }
+            saveState();
+        }
+
+        // Lógica para marcar un número como "vendido"
+        function toggleNumber(number, element) {
+            const index = appState.takenNumbers.indexOf(number);
+            if (index === -1) {
+                appState.takenNumbers.push(number);
+                element.classList.add('taken');
+            } else {
+                appState.takenNumbers.splice(index, 1);
+                element.classList.remove('taken');
+            }
+            saveState();
+        }
+
+        // Persistencia de datos
+        function saveState() {
+            localStorage.setItem(STATE_KEY, JSON.stringify(appState));
+        }
+
+        // Limpiar toda la información
+        function clearAllData() {
+            if(confirm('¿Estás seguro de que deseas borrar toda la información? Esto no se puede deshacer.')) {
+                localStorage.removeItem(STATE_KEY);
+                appState = { ...defaultState, takenNumbers: [] };
+                isFirstVisit = true;
+                initApp();
+            }
+        }
+
+        // Arrancar
+        window.onload = initApp;
+    </script>
+</body>
+</html>
