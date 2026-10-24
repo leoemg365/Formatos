@@ -679,6 +679,13 @@
           "subcat": "Configuración de Router",
           "color": "neutro",
           "content": "Una vez ingrese a la configuración del router va a la sección que dice Red o Netwok, seguidamente el tipo de conexión debe ir en PPPOE. \n\nLe pedirá un usuario y contraseña, escribirá estos:"
+        },
+        {
+          "id": 1792870162709,
+          "label": "Planes",
+          "subcat": "Ventas",
+          "color": "aviso",
+          "content": "Buenos días, contamos con los siguientes planes: \n\n$25 - Ambar Plus de 400Mbps\n$30 - Agata Plus de 600Mbps\n$35 - Jade Plus de 1Gbps"
         }
       ]
     },
@@ -809,6 +816,13 @@
           "subcat": "Pagos",
           "color": "neutro",
           "content": "Buenas tardes, el mensaje era un mensaje automático del sistema cuando se genera la factura como un recordatorio, pero su servicio ya está pago y solvente, no se preocupe."
+        },
+        {
+          "id": 1792870186061,
+          "label": "Planes",
+          "subcat": "Ventas",
+          "color": "info",
+          "content": "Buenas tardes, contamos con los siguientes planes: \n\n$25 - Ambar Plus de 400Mbps\n$30 - Agata Plus de 600Mbps\n$35 - Jade Plus de 1Gbps"
         }
       ]
     },
@@ -1067,6 +1081,13 @@
           "subcat": "Lentitud",
           "color": "info",
           "content": "Vemos que su router trabaja con sólo 100Mbps, mientras que su plan es de 400Mbps."
+        },
+        {
+          "id": 1792870205101,
+          "label": "Planes",
+          "subcat": "Ventas",
+          "color": "aviso",
+          "content": "Buenas noches, contamos con los siguientes planes: \n\n$25 - Ambar Plus de 400Mbps\n$30 - Agata Plus de 600Mbps\n$35 - Jade Plus de 1Gbps"
         }
       ]
     }
