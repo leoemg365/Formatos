@@ -982,7 +982,7 @@
           "label": "Está en LOS",
           "subcat": "ONU LOS",
           "color": "aviso",
-          "content": "Vemos que el equipo se encuentra en estado LOS, esto indica que algo le ocurrió al cable de fibra, ya en este caso tendremos que agendar un ticket de visita técnica"
+          "content": "Visualizamos que el equipo se encuentra en estado LOS, esto indica que algo le ocurrió al cable de fibra, ya en este caso tendremos que agendar un ticket de visita técnica"
         },
         {
           "id": 1778284409276,
