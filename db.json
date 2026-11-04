@@ -1069,13 +1069,6 @@
           "content": "Estimado Cliente.\n\nSe trataba de una incidencia en la zona donde conecta su servicio la cuál ya ha sido solucionada. Le invitamos a verificar nuevamente su servicio.\n\nEn caso de no contar con servicio, desconecte y conecte los equipos de la electricidad.\nSí aún persiste algún inconveniente, por favor, comuníquese con nosotros. Estamos a su disposición para brindarle la mejor atención.\n\n#TecnovenSomosmásqueInternet"
         },
         {
-          "id": 1789529712433,
-          "label": "Nodo UP",
-          "subcat": "HOY",
-          "color": "exito",
-          "content": "Estimado Cliente.\n\nSe trataba de una incidencia en el nodo donde conecta su servicio la cuál ya ha sido solucionada. Le invitamos a verificar nuevamente su servicio.\n\nEn caso de no contar con servicio, desconecte y conecte los equipos de la electricidad.\nSí aún persiste algún inconveniente, por favor, comuníquese con nosotros. Estamos a su disposición para brindarle la mejor atención.\n\n#TecnovenSomosmásqueInternet"
-        },
-        {
           "id": 1791549597764,
           "label": "Lentitud por Router Básico",
           "subcat": "Lentitud",
@@ -1088,6 +1081,13 @@
           "subcat": "Ventas",
           "color": "aviso",
           "content": "Buenas noches, contamos con los siguientes planes: \n\n$25 - Ambar Plus de 400Mbps\n$30 - Agata Plus de 600Mbps\n$35 - Jade Plus de 1Gbps"
+        },
+        {
+          "id": 1793750891597,
+          "label": "Carora - Pagos",
+          "subcat": "HOY",
+          "color": "exito",
+          "content": "Buenas noches, pago registrado correctamente y servicio activo. \n\nRecuerde que para la siguiente mensualidad deberá realizar el pago correspondiente a la nueva cuenta."
         }
       ]
     }
