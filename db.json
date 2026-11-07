@@ -354,6 +354,13 @@
           "content": "Buenos días, se trataba de una incidencia en la zona donde conecta su servicio. \nYa en estos momentos el inconveniente ha sido solucionado, verifique por favor que cuente nuevamente con el servicio, sí no cuenta con el servicio por favor desconecte los equipos de la electricidad y los vuelve a conectar, en caso de no restablecerse comunicarse por esta vía con nosotros. Feliz día."
         },
         {
+          "id": 1794081004149,
+          "label": "Corte de fibra",
+          "subcat": "Falla Interna",
+          "color": "aviso",
+          "content": "Apreciado cliente, le informamos que en estos momentos estamos experimentando un inconveniente en la fibra principal de su zona. Le ofrecemos nuestras más sinceras disculpas por las molestias que esto pueda ocasionar. Ya los técnicos se encuentran en sitio solucionando el inconveniente. *Agradecemos su confianza en\nTECNOVEN #SomosMásQueInternet*"
+        },
+        {
           "id": 1774290226113,
           "label": "Incidencia - Pospuesta",
           "content": "Estimado cliente:\n\nLe informamos que actualmente presentamos una falla en el cableado de fibra óptica principal que provee su servicio.\n\nDebido a la lluvia y motivos de la hora, por razones de seguridad, los trabajos de reparación se realizarán el día de mañana en la mañana, tenga en cuenta que el día Lunes también se estará trabajando en la zona para cambiar el cableado y evitar futuras desconexiones.\n\nAgradecemos su comprensión y confianza en TECNOVEN.\n#SomosMásQueInternet",
