@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-slate-950 text-slate-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StreamHub - Plataforma de Streaming</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Font: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        /* Aspect ratio container for responsive iframe video */
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 ratio */
+            height: 0;
+            overflow: hidden;
+            border-radius: 0.75rem;
+            background-color: #020617;
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+<body class="flex flex-col h-full bg-slate-950">
+
+    <!-- Header / Navbar -->
+    <header class="h-16 border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50 flex items-center justify-between px-4 lg:px-8">
+        <div class="flex items-center space-x-3">
+            <div class="bg-red-600 p-2 rounded-lg text-white flex items-center justify-center">
+                <i data-lucide="play" class="w-6 h-6 fill-current"></i>
+            </div>
+            <span class="text-xl font-bold bg-gradient-to-r from-red-500 to-amber-500 bg-clip-text text-transparent">StreamHub</span>
+        </div>
+
+        <!-- Buscador -->
+        <div class="hidden md:flex items-center flex-1 max-w-md mx-8">
+            <div class="relative w-full">
+                <input type="text" placeholder="Buscar streams o contenidos..." 
+                       class="w-full bg-slate-800/80 text-sm text-slate-200 placeholder-slate-400 rounded-full pl-10 pr-4 py-2 border border-slate-700 focus:outline-none focus:border-red-500 transition-colors">
+                <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-2.5"></i>
+            </div>
+        </div>
+
+        <!-- Perfil y Acciones -->
+        <div class="flex items-center space-x-4">
+            <button class="hidden sm:flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium px-4 py-2 rounded-full transition-all shadow-lg shadow-red-600/20">
+                <i data-lucide="radio" class="w-4 h-4 animate-pulse"></i>
+                <span>EN VIVO</span>
+            </button>
+            <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-purple-500 to-red-500 p-0.5 cursor-pointer">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Avatar" class="w-full h-full object-cover rounded-full">
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <div class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+        
+        <!-- Área Central del Video Principal y Lista -->
+        <main class="flex-1 overflow-y-auto p-4 lg:p-6 space-y-6">
+            
+            <!-- Contenedor del Reproductor Principal -->
+            <div class="space-y-4">
+                <div class="video-container shadow-2xl border border-slate-800" id="main-player-container">
+                    <!-- El iframe dinámico se carga desde JS -->
+                </div>
+
+                <!-- Detalles del Video Activo -->
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900/60 p-4 rounded-xl border border-slate-800/80">
+                    <div>
+                        <div class="flex items-center space-x-2 text-xs font-semibold text-red-500 tracking-wider uppercase mb-1">
+                            <span class="inline-block w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
+                            <span>Transmitiendo ahora</span>
+                        </div>
+                        <h1 id="active-video-title" class="text-xl lg:text-2xl font-bold text-white">Cargando video...</h1>
+                        <p id="active-video-desc" class="text-sm text-slate-400 mt-1">Selecciona cualquier contenido de la lista para reproducir.</p>
+                    </div>
+
+                    <div class="flex items-center space-x-3">
+                        <button onclick="toggleLike()" id="like-btn" class="flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-lg border border-slate-700 transition">
+                            <i data-lucide="thumbs-up" class="w-4 h-4"></i>
+                            <span id="like-count">1.2k</span>
+                        </button>
+                        <button class="flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-lg border border-slate-700 transition">
+                            <i data-lucide="share-2" class="w-4 h-4"></i>
+                            <span>Compartir</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista de Canales / Transmisiones disponibles -->
+            <div class="space-y-4">
+                <h2 class="text-lg font-semibold flex items-center space-x-2 text-slate-200">
+                    <i data-lucide="tv" class="w-5 h-5 text-red-500"></i>
+                    <span>Canales Disponibles</span>
+                </h2>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="video-grid">
+                    <!-- Las tarjetas de video se generarán con JavaScript usando los 3 iframes -->
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Barra Lateral: Chat en Vivo Simulado -->
+        <aside class="w-full lg:w-80 border-t lg:border-t-0 lg:border-l border-slate-800 bg-slate-900/40 flex flex-col h-96 lg:h-auto">
+            <div class="p-4 border-b border-slate-800 flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <i data-lucide="message-square" class="w-5 h-5 text-red-500"></i>
+                    <h3 class="font-semibold text-sm">Chat de la Comunidad</h3>
+                </div>
+                <span class="text-xs bg-slate-800 text-slate-400 px-2 py-1 rounded">245 conectados</span>
+            </div>
+
+            <!-- Mensajes del Chat -->
+            <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-3 text-xs">
+                <div class="flex space-x-2">
+                    <span class="font-bold text-red-400">StreamBot:</span>
+                    <span class="text-slate-300">¡Bienvenidos al canal de streaming!</span>
+                </div>
+                <div class="flex space-x-2">
+                    <span class="font-bold text-cyan-400">Carlos_Gamer:</span>
+                    <span class="text-slate-300">¡Buena calidad de video! 🔥</span>
+                </div>
+                <div class="flex space-x-2">
+                    <span class="font-bold text-emerald-400">Ana_Dev:</span>
+                    <span class="text-slate-300">Excelente música de fondo.</span>
+                </div>
+            </div>
+
+            <!-- Entrada de Chat -->
+            <div class="p-3 border-t border-slate-800 bg-slate-900/80">
+                <form id="chat-form" class="flex space-x-2">
+                    <input type="text" id="chat-input" placeholder="Envía un mensaje..." 
+                           class="flex-1 bg-slate-800 text-slate-200 text-xs rounded-lg px-3 py-2 border border-slate-700 focus:outline-none focus:border-red-500">
+                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white p-2 rounded-lg transition">
+                        <i data-lucide="send" class="w-4 h-4"></i>
+                    </button>
+                </form>
+            </div>
+        </aside>
+
+    </div>
+
+    <!-- Script principal para manejar la lógica -->
+    <script>
+        // Lista de videos con los embeds suministrados por el usuario
+        const streams = [
+            {
+                id: 1,
+                title: "Canal de Streaming 1",
+                description: "Transmisión en vivo principal con controles optimizados.",
+                src: "https://www.youtube.com/embed/HU7U4B5cgT0?si=bRgUBJFfoUivo-nl&controls=0",
+                thumbnail: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=500&auto=format&fit=crop&q=80"
+            },
+            {
+                id: 2,
+                title: "Canal de Streaming 2",
+                description: "Transmisión especial de contenido exclusivo.",
+                src: "https://www.youtube.com/embed/JG--H-Ia-bI?si=Y5Fjrpvdy2XM4vM5&controls=0",
+                thumbnail: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=500&auto=format&fit=crop&q=80"
+            },
+            {
+                id: 3,
+                title: "Canal de Streaming 3",
+                description: "Re-transmisión en vivo para la comunidad.",
+                src: "https://www.youtube.com/embed/HU7U4B5cgT0?si=YhOYHNTjhWCFXBXb&controls=0",
+                thumbnail: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500&auto=format&fit=crop&q=80"
+            }
+        ];
+
+        let currentStreamId = 1;
+        let liked = false;
+        let likesCount = 1240;
+
+        // Inicializar la aplicación
+        window.onload = function() {
+            lucide.createIcons();
+            loadMainPlayer(streams[0]);
+            renderVideoGrid();
+            setupChat();
+        };
+
+        // Cargar video en el reproductor principal
+        function loadMainPlayer(stream) {
+            currentStreamId = stream.id;
+            const container = document.getElementById('main-player-container');
+            
+            // Reemplaza iframe dinámicamente manteniendo todos los atributos originales solicitados
+            container.innerHTML = `
+                <iframe 
+                    width="560" 
+                    height="315" 
+                    src="${stream.src}&autoplay=1" 
+                    title="${stream.title}" 
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                    referrerpolicy="strict-origin-when-cross-origin" 
+                    allowfullscreen>
+                </iframe>
+            `;
+
+            document.getElementById('active-video-title').innerText = stream.title;
+            document.getElementById('active-video-desc').innerText = stream.description;
+            
+            // Actualizar vista activa en las tarjetas
+            renderVideoGrid();
+        }
+
+        // Renderizar cuadrícula de tarjetas de video
+        function renderVideoGrid() {
+            const grid = document.getElementById('video-grid');
+            grid.innerHTML = '';
+
+            streams.forEach(stream => {
+                const isActive = stream.id === currentStreamId;
+                const card = document.createElement('div');
+                card.className = `cursor-pointer rounded-xl overflow-hidden bg-slate-900 border transition-all duration-200 ${
+                    isActive ? 'border-red-500 ring-2 ring-red-500/20 shadow-lg' : 'border-slate-800 hover:border-slate-700 hover:scale-[1.02]'
+                }`;
+                
+                card.onclick = () => loadMainPlayer(stream);
+
+                card.innerHTML = `
+                    <div class="relative">
+                        <img src="${stream.thumbnail}" alt="${stream.title}" class="w-full h-36 object-cover">
+                        <div class="absolute inset-0 bg-slate-950/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                            <div class="bg-red-600 p-3 rounded-full text-white">
+                                <i data-lucide="play" class="w-5 h-5 fill-current"></i>
+                            </div>
+                        </div>
+                        ${isActive ? '<span class="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase">En Pantalla</span>' : ''}
+                    </div>
+                    <div class="p-3">
+                        <h3 class="font-semibold text-sm text-slate-100 line-clamp-1">${stream.title}</h3>
+                        <p class="text-xs text-slate-400 mt-1 line-clamp-2">${stream.description}</p>
+                    </div>
+                `;
+
+                grid.appendChild(card);
+            });
+
+            lucide.createIcons();
+        }
+
+        // Sistema interactivo de Me Gusta
+        function toggleLike() {
+            const btn = document.getElementById('like-btn');
+            const count = document.getElementById('like-count');
+            liked = !liked;
+            
+            if (liked) {
+                likesCount++;
+                btn.classList.add('bg-red-600/20', 'text-red-500', 'border-red-500/50');
+            } else {
+                likesCount--;
+                btn.classList.remove('bg-red-600/20', 'text-red-500', 'border-red-500/50');
+            }
+            count.innerText = likesCount.toLocaleString();
+        }
+
+        // Lógica del Chat Simulado
+        function setupChat() {
+            const form = document.getElementById('chat-form');
+            const input = document.getElementById('chat-input');
+            const chatMessages = document.getElementById('chat-messages');
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const text = input.value.trim();
+                if (!text) return;
+
+                // Crear mensaje del usuario
+                const msg = document.createElement('div');
+                msg.className = 'flex space-x-2 animate-fade-in';
+                msg.innerHTML = `
+                    <span class="font-bold text-yellow-400">Tú:</span>
+                    <span class="text-slate-200">${escapeHtml(text)}</span>
+                `;
+                chatMessages.appendChild(msg);
+                input.value = '';
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                // Respuesta autogenerada opcional
+                setTimeout(() => {
+                    const botMsg = document.createElement('div');
+                    botMsg.className = 'flex space-x-2 opacity-80';
+                    botMsg.innerHTML = `
+                        <span class="font-bold text-red-400">StreamBot:</span>
+                        <span class="text-slate-300">¡Gracias por participar en la transmisión!</span>
+                    `;
+                    chatMessages.appendChild(botMsg);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }, 1000);
+            });
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/[&<>"']/g, function(m) {
+                return {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#039;'
+                }[m];
+            });
+        }
+    </script>
+</body>
+</html>
