@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tecnoven Services - Helpdesk Pro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Tecnoven Services - Helpdesk Pro Mobile & Desktop</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Font Awesome Icons CDN -->
@@ -13,6 +13,7 @@
   <style>
     body {
       font-family: 'Inter', sans-serif;
+      -webkit-tap-highlight-color: transparent;
     }
     /* Custom scrollbars */
     ::-webkit-scrollbar {
@@ -38,34 +39,49 @@
     }
   </style>
 </head>
-<body class="bg-[#f8fafc] text-slate-800 h-screen w-screen overflow-hidden flex select-none">
+<body class="bg-[#f8fafc] text-slate-800 h-screen w-screen overflow-hidden flex flex-col md:flex-row select-none">
 
-  <!-- 1. FAR-LEFT NAVIGATION BAR (WHITE LIGHT MODE) -->
-  <nav class="w-16 bg-white border-r border-slate-200 flex flex-col items-center py-4 justify-between z-30 shadow-xs flex-shrink-0">
-    <div className="flex flex-col items-center space-y-4 w-full">
-      <!-- Logo Brand -->
-      <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center shadow-md shadow-indigo-200 cursor-pointer transition-transform hover:scale-105 mb-2 mx-auto">
-        <span class="font-extrabold text-white text-lg tracking-wider">T</span>
+  <!-- MOBILE OVERLAY BACKDROP -->
+  <div id="mobile-backdrop" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-40 hidden md:hidden transition-opacity"></div>
+
+  <!-- 1. FAR-LEFT NAVIGATION BAR / SLIDE-OVER MOBILE DRAWER -->
+  <nav id="main-nav-drawer" class="fixed inset-y-0 left-0 -translate-x-full md:translate-x-0 w-64 md:w-16 bg-white border-r border-slate-200 flex flex-col justify-between z-50 md:z-30 shadow-2xl md:shadow-none transition-transform duration-300 py-4">
+    <div class="flex flex-col items-center space-y-3 w-full">
+      
+      <!-- Mobile Close & Logo Header -->
+      <div class="w-full flex items-center justify-between px-4 md:px-0 md:justify-center mb-2">
+        <div class="flex items-center space-x-3 md:space-x-0">
+          <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center shadow-md shadow-indigo-200 cursor-pointer">
+            <span class="font-extrabold text-white text-lg tracking-wider">T</span>
+          </div>
+          <span class="font-bold text-slate-900 text-sm md:hidden">Tecnoven Services</span>
+        </div>
+        <button id="btn-close-mobile-nav" class="md:hidden p-2 text-slate-400 hover:text-slate-600">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
       </div>
 
-      <div class="w-8 h-[1px] bg-slate-200 my-1 mx-auto"></div>
+      <div class="w-full md:w-8 h-[1px] bg-slate-200 my-1 mx-auto"></div>
 
-      <!-- Nav Icons -->
-      <div class="flex flex-col items-center space-y-2 w-full px-2" id="nav-buttons-container">
+      <!-- Nav Icons Container -->
+      <div class="flex flex-col items-start md:items-center space-y-1 md:space-y-2 w-full px-2" id="nav-buttons-container">
         <!-- JS injects navigation items -->
       </div>
     </div>
 
     <!-- User Profile & Notifications -->
-    <div class="flex flex-col items-center space-y-3 relative">
-      <div class="relative">
-        <button id="btn-toggle-notifs" class="p-2.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition relative">
-          <i class="fa-regular fa-bell text-lg"></i>
-          <span class="absolute top-2 right-2 w-2.5 h-2.5 bg-indigo-500 rounded-full border-2 border-white"></span>
+    <div class="flex flex-col items-center space-y-3 px-3 relative w-full">
+      <div class="relative w-full md:w-auto">
+        <button id="btn-toggle-notifs" class="w-full md:w-auto p-2.5 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition flex items-center justify-between md:justify-center">
+          <div class="flex items-center space-x-3 md:space-x-0">
+            <i class="fa-regular fa-bell text-lg"></i>
+            <span class="text-xs font-semibold text-slate-700 md:hidden">Notificaciones</span>
+          </div>
+          <span class="w-2.5 h-2.5 bg-indigo-500 rounded-full border-2 border-white"></span>
         </button>
         
         <!-- Notifications Dropdown -->
-        <div id="notif-dropdown" class="hidden absolute left-full bottom-0 ml-3 w-80 bg-white border border-slate-200 rounded-2xl shadow-2xl p-4 z-50">
+        <div id="notif-dropdown" class="hidden absolute left-0 md:left-full bottom-full md:bottom-0 mb-2 md:mb-0 md:ml-3 w-72 md:w-80 bg-white border border-slate-200 rounded-2xl shadow-2xl p-4 z-50">
           <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-100">
             <span class="font-bold text-xs text-slate-800">Notificaciones</span>
             <button id="btn-mark-read" class="text-[11px] text-indigo-600 font-medium hover:underline">Marcar leídas</button>
@@ -76,7 +92,7 @@
         </div>
       </div>
 
-      <div class="w-10 h-10 rounded-xl bg-indigo-600 p-0.5 shadow-sm cursor-pointer hover:opacity-90 transition flex items-center justify-center">
+      <div class="w-full md:w-10 h-10 rounded-xl bg-indigo-600 p-0.5 shadow-sm cursor-pointer flex items-center justify-center">
         <div class="w-full h-full bg-white rounded-[9px] flex items-center justify-center font-bold text-indigo-600 text-xs">
           LM
         </div>
@@ -85,43 +101,44 @@
   </nav>
 
   <!-- MAIN APP CONTAINER -->
-  <div class="flex-1 flex flex-col h-full overflow-hidden">
+  <div class="flex-1 flex flex-col h-full overflow-hidden w-full">
 
-    <!-- TOP HEADER BAR -->
-    <header class="h-14 bg-white border-b border-slate-200 px-6 flex items-center justify-between z-20 shadow-xs flex-shrink-0">
-      <div class="flex items-center space-x-4">
+    <!-- TOP HEADER BAR (RESPONSIVE HEADER) -->
+    <header class="h-14 bg-white border-b border-slate-200 px-4 md:px-6 flex items-center justify-between z-20 shadow-xs flex-shrink-0">
+      <div class="flex items-center space-x-3">
+        <!-- Hamburger Button for Mobile -->
+        <button id="btn-open-mobile-nav" class="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-xl transition">
+          <i class="fa-solid fa-bars text-lg"></i>
+        </button>
+
         <div class="flex items-center space-x-2">
-          <span class="text-sm font-bold tracking-tight text-slate-900">
-            Tecnoven Services, C.A.
+          <span class="text-xs md:text-sm font-bold tracking-tight text-slate-900 truncate max-w-[120px] sm:max-w-none">
+            Tecnoven Helpdesk
           </span>
-          <span class="text-slate-300">/</span>
-          <span id="header-view-title" class="text-xs font-semibold text-slate-500">
+          <span class="text-slate-300 hidden sm:inline">/</span>
+          <span id="header-view-title" class="text-xs font-semibold text-slate-500 hidden sm:inline">
             Helpdesk & Omnicanalidad
           </span>
         </div>
-        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1.5">
+        <span class="hidden lg:flex px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 items-center gap-1.5">
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-          Sistema Operativo • Maracaibo Bazar
+          Maracaibo Bazar
         </span>
       </div>
 
-      <div class="flex items-center space-x-3">
-        <div class="relative">
+      <div class="flex items-center space-x-2 md:space-x-3">
+        <div class="relative hidden sm:block">
           <i class="fa-solid fa-magnifying-glass text-slate-400 text-xs absolute left-3 top-3"></i>
           <input 
             type="text" 
             placeholder="Buscar global..." 
-            class="bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-1.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:bg-white w-64 transition"
+            class="bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-1.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:bg-white w-40 md:w-64 transition"
           />
         </div>
-        <button class="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 transition">
-          <i class="fa-solid fa-sliders text-xs"></i>
-        </button>
-        <div class="h-5 w-[1px] bg-slate-200"></div>
-        <div class="flex items-center space-x-2 pl-2">
-          <div class="text-right">
-            <p class="text-xs font-bold text-slate-800">Leonardo Montiel</p>
-            <p class="text-[10px] text-indigo-600 font-semibold">Operador Senior</p>
+        <div class="flex items-center space-x-2 pl-1">
+          <div class="text-right hidden sm:block">
+            <p class="text-xs font-bold text-slate-800">Leonardo M.</p>
+            <p class="text-[10px] text-indigo-600 font-semibold">Operador</p>
           </div>
           <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-xs font-bold text-white shadow-sm">
             LM
@@ -131,10 +148,10 @@
     </header>
 
     <!-- VIEW 1: HELPDESK WORKSPACE -->
-    <div id="view-helpdesk" class="flex-1 flex overflow-hidden">
+    <div id="view-helpdesk" class="flex-1 flex overflow-hidden relative">
       
-      <!-- 2. SECONDARY SIDEBAR (CHAT LIST) -->
-      <aside class="w-80 bg-white border-r border-slate-200 flex flex-col z-10 flex-shrink-0">
+      <!-- 2. CHAT LIST PANEL (MOBILE: FULL VISIBLE BY DEFAULT, DESKTOP: FIXED SIDEBAR) -->
+      <aside id="chat-list-panel" class="w-full md:w-80 bg-white border-r border-slate-200 flex flex-col z-10 flex-shrink-0 h-full">
         <!-- Search & Filter Controls -->
         <div class="p-3.5 border-b border-slate-200">
           <div class="relative">
@@ -142,7 +159,7 @@
             <input 
               id="chat-search-input"
               type="text" 
-              placeholder="Search contacts..." 
+              placeholder="Buscar contactos o teléfono..." 
               class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition shadow-inner"
             />
           </div>
@@ -159,46 +176,49 @@
         </div>
       </aside>
 
-      <!-- 3. CENTRAL CHAT CANVAS -->
-      <main class="flex-1 flex flex-col bg-[#f8fafc] relative">
+      <!-- 3. CENTRAL CHAT CANVAS (MOBILE: HIDDEN BY DEFAULT UNTIL CHAT CLICKED) -->
+      <main id="chat-canvas-panel" class="hidden md:flex flex-1 flex-col bg-[#f8fafc] relative h-full w-full">
         
-        <!-- Active Chat Header -->
-        <div class="h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between z-10 shadow-xs flex-shrink-0">
-          <div class="flex items-center space-x-3" id="active-chat-header-info">
+        <!-- Active Chat Header (Includes Mobile Back Button + Mobile Client Details Toggle) -->
+        <div class="h-16 bg-white border-b border-slate-200 px-3 md:px-6 flex items-center justify-between z-10 shadow-xs flex-shrink-0">
+          <div class="flex items-center space-x-2 md:space-x-3" id="active-chat-header-info">
             <!-- Injected by JS -->
           </div>
 
-          <div class="flex items-center space-x-2">
-            <button class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition border border-slate-200">
+          <div class="flex items-center space-x-1.5 md:space-x-2">
+            <button class="hidden sm:inline-flex px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition border border-slate-200">
               Transferir
             </button>
-            <button class="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl text-xs font-semibold transition border border-rose-200">
-              Cerrar Ticket
+            <button class="hidden sm:inline-flex px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl text-xs font-semibold transition border border-rose-200">
+              Cerrar
             </button>
-            <div class="h-5 w-[1px] bg-slate-200"></div>
+            <div class="h-5 w-[1px] bg-slate-200 hidden sm:block"></div>
+            
+            <!-- Mobile & Desktop Client Details Drawer Button -->
             <button 
               id="btn-toggle-right-drawer"
-              class="p-2 rounded-xl transition bg-indigo-50 text-indigo-600 border border-indigo-200 hover:bg-indigo-100"
-              title="Alternar Panel de Cliente"
+              class="p-2.5 rounded-xl transition bg-indigo-50 text-indigo-600 border border-indigo-200 hover:bg-indigo-100 flex items-center gap-1.5 text-xs font-semibold"
+              title="Ver Detalles del Cliente"
             >
-              <i class="fa-regular fa-user text-sm"></i>
+              <i class="fa-solid fa-circle-info text-base"></i>
+              <span class="hidden lg:inline">Ficha ISP</span>
             </button>
           </div>
         </div>
 
         <!-- Message History Thread -->
-        <div id="messages-container" class="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50">
+        <div id="messages-container" class="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 bg-slate-50">
           <!-- Injected by JS -->
         </div>
 
         <!-- Message Composer Bottom Bar -->
-        <div class="p-4 bg-white border-t border-slate-200 relative z-10 shadow-lg flex-shrink-0">
+        <div class="p-3 md:p-4 bg-white border-t border-slate-200 relative z-10 shadow-lg flex-shrink-0">
           
           <!-- Canned Responses Popover Menu -->
-          <div id="canned-responses-popover" class="hidden absolute bottom-full left-4 mb-2 w-96 bg-white border border-slate-200 rounded-2xl shadow-xl p-3 z-50">
+          <div id="canned-responses-popover" class="hidden absolute bottom-full left-2 right-2 md:right-auto md:left-4 mb-2 md:w-96 bg-white border border-slate-200 rounded-2xl shadow-2xl p-3 z-50">
             <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
-              <span class="text-xs font-bold text-slate-800">Respuestas Rápidas (Canned Replies)</span>
-              <button id="btn-close-canned" class="text-slate-400 hover:text-slate-600">
+              <span class="text-xs font-bold text-slate-800">Respuestas Rápidas</span>
+              <button id="btn-close-canned" class="text-slate-400 hover:text-slate-600 p-1">
                 <i class="fa-solid fa-xmark text-sm"></i>
               </button>
             </div>
@@ -207,18 +227,18 @@
             </div>
           </div>
 
-          <form id="message-form" class="flex items-center space-x-3">
+          <form id="message-form" class="flex items-center space-x-2 md:space-x-3">
             <button 
               type="button" 
               id="btn-toggle-canned"
-              class="p-2.5 text-slate-500 hover:text-indigo-600 hover:bg-slate-100 rounded-xl transition"
+              class="p-2.5 text-slate-500 hover:text-indigo-600 hover:bg-slate-100 rounded-xl transition flex-shrink-0"
               title="Respuestas Rápidas"
             >
               <i class="fa-regular fa-face-smile text-lg"></i>
             </button>
             <button 
               type="button" 
-              class="p-2.5 text-slate-500 hover:text-indigo-600 hover:bg-slate-100 rounded-xl transition"
+              class="hidden sm:block p-2.5 text-slate-500 hover:text-indigo-600 hover:bg-slate-100 rounded-xl transition flex-shrink-0"
               title="Adjuntar Archivo"
             >
               <i class="fa-solid fa-paperclip text-lg"></i>
@@ -227,43 +247,43 @@
             <input 
               type="text" 
               id="message-input"
-              placeholder="Escriba su respuesta o toque la carita para plantilla rápida..." 
-              class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:bg-white shadow-inner transition"
+              placeholder="Escriba un mensaje..." 
+              class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 md:py-3 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:bg-white shadow-inner transition"
             />
 
             <button 
               type="submit"
-              class="p-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-md transition flex items-center justify-center cursor-pointer"
+              class="p-2.5 md:p-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-md transition flex items-center justify-center flex-shrink-0 cursor-pointer"
             >
-              <i class="fa-solid fa-paper-plane text-xs"></i>
+              <i class="fa-solid fa-paper-plane text-xs md:text-sm"></i>
             </button>
           </form>
         </div>
 
       </main>
 
-      <!-- 4. RIGHT DETAILS PANEL DRAWER -->
-      <aside id="right-details-drawer" class="w-80 bg-white border-l border-slate-200 flex flex-col z-10 overflow-y-auto p-6 space-y-6 shadow-sm flex-shrink-0">
+      <!-- 4. RIGHT DETAILS PANEL (DESKTOP SIDEBAR / MOBILE OFF-CANVAS SLIDE-OVER) -->
+      <aside id="right-details-drawer" class="fixed md:static inset-y-0 right-0 z-50 md:z-10 translate-x-full md:translate-x-0 w-80 bg-white border-l border-slate-200 flex flex-col overflow-y-auto p-5 md:p-6 space-y-5 shadow-2xl md:shadow-none transition-transform duration-300 flex-shrink-0 h-full">
         <!-- Injected by JS -->
       </aside>
 
     </div>
 
     <!-- VIEW 2: DASHBOARD EXECUTIVE -->
-    <div id="view-dashboard" class="hidden flex-1 bg-slate-50 p-8 overflow-y-auto">
+    <div id="view-dashboard" class="hidden flex-1 bg-slate-50 p-4 md:p-8 overflow-y-auto">
       <div class="max-w-7xl mx-auto space-y-6">
-        <div class="flex justify-between items-center">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <div>
-            <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Panel de Control General</h1>
-            <p class="text-xs text-slate-500">Métricas en tiempo real de la red ISP y soporte técnico Tecnoven.</p>
+            <h1 class="text-xl md:text-2xl font-bold text-slate-900 tracking-tight">Panel de Control General</h1>
+            <p class="text-xs text-slate-500">Métricas en tiempo real de la red ISP y soporte técnico.</p>
           </div>
           <button class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold shadow-sm transition flex items-center gap-2">
             <i class="fa-solid fa-rotate-right text-xs"></i> Actualizar Datos
           </button>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
-          <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="bg-white border border-slate-200 rounded-2xl p-4 md:p-5 shadow-xs">
             <div class="flex justify-between items-start">
               <div>
                 <p class="text-xs text-slate-500 font-medium">Chats Activos Hoy</p>
@@ -279,7 +299,7 @@
             </div>
           </div>
 
-          <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
+          <div class="bg-white border border-slate-200 rounded-2xl p-4 md:p-5 shadow-xs">
             <div class="flex justify-between items-start">
               <div>
                 <p class="text-xs text-slate-500 font-medium">Tickets Nuevos</p>
@@ -295,10 +315,10 @@
             </div>
           </div>
 
-          <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
+          <div class="bg-white border border-slate-200 rounded-2xl p-4 md:p-5 shadow-xs">
             <div class="flex justify-between items-start">
               <div>
-                <p class="text-xs text-slate-500 font-medium">Tiempo Promedio Resp.</p>
+                <p class="text-xs text-slate-500 font-medium">Tiempo Resp.</p>
                 <h3 class="text-2xl font-bold text-slate-900 mt-1">1.4 min</h3>
               </div>
               <div class="p-3 rounded-xl bg-emerald-50 text-emerald-600">
@@ -311,10 +331,10 @@
             </div>
           </div>
 
-          <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
+          <div class="bg-white border border-slate-200 rounded-2xl p-4 md:p-5 shadow-xs">
             <div class="flex justify-between items-start">
               <div>
-                <p class="text-xs text-slate-500 font-medium">Índice de Resolución</p>
+                <p class="text-xs text-slate-500 font-medium">Resolución</p>
                 <h3 class="text-2xl font-bold text-slate-900 mt-1">96.8%</h3>
               </div>
               <div class="p-3 rounded-xl bg-cyan-50 text-cyan-600">
@@ -331,29 +351,24 @@
     </div>
 
     <!-- VIEW 3: CLIENTS DIRECTORY -->
-    <div id="view-clients" class="hidden flex-1 bg-slate-50 p-8 overflow-y-auto">
+    <div id="view-clients" class="hidden flex-1 bg-slate-50 p-4 md:p-8 overflow-y-auto">
       <div class="max-w-7xl mx-auto space-y-6">
-        <div class="flex justify-between items-center">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <div>
-            <h1 class="text-2xl font-bold text-slate-900">Directorio de Clientes ISP</h1>
-            <p class="text-xs text-slate-500">Gestión de contratos, nodos de fibra y estados de servicio Tecnoven.</p>
+            <h1 class="text-xl md:text-2xl font-bold text-slate-900">Directorio de Clientes ISP</h1>
+            <p class="text-xs text-slate-500">Gestión de contratos y nodos de fibra Tecnoven.</p>
           </div>
           <button class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold shadow-sm transition">
-            + Registrar Nuevo Cliente
+            + Registrar Nuevo
           </button>
         </div>
 
-        <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs">
-          <div class="p-4 border-b border-slate-200 flex items-center justify-between">
-            <span class="text-xs font-bold text-slate-700">Lista completa de abonados</span>
-            <span class="text-xs text-slate-500">Total: 1,482 clientes activos</span>
-          </div>
-          <table class="w-full text-left border-collapse">
+        <div class="bg-white border border-slate-200 rounded-2xl overflow-x-auto shadow-xs">
+          <table class="w-full text-left border-collapse min-w-[600px]">
             <thead>
               <tr class="border-b border-slate-200 bg-slate-50 text-slate-500 text-xs font-bold">
                 <th class="p-4">Cliente / Contrato</th>
                 <th class="p-4">Plan Asignado</th>
-                <th className="p-4">Dirección / Nodo</th>
                 <th class="p-4">Estado IP</th>
                 <th class="p-4">Estatus Servicio</th>
                 <th class="p-4 text-right">Acciones</th>
@@ -368,13 +383,13 @@
     </div>
 
     <!-- VIEW 4: GENERIC OTHER MODULES -->
-    <div id="view-generic" class="hidden flex-1 bg-slate-50 p-8 flex items-center justify-center">
+    <div id="view-generic" class="hidden flex-1 bg-slate-50 p-6 flex items-center justify-center">
       <div class="max-w-md mx-auto text-center space-y-4">
         <div class="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-indigo-100 shadow-sm">
           <i class="fa-solid fa-layer-group text-2xl"></i>
         </div>
-        <h2 id="generic-view-title" class="text-2xl font-bold text-slate-900 capitalize">Módulo</h2>
-        <p class="text-slate-500 text-xs">Este entorno está sincronizado con los servidores centrales de Tecnoven Services. Puede volver al Helpdesk de chat en cualquier momento.</p>
+        <h2 id="generic-view-title" class="text-xl md:text-2xl font-bold text-slate-900 capitalize">Módulo</h2>
+        <p class="text-slate-500 text-xs">Este entorno está sincronizado con los servidores centrales de Tecnoven Services.</p>
         <button onclick="switchView('helpdesk')" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold shadow-sm transition cursor-pointer">
           Volver al Helpdesk Chat
         </button>
@@ -383,7 +398,7 @@
 
   </div>
 
-  <!-- VANILLA JAVASCRIPT APP STATE & LOGIC -->
+  <!-- VANILLA JAVASCRIPT APPLICATION CODE -->
   <script>
     // APP STATE
     const state = {
@@ -391,9 +406,8 @@
       chatFilter: 'todos',
       searchQuery: '',
       activeChatId: 1,
-      showRightPanel: true,
-      showNotifsPopover: false,
-      showCannedPopover: false,
+      showRightPanel: false, // Hidden by default on mobile, openable via info button
+      showMobileNav: false,
       notifications: [
         { id: 1, text: 'Nuevo ticket asignado de Nely Balza', time: 'Hace 2 min', read: false },
         { id: 2, text: 'Conversación cambio a PENDIENTE (Imontiel)', time: 'Hace 15 min', read: false }
@@ -522,52 +536,6 @@
           messages: [
             { id: 501, sender: 'customer', text: 'Directo a una regla de configuración por favor.', timestamp: '07-11-2026 11:40 AM', status: 'entregado' }
           ]
-        },
-        {
-          id: 6,
-          name: 'REIDY RUBEN VALLES',
-          phone: '584121344008',
-          department: 'Soporte Técnico',
-          timeAgo: 'Hace 46 min',
-          unreadCount: 0,
-          status: 'pending',
-          operator: 'Imontiel',
-          clientDetails: {
-            contractId: 'TRV-44120',
-            plan: 'Fibra Óptica 200 Mbps',
-            status: 'Activo',
-            address: 'San Francisco, Maracaibo',
-            ipAddress: '192.168.12.9',
-            router: 'ZTE F670L',
-            previousTickets: 2,
-            notes: 'Solicita cambio de clave WiFi.'
-          },
-          messages: [
-            { id: 601, sender: 'customer', text: 'Por ahora bien, gracias por la pronta atención.', timestamp: '07-11-2026 11:30 AM', status: 'leído' }
-          ]
-        },
-        {
-          id: 7,
-          name: 'José Luis Antúnez / Ticket',
-          phone: '17868193528',
-          department: 'Ventas',
-          timeAgo: 'Hace 49 min',
-          unreadCount: 0,
-          status: 'closed',
-          operator: 'Bot Ícaro',
-          clientDetails: {
-            contractId: 'TRV-11029',
-            plan: 'Fibra Óptica 300 Mbps',
-            status: 'Activo',
-            address: 'El Milagro, Maracaibo',
-            ipAddress: '192.168.5.20',
-            router: 'Huawei EG8141A5',
-            previousTickets: 5,
-            notes: 'Ticket resuelto por el bot.'
-          },
-          messages: [
-            { id: 701, sender: 'customer', text: 'En estos momentos verificando velocidad, todo excelente.', timestamp: '07-11-2026 10:15 AM', status: 'leído' }
-          ]
         }
       ]
     };
@@ -582,13 +550,13 @@
 
     const navItems = [
       { id: 'dashboard', icon: 'fa-chart-pie', label: 'Dashboard' },
-      { id: 'clients', icon: 'fa-users', label: 'Lista de Clientes' },
+      { id: 'clients', icon: 'fa-users', label: 'Clientes' },
       { id: 'callcenter', icon: 'fa-headset', label: 'Call Center' },
-      { id: 'kanban', icon: 'fa-[#kanban] fa-table-columns', label: 'Tableros Kanban' },
+      { id: 'kanban', icon: 'fa-table-columns', label: 'Kanban' },
       { id: 'ai', icon: 'fa-robot', label: 'Solicitudes IA' },
-      { id: 'helpdesk', icon: 'fa-comments', label: 'Helpdesk / Chats', badge: 40 },
+      { id: 'helpdesk', icon: 'fa-comments', label: 'Helpdesk Chats', badge: 40 },
       { id: 'reports', icon: 'fa-file-lines', label: 'Reportes' },
-      { id: 'messaging', icon: 'fa-envelope', label: 'Mensajería Masiva' },
+      { id: 'messaging', icon: 'fa-envelope', label: 'Mensajería' },
       { id: 'settings', icon: 'fa-gear', label: 'Configuración' },
     ];
 
@@ -602,15 +570,16 @@
           <button
             onclick="switchView('${item.id}')"
             title="${item.label}"
-            class="relative p-3 rounded-xl transition-all duration-200 group w-full flex items-center justify-center ${
+            class="relative p-2.5 md:p-3 rounded-xl transition-all duration-200 group w-full flex items-center justify-start md:justify-center space-x-3 md:space-x-0 ${
               isActive 
-                ? 'bg-indigo-50 text-indigo-600 shadow-xs border border-indigo-100' 
-                : 'text-slate-400 hover:text-slate-700 hover:bg-slate-100'
+                ? 'bg-indigo-50 text-indigo-600 shadow-xs border border-indigo-100 font-bold' 
+                : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100 font-medium'
             }"
           >
-            <i class="fa-solid ${item.icon} text-lg"></i>
+            <i class="fa-solid ${item.icon} text-base md:text-lg w-5 text-center"></i>
+            <span class="text-xs md:hidden">${item.label}</span>
             ${item.badge ? `
-              <span class="absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shadow-xs animate-pulse">
+              <span class="ml-auto md:ml-0 md:absolute md:-top-1 md:-right-1 bg-rose-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shadow-xs">
                 ${item.badge}
               </span>
             ` : ''}
@@ -679,7 +648,7 @@
         const lastMsg = chat.messages[chat.messages.length - 1];
         return `
           <div
-            onclick="selectChat(${chat.id})"
+            onclick="selectChatMobile(${chat.id})"
             class="p-3.5 cursor-pointer transition relative group ${
               isSelected 
                 ? 'bg-indigo-50/70 border-l-4 border-indigo-600' 
@@ -720,17 +689,22 @@
       const activeChat = state.chats.find(c => c.id === state.activeChatId) || state.chats[0];
       const container = document.getElementById('active-chat-header-info');
       container.innerHTML = `
-        <div class="w-10 h-10 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-xs shadow-sm">
+        <!-- Mobile Back Arrow -->
+        <button onclick="backToChatListMobile()" class="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-xl mr-1">
+          <i class="fa-solid fa-arrow-left text-base"></i>
+        </button>
+
+        <div class="w-9 h-9 md:w-10 md:h-10 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-xs shadow-sm flex-shrink-0">
           ${activeChat.name.substring(0, 2).toUpperCase()}
         </div>
-        <div>
-          <h3 class="text-xs font-bold text-slate-900 flex items-center gap-2">
-            ${activeChat.name}
-            <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-100">
+        <div class="min-w-0">
+          <h3 class="text-xs font-bold text-slate-900 flex items-center gap-1.5 truncate">
+            <span class="truncate">${activeChat.name}</span>
+            <span class="hidden sm:inline px-2 py-0.5 rounded-full text-[10px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-100 flex-shrink-0">
               ${activeChat.department}
             </span>
           </h3>
-          <p class="text-[11px] text-slate-400">Operador asignado: <span class="text-slate-700 font-semibold">${activeChat.operator}</span></p>
+          <p class="text-[10px] md:text-[11px] text-slate-400 truncate">Op: <span class="text-slate-700 font-semibold">${activeChat.operator}</span></p>
         </div>
       `;
     }
@@ -741,8 +715,8 @@
 
       let html = `
         <div class="text-center my-2">
-          <button class="px-4 py-1.5 bg-white hover:bg-slate-100 text-slate-600 text-xs font-semibold rounded-full border border-slate-200 shadow-xs transition">
-            Cargar mensajes anteriores
+          <button class="px-3.5 py-1 bg-white hover:bg-slate-100 text-slate-600 text-[11px] font-semibold rounded-full border border-slate-200 shadow-xs transition">
+            Mensajes anteriores
           </button>
         </div>
       `;
@@ -754,8 +728,8 @@
         if (isSystem) {
           return `
             <div class="flex justify-center my-3">
-              <span class="px-4 py-1.5 rounded-full text-[11px] bg-emerald-50 text-emerald-800 border border-emerald-200/60 shadow-xs text-center font-medium">
-                ${msg.text} <span class="text-emerald-500 text-[10px] ml-2">${msg.timestamp}</span>
+              <span class="px-3 py-1 rounded-full text-[10px] md:text-[11px] bg-emerald-50 text-emerald-800 border border-emerald-200/60 shadow-xs text-center font-medium">
+                ${msg.text} <span class="text-emerald-500 text-[9px] ml-1">${msg.timestamp}</span>
               </span>
             </div>
           `;
@@ -763,7 +737,7 @@
 
         return `
           <div class="flex flex-col ${isOperator ? 'items-end' : 'items-start'} space-y-1">
-            <div class="max-w-xl rounded-2xl px-4 py-3 shadow-xs text-xs leading-relaxed ${
+            <div class="max-w-[85%] sm:max-w-md md:max-w-xl rounded-2xl px-3.5 py-2.5 md:py-3 shadow-xs text-xs leading-relaxed ${
               isOperator 
                 ? 'bg-emerald-700 text-white rounded-tr-none' 
                 : 'bg-white border border-slate-200 text-slate-800 rounded-tl-none shadow-xs'
@@ -771,12 +745,12 @@
               <p>${msg.text}</p>
             </div>
             <div class="flex items-center space-x-1.5 text-[10px] text-slate-400 px-1">
-              <span>${isOperator ? 'Leonardo Montiel' : activeChat.name.split('/')[0]}</span>
+              <span>${isOperator ? 'Leonardo M.' : activeChat.name.split('/')[0]}</span>
               <span>•</span>
               <span>${msg.timestamp}</span>
               ${isOperator ? `
                 <span class="flex items-center text-emerald-600 ml-1 font-semibold">
-                  <i class="fa-solid fa-check-double text-[10px] mr-1"></i> ${msg.status}
+                  <i class="fa-solid fa-check-double text-[9px] mr-1"></i> ${msg.status}
                 </span>
               ` : ''}
             </div>
@@ -791,25 +765,35 @@
     function renderRightDrawer() {
       const activeChat = state.chats.find(c => c.id === state.activeChatId) || state.chats[0];
       const drawer = document.getElementById('right-details-drawer');
+      const backdrop = document.getElementById('mobile-backdrop');
 
-      if (!state.showRightPanel) {
-        drawer.classList.add('hidden');
-        return;
+      // Apply desktop & mobile off-canvas classes
+      if (state.showRightPanel) {
+        drawer.classList.remove('translate-x-full');
+        drawer.classList.add('translate-x-0');
+        if (window.innerWidth < 768) {
+          backdrop.classList.remove('hidden');
+        }
+      } else {
+        drawer.classList.remove('translate-x-0');
+        drawer.classList.add('translate-x-full');
+        if (!state.showMobileNav) {
+          backdrop.classList.add('hidden');
+        }
       }
-      drawer.classList.remove('hidden');
 
       drawer.innerHTML = `
-        <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
           <h3 class="text-xs font-bold text-slate-800 flex items-center gap-2">
-            <i class="fa-regular fa-user text-indigo-600"></i> Perfil del Cliente ISP
+            <i class="fa-solid fa-circle-info text-indigo-600"></i> Ficha del Cliente ISP
           </h3>
-          <button onclick="toggleRightDrawer()" class="text-slate-400 hover:text-slate-600 transition">
-            <i class="fa-solid fa-xmark"></i>
+          <button onclick="toggleRightDrawer()" class="p-1 text-slate-400 hover:text-slate-600 transition">
+            <i class="fa-solid fa-xmark text-lg"></i>
           </button>
         </div>
 
-        <div class="text-center pb-4 border-b border-slate-100">
-          <div class="w-16 h-16 rounded-2xl bg-indigo-600 text-white mx-auto flex items-center justify-center font-bold text-lg shadow-md mb-3">
+        <div class="text-center pb-3 border-b border-slate-100">
+          <div class="w-14 h-14 rounded-2xl bg-indigo-600 text-white mx-auto flex items-center justify-center font-bold text-base shadow-md mb-2">
             ${activeChat.name.substring(0, 2).toUpperCase()}
           </div>
           <h4 class="text-xs font-bold text-slate-900">${activeChat.name}</h4>
@@ -819,40 +803,36 @@
           </span>
         </div>
 
-        <div class="space-y-3">
-          <h5 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Detalles de Fibra Óptica</h5>
-          <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-200 space-y-2.5 text-xs">
+        <div class="space-y-2">
+          <h5 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Detalles de Conexión</h5>
+          <div class="bg-slate-50 rounded-xl p-3 border border-slate-200 space-y-2 text-xs">
             <div class="flex justify-between">
-              <span class="text-slate-500">Contrato ID:</span>
+              <span class="text-slate-500">Contrato:</span>
               <span class="font-mono text-indigo-600 font-bold">${activeChat.clientDetails.contractId}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-slate-500">Plan Actual:</span>
+              <span class="text-slate-500">Plan:</span>
               <span class="font-semibold text-slate-800">${activeChat.clientDetails.plan}</span>
             </div>
             <div class="flex justify-between">
               <span class="text-slate-500">Dirección:</span>
-              <span class="text-slate-700 text-right max-w-[150px]">${activeChat.clientDetails.address}</span>
+              <span class="text-slate-700 text-right max-w-[130px] truncate">${activeChat.clientDetails.address}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-slate-500">IP Asignada:</span>
+              <span class="text-slate-500">IP ONU:</span>
               <span class="font-mono text-emerald-700 font-bold">${activeChat.clientDetails.ipAddress}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-slate-500">Router / ONU:</span>
+              <span class="text-slate-500">Equipo:</span>
               <span class="text-slate-700 font-medium">${activeChat.clientDetails.router}</span>
             </div>
           </div>
         </div>
 
-        <div class="space-y-3">
-          <h5 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Historial de Tickets</h5>
-          <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-200 text-xs space-y-2">
-            <div class="flex justify-between items-center">
-              <span class="text-slate-500">Tickets Previos:</span>
-              <span class="font-bold text-slate-800">${activeChat.clientDetails.previousTickets}</span>
-            </div>
-            <p class="text-slate-500 italic text-[11px] mt-1 pt-2 border-t border-slate-200">
+        <div class="space-y-2">
+          <h5 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Notas del Operador</h5>
+          <div class="bg-slate-50 rounded-xl p-3 border border-slate-200 text-xs">
+            <p class="text-slate-600 italic text-[11px]">
               "${activeChat.clientDetails.notes}"
             </p>
           </div>
@@ -860,7 +840,7 @@
 
         <div class="pt-2">
           <button class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-indigo-600 rounded-xl text-xs font-bold border border-slate-200 transition flex items-center justify-center gap-2">
-            <i class="fa-solid fa-up-right-from-square text-xs"></i> Ver Contrato en ICAROSoft
+            <i class="fa-solid fa-up-right-from-square text-xs"></i> Abrir en ICAROSoft
           </button>
         </div>
       `;
@@ -882,32 +862,76 @@
       const container = document.getElementById('clients-table-body');
       container.innerHTML = state.chats.map(c => `
         <tr class="hover:bg-slate-50 transition">
-          <td class="p-4">
+          <td class="p-3 md:p-4">
             <p class="font-bold text-slate-800">${c.name}</p>
-            <p class="text-slate-400 text-[10px]">Contrato: ${c.clientDetails.contractId}</p>
+            <p class="text-slate-400 text-[10px]">${c.clientDetails.contractId}</p>
           </td>
-          <td class="p-4 text-slate-600">${c.clientDetails.plan}</td>
-          <td class="p-4 text-slate-500">${c.clientDetails.address}</td>
-          <td class="p-4 font-mono text-indigo-600 font-semibold">${c.clientDetails.ipAddress}</td>
-          <td class="p-4">
-            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+          <td class="p-3 md:p-4 text-slate-600">${c.clientDetails.plan}</td>
+          <td class="p-3 md:p-4 font-mono text-indigo-600 font-semibold">${c.clientDetails.ipAddress}</td>
+          <td class="p-3 md:p-4">
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
               ${c.clientDetails.status}
             </span>
           </td>
-          <td class="p-4 text-right">
-            <button onclick="selectChatAndGo(${c.id})" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-indigo-600 rounded-lg font-semibold transition inline-flex items-center gap-1.5">
-              <i class="fa-regular fa-comment"></i> Abrir Chat
+          <td class="p-3 md:p-4 text-right">
+            <button onclick="selectChatAndGo(${c.id})" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-indigo-600 rounded-lg font-semibold transition inline-flex items-center gap-1 text-xs">
+              <i class="fa-regular fa-comment"></i> Chat
             </button>
           </td>
         </tr>
       `).join('');
     }
 
-    // ACTIONS & HANDLERS
+    // RESPONSIVE & MOBILE NAVIGATION HANDLERS
+
+    function selectChatMobile(id) {
+      state.activeChatId = id;
+      const chat = state.chats.find(c => c.id === id);
+      if (chat) chat.unreadCount = 0;
+
+      renderChatList();
+      renderActiveChatHeader();
+      renderMessages();
+
+      // In Mobile mode: Hide chat list, Show active chat panel
+      if (window.innerWidth < 768) {
+        document.getElementById('chat-list-panel').classList.add('hidden');
+        document.getElementById('chat-canvas-panel').classList.remove('hidden');
+        document.getElementById('chat-canvas-panel').classList.add('flex');
+      }
+    }
+
+    function backToChatListMobile() {
+      // In Mobile mode: Show chat list, Hide chat panel
+      document.getElementById('chat-list-panel').classList.remove('hidden');
+      document.getElementById('chat-canvas-panel').classList.add('hidden');
+      document.getElementById('chat-canvas-panel').classList.remove('flex');
+    }
+
+    function toggleMobileNav(forceClose = false) {
+      const drawer = document.getElementById('main-nav-drawer');
+      const backdrop = document.getElementById('mobile-backdrop');
+
+      if (forceClose || state.showMobileNav) {
+        state.showMobileNav = false;
+        drawer.classList.add('-translate-x-full');
+        if (!state.showRightPanel) backdrop.classList.add('hidden');
+      } else {
+        state.showMobileNav = true;
+        drawer.classList.remove('-translate-x-full');
+        backdrop.classList.remove('hidden');
+      }
+    }
+
+    function toggleRightDrawer() {
+      state.showRightPanel = !state.showRightPanel;
+      renderRightDrawer();
+    }
 
     function switchView(viewId) {
       state.activeView = viewId;
       renderNav();
+      toggleMobileNav(true); // Close mobile nav menu if open
 
       const helpdeskView = document.getElementById('view-helpdesk');
       const dashboardView = document.getElementById('view-dashboard');
@@ -933,7 +957,7 @@
         headerTitle.innerText = 'Directorio de Clientes';
       } else {
         genericView.classList.remove('hidden');
-        document.getElementById('generic-view-title').innerText = 'Módulo de ' + viewId.toUpperCase();
+        document.getElementById('generic-view-title').innerText = 'Módulo ' + viewId;
         headerTitle.innerText = 'Módulo ' + viewId;
       }
     }
@@ -944,24 +968,9 @@
       renderChatList();
     }
 
-    function selectChat(id) {
-      state.activeChatId = id;
-      const chat = state.chats.find(c => c.id === id);
-      if (chat) chat.unreadCount = 0;
-      renderChatList();
-      renderActiveChatHeader();
-      renderMessages();
-      renderRightDrawer();
-    }
-
     function selectChatAndGo(id) {
-      selectChat(id);
+      selectChatMobile(id);
       switchView('helpdesk');
-    }
-
-    function toggleRightDrawer() {
-      state.showRightPanel = !state.showRightPanel;
-      renderRightDrawer();
     }
 
     function selectCanned(text) {
@@ -969,7 +978,7 @@
       document.getElementById('canned-responses-popover').classList.add('hidden');
     }
 
-    // INITIALIZATION & EVENT LISTENERS
+    // INIT & LISTENERS
     window.addEventListener('DOMContentLoaded', () => {
       renderNav();
       renderNotifications();
@@ -980,7 +989,7 @@
       renderRightDrawer();
       renderCannedResponses();
 
-      // Live contact search
+      // Mobile search input listener
       document.getElementById('chat-search-input').addEventListener('input', (e) => {
         state.searchQuery = e.target.value;
         renderChatList();
@@ -1011,20 +1020,30 @@
 
       // Toggle Canned menu
       document.getElementById('btn-toggle-canned').addEventListener('click', () => {
-        const popover = document.getElementById('canned-responses-popover');
-        popover.classList.toggle('hidden');
+        document.getElementById('canned-responses-popover').classList.toggle('hidden');
       });
 
       document.getElementById('btn-close-canned').addEventListener('click', () => {
         document.getElementById('canned-responses-popover').classList.add('hidden');
       });
 
-      // Toggle Drawer from header button
-      document.getElementById('btn-toggle-right-drawer').addEventListener('click', () => {
-        toggleRightDrawer();
+      // Open/Close Mobile Main Navigation Drawer
+      document.getElementById('btn-open-mobile-nav').addEventListener('click', () => toggleMobileNav());
+      document.getElementById('btn-close-mobile-nav').addEventListener('click', () => toggleMobileNav(true));
+
+      // Right Details Drawer button toggle
+      document.getElementById('btn-toggle-right-drawer').addEventListener('click', () => toggleRightDrawer());
+
+      // Backdrop overlay click to close drawers
+      document.getElementById('mobile-backdrop').addEventListener('click', () => {
+        toggleMobileNav(true);
+        if (state.showRightPanel) {
+          state.showRightPanel = false;
+          renderRightDrawer();
+        }
       });
 
-      // Toggle Notifications dropdown
+      // Notifications dropdown toggle
       document.getElementById('btn-toggle-notifs').addEventListener('click', () => {
         document.getElementById('notif-dropdown').classList.toggle('hidden');
       });
@@ -1032,6 +1051,18 @@
       document.getElementById('btn-mark-read').addEventListener('click', () => {
         state.notifications.forEach(n => n.read = true);
         renderNotifications();
+      });
+
+      // Handle window resize between desktop and mobile layouts
+      window.addEventListener('resize', () => {
+        if (window.innerWidth >= 768) {
+          document.getElementById('chat-list-panel').classList.remove('hidden');
+          document.getElementById('chat-canvas-panel').classList.remove('hidden');
+          document.getElementById('chat-canvas-panel').classList.add('flex');
+          document.getElementById('mobile-backdrop').classList.add('hidden');
+        } else {
+          backToChatListMobile();
+        }
       });
     });
   </script>
