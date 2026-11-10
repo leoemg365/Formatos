@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tecnoven Services - Helpdesk Pro</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome Icons CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <!-- Inter Font -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    .scrollbar-none::-webkit-scrollbar {
+      display: none;
+    }
+    .scrollbar-none {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="bg-[#f8fafc] text-slate-800 h-screen w-screen overflow-hidden flex select-none">
+
+  <!-- 1. FAR-LEFT NAVIGATION BAR (WHITE LIGHT MODE) -->
+  <nav class="w-16 bg-white border-r border-slate-200 flex flex-col items-center py-4 justify-between z-30 shadow-xs flex-shrink-0">
+    <div className="flex flex-col items-center space-y-4 w-full">
+      <!-- Logo Brand -->
+      <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center shadow-md shadow-indigo-200 cursor-pointer transition-transform hover:scale-105 mb-2 mx-auto">
+        <span class="font-extrabold text-white text-lg tracking-wider">T</span>
+      </div>
+
+      <div class="w-8 h-[1px] bg-slate-200 my-1 mx-auto"></div>
+
+      <!-- Nav Icons -->
+      <div class="flex flex-col items-center space-y-2 w-full px-2" id="nav-buttons-container">
+        <!-- JS injects navigation items -->
+      </div>
+    </div>
+
+    <!-- User Profile & Notifications -->
+    <div class="flex flex-col items-center space-y-3 relative">
+      <div class="relative">
+        <button id="btn-toggle-notifs" class="p-2.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition relative">
+          <i class="fa-regular fa-bell text-lg"></i>
+          <span class="absolute top-2 right-2 w-2.5 h-2.5 bg-indigo-500 rounded-full border-2 border-white"></span>
+        </button>
+        
+        <!-- Notifications Dropdown -->
+        <div id="notif-dropdown" class="hidden absolute left-full bottom-0 ml-3 w-80 bg-white border border-slate-200 rounded-2xl shadow-2xl p-4 z-50">
+          <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-100">
+            <span class="font-bold text-xs text-slate-800">Notificaciones</span>
+            <button id="btn-mark-read" class="text-[11px] text-indigo-600 font-medium hover:underline">Marcar leídas</button>
+          </div>
+          <div class="space-y-2 max-h-60 overflow-y-auto" id="notifs-container">
+            <!-- Injected by JS -->
+          </div>
+        </div>
+      </div>
+
+      <div class="w-10 h-10 rounded-xl bg-indigo-600 p-0.5 shadow-sm cursor-pointer hover:opacity-90 transition flex items-center justify-center">
+        <div class="w-full h-full bg-white rounded-[9px] flex items-center justify-center font-bold text-indigo-600 text-xs">
+          LM
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN APP CONTAINER -->
+  <div class="flex-1 flex flex-col h-full overflow-hidden">
+
+    <!-- TOP HEADER BAR -->
+    <header class="h-14 bg-white border-b border-slate-200 px-6 flex items-center justify-between z-20 shadow-xs flex-shrink-0">
+      <div class="flex items-center space-x-4">
+        <div class="flex items-center space-x-2">
+          <span class="text-sm font-bold tracking-tight text-slate-900">
+            Tecnoven Services, C.A.
+          </span>
+          <span class="text-slate-300">/</span>
+          <span id="header-view-title" class="text-xs font-semibold text-slate-500">
+            Helpdesk & Omnicanalidad
+          </span>
+        </div>
+        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          Sistema Operativo • Maracaibo Bazar
+        </span>
+      </div>
+
+      <div class="flex items-center space-x-3">
+        <div class="relative">
+          <i class="fa-solid fa-magnifying-glass text-slate-400 text-xs absolute left-3 top-3"></i>
+          <input 
+            type="text" 
+            placeholder="Buscar global..." 
+            class="bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-1.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:bg-white w-64 transition"
+          />
+        </div>
+        <button class="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 transition">
+          <i class="fa-solid fa-sliders text-xs"></i>
+        </button>
+        <div class="h-5 w-[1px] bg-slate-200"></div>
+        <div class="flex items-center space-x-2 pl-2">
+          <div class="text-right">
+            <p class="text-xs font-bold text-slate-800">Leonardo Montiel</p>
+            <p class="text-[10px] text-indigo-600 font-semibold">Operador Senior</p>
+          </div>
+          <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-xs font-bold text-white shadow-sm">
+            LM
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- VIEW 1: HELPDESK WORKSPACE -->
+    <div id="view-helpdesk" class="flex-1 flex overflow-hidden">
+      
+      <!-- 2. SECONDARY SIDEBAR (CHAT LIST) -->
+      <aside class="w-80 bg-white border-r border-slate-200 flex flex-col z-10 flex-shrink-0">
+        <!-- Search & Filter Controls -->
+        <div class="p-3.5 border-b border-slate-200">
+          <div class="relative">
+            <i class="fa-solid fa-magnifying-glass text-slate-400 text-xs absolute left-3 top-3"></i>
+            <input 
+              id="chat-search-input"
+              type="text" 
+              placeholder="Search contacts..." 
+              class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition shadow-inner"
+            />
+          </div>
+
+          <!-- Filter Tabs -->
+          <div class="flex items-center gap-1 mt-3 overflow-x-auto pb-1 scrollbar-none" id="chat-filter-tabs">
+            <!-- Injected by JS -->
+          </div>
+        </div>
+
+        <!-- Chat List Items Container -->
+        <div class="flex-1 overflow-y-auto divide-y divide-slate-100" id="chat-list-container">
+          <!-- Injected by JS -->
+        </div>
+      </aside>
+
+      <!-- 3. CENTRAL CHAT CANVAS -->
+      <main class="flex-1 flex flex-col bg-[#f8fafc] relative">
+        
+        <!-- Active Chat Header -->
+        <div class="h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between z-10 shadow-xs flex-shrink-0">
+          <div class="flex items-center space-x-3" id="active-chat-header-info">
+            <!-- Injected by JS -->
+          </div>
+
+          <div class="flex items-center space-x-2">
+            <button class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition border border-slate-200">
+              Transferir
+            </button>
+            <button class="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl text-xs font-semibold transition border border-rose-200">
+              Cerrar Ticket
+            </button>
+            <div class="h-5 w-[1px] bg-slate-200"></div>
+            <button 
+              id="btn-toggle-right-drawer"
+              class="p-2 rounded-xl transition bg-indigo-50 text-indigo-600 border border-indigo-200 hover:bg-indigo-100"
+              title="Alternar Panel de Cliente"
+            >
+              <i class="fa-regular fa-user text-sm"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Message History Thread -->
+        <div id="messages-container" class="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50">
+          <!-- Injected by JS -->
+        </div>
+
+        <!-- Message Composer Bottom Bar -->
+        <div class="p-4 bg-white border-t border-slate-200 relative z-10 shadow-lg flex-shrink-0">
+          
+          <!-- Canned Responses Popover Menu -->
+          <div id="canned-responses-popover" class="hidden absolute bottom-full left-4 mb-2 w-96 bg-white border border-slate-200 rounded-2xl shadow-xl p-3 z-50">
+            <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
+              <span class="text-xs font-bold text-slate-800">Respuestas Rápidas (Canned Replies)</span>
+              <button id="btn-close-canned" class="text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-xmark text-sm"></i>
+              </button>
+            </div>
+            <div class="space-y-1 max-h-48 overflow-y-auto" id="canned-list-container">
+              <!-- Injected by JS -->
+            </div>
+          </div>
+
+          <form id="message-form" class="flex items-center space-x-3">
+            <button 
+              type="button" 
+              id="btn-toggle-canned"
+              class="p-2.5 text-slate-500 hover:text-indigo-600 hover:bg-slate-100 rounded-xl transition"
+              title="Respuestas Rápidas"
+            >
+              <i class="fa-regular fa-face-smile text-lg"></i>
+            </button>
+            <button 
+              type="button" 
+              class="p-2.5 text-slate-500 hover:text-indigo-600 hover:bg-slate-100 rounded-xl transition"
+              title="Adjuntar Archivo"
+            >
+              <i class="fa-solid fa-paperclip text-lg"></i>
+            </button>
+
+            <input 
+              type="text" 
+              id="message-input"
+              placeholder="Escriba su respuesta o toque la carita para plantilla rápida..." 
+              class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:bg-white shadow-inner transition"
+            />
+
+            <button 
+              type="submit"
+              class="p-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-md transition flex items-center justify-center cursor-pointer"
+            >
+              <i class="fa-solid fa-paper-plane text-xs"></i>
+            </button>
+          </form>
+        </div>
+
+      </main>
+
+      <!-- 4. RIGHT DETAILS PANEL DRAWER -->
+      <aside id="right-details-drawer" class="w-80 bg-white border-l border-slate-200 flex flex-col z-10 overflow-y-auto p-6 space-y-6 shadow-sm flex-shrink-0">
+        <!-- Injected by JS -->
+      </aside>
+
+    </div>
+
+    <!-- VIEW 2: DASHBOARD EXECUTIVE -->
+    <div id="view-dashboard" class="hidden flex-1 bg-slate-50 p-8 overflow-y-auto">
+      <div class="max-w-7xl mx-auto space-y-6">
+        <div class="flex justify-between items-center">
+          <div>
+            <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Panel de Control General</h1>
+            <p class="text-xs text-slate-500">Métricas en tiempo real de la red ISP y soporte técnico Tecnoven.</p>
+          </div>
+          <button class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold shadow-sm transition flex items-center gap-2">
+            <i class="fa-solid fa-rotate-right text-xs"></i> Actualizar Datos
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
+          <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
+            <div class="flex justify-between items-start">
+              <div>
+                <p class="text-xs text-slate-500 font-medium">Chats Activos Hoy</p>
+                <h3 class="text-2xl font-bold text-slate-900 mt-1">142</h3>
+              </div>
+              <div class="p-3 rounded-xl bg-indigo-50 text-indigo-600">
+                <i class="fa-regular fa-comments text-lg"></i>
+              </div>
+            </div>
+            <div class="mt-4 flex items-center gap-2 text-xs">
+              <span class="text-emerald-600 font-bold">+12.4%</span>
+              <span class="text-slate-400">vs semana anterior</span>
+            </div>
+          </div>
+
+          <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
+            <div class="flex justify-between items-start">
+              <div>
+                <p class="text-xs text-slate-500 font-medium">Tickets Nuevos</p>
+                <h3 class="text-2xl font-bold text-slate-900 mt-1">28</h3>
+              </div>
+              <div class="p-3 rounded-xl bg-amber-50 text-amber-600">
+                <i class="fa-solid fa-triangle-exclamation text-lg"></i>
+              </div>
+            </div>
+            <div class="mt-4 flex items-center gap-2 text-xs">
+              <span class="text-rose-600 font-bold">-3.2%</span>
+              <span class="text-slate-400">vs semana anterior</span>
+            </div>
+          </div>
+
+          <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
+            <div class="flex justify-between items-start">
+              <div>
+                <p class="text-xs text-slate-500 font-medium">Tiempo Promedio Resp.</p>
+                <h3 class="text-2xl font-bold text-slate-900 mt-1">1.4 min</h3>
+              </div>
+              <div class="p-3 rounded-xl bg-emerald-50 text-emerald-600">
+                <i class="fa-regular fa-clock text-lg"></i>
+              </div>
+            </div>
+            <div class="mt-4 flex items-center gap-2 text-xs">
+              <span class="text-emerald-600 font-bold">-18s</span>
+              <span class="text-slate-400">vs semana anterior</span>
+            </div>
+          </div>
+
+          <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
+            <div class="flex justify-between items-start">
+              <div>
+                <p class="text-xs text-slate-500 font-medium">Índice de Resolución</p>
+                <h3 class="text-2xl font-bold text-slate-900 mt-1">96.8%</h3>
+              </div>
+              <div class="p-3 rounded-xl bg-cyan-50 text-cyan-600">
+                <i class="fa-regular fa-circle-check text-lg"></i>
+              </div>
+            </div>
+            <div class="mt-4 flex items-center gap-2 text-xs">
+              <span class="text-emerald-600 font-bold">+1.5%</span>
+              <span class="text-slate-400">vs semana anterior</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 3: CLIENTS DIRECTORY -->
+    <div id="view-clients" class="hidden flex-1 bg-slate-50 p-8 overflow-y-auto">
+      <div class="max-w-7xl mx-auto space-y-6">
+        <div class="flex justify-between items-center">
+          <div>
+            <h1 class="text-2xl font-bold text-slate-900">Directorio de Clientes ISP</h1>
+            <p class="text-xs text-slate-500">Gestión de contratos, nodos de fibra y estados de servicio Tecnoven.</p>
+          </div>
+          <button class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold shadow-sm transition">
+            + Registrar Nuevo Cliente
+          </button>
+        </div>
+
+        <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs">
+          <div class="p-4 border-b border-slate-200 flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-700">Lista completa de abonados</span>
+            <span class="text-xs text-slate-500">Total: 1,482 clientes activos</span>
+          </div>
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="border-b border-slate-200 bg-slate-50 text-slate-500 text-xs font-bold">
+                <th class="p-4">Cliente / Contrato</th>
+                <th class="p-4">Plan Asignado</th>
+                <th className="p-4">Dirección / Nodo</th>
+                <th class="p-4">Estado IP</th>
+                <th class="p-4">Estatus Servicio</th>
+                <th class="p-4 text-right">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="clients-table-body" class="divide-y divide-slate-100 text-xs">
+              <!-- Injected by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 4: GENERIC OTHER MODULES -->
+    <div id="view-generic" class="hidden flex-1 bg-slate-50 p-8 flex items-center justify-center">
+      <div class="max-w-md mx-auto text-center space-y-4">
+        <div class="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-indigo-100 shadow-sm">
+          <i class="fa-solid fa-layer-group text-2xl"></i>
+        </div>
+        <h2 id="generic-view-title" class="text-2xl font-bold text-slate-900 capitalize">Módulo</h2>
+        <p class="text-slate-500 text-xs">Este entorno está sincronizado con los servidores centrales de Tecnoven Services. Puede volver al Helpdesk de chat en cualquier momento.</p>
+        <button onclick="switchView('helpdesk')" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold shadow-sm transition cursor-pointer">
+          Volver al Helpdesk Chat
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- VANILLA JAVASCRIPT APP STATE & LOGIC -->
+  <script>
+    // APP STATE
+    const state = {
+      activeView: 'helpdesk',
+      chatFilter: 'todos',
+      searchQuery: '',
+      activeChatId: 1,
+      showRightPanel: true,
+      showNotifsPopover: false,
+      showCannedPopover: false,
+      notifications: [
+        { id: 1, text: 'Nuevo ticket asignado de Nely Balza', time: 'Hace 2 min', read: false },
+        { id: 2, text: 'Conversación cambio a PENDIENTE (Imontiel)', time: 'Hace 15 min', read: false }
+      ],
+      chats: [
+        {
+          id: 1,
+          name: 'Nely Balza / Retiro',
+          phone: '584145941788',
+          department: 'Soporte Técnico',
+          timeAgo: 'Hace 48 min',
+          unreadCount: 1,
+          status: 'pending',
+          operator: 'Imontiel',
+          clientDetails: {
+            contractId: 'TRV-89421',
+            plan: 'Fibra Óptica 300 Mbps Pro',
+            status: 'Activo',
+            address: 'Urb. La Limpia, Calle 72, Maracaibo',
+            ipAddress: '192.168.10.45',
+            router: 'ONU Huawei EG8141A5',
+            previousTickets: 4,
+            notes: 'Cliente solicita soporte sobre traslado de equipo o retiro temporal por viaje.'
+          },
+          messages: [
+            { id: 101, sender: 'customer', text: 'Buenos días Sra Nely, el departamento administrativo ya cuenta con esa información', timestamp: '06-11-2026 12:38 PM', status: 'leído' },
+            { id: 102, sender: 'system', text: 'Conversacion Cambio a PENDIENTE por el operador = Imontiel', timestamp: '06-11-2026 07:38 PM', status: 'leído' },
+            { id: 103, sender: 'system', text: 'NUEVA Conversacion ASIGNADA al operador = Imontiel', timestamp: '07-11-2026 10:54 AM', status: 'leído' },
+            { id: 104, sender: 'customer', text: 'Buenos días', timestamp: '07-11-2026 11:04 AM', status: 'leído' },
+            { id: 105, sender: 'operator', text: 'Buenos días Sra Nely', timestamp: '07-11-2026 11:18 AM', status: 'leído' },
+            { id: 106, sender: 'customer', text: 'Quiero saber como procede la solicitud que realice el dia anterior', timestamp: '07-11-2026 11:55 AM', status: 'leído' },
+            { id: 107, sender: 'customer', text: 'El departamento correspondiente ya fue informado?', timestamp: '07-11-2026 11:56 AM', status: 'leído' },
+            { id: 108, sender: 'customer', text: 'De ser asi, cual es el tiempo estimado para recibir una respuesta?', timestamp: '07-11-2026 11:56 AM', status: 'leído' },
+            { id: 109, sender: 'operator', text: 'Si Sra Nely, el departamento administrativo ya cuenta con esa información', timestamp: '07-11-2026 11:58 AM', status: 'leído' }
+          ]
+        },
+        {
+          id: 2,
+          name: 'RICARDO JOSE CORDERO',
+          phone: '584145533177',
+          department: 'Soporte Técnico',
+          timeAgo: 'Hace 39 min',
+          unreadCount: 1,
+          status: 'new',
+          operator: 'Sin Asignar',
+          clientDetails: {
+            contractId: 'TRV-77312',
+            plan: 'Fibra Óptica 100 Mbps',
+            status: 'Activo',
+            address: 'Sector Amparo, Av. 15, Maracaibo',
+            ipAddress: '192.168.1.102',
+            router: 'ZTE F670L',
+            previousTickets: 1,
+            notes: 'Reporta intermitencia en el servicio durante las horas nocturnas.'
+          },
+          messages: [
+            { id: 201, sender: 'customer', text: 'Buenos días, tengo problemas con la conexión desde anoche.', timestamp: '07-11-2026 12:08 PM', status: 'leído' },
+            { id: 202, sender: 'customer', text: '¿Podrían verificar el estado de mi puerto por favor?', timestamp: '07-11-2026 12:09 PM', status: 'entregado' }
+          ]
+        },
+        {
+          id: 3,
+          name: 'NANCY EDUVIGES GONZALEZ',
+          phone: '584122776568',
+          department: 'Soporte Técnico',
+          timeAgo: 'Hace 41 min',
+          unreadCount: 0,
+          status: 'assigned',
+          operator: 'Imontiel',
+          clientDetails: {
+            contractId: 'TRV-54901',
+            plan: 'Fibra Óptica 500 Mbps Business',
+            status: 'Activo',
+            address: 'Calle 67 Cecilio Acosta, Maracaibo',
+            ipAddress: '10.20.50.2',
+            router: 'Huawei Enterprise ONT',
+            previousTickets: 6,
+            notes: 'Cliente VIP corporativo.'
+          },
+          messages: [
+            { id: 301, sender: 'customer', text: 'Buenos días Sra Nancy, su requerimiento fue atendido.', timestamp: '07-11-2026 11:20 AM', status: 'leído' }
+          ]
+        },
+        {
+          id: 4,
+          name: 'Clauyelis Carolina Estrada',
+          phone: '584128260920',
+          department: 'Cobranzas',
+          timeAgo: 'Hace 42 min',
+          unreadCount: 1,
+          status: 'new',
+          operator: 'Sin Asignar',
+          clientDetails: {
+            contractId: 'TRV-33290',
+            plan: 'Fibra Óptica 150 Mbps',
+            status: 'Suspendido (Pago pendiente)',
+            address: 'Urb. La Victoria, Maracaibo',
+            ipAddress: '192.168.4.15',
+            router: 'TP-Link XR500v',
+            previousTickets: 3,
+            notes: 'Pendiente validación de transferencia bancaria.'
+          },
+          messages: [
+            { id: 401, sender: 'customer', text: 'Y quiero saber el estatus de mi pago reportado.', timestamp: '07-11-2026 11:45 AM', status: 'entregado' }
+          ]
+        },
+        {
+          id: 5,
+          name: 'JOENNY DEL CARMEN',
+          phone: '584246476616',
+          department: 'Soporte Técnico',
+          timeAgo: 'Hace 46 min',
+          unreadCount: 1,
+          status: 'new',
+          operator: 'Sin Asignar',
+          clientDetails: {
+            contractId: 'TRV-99210',
+            plan: 'Fibra Óptica 300 Mbps',
+            status: 'Activo',
+            address: 'Av. Bella Vista, Maracaibo',
+            ipAddress: '192.168.8.88',
+            router: 'Huawei EG8141A5',
+            previousTickets: 0,
+            notes: 'Nuevo cliente.'
+          },
+          messages: [
+            { id: 501, sender: 'customer', text: 'Directo a una regla de configuración por favor.', timestamp: '07-11-2026 11:40 AM', status: 'entregado' }
+          ]
+        },
+        {
+          id: 6,
+          name: 'REIDY RUBEN VALLES',
+          phone: '584121344008',
+          department: 'Soporte Técnico',
+          timeAgo: 'Hace 46 min',
+          unreadCount: 0,
+          status: 'pending',
+          operator: 'Imontiel',
+          clientDetails: {
+            contractId: 'TRV-44120',
+            plan: 'Fibra Óptica 200 Mbps',
+            status: 'Activo',
+            address: 'San Francisco, Maracaibo',
+            ipAddress: '192.168.12.9',
+            router: 'ZTE F670L',
+            previousTickets: 2,
+            notes: 'Solicita cambio de clave WiFi.'
+          },
+          messages: [
+            { id: 601, sender: 'customer', text: 'Por ahora bien, gracias por la pronta atención.', timestamp: '07-11-2026 11:30 AM', status: 'leído' }
+          ]
+        },
+        {
+          id: 7,
+          name: 'José Luis Antúnez / Ticket',
+          phone: '17868193528',
+          department: 'Ventas',
+          timeAgo: 'Hace 49 min',
+          unreadCount: 0,
+          status: 'closed',
+          operator: 'Bot Ícaro',
+          clientDetails: {
+            contractId: 'TRV-11029',
+            plan: 'Fibra Óptica 300 Mbps',
+            status: 'Activo',
+            address: 'El Milagro, Maracaibo',
+            ipAddress: '192.168.5.20',
+            router: 'Huawei EG8141A5',
+            previousTickets: 5,
+            notes: 'Ticket resuelto por el bot.'
+          },
+          messages: [
+            { id: 701, sender: 'customer', text: 'En estos momentos verificando velocidad, todo excelente.', timestamp: '07-11-2026 10:15 AM', status: 'leído' }
+          ]
+        }
+      ]
+    };
+
+    const cannedResponses = [
+      "Buenos días, ¿en qué podemos ayudarle el día de hoy?",
+      "Su solicitud ha sido pasada a pendiente con el departamento técnico.",
+      "Por favor reinicie su equipo ONU/Router y verifique los indicadores LED.",
+      "El departamento administrativo ya cuenta con esa información.",
+      "Gracias por contactar a Tecnoven Services ISP Helpdesk. ¡Feliz día!"
+    ];
+
+    const navItems = [
+      { id: 'dashboard', icon: 'fa-chart-pie', label: 'Dashboard' },
+      { id: 'clients', icon: 'fa-users', label: 'Lista de Clientes' },
+      { id: 'callcenter', icon: 'fa-headset', label: 'Call Center' },
+      { id: 'kanban', icon: 'fa-[#kanban] fa-table-columns', label: 'Tableros Kanban' },
+      { id: 'ai', icon: 'fa-robot', label: 'Solicitudes IA' },
+      { id: 'helpdesk', icon: 'fa-comments', label: 'Helpdesk / Chats', badge: 40 },
+      { id: 'reports', icon: 'fa-file-lines', label: 'Reportes' },
+      { id: 'messaging', icon: 'fa-envelope', label: 'Mensajería Masiva' },
+      { id: 'settings', icon: 'fa-gear', label: 'Configuración' },
+    ];
+
+    // RENDER FUNCTIONS
+
+    function renderNav() {
+      const container = document.getElementById('nav-buttons-container');
+      container.innerHTML = navItems.map(item => {
+        const isActive = state.activeView === item.id;
+        return `
+          <button
+            onclick="switchView('${item.id}')"
+            title="${item.label}"
+            class="relative p-3 rounded-xl transition-all duration-200 group w-full flex items-center justify-center ${
+              isActive 
+                ? 'bg-indigo-50 text-indigo-600 shadow-xs border border-indigo-100' 
+                : 'text-slate-400 hover:text-slate-700 hover:bg-slate-100'
+            }"
+          >
+            <i class="fa-solid ${item.icon} text-lg"></i>
+            ${item.badge ? `
+              <span class="absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shadow-xs animate-pulse">
+                ${item.badge}
+              </span>
+            ` : ''}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function renderNotifications() {
+      const container = document.getElementById('notifs-container');
+      container.innerHTML = state.notifications.map(n => `
+        <div class="p-2.5 bg-slate-50 border border-slate-100 rounded-xl text-xs">
+          <p class="text-slate-700 font-medium">${n.text}</p>
+          <span class="text-slate-400 text-[10px] mt-1 block">${n.time}</span>
+        </div>
+      `).join('');
+    }
+
+    function renderFilterTabs() {
+      const tabs = [
+        { id: 'todos', label: 'Todos' },
+        { id: 'nuevos', label: 'Nuevos' },
+        { id: 'pendientes', label: 'Pendientes' },
+        { id: 'asignados', label: 'Asignados' },
+        { id: 'bot', label: 'ÍcaroBot' },
+        { id: 'cerrados', label: 'Cerrados' },
+      ];
+      const container = document.getElementById('chat-filter-tabs');
+      container.innerHTML = tabs.map(tab => `
+        <button
+          onclick="setChatFilter('${tab.id}')"
+          class="px-3 py-1 rounded-lg text-[11px] font-semibold transition whitespace-nowrap ${
+            state.chatFilter === tab.id
+              ? 'bg-indigo-600 text-white shadow-xs'
+              : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100'
+          }"
+        >
+          ${tab.label}
+        </button>
+      `).join('');
+    }
+
+    function renderChatList() {
+      const container = document.getElementById('chat-list-container');
+      const filtered = state.chats.filter(chat => {
+        const matchesSearch = chat.name.toLowerCase().includes(state.searchQuery.toLowerCase()) || 
+                              chat.phone.includes(state.searchQuery);
+        if (!matchesSearch) return false;
+
+        if (state.chatFilter === 'todos') return true;
+        if (state.chatFilter === 'nuevos') return chat.status === 'new';
+        if (state.chatFilter === 'pendientes') return chat.status === 'pending';
+        if (state.chatFilter === 'asignados') return chat.status === 'assigned';
+        if (state.chatFilter === 'bot') return chat.operator === 'Bot Ícaro';
+        if (state.chatFilter === 'cerrados') return chat.status === 'closed';
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="p-6 text-center text-xs text-slate-400">No se encontraron conversaciones.</div>`;
+        return;
+      }
+
+      container.innerHTML = filtered.map(chat => {
+        const isSelected = chat.id === state.activeChatId;
+        const lastMsg = chat.messages[chat.messages.length - 1];
+        return `
+          <div
+            onclick="selectChat(${chat.id})"
+            class="p-3.5 cursor-pointer transition relative group ${
+              isSelected 
+                ? 'bg-indigo-50/70 border-l-4 border-indigo-600' 
+                : 'hover:bg-slate-50'
+            }"
+          >
+            <div class="flex items-start justify-between">
+              <div class="flex items-center space-x-3">
+                <div class="relative">
+                  <div class="w-10 h-10 rounded-full bg-slate-200 border border-slate-300 flex items-center justify-center text-slate-700 font-bold text-xs shadow-xs">
+                    ${chat.name.substring(0, 2).toUpperCase()}
+                  </div>
+                  <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full"></span>
+                </div>
+                <div>
+                  <h4 class="text-xs font-bold text-slate-800 group-hover:text-indigo-600 transition line-clamp-1">${chat.name}</h4>
+                  <p class="text-[11px] text-slate-400 font-mono mt-0.5">${chat.phone}</p>
+                </div>
+              </div>
+              ${chat.unreadCount > 0 ? `
+                <span class="w-5 h-5 bg-rose-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-xs animate-pulse">
+                  ${chat.unreadCount}
+                </span>
+              ` : ''}
+            </div>
+
+            <div class="mt-2.5 flex items-center justify-between text-[10px]">
+              <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-medium">${chat.department}</span>
+              <span class="text-slate-400 whitespace-nowrap">${chat.timeAgo}</span>
+            </div>
+            <p class="text-slate-500 text-[11px] line-clamp-1 mt-1.5">${lastMsg ? lastMsg.text : 'Sin mensajes'}</p>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderActiveChatHeader() {
+      const activeChat = state.chats.find(c => c.id === state.activeChatId) || state.chats[0];
+      const container = document.getElementById('active-chat-header-info');
+      container.innerHTML = `
+        <div class="w-10 h-10 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-xs shadow-sm">
+          ${activeChat.name.substring(0, 2).toUpperCase()}
+        </div>
+        <div>
+          <h3 class="text-xs font-bold text-slate-900 flex items-center gap-2">
+            ${activeChat.name}
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-100">
+              ${activeChat.department}
+            </span>
+          </h3>
+          <p class="text-[11px] text-slate-400">Operador asignado: <span class="text-slate-700 font-semibold">${activeChat.operator}</span></p>
+        </div>
+      `;
+    }
+
+    function renderMessages() {
+      const activeChat = state.chats.find(c => c.id === state.activeChatId) || state.chats[0];
+      const container = document.getElementById('messages-container');
+
+      let html = `
+        <div class="text-center my-2">
+          <button class="px-4 py-1.5 bg-white hover:bg-slate-100 text-slate-600 text-xs font-semibold rounded-full border border-slate-200 shadow-xs transition">
+            Cargar mensajes anteriores
+          </button>
+        </div>
+      `;
+
+      html += activeChat.messages.map(msg => {
+        const isOperator = msg.sender === 'operator';
+        const isSystem = msg.sender === 'system';
+
+        if (isSystem) {
+          return `
+            <div class="flex justify-center my-3">
+              <span class="px-4 py-1.5 rounded-full text-[11px] bg-emerald-50 text-emerald-800 border border-emerald-200/60 shadow-xs text-center font-medium">
+                ${msg.text} <span class="text-emerald-500 text-[10px] ml-2">${msg.timestamp}</span>
+              </span>
+            </div>
+          `;
+        }
+
+        return `
+          <div class="flex flex-col ${isOperator ? 'items-end' : 'items-start'} space-y-1">
+            <div class="max-w-xl rounded-2xl px-4 py-3 shadow-xs text-xs leading-relaxed ${
+              isOperator 
+                ? 'bg-emerald-700 text-white rounded-tr-none' 
+                : 'bg-white border border-slate-200 text-slate-800 rounded-tl-none shadow-xs'
+            }">
+              <p>${msg.text}</p>
+            </div>
+            <div class="flex items-center space-x-1.5 text-[10px] text-slate-400 px-1">
+              <span>${isOperator ? 'Leonardo Montiel' : activeChat.name.split('/')[0]}</span>
+              <span>•</span>
+              <span>${msg.timestamp}</span>
+              ${isOperator ? `
+                <span class="flex items-center text-emerald-600 ml-1 font-semibold">
+                  <i class="fa-solid fa-check-double text-[10px] mr-1"></i> ${msg.status}
+                </span>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      container.innerHTML = html;
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function renderRightDrawer() {
+      const activeChat = state.chats.find(c => c.id === state.activeChatId) || state.chats[0];
+      const drawer = document.getElementById('right-details-drawer');
+
+      if (!state.showRightPanel) {
+        drawer.classList.add('hidden');
+        return;
+      }
+      drawer.classList.remove('hidden');
+
+      drawer.innerHTML = `
+        <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+          <h3 class="text-xs font-bold text-slate-800 flex items-center gap-2">
+            <i class="fa-regular fa-user text-indigo-600"></i> Perfil del Cliente ISP
+          </h3>
+          <button onclick="toggleRightDrawer()" class="text-slate-400 hover:text-slate-600 transition">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <div class="text-center pb-4 border-b border-slate-100">
+          <div class="w-16 h-16 rounded-2xl bg-indigo-600 text-white mx-auto flex items-center justify-center font-bold text-lg shadow-md mb-3">
+            ${activeChat.name.substring(0, 2).toUpperCase()}
+          </div>
+          <h4 class="text-xs font-bold text-slate-900">${activeChat.name}</h4>
+          <p class="text-xs text-slate-400 font-mono mt-0.5">${activeChat.phone}</p>
+          <span class="mt-2 inline-block px-3 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+            ${activeChat.clientDetails.status}
+          </span>
+        </div>
+
+        <div class="space-y-3">
+          <h5 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Detalles de Fibra Óptica</h5>
+          <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-200 space-y-2.5 text-xs">
+            <div class="flex justify-between">
+              <span class="text-slate-500">Contrato ID:</span>
+              <span class="font-mono text-indigo-600 font-bold">${activeChat.clientDetails.contractId}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-500">Plan Actual:</span>
+              <span class="font-semibold text-slate-800">${activeChat.clientDetails.plan}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-500">Dirección:</span>
+              <span class="text-slate-700 text-right max-w-[150px]">${activeChat.clientDetails.address}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-500">IP Asignada:</span>
+              <span class="font-mono text-emerald-700 font-bold">${activeChat.clientDetails.ipAddress}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-500">Router / ONU:</span>
+              <span class="text-slate-700 font-medium">${activeChat.clientDetails.router}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-3">
+          <h5 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Historial de Tickets</h5>
+          <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-200 text-xs space-y-2">
+            <div class="flex justify-between items-center">
+              <span class="text-slate-500">Tickets Previos:</span>
+              <span class="font-bold text-slate-800">${activeChat.clientDetails.previousTickets}</span>
+            </div>
+            <p class="text-slate-500 italic text-[11px] mt-1 pt-2 border-t border-slate-200">
+              "${activeChat.clientDetails.notes}"
+            </p>
+          </div>
+        </div>
+
+        <div class="pt-2">
+          <button class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-indigo-600 rounded-xl text-xs font-bold border border-slate-200 transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-up-right-from-square text-xs"></i> Ver Contrato en ICAROSoft
+          </button>
+        </div>
+      `;
+    }
+
+    function renderCannedResponses() {
+      const container = document.getElementById('canned-list-container');
+      container.innerHTML = cannedResponses.map(cr => `
+        <div 
+          onclick="selectCanned('${cr.replace(/'/g, "\\'")}')"
+          class="p-2.5 rounded-xl hover:bg-slate-50 cursor-pointer text-xs text-slate-700 font-medium transition border border-transparent hover:border-slate-200"
+        >
+          ${cr}
+        </div>
+      `).join('');
+    }
+
+    function renderClientsTable() {
+      const container = document.getElementById('clients-table-body');
+      container.innerHTML = state.chats.map(c => `
+        <tr class="hover:bg-slate-50 transition">
+          <td class="p-4">
+            <p class="font-bold text-slate-800">${c.name}</p>
+            <p class="text-slate-400 text-[10px]">Contrato: ${c.clientDetails.contractId}</p>
+          </td>
+          <td class="p-4 text-slate-600">${c.clientDetails.plan}</td>
+          <td class="p-4 text-slate-500">${c.clientDetails.address}</td>
+          <td class="p-4 font-mono text-indigo-600 font-semibold">${c.clientDetails.ipAddress}</td>
+          <td class="p-4">
+            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+              ${c.clientDetails.status}
+            </span>
+          </td>
+          <td class="p-4 text-right">
+            <button onclick="selectChatAndGo(${c.id})" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-indigo-600 rounded-lg font-semibold transition inline-flex items-center gap-1.5">
+              <i class="fa-regular fa-comment"></i> Abrir Chat
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // ACTIONS & HANDLERS
+
+    function switchView(viewId) {
+      state.activeView = viewId;
+      renderNav();
+
+      const helpdeskView = document.getElementById('view-helpdesk');
+      const dashboardView = document.getElementById('view-dashboard');
+      const clientsView = document.getElementById('view-clients');
+      const genericView = document.getElementById('view-generic');
+
+      helpdeskView.classList.add('hidden');
+      dashboardView.classList.add('hidden');
+      clientsView.classList.add('hidden');
+      genericView.classList.add('hidden');
+
+      const headerTitle = document.getElementById('header-view-title');
+
+      if (viewId === 'helpdesk') {
+        helpdeskView.classList.remove('hidden');
+        headerTitle.innerText = 'Helpdesk & Omnicanalidad';
+      } else if (viewId === 'dashboard') {
+        dashboardView.classList.remove('hidden');
+        headerTitle.innerText = 'Dashboard Ejecutivo';
+      } else if (viewId === 'clients') {
+        clientsView.classList.remove('hidden');
+        renderClientsTable();
+        headerTitle.innerText = 'Directorio de Clientes';
+      } else {
+        genericView.classList.remove('hidden');
+        document.getElementById('generic-view-title').innerText = 'Módulo de ' + viewId.toUpperCase();
+        headerTitle.innerText = 'Módulo ' + viewId;
+      }
+    }
+
+    function setChatFilter(filter) {
+      state.chatFilter = filter;
+      renderFilterTabs();
+      renderChatList();
+    }
+
+    function selectChat(id) {
+      state.activeChatId = id;
+      const chat = state.chats.find(c => c.id === id);
+      if (chat) chat.unreadCount = 0;
+      renderChatList();
+      renderActiveChatHeader();
+      renderMessages();
+      renderRightDrawer();
+    }
+
+    function selectChatAndGo(id) {
+      selectChat(id);
+      switchView('helpdesk');
+    }
+
+    function toggleRightDrawer() {
+      state.showRightPanel = !state.showRightPanel;
+      renderRightDrawer();
+    }
+
+    function selectCanned(text) {
+      document.getElementById('message-input').value = text;
+      document.getElementById('canned-responses-popover').classList.add('hidden');
+    }
+
+    // INITIALIZATION & EVENT LISTENERS
+    window.addEventListener('DOMContentLoaded', () => {
+      renderNav();
+      renderNotifications();
+      renderFilterTabs();
+      renderChatList();
+      renderActiveChatHeader();
+      renderMessages();
+      renderRightDrawer();
+      renderCannedResponses();
+
+      // Live contact search
+      document.getElementById('chat-search-input').addEventListener('input', (e) => {
+        state.searchQuery = e.target.value;
+        renderChatList();
+      });
+
+      // Send Message Form
+      document.getElementById('message-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const input = document.getElementById('message-input');
+        const text = input.value.trim();
+        if (!text) return;
+
+        const activeChat = state.chats.find(c => c.id === state.activeChatId);
+        if (activeChat) {
+          activeChat.messages.push({
+            id: Date.now(),
+            sender: 'operator',
+            text: text,
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            status: 'entregado'
+          });
+        }
+
+        input.value = '';
+        renderMessages();
+        renderChatList();
+      });
+
+      // Toggle Canned menu
+      document.getElementById('btn-toggle-canned').addEventListener('click', () => {
+        const popover = document.getElementById('canned-responses-popover');
+        popover.classList.toggle('hidden');
+      });
+
+      document.getElementById('btn-close-canned').addEventListener('click', () => {
+        document.getElementById('canned-responses-popover').classList.add('hidden');
+      });
+
+      // Toggle Drawer from header button
+      document.getElementById('btn-toggle-right-drawer').addEventListener('click', () => {
+        toggleRightDrawer();
+      });
+
+      // Toggle Notifications dropdown
+      document.getElementById('btn-toggle-notifs').addEventListener('click', () => {
+        document.getElementById('notif-dropdown').classList.toggle('hidden');
+      });
+
+      document.getElementById('btn-mark-read').addEventListener('click', () => {
+        state.notifications.forEach(n => n.read = true);
+        renderNotifications();
+      });
+    });
+  </script>
+</body>
+</html>
