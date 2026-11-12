@@ -1,0 +1,99 @@
+/* ==========================================================================
+   Adaptación a tablet, escritorio y móvil
+   ========================================================================== */
+
+@media (min-width: 768px) {
+  body {
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  .header {
+    display: none;
+  }
+
+  .nav-menu {
+    position: sticky;
+    top: 12px;
+    width: 250px;
+    height: calc(100vh - 24px);
+    height: calc(100dvh - 24px);
+    flex: 0 0 250px;
+    transform: none;
+    border: 0;
+    border-radius: 16px;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+  }
+
+  .nav-menu h3 {
+    margin: 14px 0 24px;
+  }
+
+  .main-content {
+    min-height: calc(100vh - 24px);
+    min-height: calc(100dvh - 24px);
+    flex: 1 1 0;
+    padding: 24px;
+  }
+}
+
+@media (max-width: 767px) {
+  .counter-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  #ubicacion {
+    flex: 1 1 100%;
+  }
+
+  .row {
+    flex-wrap: wrap;
+  }
+
+  .row > input,
+  .row > select {
+    flex: 1 1 130px;
+  }
+
+  .row > button {
+    flex: 0 1 auto;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .main-content {
+    padding: 12px;
+    border-radius: 12px;
+  }
+
+  .row > button {
+    flex: 1 1 auto;
+  }
+
+  .actions .btn {
+    flex-basis: 100%;
+  }
+
+  .modal-content {
+    padding: 18px;
+  }
+
+  .app-footer {
+    padding-top: 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

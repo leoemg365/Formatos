@@ -1,0 +1,102 @@
+/* ==========================================================================
+   Tema oscuro
+   ========================================================================== */
+
+body.dark-mode {
+  background: linear-gradient(160deg, #181818, #222 100%);
+  color: #eee;
+}
+
+body.dark-mode .main-content,
+body.dark-mode .nav-menu {
+  background: #232323;
+  color: #eee;
+}
+
+body.dark-mode .main-content {
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
+}
+
+body.dark-mode .nav-menu {
+  border-right-color: #333;
+}
+
+body.dark-mode .nav-menu h3,
+body.dark-mode .nav-menu ul li a,
+body.dark-mode .app-footer a {
+  color: #eee;
+}
+
+body.dark-mode .nav-menu ul li a.active {
+  background: var(--vino);
+  color: #fff;
+}
+
+body.dark-mode .nav-menu ul li a:hover,
+body.dark-mode .nav-menu ul li a:focus-visible,
+body.dark-mode .btn.alt:hover {
+  background: #383838;
+}
+
+body.dark-mode .app-footer {
+  color: #bbb;
+}
+
+body.dark-mode .output {
+  background: #181818;
+  color: #eee;
+}
+
+body.dark-mode .highlight-block {
+  border-color: var(--vino);
+  background: #232323;
+  color: #eee;
+}
+
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea {
+  border-color: #444;
+  background: #181818;
+  color: #eee;
+}
+
+body.dark-mode .btn {
+  background: var(--vino);
+  color: #fff;
+}
+
+body.dark-mode .btn.alt {
+  border-color: #eee;
+  background: #232323;
+  color: #fff;
+}
+
+body.dark-mode .counter-control {
+  border-color: #3a3a3a;
+  background: #1b1b1b;
+}
+
+body.dark-mode .counter-control > span {
+  color: #eee;
+}
+
+body.dark-mode .counter-control--metraje input {
+  background: transparent;
+  color: #eee;
+}
+
+body.dark-mode .unit,
+body.dark-mode .hint {
+  color: #aaa;
+}
+
+body.dark-mode #ubicacion {
+  background: #181818;
+  color: #eee;
+}
+
+body.dark-mode .message-box {
+  background: #232323;
+  color: #fff;
+}

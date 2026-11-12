@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Plataforma de reportes y formatos de Tecnoven.">
+  <title>Tecnoven Reportes</title>
+
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/10581/10581089.png" type="image/png">
+
+  <!-- Estilos -->
+  <link rel="stylesheet" href="assets/css/base.css">
+  <link rel="stylesheet" href="assets/css/layout.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/themes.css">
+  <link rel="stylesheet" href="assets/css/responsive.css">
+
+  <!-- Librería externa para el escáner QR -->
+  <script src="https://unpkg.com/html5-qrcode" defer></script>
+
+  <!-- Scripts de la aplicación (el orden importa) -->
+  <script src="assets/js/config.js" defer></script>
+  <script src="assets/js/utils.js" defer></script>
+  <script src="assets/js/ui.js" defer></script>
+  <script src="assets/js/qr.js" defer></script>
+  <script src="assets/js/forms/ficha-instalacion.js" defer></script>
+  <script src="assets/js/forms/activacion.js" defer></script>
+  <script src="assets/js/forms/solicitud.js" defer></script>
+  <script src="assets/js/app.js" defer></script>
+</head>
+<body>
+
+  <!-- Menú lateral -->
+  <nav class="nav-menu" aria-label="Formatos disponibles">
+    <h3>Formatos</h3>
+    <ul>
+      <li><a href="#" class="nav-link" data-target="ficha-instalacion">Ficha de Trabajo</a></li>
+      <li><a href="#" class="nav-link" data-target="proceso-activacion">Proceso de Activación</a></li>
+      <li><a href="#" class="nav-link" data-target="solicitud">Solicitud</a></li>
+      <li><a href="inventario.html" target="_blank" rel="noopener">Inventario</a></li>
+    </ul>
+    <button class="btn alt" id="toggleThemeBtn" type="button" title="Modo claro/oscuro" aria-label="Cambiar tema">🌙</button>
+  </nav>
+
+  <div class="main-content">
+    <header class="header">
+      <button class="menu-toggle" type="button" aria-label="Abrir menú">Menú</button>
+    </header>
+
+    <!-- Ficha de trabajo -->
+    <section id="ficha-instalacion" class="content-section" aria-labelledby="tituloFichaInstalacion">
+      <h2 id="tituloFichaInstalacion">Ficha de Trabajo</h2>
+
+      <div class="highlight-block">
+        <label for="tipoTrabajo">Tipo de trabajo</label>
+        <select id="tipoTrabajo">
+          <option value="instalacion">Instalación</option>
+          <option value="soporte">Soporte</option>
+        </select>
+
+        <label for="servicio">Servicio</label>
+        <select id="servicio">
+          <option value="Internet">Internet</option>
+          <option value="TV">TV</option>
+          <option value="Ambos">Ambos</option>
+        </select>
+      </div>
+
+      <label for="fecha">Fecha</label>
+      <div class="row">
+        <input id="fecha" placeholder="30 08 2025">
+        <button type="button" class="btn accent" id="btnFecha">Ahora</button>
+      </div>
+
+      <label for="cliente">Nombre de cliente</label>
+      <input id="cliente">
+
+      <label for="horaInicio">Hora inicio</label>
+      <div class="row">
+        <input id="horaInicio" placeholder="9 37">
+        <button type="button" class="btn" id="btnAhoraIni">Ahora</button>
+      </div>
+
+      <label for="horaFin">Hora fin</label>
+      <div class="row">
+        <input id="horaFin" placeholder="12 15">
+        <button type="button" class="btn" id="btnAhoraFin">Ahora</button>
+      </div>
+
+      <label for="serialInst">Serial</label>
+      <div class="row">
+        <input id="serialInst" placeholder="Ingresa serial o escanea QR">
+        <button type="button" class="btn" id="btnScanQRInst">Escanear QR</button>
+      </div>
+
+      <label for="napNumberInst">NAP</label>
+      <div class="row">
+        <select id="napRegionInst" aria-label="Región de la NAP">
+          <option value="MCBO">MCBO</option>
+          <option value="SFCO">SFCO</option>
+        </select>
+        <input id="napNumberInst" placeholder="Número" type="number">
+      </div>
+
+      <label for="puertoInst">Puerto</label>
+      <select id="puertoInst">
+        <option value="">Selecciona un puerto</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+        <option value="13">13</option>
+        <option value="14">14</option>
+        <option value="15">15</option>
+        <option value="16">16</option>
+      </select>
+
+      <label for="potencia">Potencia</label>
+      <input id="potencia">
+
+      <div class="counter-grid">
+        <div class="counter-field">
+          <label>Conector APC</label>
+          <div class="counter-control">
+            <button type="button" data-type="apc" data-action="decrease" aria-label="Restar conector APC">−</button>
+            <span data-type="apc">0</span>
+            <button type="button" data-type="apc" data-action="increase" aria-label="Sumar conector APC">+</button>
+          </div>
+        </div>
+
+        <div class="counter-field">
+          <label>Conector UPC</label>
+          <div class="counter-control">
+            <button type="button" data-type="upc" data-action="decrease" aria-label="Restar conector UPC">−</button>
+            <span data-type="upc">0</span>
+            <button type="button" data-type="upc" data-action="increase" aria-label="Sumar conector UPC">+</button>
+          </div>
+        </div>
+
+        <div class="counter-field">
+          <label>Conector RG6</label>
+          <div class="counter-control">
+            <button type="button" data-type="rg6" data-action="decrease" aria-label="Restar conector RG6">−</button>
+            <span data-type="rg6">0</span>
+            <button type="button" data-type="rg6" data-action="increase" aria-label="Sumar conector RG6">+</button>
+          </div>
+        </div>
+
+        <div class="counter-field">
+          <label>Conector RJ45</label>
+          <div class="counter-control">
+            <button type="button" data-type="rj45" data-action="decrease" aria-label="Restar conector RJ45">−</button>
+            <span data-type="rj45">0</span>
+            <button type="button" data-type="rj45" data-action="increase" aria-label="Sumar conector RJ45">+</button>
+          </div>
+        </div>
+
+        <div class="counter-field">
+          <label>Splitter TV</label>
+          <div class="counter-control">
+            <button type="button" data-type="splitter" data-action="decrease" aria-label="Restar splitter">−</button>
+            <span data-type="splitter">0</span>
+            <button type="button" data-type="splitter" data-action="increase" aria-label="Sumar splitter">+</button>
+          </div>
+        </div>
+
+        <div class="counter-field">
+          <label>Roseta</label>
+          <div class="counter-control">
+            <button type="button" data-type="roseta" data-action="decrease" aria-label="Restar roseta">−</button>
+            <span data-type="roseta">0</span>
+            <button type="button" data-type="roseta" data-action="increase" aria-label="Sumar roseta">+</button>
+          </div>
+        </div>
+
+        <div class="counter-field">
+          <label>Manguita</label>
+          <div class="counter-control">
+            <button type="button" data-type="manguita" data-action="decrease" aria-label="Restar manguita">−</button>
+            <span data-type="manguita">0</span>
+            <button type="button" data-type="manguita" data-action="increase" aria-label="Sumar manguita">+</button>
+          </div>
+        </div>
+
+        <div class="counter-field">
+          <label>Couple</label>
+          <div class="counter-control">
+            <button type="button" data-type="couple" data-action="decrease" aria-label="Restar couple">−</button>
+            <span data-type="couple">0</span>
+            <button type="button" data-type="couple" data-action="increase" aria-label="Sumar couple">+</button>
+          </div>
+        </div>
+
+        <div class="counter-field">
+          <label for="utpManual">Metraje UTP <span class="unit">(m)</span></label>
+          <div class="counter-control counter-control--metraje">
+            <button type="button" data-type="utp" data-action="decrease" aria-label="Restar 10 metros de UTP">−</button>
+            <input type="number" id="utpManual" value="0" min="0" step="10" inputmode="numeric" aria-label="Metraje UTP en metros">
+            <button type="button" data-type="utp" data-action="increase" aria-label="Sumar 10 metros de UTP">+</button>
+          </div>
+        </div>
+
+        <div class="counter-field">
+          <label for="dropManual">Metraje Drop <span class="unit">(m)</span></label>
+          <div class="counter-control counter-control--metraje">
+            <button type="button" data-type="drop" data-action="decrease" aria-label="Restar 10 metros de drop">−</button>
+            <input type="number" id="dropManual" value="0" min="0" step="10" inputmode="numeric" aria-label="Metraje drop en metros">
+            <button type="button" data-type="drop" data-action="increase" aria-label="Sumar 10 metros de drop">+</button>
+          </div>
+        </div>
+
+        <div class="counter-field">
+          <label for="coaxialManual">Metraje Coaxial <span class="unit">(m)</span></label>
+          <div class="counter-control counter-control--metraje">
+            <button type="button" data-type="coaxial" data-action="decrease" aria-label="Restar 10 metros de coaxial">−</button>
+            <input type="number" id="coaxialManual" value="0" min="0" step="10" inputmode="numeric" aria-label="Metraje coaxial en metros">
+            <button type="button" data-type="coaxial" data-action="increase" aria-label="Sumar 10 metros de coaxial">+</button>
+          </div>
+        </div>
+
+        <div class="counter-field">
+          <label for="flapManual">Metraje Flap <span class="unit">(m)</span></label>
+          <div class="counter-control counter-control--metraje">
+            <button type="button" data-type="flap" data-action="decrease" aria-label="Restar 10 metros de flap">−</button>
+            <input type="number" id="flapManual" value="0" min="0" step="10" inputmode="numeric" aria-label="Metraje flap en metros">
+            <button type="button" data-type="flap" data-action="increase" aria-label="Sumar 10 metros de flap">+</button>
+          </div>
+        </div>
+
+        <div class="counter-field">
+          <label>Mástil</label>
+          <div class="counter-control">
+            <button type="button" data-type="mastil" data-action="decrease" aria-label="Restar mástil">−</button>
+            <span data-type="mastil">0</span>
+            <button type="button" data-type="mastil" data-action="increase" aria-label="Sumar mástil">+</button>
+          </div>
+        </div>
+
+        <div class="counter-field">
+          <label>Tensores</label>
+          <div class="counter-control">
+            <button type="button" data-type="tensores" data-action="decrease" aria-label="Restar tensor">−</button>
+            <span data-type="tensores">0</span>
+            <button type="button" data-type="tensores" data-action="increase" aria-label="Sumar tensor">+</button>
+          </div>
+        </div>
+
+        <div class="counter-field">
+          <label>Preformados</label>
+          <div class="counter-control">
+            <button type="button" data-type="preformados" data-action="decrease" aria-label="Restar preformado">−</button>
+            <span data-type="preformados">0</span>
+            <button type="button" data-type="preformados" data-action="increase" aria-label="Sumar preformado">+</button>
+          </div>
+        </div>
+
+        <div class="counter-field">
+          <label>Grapas y Clavos</label>
+          <div class="counter-control">
+            <button type="button" data-type="grapas" data-action="decrease" aria-label="Restar grapas y clavos">−</button>
+            <span data-type="grapas">0</span>
+            <button type="button" data-type="grapas" data-action="increase" aria-label="Sumar grapas y clavos">+</button>
+          </div>
+        </div>
+
+        <div class="counter-field">
+          <label>Ramplug y Tornillos</label>
+          <div class="counter-control">
+            <button type="button" data-type="ramplug" data-action="decrease" aria-label="Restar ramplug y tornillos">−</button>
+            <span data-type="ramplug">0</span>
+            <button type="button" data-type="ramplug" data-action="increase" aria-label="Sumar ramplug y tornillos">+</button>
+          </div>
+        </div>
+      </div>
+
+      <label for="ubicacion">Ubicación GPS</label>
+      <div class="row">
+        <input id="ubicacion" placeholder="Sin ubicación" readonly>
+        <button type="button" class="btn" id="btnUbicacion">Obtener ubicación</button>
+      </div>
+      <p class="hint">Se pedirá permiso para usar el GPS del dispositivo.</p>
+
+      <label for="tecnicosSelect">Técnicos</label>
+      <select id="tecnicosSelect">
+        <option value="">-- Selecciona técnico --</option>
+        <option value="Alejandro Blanco">Alejandro Blanco</option>
+        <option value="Alejandro Soto">Alejandro Soto</option>
+        <option value="Danny Perez">Danny Perez</option>
+        <option value="Keiver Zambrano">Keiver Zambrano</option>
+        <option value="Mayckkol Fuenmayor">Mayckkol Fuenmayor</option>
+        <option value="Alfonso Solarte">Alfonso Solarte</option>
+        <option value="Anddy Bravo">Anddy Bravo</option>
+        <option value="Alexander Zambrano">Alexander Zambrano</option>
+        <option value="Josue Utria">Josue Utria</option>
+        <option value="Leonardo Montiel">Leonardo Montiel</option>
+        <option value="Hebert Vargas">Hebert Vargas</option>
+        <option value="Pedro Linares">Pedro Linares</option>
+        <option value="Jose Luis Gonzalez">Jose Luis Gonzalez</option>
+        <option value="Ricardo Valencia">Ricardo Valencia</option>
+        <option value="Jonathan Bravo">Jonathan Bravo</option>
+        <option value="Antonio Roo">Antonio Roo</option>
+        <option value="Otro">Otro</option>
+      </select>
+
+      <div class="chips" id="chipsContainer"></div>
+      <input id="otroNombre" placeholder="Escribe otro nombre" aria-label="Otro nombre de técnico">
+
+      <label for="cobro">Cobrar</label>
+      <input id="cobro">
+
+      <label for="observacion">Observación</label>
+      <textarea id="observacion"></textarea>
+
+      <div class="actions">
+        <button class="btn" id="btnGenerarInst" type="button">Generar</button>
+        <button class="btn" id="btnCopiarInst" type="button">Copiar</button>
+        <button class="btn alt" id="btnNuevoInst" type="button">Nuevo Formato</button>
+      </div>
+      <div class="output" id="resultadoInst" aria-live="polite"></div>
+    </section>
+
+    <!-- Proceso de activación -->
+    <section id="proceso-activacion" class="content-section" aria-labelledby="tituloActivacion">
+      <h2 id="tituloActivacion">Proceso de Activación</h2>
+
+      <div class="highlight-block">
+        <label for="tipoActivacion">Tipo de Activación</label>
+        <select id="tipoActivacion">
+          <option value="Internet">Internet</option>
+          <option value="TV">TV</option>
+          <option value="Ambos">Ambos</option>
+        </select>
+      </div>
+
+      <label for="clienteAct">Nombre de Cliente</label>
+      <input id="clienteAct" placeholder="Nombre de Cliente">
+
+      <label for="napNumberAct">NAP</label>
+      <div class="row">
+        <select id="napRegionAct" aria-label="Región de la NAP">
+          <option value="MCBO">MCBO</option>
+          <option value="SFCO">SFCO</option>
+        </select>
+        <input id="napNumberAct" placeholder="Número" type="number">
+      </div>
+
+      <label for="puertoAct">Puerto</label>
+      <select id="puertoAct">
+        <option value="">Selecciona un puerto</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+        <option value="13">13</option>
+        <option value="14">14</option>
+        <option value="15">15</option>
+        <option value="16">16</option>
+      </select>
+
+      <label for="serialAct">Serial</label>
+      <div class="row">
+        <input id="serialAct" placeholder="Ingresa serial o escanea QR">
+        <button type="button" class="btn" id="btnScanQRAct">Escanear QR</button>
+      </div>
+
+      <div class="actions">
+        <button class="btn" id="btnGenerarAct" type="button">Generar</button>
+        <button class="btn" id="btnCopiarAct" type="button">Copiar</button>
+        <button class="btn alt" id="btnNuevoAct" type="button">Nuevo Formato</button>
+      </div>
+      <div class="output" id="resultadoAct" aria-live="polite"></div>
+    </section>
+
+    <!-- Solicitud de trabajo -->
+    <section id="solicitud" class="content-section" aria-labelledby="tituloSolicitud">
+      <h2 id="tituloSolicitud">Solicitud de Trabajo</h2>
+
+      <div class="highlight-block">
+        <label for="servicioSol">Servicio</label>
+        <select id="servicioSol">
+          <option value="Internet">Internet</option>
+          <option value="TV">TV</option>
+          <option value="Ambos">Ambos</option>
+        </select>
+      </div>
+
+      <label for="napNumberSol">NAP</label>
+      <div class="row">
+        <select id="napRegionSol" aria-label="Región de la NAP">
+          <option value="MCBO">MCBO</option>
+          <option value="SFCO">SFCO</option>
+        </select>
+        <input id="napNumberSol" placeholder="Número" type="number">
+      </div>
+
+      <label for="clienteSol">Nombre de Cliente</label>
+      <input id="clienteSol">
+
+      <div class="actions">
+        <button class="btn" id="btnGenerarSol" type="button">Generar</button>
+        <button class="btn" id="btnCopiarSol" type="button">Copiar</button>
+        <button class="btn alt" id="btnNuevoSol" type="button">Nuevo Formato</button>
+      </div>
+      <div class="output" id="resultadoSol" aria-live="polite"></div>
+    </section>
+
+    <footer class="app-footer">
+      Plataforma de Reportes y Formatos<br>
+      Versión 2.0<br>
+      Todos los derechos reservados<br>
+      © 2025 Espiral - Leonardo Montiel<br>
+      <a href="https://wa.me/584121982608">Contáctanos</a>
+    </footer>
+  </div>
+
+  <!-- Modal del escáner QR -->
+  <div class="modal-overlay" id="qrModal">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="qrModalTitle">
+      <h3 id="qrModalTitle">Escanear código QR</h3>
+      <div id="scanner-container"></div>
+      <button type="button" class="btn" id="btnCloseScanner">Cerrar</button>
+    </div>
+  </div>
+
+  <div id="messageBox" class="message-box" role="status" aria-live="polite"></div>
+
+  <!-- Modal de novedades -->
+  <div class="modal-overlay" id="updatesModal">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="updatesTitle">
+      <h2 id="updatesTitle">🚀 Novedades de la Versión</h2>
+      <div id="updatesBody"></div>
+      <button type="button" class="btn" id="closeUpdatesModal">Entendido</button>
+    </div>
+  </div>
+
+  <!-- Modal de actualización -->
+  <div class="modal-overlay" id="applyingUpdateModal" role="dialog" aria-modal="true" aria-labelledby="applyingUpdateTitle">
+    <div class="modal-content">
+      <h2 id="applyingUpdateTitle">Aplicando actualización.</h2>
+      <div class="update-progress" role="progressbar" aria-label="Aplicando actualización" aria-valuemin="0" aria-valuemax="100">
+        <div class="update-progress-bar"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Botón flotante de WhatsApp -->
+  <a class="whatsapp-link" href="https://wa.me" target="_blank" rel="noopener noreferrer" aria-label="Abrir WhatsApp">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="">
+  </a>
+
+</body>
+</html>
